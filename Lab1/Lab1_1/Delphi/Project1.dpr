@@ -31,7 +31,7 @@ Begin
             Write('¬ведите число A: ');
             Try
                 ReadLn(A);
-                If (A > MIN) And (A < MAX) Then
+                If ((A > MIN) Or (A = MIN)) And ((A < MAX) Or (A = MAX)) Then
                     IsIncorrect := False
                 Else
                 Begin
@@ -50,7 +50,7 @@ Begin
             Write('¬ведите число B: ');
             Try
                 ReadLn(B);
-                If (B > 0) And (B < 1000) Then
+                If ((B > MIN) Or (B = MIN)) And ((B < MAX) Or (B = MAX)) Then
                     IsIncorrect := False
                 Else
                 Begin
