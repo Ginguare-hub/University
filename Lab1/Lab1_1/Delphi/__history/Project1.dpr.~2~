@@ -1,4 +1,4 @@
-﻿Program Project1;
+Program Project1;
 
 Uses
     System.SysUtils;

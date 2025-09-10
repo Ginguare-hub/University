@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int main() 
+int main()
 {
 
     setlocale(LC_ALL, "Rus");
@@ -15,111 +15,92 @@ int main()
     double geomMean = 1.0;
     bool isIncorrect = true;
     bool isAllCorrect = true;
-    
+
     const int MIN = 0;
     const int MAX = 1000;
 
-    while (isAllCorrect) 
-    {
-    
     cout << "Программа считает среднее арифметическое и среднее геометрическое для чисел a и b, и показывает, что среднее арифметическое этих чисел не меньше их среднего геометрического." << endl;
-    
-    while (isIncorrect) 
+
+    while (isAllCorrect)
     {
-        isIncorrect = false;
-
-        cout << "Введите число a:  ";
-        cin >> a;
-
-        if (cin.fail())
+        while (isIncorrect)
         {
-            isIncorrect = true;
-            cout << "Ошибка в записи числа a, повториет попытку." << endl;
-            cin.clear();
-            while (cin.get() != '\n');
+
+            isIncorrect = false;
+
+            cout << "Введите число a:  ";
+            cin >> a;
+
+            if (cin.fail())
+            {
+                isIncorrect = true;
+                cout << "Ошибка в записи числа a, повториет попытку." << endl;
+                cin.clear();
+                while (cin.get() != '\n')
+                    ;
+            }
+
+            if (!isIncorrect && (a < MIN || a > MAX))
+            {
+                isIncorrect = true;
+                cout << "Число a должно быть положительным и лежать в диапазоне (" << MIN << ";" << MAX << "), попробуйте ещё раз." << endl;
+            }
         }
 
-        if (!isIncorrect && (a < MIN || a > MAX))
+        isIncorrect = true;
+
+        while (isIncorrect)
         {
-            isIncorrect = true;
-            cout << "Число a должно быть положительным и лежать в диапазоне (" << MIN << ";" << MAX << "), попробуйте ещё раз." << endl;
+            isIncorrect = false;
+
+            cout << "Введите число b:  ";
+            cin >> b;
+
+            if (cin.fail())
+            {
+                isIncorrect = true;
+                cout << "Ошибка в записи числа b, повториет попытку." << endl;
+                cin.clear();
+                while (cin.get() != '\n')
+                    ;
+            }
+
+            if (!isIncorrect && (b < MIN || b > MAX))
+            {
+                isIncorrect = true;
+                cout << "Число b должно быть положительным и лежать в диапазоне (" << MIN << ";" << MAX << "), попробуйте ещё раз." << endl;
+            }
         }
-    }
 
-    isIncorrect = true;
+        isIncorrect = true;
 
-    while (isIncorrect) 
-    {
-        isIncorrect = false;
+        arithmMean = (a + b) / 2;
+        geomMean = sqrt(a * b);
 
-        cout << "Введите число b:  ";
-        cin >> b;
+        // cout << arithmMean << endl;
+        // cout << geomMean << endl;
 
-        if (cin.fail())
+        if (arithmMean < geomMean)
         {
-            isIncorrect = true;
-            cout << "Ошибка в записи числа b, повториет попытку." << endl;
-            cin.clear();
-            while (cin.get() != '\n');
+            cout << "Среднее арифметическое меньше чем среднее геометрическое заданных чисел." << endl;
         }
-
-        if (!isIncorrect && (b < MIN || b > MAX))
+        else
         {
-            isIncorrect = true;
-            cout << "Число a должно быть положительным и лежать в диапазоне (" << MIN << ";" << MAX << "), попробуйте ещё раз." << endl;
+            cout << "Среднее арифметическое не меньше чем среднее геометрическое заданных чисел." << endl;
         }
-    }
 
-    arithmMean = (a + b) / 2;
-    geomMean = sqrt(a * b);
+        cout << "Если хотите продолжить, введите число 1, если нет, то число 2" << endl;
+        cin >> checker;
 
-    cout << arithmMean << endl;
-    cout << geomMean << endl;
-
-    if (arithmMean < geomMean) 
-    {
-        cout << "Среднее арифметическое меньше чем среднее геометрическое заданных чисел.";    
-    } else 
-    {
-        cout << "Среднее арифметическое не меньше чем среднее геометрическое заданных чисел.";
-    }
-
-    cout << "Если хотите продолжить, введите число 1, если нет, то число 2";
-
-    
-    // Try
-    //         ReadLn(Checker);
-    //         If Checker = 1 Then
-    //         Begin
-    //             WriteLn('');
-    //             WriteLn('Давайте заново');
-    //         End
-    //         Else
-    //             IsAllCorrect := False;
-    //     Except
-    //         IsAllCorrect := False
-    //     End;
-
-
-    isAllCorrect = false;
-
+        if (checker == 1)
+        {
+            isAllCorrect = true;
+            cout << "Давайте заново." << endl << endl;
+        }
+        else
+        {
+            isAllCorrect = false;
+        }
     }
     return 0;
 }
-
-// #include <iostream>
-// #include <vector>
-// #include <string>
-
-// using namespace std;
-
-// int main()
-// {
-//     vector<string> msg {"Hello", "C++", "World", "from", "VS Code", "and the C++ extension!"};
-
-//     for (const string& word : msg)
-//     {
-//         cout << word << " ";
-//     }
-//     cout << endl;
-// }
