@@ -23,7 +23,7 @@ Begin
     IsIncorrect := True;
     IsCycleAllowed := True;
 
-    While IsCycleAllowed Do
+    While IsAllCorrect Do
     Begin
 
         While IsIncorrect Do
