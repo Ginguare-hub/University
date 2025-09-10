@@ -1,0 +1,33 @@
+program Project1;
+
+uses
+  System.SysUtils;
+
+Var
+    A, B, C, X1, X2: Double;
+
+begin
+    A := 1.0;
+    B := 1.0;
+    C := 1.0;
+    X1 := 1.0;
+    X2 := 1.0;
+
+    ReadLn(A, B, C);
+
+    If (B*B - 4*A*C > 0) Then
+    Begin
+    X1 := (-1*B + sqrt(B*B - 4*A*C))/(2*A);
+    X2 := (-1*B - sqrt(B*B - 4*A*C))/(2*A);
+    WriteLn('X1 =',X1:6:4, ', X2 =',X2:6:4)
+    End
+    Else If (B*B - 4*A*C = 0) Then
+    Begin
+        X1 := (-1*B + sqrt(B*B - 4*A*C))/(2*A);
+        WriteLn('X1 = X2 =',X1:6:4);
+    End
+    Else
+        WriteLn('Действительных корней нет');
+
+    ReadLn;
+end.
