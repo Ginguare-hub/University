@@ -95,7 +95,7 @@ int main()
         if (checker == 1)
         {
             isAllCorrect = true;
-            cout << "Давайте заново." << endl << endl;
+            cout << endl << "Давайте заново." << endl;
         }
         else
         {
