@@ -6,7 +6,9 @@ using namespace std;
 int main()
 {
 
-    setlocale(LC_ALL, "Rus");
+    //setlocale(LC_ALL, "Rus");
+    setlocale(LC_ALL, "Russian");
+
 
     int checker = 0;
     double a = 1.0;
