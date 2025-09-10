@@ -1,14 +1,14 @@
 ﻿[Modules]
-Module0=C:\Учёба\Университет\ОАиП\Лабораторная 1\Lab1_1 Delphi\Project1.dproj
+Module0=C:\GitHub\University\Lab1\Lab1_1\Delphi\Project1.dproj
 Count=1
 EditWindowCount=1
 
-[C:\Учёба\Университет\ОАиП\Лабораторная 1\Lab1_1 Delphi\Project1.dproj]
+[C:\GitHub\University\Lab1\Lab1_1\Delphi\Project1.dproj]
 ModuleType=TBaseProject
 
 [EditWindow0]
 ViewCount=1
-CurrentEditView=C:\Учёба\Университет\ОАиП\Лабораторная 1\Lab1_1 Delphi\Project1.dpr
+CurrentEditView=C:\GitHub\University\Lab1\Lab1_1\Delphi\Project1.dpr
 View0=0
 PercentageSizes=1
 Create=1
@@ -45,14 +45,14 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 
 [View0]
 CustomEditViewType=TEditView
-Module=C:\Учёба\Университет\ОАиП\Лабораторная 1\Lab1_1 Delphi\Project1.dpr
-CursorX=1
-CursorY=76
-TopLine=53
+Module=C:\GitHub\University\Lab1\Lab1_1\Delphi\Project1.dpr
+CursorX=45
+CursorY=92
+TopLine=42
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Учёба\Университет\ОАиП\Лабораторная 1\Lab1_1 Delphi\Project1.dpr
+EditViewName=C:\GitHub\University\Lab1\Lab1_1\Delphi\Project1.dpr
 
 [Watches]
 Count=0

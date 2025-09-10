@@ -5,7 +5,7 @@ Uses
 
 Var
     A, B, ArithmMean, GeomMean: Double;
-    IsIncorrect, IsAllCorrect: Boolean;
+    IsIncorrect, IsCycleAllowed: Boolean;
     Checker: Integer;
 
 Const
@@ -21,7 +21,7 @@ Begin
     GeomMean := 1.0;
     Checker := 0;
     IsIncorrect := True;
-    IsAllCorrect := True;
+    IsCycleAllowed := True;
 
     While IsAllCorrect Do
     Begin
@@ -82,9 +82,9 @@ Begin
                 WriteLn('Давайте заново');
             End
             Else
-                IsAllCorrect := False;
+                IsCycleAllowed := False;
         Except
-            IsAllCorrect := False
+            IsCycleAllowed := False
         End;
 
     End;
