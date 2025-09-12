@@ -5,8 +5,6 @@
 
 int main()
 {
-
-    // setlocale(LC_ALL, "Rus");
     setlocale(LC_ALL, "Russian");
 
     int checker = 0;
@@ -90,9 +88,6 @@ int main()
 
         arithmMean = (a + b) / 2;
         geomMean = sqrt(a * b);
-
-        // cout << arithmMean << endl;
-        // cout << geomMean << endl;
 
         if (arithmMean < geomMean)
         {
