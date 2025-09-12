@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
 
-using namespace std;
+//using namespace std;
 
 int main()
 {
@@ -20,33 +20,40 @@ int main()
     const int MIN = 0;
     const int MAX = 1000;
 
-    cout << "Программа считает среднее арифметическое и среднее геометрическое для чисел a и b, и показывает, что среднее арифметическое этих чисел не меньше их среднего геометрического." << endl;
+    std::cout << "Программа считает среднее арифметическое и среднее геометрическое для чисел a и b, и показывает, что среднее арифметическое этих чисел не меньше их среднего геометрического." << std::endl;
 
     while (isCycleAllowed)
     {
-        while (isIncorrect)
+        do
         {
 
             isIncorrect = false;
 
-            cout << "Введите число a:  ";
-            cin >> a;
+            std::cout << "Введите число a:  ";
+            std::cin >> a;
 
-            if (cin.fail())
+            if (std::cin.fail())
             {
                 isIncorrect = true;
-                cout << "Ошибка в записи числа a, повториет попытку.." << endl;
-                cin.clear();
-                while (cin.get() != '\n')
-                    ;
+                std::cout << "Ошибка в записи числа a, повториет попытку.." << std::endl;
+                std::cin.clear();
+                while (std::cin.get() != '\n');
+            }
+
+            if (!isIncorrect && std::cin.get() != '\n') 
+            {
+                isIncorrect = true;
+                std::cout << "Ошибка в записи числа a, повториет попытку." << std::endl;
+                while(std::cin.get() != '\n');
             }
 
             if (!isIncorrect && (a < MIN || a > MAX))
             {
                 isIncorrect = true;
-                cout << "Число a должно быть положительным и лежать в диапазоне (" << MIN << ";" << MAX << "), попробуйте ещё раз." << endl;
+                std::cout << "Число a должно быть положительным и лежать в диапазоне (" << MIN << ";" << MAX << "), попробуйте ещё раз." << std::endl;
             }
-        }
+
+        } while (isIncorrect);
 
         isIncorrect = true;
 
@@ -54,22 +61,28 @@ int main()
         {
             isIncorrect = false;
 
-            cout << "Введите число b:  ";
-            cin >> b;
+            std::cout << "Введите число b:  ";
+            std::cin >> b;
 
-            if (cin.fail())
+            if (std::cin.fail())
             {
                 isIncorrect = true;
-                cout << "Ошибка в записи числа b, повториет попытку." << endl;
-                cin.clear();
-                while (cin.get() != '\n')
-                    ;
+                std::cout << "Ошибка в записи числа b, повториет попытку." << std::endl;
+                std::cin.clear();
+                while (std::cin.get() != '\n');
+            }
+
+            if (!isIncorrect && std::cin.get() != '\n') 
+            {
+                isIncorrect = true;
+                std::cout << "Ошибка в записи числа b, повториет попытку." << std::endl;
+                while(std::cin.get() != '\n');
             }
 
             if (!isIncorrect && (b < MIN || b > MAX))
             {
                 isIncorrect = true;
-                cout << "Число b должно быть положительным и лежать в диапазоне (" << MIN << ";" << MAX << "), попробуйте ещё раз." << endl;
+                std::cout << "Число b должно быть положительным и лежать в диапазоне (" << MIN << ";" << MAX << "), попробуйте ещё раз." << std::endl;
             }
         }
 
@@ -83,20 +96,20 @@ int main()
 
         if (arithmMean < geomMean)
         {
-            cout << "Среднее арифметическое меньше чем среднее геометрическое заданных чисел." << endl;
+            std::cout << "Среднее арифметическое меньше чем среднее геометрическое заданных чисел." << std::endl;
         }
         else
         {
-            cout << "Среднее арифметическое не меньше чем среднее геометрическое заданных чисел." << endl;
+            std::cout << "Среднее арифметическое не меньше чем среднее геометрическое заданных чисел." << std::endl;
         }
 
-        cout << "Если хотите продолжить, введите число 1, если нет, то число 2" << endl;
-        cin >> checker;
+        std::cout << "Если хотите продолжить, введите число 1, если нет, то число 2" << std::endl;
+        std::cin >> checker;
 
         if (checker == 1)
         {
             isCycleAllowed = true;
-            cout << endl << "Давайте заново." << endl;
+            std::cout << std::endl << "Давайте заново." << std::endl;
         }
         else
         {
