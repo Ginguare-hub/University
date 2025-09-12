@@ -1,6 +1,6 @@
 Program Homework1_1;
 
-uses
+Uses
   System.SysUtils;
 
 Var
