@@ -57,7 +57,7 @@ int main()
 
         isIncorrect = true;
 
-        while (isIncorrect)
+        do
         {
             isIncorrect = false;
 
@@ -84,7 +84,7 @@ int main()
                 isIncorrect = true;
                 std::cout << "Число b должно быть положительным и лежать в диапазоне (" << MIN << ";" << MAX << "), попробуйте ещё раз." << std::endl;
             }
-        }
+        } while (isIncorrect);
 
         isIncorrect = true;
 
