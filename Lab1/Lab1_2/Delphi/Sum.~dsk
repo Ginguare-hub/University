@@ -1,14 +1,14 @@
 ﻿[Modules]
-Module0=C:\GitHub\University\Lab1\Lab1_1\Delphi\Project1.dproj
+Module0=C:\GitHub\University\Lab1\Lab1_2\Delphi\Sum.dproj
 Count=1
 EditWindowCount=1
 
-[C:\GitHub\University\Lab1\Lab1_1\Delphi\Project1.dproj]
+[C:\GitHub\University\Lab1\Lab1_2\Delphi\Sum.dproj]
 ModuleType=TBaseProject
 
 [EditWindow0]
 ViewCount=1
-CurrentEditView=C:\GitHub\University\Lab1\Lab1_1\Delphi\Project1.dpr
+CurrentEditView=C:\GitHub\University\Lab1\Lab1_2\Delphi\Sum.dpr
 View0=0
 PercentageSizes=1
 Create=1
@@ -23,8 +23,8 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=9896
 ClientHeight=8875
-TBDockHeight=13543
-LRDockWidth=12070
+TBDockHeight=8875
+LRDockWidth=9896
 Dockable=1
 StayOnTop=0
 DockedToMainForm=1
@@ -37,7 +37,7 @@ RightPanelSize=1999
 RightPanelClients=DockSite2,DockSite4
 RightPanelData=00000800010100000000F01000000000000001CF0700000000000001000000004A12000009000000446F636B536974653201000000001A1B000009000000446F636B5369746534FFFFFFFF
 BottomPanelSize=1484
-BottomPanelClients=DockSite1,MessageView
+BottomPanelClients=MessageView,DockSite1
 BottomPanelData=0000080001020100000009000000446F636B5369746531D93D00000000000002CC050000000000000100000000D93D00000F0000004D65737361676556696577466F726DFFFFFFFF
 BottomMiddlePanelSize=0
 BottomMiddlePanelClients=DockSite0,GraphDrawingModel
@@ -45,14 +45,14 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 
 [View0]
 CustomEditViewType=TEditView
-Module=C:\GitHub\University\Lab1\Lab1_1\Delphi\Project1.dpr
-CursorX=1
-CursorY=76
+Module=C:\GitHub\University\Lab1\Lab1_2\Delphi\Sum.dpr
+CursorX=15
+CursorY=21
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\GitHub\University\Lab1\Lab1_1\Delphi\Project1.dpr
+EditViewName=C:\GitHub\University\Lab1\Lab1_2\Delphi\Sum.dpr
 
 [Watches]
 Count=0
@@ -79,8 +79,7 @@ Dockable=1
 StayOnTop=0
 
 [Breakpoints]
-Count=1
-Breakpoint0='C:\Учёба\Университет\ОАиП\Лабораторная 1\Project1.dpr',76,'',0,1,'',1,0,0,'',1,'','','',0,''
+Count=0
 
 [EmbarcaderoWin32Debugger_AddressBreakpoints]
 Count=0
@@ -194,11 +193,11 @@ State=0
 Left=0
 Top=0
 Width=1999
-Height=12935
+Height=6174
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1999
-ClientHeight=12935
+ClientHeight=6174
 TBDockHeight=5957
 LRDockWidth=2510
 Dockable=1
@@ -210,8 +209,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-372
-Top=-661
+Left=-16
+Top=-247
 Width=1846
 Height=3141
 MaxLeft=-1
@@ -267,8 +266,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=0
-Top=0
+Left=-2442
+Top=407
 Width=273
 Height=364
 MaxLeft=-1
@@ -279,8 +278,8 @@ TBDockHeight=364
 LRDockWidth=273
 Dockable=1
 StayOnTop=0
-Name=60
-Description=167
+Name=5
+Description=5
 filter=1
 
 [DebugLogView]
@@ -391,11 +390,11 @@ State=0
 Left=0
 Top=0
 Width=2337
-Height=1174
+Height=940
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2337
-ClientHeight=1174
+ClientHeight=940
 TBDockHeight=2321
 LRDockWidth=2826
 Dockable=1
@@ -456,11 +455,11 @@ State=0
 Left=0
 Top=0
 Width=1999
-Height=12935
+Height=6174
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1999
-ClientHeight=12935
+ClientHeight=6174
 TBDockHeight=4880
 LRDockWidth=7148
 Dockable=1
@@ -472,8 +471,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=0
-Top=0
+Left=614
+Top=1439
 Width=2855
 Height=3207
 MaxLeft=-1
@@ -539,11 +538,11 @@ State=0
 Left=0
 Top=0
 Width=1999
-Height=12935
+Height=6174
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1999
-ClientHeight=12935
+ClientHeight=6174
 TBDockHeight=4880
 LRDockWidth=5309
 Dockable=1
@@ -603,8 +602,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=8
-Top=8
+Left=1520
+Top=56
 Width=3822
 Height=1418
 MaxLeft=-1
