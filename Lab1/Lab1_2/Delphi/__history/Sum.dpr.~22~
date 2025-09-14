@@ -9,12 +9,13 @@ Var
 Begin
     N := 1;
     I := 1;
-    SumOfNumbers := 1;
-    Number := -2;
+    SumOfNumbers := 0;
+    Number := 1;
 
     Repeat
     Begin
         Try
+            Write('Введите верхнюю границу суммирования: ');
             ReadLn(N);
             If N < 1 Then
                 WriteLn('Степенью может являться только целое положительное число');
@@ -22,22 +23,20 @@ Begin
             WriteLn('Неправильный ввод, повторите попытку снова.');
         End;
     End;
-    Until N > 0;
+    Until (N > 0) And (N < 30);
 
-    SumOfNumbers := 0;
-
-    If (N > 1) Then
+    If (N > 1) Or (N = 1) Then
     Begin
         For I := 1 To N Do
         Begin
-            SumOfNumbers := SumOfNumbers * Number;
+            Number := Number * -2;
+            SumOfNumbers := SumOfNumbers + Number;
         End;
     End
     Else
         WriteLn(SumOfNumbers);
 
-
-WriteLn(SumOfNumbers);
-ReadLn;
+    WriteLn(SumOfNumbers);
+    ReadLn;
 
 End.

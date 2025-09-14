@@ -27,13 +27,18 @@ Begin
             WriteLn('Неправильный ввод, повторите попытку снова.');
         End;
     End;
-    Until (N > (MIN - 1)) And (N < (MAX + 1));
+    Until (N > 0) And (N < 30);
 
-    For I := 1 To N Do
+    If (N > 1) Or (N = 1) Then
     Begin
-        Number := Number * -2;
-        SumOfNumbers := SumOfNumbers + Number;
-    End;
+        For I := 1 To N Do
+        Begin
+            Number := Number * -2;
+            SumOfNumbers := SumOfNumbers + Number;
+        End;
+    End
+    Else
+        WriteLn(SumOfNumbers);
 
     WriteLn(SumOfNumbers);
     ReadLn;

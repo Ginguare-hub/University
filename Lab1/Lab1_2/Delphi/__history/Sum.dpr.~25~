@@ -29,11 +29,16 @@ Begin
     End;
     Until (N > (MIN - 1)) And (N < (MAX + 1));
 
-    For I := 1 To N Do
-    Begin
-        Number := Number * -2;
-        SumOfNumbers := SumOfNumbers + Number;
-    End;
+    //If (N > 1) Or (N = 1) Then
+    //Begin
+        For I := 1 To N Do
+        Begin
+            Number := Number * -2;
+            SumOfNumbers := SumOfNumbers + Number;
+        End;
+    //End
+    //Else
+    //    WriteLn(SumOfNumbers);
 
     WriteLn(SumOfNumbers);
     ReadLn;
