@@ -38,18 +38,8 @@ Begin
 
     For I := 0 To (Lenght - 1) Do
     Begin
-
-        Repeat
-        Try
-            Write('¬ведите N', I + 1, ' элемент массива: ');
-            ReadLn(N);
-            If (N < MIN_NUMBER) Or (N > MAX_NUMBER) Then
-                WriteLn('«начение элемента массива должно лежать в диапазоне [', MIN_NUMBER, ';', MAX_NUMBER, '], попробуйте ещЄ раз.');
-        Except
-            WriteLn('ќшибка ввода, повторите попытку.');
-        End;
-        Until (N > (MIN_NUMBER - 1)) AND (N < (MAX_NUMBER + 1));
-
+        Write('¬ведите N', I + 1, ' элемент массива: ');
+        ReadLn(N);
         A[I] := N;
     End;
 

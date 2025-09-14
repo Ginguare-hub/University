@@ -31,25 +31,15 @@ Begin
         Except
             WriteLn('Ошибка ввода, повторите попытку.');
         End;
-    Until (Lenght > (MIN_LENGHT - 1)) AND (Lenght < (MAX_LENGHT + 1));
+    Until (Lenght > (MIN_LENGHT - 1)) Or (Lenght < (MAX_LENGHT + 1));
 
     SetLength(A, Lenght);
     SetLength(B, Lenght);
 
     For I := 0 To (Lenght - 1) Do
     Begin
-
-        Repeat
-        Try
-            Write('Введите N', I + 1, ' элемент массива: ');
-            ReadLn(N);
-            If (N < MIN_NUMBER) Or (N > MAX_NUMBER) Then
-                WriteLn('Значение элемента массива должно лежать в диапазоне [', MIN_NUMBER, ';', MAX_NUMBER, '], попробуйте ещё раз.');
-        Except
-            WriteLn('Ошибка ввода, повторите попытку.');
-        End;
-        Until (N > (MIN_NUMBER - 1)) AND (N < (MAX_NUMBER + 1));
-
+        Write('Введите N', I + 1, ' элемент массива: ');
+        ReadLn(N);
         A[I] := N;
     End;
 

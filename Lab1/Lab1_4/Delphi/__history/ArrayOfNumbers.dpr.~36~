@@ -1,0 +1,52 @@
+﻿Program ArrayOfNumbers;
+
+uses
+  System.SysUtils;
+
+Var
+    A: Array Of Double;
+    B: Array Of Double;
+    Lenght: Integer;
+    I : Integer;
+    N : Double;
+
+Const
+    MAX_NUMBER: Double = 1024.0;
+    MIN_NUMBER: Double = -1024.0;
+    MAX_LENGHT: Integer = 10;
+    MIN_LENGHT: Integer = 1;
+
+Begin
+
+    Lenght := 1;
+    I := 0;
+    N := 1.0;
+    Try
+    Write('Введите число элементов массива A: ');
+    ReadLn(Amount);
+    If
+    Except
+        WriteLn();
+    End;
+
+    SetLength(A, Amount);
+    SetLength(B, Amount);
+
+    For I := 0 To (Amount - 1) Do
+    Begin
+        Write('Введите N', I + 1, ' элемент массива: ');
+        ReadLn(N);
+        A[I] := N;
+    End;
+
+    For I := 0 To (Amount - 1) Do
+    Begin
+        B[I] := 2*A[I] + I + 1;
+    End;
+
+    For I := 0 to (Amount - 1) Do
+        WriteLn('B[',I,'] = ', B[I]:4:4);
+
+
+    ReadLn;
+End.
