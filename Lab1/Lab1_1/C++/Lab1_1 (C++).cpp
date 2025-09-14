@@ -31,7 +31,7 @@ int main()
             if (std::cin.fail())
             {
                 isIncorrect = true;
-                std::cout << "Ошибка в записи числа a, повториет попытку.." << std::endl;
+                std::cout << "Ошибка в записи числа a, повториет попытку." << std::endl;
                 std::cin.clear();
                 while (std::cin.get() != '\n');
             }
