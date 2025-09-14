@@ -2,19 +2,19 @@ import java.util.Scanner;
 
 public class Main {
 
+    static int checker = 0;
+    static double a = 1.0;
+    static double b = 1.0;
+    static double arithmMean = 1.0;
+    static double geomMean = 1.0;
+    static boolean isIncorrect = true;
+    static boolean isCycleAllowed = true;
+
+    static final int MIN = 0;
+    static final int MAX = 1000;
+
     public static void main(String[] args) 
     {
-
-        int checker = 0;
-        double a = 1.0;
-        double b = 1.0;
-        double arithmMean = 1.0;
-        double geomMean = 1.0;
-        boolean isIncorrect = true;
-        boolean isCycleAllowed = true;
-
-        final int MIN = 0;
-        final int MAX = 1000;
 
         Scanner scanner = new Scanner(System.in);
 
