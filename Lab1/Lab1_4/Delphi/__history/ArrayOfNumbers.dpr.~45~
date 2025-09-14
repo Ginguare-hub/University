@@ -9,6 +9,7 @@ Var
     Lenght: Integer;
     I: Integer;
     N: Double;
+    IsAllRight: Boolean;
 
 Const
     MAX_NUMBER: Double = 1024.0;
@@ -21,29 +22,46 @@ Begin
     Lenght := 1;
     I := 0;
     N := 1.0;
+    IsAllRight := True;
 
     Repeat
         Try
             Write('¬ведите число элементов массива A: ');
             ReadLn(Lenght);
+            IsAllRight := True;
             If (Lenght < MIN_LENGHT) Or (Lenght > MAX_LENGHT) Then
                 WriteLn('„исло элементов массива должно лежать в диапазоне [', MIN_LENGHT, ';', MAX_LENGHT, '], попробуйте ещЄ раз.');
+                IsAllRight := False;
         Except
             WriteLn('ќшибка ввода, повторите попытку.');
+            IsAllRight := False;
         End;
-    Until (Lenght > (MIN_LENGHT - 1)) Or (Lenght < (MAX_LENGHT + 1));
+    Until IsAllRight And (Lenght > (MIN_LENGHT - 1)) And (Lenght < (MAX_LENGHT + 1));
 
     SetLength(A, Lenght);
     SetLength(B, Lenght);
 
-    For I := 0 To (Lenght - 1) Do
+    For I := 0 To High(A) Do
     Begin
-        Write('¬ведите N', I + 1, ' элемент массива: ');
-        ReadLn(N);
+
+        Repeat
+        Try
+            IsAllRight := True;
+            Write('¬ведите N', I + 1, ' элемент массива: ');
+            ReadLn(N);
+            If (N < MIN_NUMBER) Or (N > MAX_NUMBER) Then
+                WriteLn('«начение элемента массива должно лежать в диапазоне [', MIN_NUMBER, ';', MAX_NUMBER, '], попробуйте ещЄ раз.');
+                IsAllRight := False;
+        Except
+            WriteLn('ќшибка ввода, повторите попытку.');
+            IsAllRight := False;
+        End;
+        Until IsAllRight And (N > (MIN_NUMBER - 1)) AND (N < (MAX_NUMBER + 1));
+
         A[I] := N;
     End;
 
-    For I := 0 To (Lenght - 1) Do
+    For I := 0 To High(A) Do
     Begin
         B[I] := 2 * A[I] + I + 1;
     End;

@@ -52,15 +52,13 @@ Begin
             Write('Введите N', I + 1, ' элемент массива: ');
             ReadLn(N);
             If (N < MIN_NUMBER) Or (N > MAX_NUMBER) Then
-            Begin
                 WriteLn('Значение элемента массива должно лежать в диапазоне [', MIN_NUMBER, ';', MAX_NUMBER, '], попробуйте ещё раз.');
                 IsAllRight := False;
-            End;
         Except
             WriteLn('Ошибка ввода, повторите попытку.');
             IsAllRight := False;
         End;
-        Until IsAllRight;
+        Until IsAllRight And (N > (MIN_NUMBER - 1)) AND (N < (MAX_NUMBER + 1));
 
         A[I] := N;
     End;
