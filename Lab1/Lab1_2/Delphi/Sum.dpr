@@ -18,6 +18,8 @@ Begin
     Number := 1;
     IsAllCorrect := True;
 
+    WriteLn('Программа считает сумму заданную в условии задачи №2 варианта №20');
+
     Repeat
     Begin
         Try
@@ -42,6 +44,7 @@ Begin
         SumOfNumbers := SumOfNumbers + Number;
     End;
 
+    Write('Сумма равна ');
     WriteLn(SumOfNumbers);
     ReadLn;
 
