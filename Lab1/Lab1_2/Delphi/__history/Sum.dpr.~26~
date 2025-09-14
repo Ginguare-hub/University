@@ -5,7 +5,6 @@ Uses
 
 Var
     N, I, SumOfNumbers, Number: Integer;
-    IsAllCorrect: Boolean;
 
 Const
     MAX: Integer = 29;
@@ -16,25 +15,19 @@ Begin
     I := 1;
     SumOfNumbers := 0;
     Number := 1;
-    IsAllCorrect := True;
 
     Repeat
     Begin
         Try
             Write('Введите верхнюю границу суммирования: ');
             ReadLn(N);
-            IsAllCorrect := True;
             If (N < MIN) Or (N > MAX) Then
-            Begin
                 WriteLn('Степенью может являться только целое положительное число, которое принадлежит диапазону [', MIN, ';', MAX, '].');
-                IsAllCorrect := False;
-            End;
         Except
             WriteLn('Неправильный ввод, повторите попытку снова.');
-            IsAllCorrect := False;
         End;
     End;
-    Until IsAllCorrect;
+    Until (N > (MIN - 1)) And (N < (MAX + 1));
 
     For I := 1 To N Do
     Begin
