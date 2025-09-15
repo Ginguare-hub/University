@@ -2,19 +2,15 @@ import java.util.Scanner;
 
 public class Main {
 
-    static int checker;
-    static double a;
-    static double b;
-    static double arithmMean;
-    static double geomMean;
-    static boolean isIncorrect;
-    static boolean isCycleAllowed;
-
-    static final int MIN = 0;
-    static final int MAX = 1000;
-
     public static void main(String[] args) {
 
+        int checker;
+        double a;
+        double b;
+        double arithmMean;
+        double geomMean;
+        boolean isIncorrect;
+        boolean isCycleAllowed;
 
         checker = 0;
         a = 1.0;
@@ -23,6 +19,9 @@ public class Main {
         geomMean = 1.0;
         isIncorrect = true;
         isCycleAllowed = true;
+
+        final int MIN = 0;
+        final int MAX = 1000;
 
         Scanner scanner = new Scanner(System.in);
 
