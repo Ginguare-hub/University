@@ -92,13 +92,12 @@ int main()
         } while (!isAllCorrect);
     }
 
-    for (i = 0; i < lenght; i++) 
+    for (i = 0; i < lenght; i++)
     {
         b[i] = 2 * a[i] + i + 1;
     }
 
-
-    for (i = 0; i < lenght; i++) 
+    for (i = 0; i < lenght; i++)
     {
         std::cout << "B[" << i << "] = " << b[i] << std::endl;
     }
