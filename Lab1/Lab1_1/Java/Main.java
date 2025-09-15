@@ -10,18 +10,19 @@ public class Main {
     static boolean isIncorrect;
     static boolean isCycleAllowed;
 
-    checker = 0;
-    a = 1.0;
-    b = 1.0;
-    arithmMean = 1.0;
-    geomMean = 1.0;
-    isIncorrect = true;
-    isCycleAllowed = true;
-
     static final int MIN = 0;
     static final int MAX = 1000;
 
     public static void main(String[] args) {
+
+
+        checker = 0;
+        a = 1.0;
+        b = 1.0;
+        arithmMean = 1.0;
+        geomMean = 1.0;
+        isIncorrect = true;
+        isCycleAllowed = true;
 
         Scanner scanner = new Scanner(System.in);
 
@@ -36,15 +37,14 @@ public class Main {
                 try {
                     System.out.print("Введите число A: ");
                     a = Double.parseDouble(scanner.nextLine());
-                } 
-                catch (NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     isIncorrect = true;
                     System.out.println("Ошибка в записи числа А, повториет попытку.");
                 }
  
                 if (!isIncorrect && (a < MIN || a > MAX)) {
                     isIncorrect = true;
-                    System.out.println("Число A должно быть положительным и лежать в диапазоне [%d;%d], попробуйте ещё раз.", MIN, MAX);
+                    System.out.printf("Число A должно быть положительным и лежать в диапазоне [%d;%d], попробуйте ещё раз.\n", MIN, MAX);
                 }
             }
 
@@ -57,15 +57,14 @@ public class Main {
                 try {
                     System.out.print("Введите число B: ");
                     b = Double.parseDouble(scanner.nextLine());
-                } 
-                catch (NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     isIncorrect = true;
                     System.out.println("Ошибка в записи числа B, повториет попытку.");
                 }
  
                 if (!isIncorrect && (b < MIN || b > MAX)) {
                     isIncorrect = true;
-                    System.out.println("Число B должно быть положительным и лежать в диапазоне [%d;%d], попробуйте ещё раз.", MIN, MAX);
+                    System.out.printf("Число B должно быть положительным и лежать в диапазоне [%d;%d], попробуйте ещё раз.\n", MIN, MAX);
                 }
             }
 
@@ -76,8 +75,7 @@ public class Main {
 
             if (arithmMean < geomMean) {
                 System.out.println("Среднее арифметическое меньше чем среднее геометрическое заданных чисел.");
-            } 
-            else {
+            } else {
                 System.out.println("Cреднее арифметическое заданных чисел не меньше их среднего геометрического.");
             }
 
@@ -87,8 +85,7 @@ public class Main {
             if (checker == 1) {
                 isCycleAllowed = true;
                 System.out.println("Давайте заново.");
-            } 
-            else {
+            } else {
                 isCycleAllowed = false;
             }
 
