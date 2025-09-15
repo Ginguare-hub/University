@@ -15,11 +15,11 @@ Const
 Begin
     WriteLn('Программа считает среднее арифметическое и среднее геометрическое для чисел A и B, и показывает, что среднее арифметическое этих чисел не меньше их среднего геометрического.');
 
+    Checker := 0;
     A := 1.0;
     B := 1.0;
     ArithmMean := 1.0;
     GeomMean := 1.0;
-    Checker := 0;
     IsIncorrect := True;
     IsCycleAllowed := True;
 
@@ -35,7 +35,7 @@ Begin
                     IsIncorrect := False
                 Else
                 Begin
-                    WriteLn('Число A должно быть положительным и лежать в диапазоне (', MIN, ';', MAX, '), попробуйте ещё раз.');
+                    WriteLn('Число A должно быть положительным и лежать в диапазоне [', MIN, ';', MAX, '], попробуйте ещё раз.');
                     IsIncorrect := True;
                 End;
             Except
@@ -54,7 +54,7 @@ Begin
                     IsIncorrect := False
                 Else
                 Begin
-                    WriteLn('Число B должно быть положительным и лежать в диапазоне (', MIN, ';', MAX, '), попробуйте ещё раз.');
+                    WriteLn('Число B должно быть положительным и лежать в диапазоне [', MIN, ';', MAX, '], попробуйте ещё раз.');
                     IsIncorrect := True;
                 End;
             Except
@@ -72,14 +72,13 @@ Begin
         Else
             WriteLn('Cреднее арифметическое заданных чисел не меньше их среднего геометрического.');
 
-        WriteLn('Если хотите продолжить, введите число 1, если нет, то число 2');
-
+        WriteLn('Если хотите продолжить, введите число 1, если нет, то число 2.');
         Try
             ReadLn(Checker);
             If Checker = 1 Then
             Begin
                 WriteLn('');
-                WriteLn('Давайте заново');
+                WriteLn('Давайте заново.');
             End
             Else
                 IsCycleAllowed := False;

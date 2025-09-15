@@ -19,8 +19,8 @@ int main()
     n = 1.0;
     isAllCorrect = true;
 
-    double a[10];
-    double b[10];
+    {new double a[lenght]};
+    {new double b[lenght]};
 
     do
     {

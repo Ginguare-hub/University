@@ -5,13 +5,21 @@ int main()
 {
     setlocale(LC_ALL, "Russian");
 
-    int checker = 0;
-    double a = 1.0;
-    double b = 1.0;
-    double arithmMean = 1.0;
-    double geomMean = 1.0;
-    bool isIncorrect = true;
-    bool isCycleAllowed = true;
+    int checker;
+    double a;
+    double b;
+    double arithmMean;
+    double geomMean;
+    bool isIncorrect;
+    bool isCycleAllowed;
+
+    checker = 0;
+    a = 1.0;
+    b = 1.0;
+    arithmMean = 1.0;
+    geomMean = 1.0;
+    isIncorrect = true;
+    isCycleAllowed = true;
 
     const int MIN = 0;
     const int MAX = 1000;
@@ -25,7 +33,7 @@ int main()
 
             isIncorrect = false;
 
-            std::cout << "Введите число a:  ";
+            std::cout << "Введите число a: ";
             std::cin >> a;
 
             if (std::cin.fail())
@@ -46,7 +54,7 @@ int main()
             if (!isIncorrect && (a < MIN || a > MAX))
             {
                 isIncorrect = true;
-                std::cout << "Число a должно быть положительным и лежать в диапазоне (" << MIN << ";" << MAX << "), попробуйте ещё раз." << std::endl;
+                std::cout << "Число a должно быть положительным и лежать в диапазоне [" << MIN << ";" << MAX << "], попробуйте ещё раз." << std::endl;
             }
 
         } while (isIncorrect);
@@ -57,7 +65,7 @@ int main()
         {
             isIncorrect = false;
 
-            std::cout << "Введите число b:  ";
+            std::cout << "Введите число b: ";
             std::cin >> b;
 
             if (std::cin.fail())
@@ -78,7 +86,7 @@ int main()
             if (!isIncorrect && (b < MIN || b > MAX))
             {
                 isIncorrect = true;
-                std::cout << "Число b должно быть положительным и лежать в диапазоне (" << MIN << ";" << MAX << "), попробуйте ещё раз." << std::endl;
+                std::cout << "Число b должно быть положительным и лежать в диапазоне [" << MIN << ";" << MAX << "], попробуйте ещё раз." << std::endl;
             }
         } while (isIncorrect);
 
@@ -96,7 +104,7 @@ int main()
             std::cout << "Среднее арифметическое не меньше чем среднее геометрическое заданных чисел." << std::endl;
         }
 
-        std::cout << "Если хотите продолжить, введите число 1, если нет, то число 2" << std::endl;
+        std::cout << "Если хотите продолжить, введите число 1, если нет, то число 2." << std::endl;
         std::cin >> checker;
 
         if (checker == 1)
