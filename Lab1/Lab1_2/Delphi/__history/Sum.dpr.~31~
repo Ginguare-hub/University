@@ -4,7 +4,7 @@ Uses
     System.SysUtils;
 
 Const
-    MAX_N: Integer = 30;
+    MAX_N: Integer = 29;
     MIN_N: Integer = 1;
 
 
@@ -13,8 +13,8 @@ Var
     IsAllCorrect: Boolean;
 
 Begin
-    N := 0;
-    I := 0;
+    N := 1;
+    I := 1;
     SumOfNumbers := 0;
     Number := 1;
     IsAllCorrect := True;

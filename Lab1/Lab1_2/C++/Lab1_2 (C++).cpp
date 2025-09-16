@@ -4,17 +4,17 @@ int main()
 {
     setlocale(LC_ALL, "Russian");
 
+    const int MAX = 29;
+    const int MIN = 1;
+
     int n, i, sumOfNumbers, number;
     bool isAllCorrect;
 
-    n = 1;
+    n = 0;
     i = 0;
     sumOfNumbers = 0;
     number = 1;
     isAllCorrect = true;
-
-    const int MAX = 29;
-    const int MIN = 1;
 
     std::cout << "Программа считает сумму заданную в условии задачи №2 варианта №20." << std::endl;
 
