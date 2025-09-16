@@ -20,8 +20,8 @@ public class Main {
         isIncorrect = true;
         isCycleAllowed = true;
 
-        final int MIN = 0;
-        final int MAX = 1000;
+        final int MIN_NUM = 0;
+        final int MAX_NUM = 1000;
 
         Scanner scanner = new Scanner(System.in);
 
@@ -41,9 +41,9 @@ public class Main {
                     System.out.println("Ошибка в записи числа А, повториет попытку.");
                 }
  
-                if (!isIncorrect && (a < MIN || a > MAX)) {
+                if (!isIncorrect && (a < MIN_NUM || a > MAX_NUM)) {
                     isIncorrect = true;
-                    System.out.printf("Число A должно быть положительным и лежать в диапазоне [%d;%d], попробуйте ещё раз.\n", MIN, MAX);
+                    System.out.printf("Число A должно быть положительным и лежать в диапазоне [%d;%d], попробуйте ещё раз.\n", MIN_NUM, MAX_NUM);
                 }
             }
 
@@ -61,9 +61,9 @@ public class Main {
                     System.out.println("Ошибка в записи числа B, повториет попытку.");
                 }
  
-                if (!isIncorrect && (b < MIN || b > MAX)) {
+                if (!isIncorrect && (b < MIN_NUM || b > MAX_NUM)) {
                     isIncorrect = true;
-                    System.out.printf("Число B должно быть положительным и лежать в диапазоне [%d;%d], попробуйте ещё раз.\n", MIN, MAX);
+                    System.out.printf("Число B должно быть положительным и лежать в диапазоне [%d;%d], попробуйте ещё раз.\n", MIN_NUM, MAX_NUM);
                 }
             }
 

@@ -5,6 +5,9 @@ int main()
 {
     setlocale(LC_ALL, "Russian");
 
+    const int MIN_NUM = 0;
+    const int MAX_NUM = 1000;
+
     int checker;
     double a;
     double b;
@@ -20,9 +23,6 @@ int main()
     geomMean = 0.0;
     isIncorrect = true;
     isCycleAllowed = true;
-
-    const int MIN = 0;
-    const int MAX = 1000;
 
     std::cout << "Программа считает среднее арифметическое и среднее геометрическое для чисел a и b, и показывает, что среднее арифметическое этих чисел не меньше их среднего геометрического." << std::endl;
 
@@ -51,10 +51,10 @@ int main()
                 while(std::cin.get() != '\n');
             }
 
-            if (!isIncorrect && (a < MIN || a > MAX))
+            if (!isIncorrect && (a < MIN_NUM || a > MAX_NUM))
             {
                 isIncorrect = true;
-                std::cout << "Число a должно быть положительным и лежать в диапазоне [" << MIN << ";" << MAX << "], попробуйте ещё раз." << std::endl;
+                std::cout << "Число a должно быть положительным и лежать в диапазоне [" << MIN_NUM << ";" << MAX_NUM << "], попробуйте ещё раз." << std::endl;
             }
 
         } while (isIncorrect);
@@ -83,10 +83,10 @@ int main()
                 while(std::cin.get() != '\n');
             }
 
-            if (!isIncorrect && (b < MIN || b > MAX))
+            if (!isIncorrect && (b < MIN_NUM || b > MAX_NUM))
             {
                 isIncorrect = true;
-                std::cout << "Число b должно быть положительным и лежать в диапазоне [" << MIN << ";" << MAX << "], попробуйте ещё раз." << std::endl;
+                std::cout << "Число b должно быть положительным и лежать в диапазоне [" << MIN_NUM << ";" << MAX_NUM << "], попробуйте ещё раз." << std::endl;
             }
         } while (isIncorrect);
 
