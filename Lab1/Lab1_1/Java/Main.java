@@ -13,10 +13,10 @@ public class Main {
         boolean isCycleAllowed;
 
         checker = 0;
-        a = 1.0;
-        b = 1.0;
-        arithmMean = 1.0;
-        geomMean = 1.0;
+        a = 0.0;
+        b = 0.0;
+        arithmMean = 0.0;
+        geomMean = 0.0;
         isIncorrect = true;
         isCycleAllowed = true;
 
