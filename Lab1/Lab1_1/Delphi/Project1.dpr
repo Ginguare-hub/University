@@ -75,7 +75,7 @@ Begin
         WriteLn('Если хотите продолжить, введите число 1, если нет, то число 2.');
 
         Try
-            ReadLn(Checker);
+            Read(Checker);
             If Checker = 1 Then
             Begin
                 WriteLn('');
