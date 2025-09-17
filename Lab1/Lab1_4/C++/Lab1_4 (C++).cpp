@@ -92,6 +92,7 @@ int main()
         
     }
 
+
     for (i = 0; i < lenght; i++)
     {
         b[i] = 2 * a[i] + i + 1;
