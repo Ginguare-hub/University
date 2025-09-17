@@ -46,9 +46,9 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 [View0]
 CustomEditViewType=TEditView
 Module=C:\GitHub\University\Lab1\Lab1_1\Delphi\Project1.dpr
-CursorX=82
-CursorY=24
-TopLine=1
+CursorX=140
+CursorY=75
+TopLine=52
 LeftCol=1
 Elisions=
 Bookmarks=

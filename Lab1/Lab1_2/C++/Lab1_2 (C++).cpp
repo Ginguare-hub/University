@@ -4,7 +4,7 @@ int main()
 {
     setlocale(LC_ALL, "Russian");
 
-    const int MAX = 29;
+    const int MAX = 30;
     const int MIN = 1;
 
     int n, i, sumOfNumbers, number;
