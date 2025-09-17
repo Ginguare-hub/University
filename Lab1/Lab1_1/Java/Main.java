@@ -25,7 +25,7 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Программа считает среднее арифметическое и среднее геометрическое для чисел A и B, и показывает, что среднее арифметическое этих чисел не меньше их среднего геометрического.");
+        System.out.println("╧ЁюуЁрььр ёўшЄрхЄ ёЁхфэхх рЁшЇьхЄшўхёъюх ш ёЁхфэхх ухюьхЄЁшўхёъюх фы  ўшёхы a ш b, ш яюърч√трхЄ, ўЄю ёЁхфэхх рЁшЇьхЄшўхёъюх ¤Єшї ўшёхы эх ьхэ№°х шї ёЁхфэхую ухюьхЄЁшўхёъюую.");
 
         while (isCycleAllowed) {
 
@@ -34,16 +34,16 @@ public class Main {
                 isIncorrect = false;
 
                 try {
-                    System.out.print("Введите число A: ");
+                    System.out.print("┬тхфшЄх ўшёыю a: ");
                     a = Double.parseDouble(scanner.nextLine());
                 } catch (NumberFormatException e) {
                     isIncorrect = true;
-                    System.out.println("Ошибка в записи числа А, повториет попытку.");
+                    System.out.println("╬°шсър т чряшёш ўшёыр a, яютЄюЁшЄх яюя√Єъє.");
                 }
  
                 if (!isIncorrect && (a < MIN_NUM || a > MAX_NUM)) {
                     isIncorrect = true;
-                    System.out.printf("Число A должно быть положительным и лежать в диапазоне [%d;%d], попробуйте ещё раз.\n", MIN_NUM, MAX_NUM);
+                    System.out.printf("╫шёыю a фюыцэю с√Є№ яюыюцшЄхы№э√ь ш ыхцрЄ№ т фшрярчюэх [%d;%d], яюяЁюсєщЄх х∙╕ Ёрч.", MIN_NUM, MAX_NUM);
                 }
             }
 
@@ -54,16 +54,16 @@ public class Main {
                 isIncorrect = false;
 
                 try {
-                    System.out.print("Введите число B: ");
+                    System.out.print("┬тхфшЄх ўшёыю b: ");
                     b = Double.parseDouble(scanner.nextLine());
                 } catch (NumberFormatException e) {
                     isIncorrect = true;
-                    System.out.println("Ошибка в записи числа B, повториет попытку.");
+                    System.out.println("╬°шсър т чряшёш ўшёыр b, яютЄюЁшЄх яюя√Єъє.");
                 }
  
                 if (!isIncorrect && (b < MIN_NUM || b > MAX_NUM)) {
                     isIncorrect = true;
-                    System.out.printf("Число B должно быть положительным и лежать в диапазоне [%d;%d], попробуйте ещё раз.\n", MIN_NUM, MAX_NUM);
+                    System.out.printf("╫шёыю b фюыцэю с√Є№ яюыюцшЄхы№э√ь ш ыхцрЄ№ т фшрярчюэх [%d;%d], яюяЁюсєщЄх х∙╕ Ёрч.", MIN_NUM, MAX_NUM);
                 }
             }
 
@@ -73,17 +73,17 @@ public class Main {
             geomMean = Math.sqrt(a * b);
 
             if (arithmMean < geomMean) {
-                System.out.println("Среднее арифметическое меньше чем среднее геометрическое заданных чисел.");
+                System.out.println("╤Ёхфэхх рЁшЇьхЄшўхёъюх ьхэ№°х ўхь ёЁхфэхх ухюьхЄЁшўхёъюх чрфрээ√ї ўшёхы.");
             } else {
-                System.out.println("Cреднее арифметическое заданных чисел не меньше их среднего геометрического.");
+                System.out.println("╤Ёхфэхх рЁшЇьхЄшўхёъюх эх ьхэ№°х ўхь ёЁхфэхх ухюьхЄЁшўхёъюх чрфрээ√ї ўшёхы.");
             }
 
-            System.out.println("Если хотите продолжить, введите число 1, если нет, то число 2.");
+            System.out.println("┼ёыш їюЄшЄх яЁюфюыцшЄ№, ттхфшЄх ўшёыю 1, хёыш эхЄ, Єю ўшёыю 2.");
             checker = scanner.nextInt();
 
             if (checker == 1) {
                 isCycleAllowed = true;
-                System.out.println("Давайте заново.");
+                System.out.println("─ртрщЄх чрэютю.");
             } else {
                 isCycleAllowed = false;
             }

@@ -39,7 +39,7 @@ int main()
             if (std::cin.fail())
             {
                 isIncorrect = true;
-                std::cout << "Ошибка в записи числа a, повториет попытку." << std::endl;
+                std::cout << "Ошибка в записи числа a, повторите попытку." << std::endl;
                 std::cin.clear();
                 while (std::cin.get() != '\n');
             }
@@ -47,7 +47,7 @@ int main()
             if (!isIncorrect && std::cin.get() != '\n') 
             {
                 isIncorrect = true;
-                std::cout << "Ошибка в записи числа a, повториет попытку." << std::endl;
+                std::cout << "Ошибка в записи числа a, повторите попытку." << std::endl;
                 while(std::cin.get() != '\n');
             }
 
@@ -71,7 +71,7 @@ int main()
             if (std::cin.fail())
             {
                 isIncorrect = true;
-                std::cout << "Ошибка в записи числа b, повториет попытку." << std::endl;
+                std::cout << "Ошибка в записи числа b, повторите попытку." << std::endl;
                 std::cin.clear();
                 while (std::cin.get() != '\n');
             }
@@ -79,7 +79,7 @@ int main()
             if (!isIncorrect && std::cin.get() != '\n') 
             {
                 isIncorrect = true;
-                std::cout << "Ошибка в записи числа b, повториет попытку." << std::endl;
+                std::cout << "Ошибка в записи числа b, повторите попытку." << std::endl;
                 while(std::cin.get() != '\n');
             }
 

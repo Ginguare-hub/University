@@ -39,7 +39,7 @@ Begin
                     IsIncorrect := True;
                 End;
             Except
-                WriteLn('Ошибка в записи числа А, повториет попытку.');
+                WriteLn('Ошибка в записи числа А, повторите попытку.');
             End;
         End;
 
@@ -58,7 +58,7 @@ Begin
                     IsIncorrect := True;
                 End;
             Except
-                WriteLn('Ошибка в записи числа B, повториет попытку.');
+                WriteLn('Ошибка в записи числа B, повторите попытку.');
             End;
         End;
 
