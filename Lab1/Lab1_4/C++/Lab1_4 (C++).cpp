@@ -14,13 +14,10 @@ int main()
     const double MAX_LENGHT = 10;
     const double MIN_LENGHT = 1;
 
-    lenght = 1.0;
+    lenght = 0;
     i = 0;
-    n = 1.0;
+    n = 0.0;
     isAllCorrect = true;
-
-    {new double a[lenght]};
-    {new double b[lenght]};
 
     do
     {
@@ -42,8 +39,7 @@ int main()
         {
             isAllCorrect = false;
             std::cout << "Ошибка ввода, повторите попытку." << std::endl;
-            while (std::cin.get() != '\n')
-                ;
+            while (std::cin.get() != '\n');
         }
 
         if (isAllCorrect && ((lenght < MIN_LENGHT) || (lenght > MAX_LENGHT)))
@@ -56,6 +52,9 @@ int main()
 
     // std::array<double, lenght> a;
     // std::array<double, lenght> b;
+
+    int *a{ new int[lenght]};
+    int *b{ new int[lenght]};
 
     for (i = 0; i < lenght; i++)
     {
@@ -71,16 +70,14 @@ int main()
                 isAllCorrect = false;
                 std::cout << "Ошибка ввода, повторите попытку." << std::endl;
                 std::cin.clear();
-                while (std::cin.get() != '\n')
-                    ;
+                while (std::cin.get() != '\n');
             }
 
             if (isAllCorrect && std::cin.get() != '\n')
             {
                 isAllCorrect = false;
                 std::cout << "Ошибка ввода, повторите попытку." << std::endl;
-                while (std::cin.get() != '\n')
-                    ;
+                while (std::cin.get() != '\n');
             }
 
             if (isAllCorrect && ((n < MIN_NUMBER) || (n > MAX_NUMBER)))
@@ -90,17 +87,21 @@ int main()
             }
 
         } while (!isAllCorrect);
+
+        a[i] = n;
+        
     }
 
     for (i = 0; i < lenght; i++)
     {
         b[i] = 2 * a[i] + i + 1;
-    }
-
-    for (i = 0; i < lenght; i++)
-    {
         std::cout << "B[" << i << "] = " << b[i] << std::endl;
     }
+
+    // for (i = 0; i < lenght; i++)
+    // {
+    //     std::cout << "B[" << i << "] = " << b[i] << std::endl;
+    // }
 
     return (0);
 }
