@@ -6,8 +6,8 @@ int main()
 
     const double MAX_NUMBER = 1024.0;
     const double MIN_NUMBER = -1024.0;
-    const double MAX_LENGHT = 10;
-    const double MIN_LENGHT = 1;
+    const int MAX_LENGHT = 10;
+    const int MIN_LENGHT = 1;
 
     int lenght;
     int i;
