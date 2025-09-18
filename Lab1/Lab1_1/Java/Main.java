@@ -4,6 +4,9 @@ public class Main {
 
     public static void main(String[] args) {
 
+        final int MIN_NUM = 0;
+        final int MAX_NUM = 1000;
+
         int checker;
         double a;
         double b;
@@ -19,9 +22,6 @@ public class Main {
         geomMean = 0.0;
         isIncorrect = true;
         isCycleAllowed = true;
-
-        final int MIN_NUM = 0;
-        final int MAX_NUM = 1000;
 
         Scanner scanner = new Scanner(System.in);
 
