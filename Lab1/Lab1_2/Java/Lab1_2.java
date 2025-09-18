@@ -39,12 +39,12 @@ public class Lab1_2 {
 
         } while (!isAllCorrect);
 
+        scanner.close();
+
         for (i = 0; i < n; i++) {
             number = number * -2;
             sumOfNumbers = sumOfNumbers + number;
         }
-
-        scanner.close();
 
         System.out.printf("Сумма равна %d", sumOfNumbers);
     }
