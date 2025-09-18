@@ -4,15 +4,15 @@ int main()
 {
     setlocale(LC_ALL, "Russian");
 
-    int lenght;
-    int i;
-    double n;
-    bool isAllCorrect;
-
     const double MAX_NUMBER = 1024.0;
     const double MIN_NUMBER = -1024.0;
     const double MAX_LENGHT = 10;
     const double MIN_LENGHT = 1;
+
+    int lenght;
+    int i;
+    double n;
+    bool isAllCorrect;
 
     lenght = 0;
     i = 0;
@@ -49,12 +49,9 @@ int main()
         }
 
     } while (!isAllCorrect);
-
-    // std::array<double, lenght> a;
-    // std::array<double, lenght> b;
-
-    int *a{ new int[lenght]};
-    int *b{ new int[lenght]};
+    
+    double *a = new double[lenght];
+    double *b = new double[lenght];
 
     for (i = 0; i < lenght; i++)
     {

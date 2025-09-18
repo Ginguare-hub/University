@@ -9,6 +9,7 @@ Var
     Lenght: Integer;
     I: Integer;
     N: Double;
+    IsAllRight: Boolean;
 
 Const
     MAX_NUMBER: Double = 1024.0;
@@ -18,20 +19,26 @@ Const
 
 Begin
 
-    Lenght := 1;
+    Lenght := 0;
     I := 0;
-    N := 1.0;
+    N := 0;
+    IsAllRight := True;
 
     Repeat
         Try
             Write('Введите число элементов массива A: ');
             ReadLn(Lenght);
+            IsAllRight := True;
             If (Lenght < MIN_LENGHT) Or (Lenght > MAX_LENGHT) Then
+            Begin
                 WriteLn('Число элементов массива должно лежать в диапазоне [', MIN_LENGHT, ';', MAX_LENGHT, '], попробуйте ещё раз.');
+                IsAllRight := False;
+            End;
         Except
             WriteLn('Ошибка ввода, повторите попытку.');
+            IsAllRight := False;
         End;
-    Until (Lenght > (MIN_LENGHT - 1)) AND (Lenght < (MAX_LENGHT + 1));
+    Until IsAllRight;
 
     SetLength(A, Lenght);
     SetLength(B, Lenght);
@@ -41,14 +48,19 @@ Begin
 
         Repeat
         Try
+            IsAllRight := True;
             Write('Введите N', I + 1, ' элемент массива: ');
             ReadLn(N);
             If (N < MIN_NUMBER) Or (N > MAX_NUMBER) Then
+            Begin
                 WriteLn('Значение элемента массива должно лежать в диапазоне [', MIN_NUMBER, ';', MAX_NUMBER, '], попробуйте ещё раз.');
+                IsAllRight := False;
+            End;
         Except
             WriteLn('Ошибка ввода, повторите попытку.');
+            IsAllRight := False;
         End;
-        Until (N > (MIN_NUMBER - 1)) AND (N < (MAX_NUMBER + 1));
+        Until IsAllRight;
 
         A[I] := N;
     End;

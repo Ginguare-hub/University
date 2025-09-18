@@ -3,6 +3,13 @@ Program ArrayOfNumbers;
 Uses
     System.SysUtils;
 
+Const
+    MAX_NUMBER: Double = 1024.0;
+    MIN_NUMBER: Double = -1024.0;
+    MAX_LENGHT: Integer = 10;
+    MIN_LENGHT: Integer = 1;
+
+
 Var
     A: Array Of Double;
     B: Array Of Double;
@@ -11,17 +18,11 @@ Var
     N: Double;
     IsAllRight: Boolean;
 
-Const
-    MAX_NUMBER: Double = 1024.0;
-    MIN_NUMBER: Double = -1024.0;
-    MAX_LENGHT: Integer = 10;
-    MIN_LENGHT: Integer = 1;
-
 Begin
 
     Lenght := 0;
     I := 0;
-    N := 0;
+    N := 0.0;
     IsAllRight := True;
 
     Repeat
