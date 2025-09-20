@@ -8,13 +8,13 @@ public class Lab1_2 {
         final int MIN_N = 1;
 
         int n, i, sumOfNumbers, number;
-        boolean isAllCorrect;
+        boolean isIncorrect;
 
         n = 0;
         i = 0;
         sumOfNumbers = 0;
         number = 1;
-        isAllCorrect = true;
+        isIncorrect = true;
 
         Scanner scanner = new Scanner(System.in);
 
@@ -22,22 +22,22 @@ public class Lab1_2 {
 
         do {
 
-            isAllCorrect = true;
+            isIncorrect = false;
 
             try {
                 System.out.print("¬ведите верхнюю границу суммировани€: ");
                 n = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                isAllCorrect = false;
+                isIncorrect = true;
                 System.out.println("Ќеправильный ввод, повторите попытку.");
             }
  
-            if (isAllCorrect && (n < MIN_N || n > MAX_N)) {
-                isAllCorrect = false;
-                System.out.printf("—тепенью может €вл€тьс€ только целое положительное число, которое принадлежит диапазону [%d;%d].", MIN_N, MAX_N);
+            if (!isIncorrect && (n < MIN_N || n > MAX_N)) {
+                isIncorrect = true;
+                System.out.printf("—тепенью может €вл€тьс€ только целое положительное число, которое принадлежит диапазону [%d;%d].\n", MIN_N, MAX_N);
             }
 
-        } while (!isAllCorrect);
+        } while (isIncorrect);
 
         scanner.close();
 

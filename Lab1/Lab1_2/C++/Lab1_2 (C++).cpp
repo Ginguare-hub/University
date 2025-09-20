@@ -8,13 +8,13 @@ int main()
     const int MIN = 1;
 
     int n, i, sumOfNumbers, number;
-    bool isAllCorrect;
+    bool isIncorrect;
 
     n = 0;
     i = 0;
     sumOfNumbers = 0;
     number = 1;
-    isAllCorrect = true;
+    isIncorrect = false;
 
     std::cout << "Программа считает сумму заданную в условии задачи №2 варианта №20." << std::endl;
 
@@ -23,30 +23,30 @@ int main()
         std::cout << "Введите верхнюю границу суммирования: ";
         std::cin >> n;
 
-        isAllCorrect = true;
+        isIncorrect = false;
 
         if (std::cin.fail())
         {
-            isAllCorrect = false;
+            isIncorrect = true;
             std::cout << "Неправильный ввод, повторите попытку снова." << std::endl;
             std::cin.clear();
             while (std::cin.get() != '\n');
         }
 
-        if (isAllCorrect && std::cin.get() != '\n')
+        if (!isIncorrect && std::cin.get() != '\n')
         {
-            isAllCorrect = false;
+            isIncorrect = true;
             std::cout << "Неправильный ввод, повторите попытку снова." << std::endl;
             while (std::cin.get() != '\n');
         }
 
-        if (isAllCorrect && ((n < MIN) || (n > MAX)))
+        if (!isIncorrect && ((n < MIN) || (n > MAX)))
         {
-            isAllCorrect = false;
+            isIncorrect = true;
             std::cout << "Степенью может являться только целое положительное число, которое принадлежит диапазону [" << MIN << ";" << MAX << "]." << std::endl;
         }
 
-    } while (!isAllCorrect);
+    } while (isIncorrect);
 
     for (i = 0; i < n; i++) 
     {
