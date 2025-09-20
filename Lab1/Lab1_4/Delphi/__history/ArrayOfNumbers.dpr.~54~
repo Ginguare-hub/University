@@ -3,40 +3,43 @@ Program ArrayOfNumbers;
 Uses
     System.SysUtils;
 
-Var
-    A: Array Of Double;
-    B: Array Of Double;
-    Lenght: Integer;
-    I: Integer;
-    N: Double;
-    IsAllRight: Boolean;
-
 Const
     MAX_NUMBER: Double = 1024.0;
     MIN_NUMBER: Double = -1024.0;
     MAX_LENGHT: Integer = 10;
     MIN_LENGHT: Integer = 1;
 
+
+Var
+    A: Array Of Double;
+    B: Array Of Double;
+    Lenght: Integer;
+    I: Integer;
+    N: Double;
+    IsIncorrect: Boolean;
+
 Begin
 
-    Lenght := 1;
+    Lenght := 0;
     I := 0;
-    N := 1.0;
-    IsAllRight := True;
+    N := 0.0;
+    IsIncorrect := True;
 
     Repeat
         Try
-            IsAllRight := True;
             Write('Введите число элементов массива A: ');
             ReadLn(Lenght);
+            IsIncorrect := True;
             If (Lenght < MIN_LENGHT) Or (Lenght > MAX_LENGHT) Then
+            Begin
                 WriteLn('Число элементов массива должно лежать в диапазоне [', MIN_LENGHT, ';', MAX_LENGHT, '], попробуйте ещё раз.');
-                IsAllRight := False;
+                IsIncorrect := False;
+            End;
         Except
             WriteLn('Ошибка ввода, повторите попытку.');
-            IsAllRight := False;
+            IsIncorrect := False;
         End;
-    Until IsAllRight And (Lenght > (MIN_LENGHT - 1)) And (Lenght < (MAX_LENGHT + 1));
+    Until IsIncorrect;
 
     SetLength(A, Lenght);
     SetLength(B, Lenght);
@@ -46,17 +49,19 @@ Begin
 
         Repeat
         Try
-            IsAllRight := True;
+            IsIncorrect := True;
             Write('Введите N', I + 1, ' элемент массива: ');
             ReadLn(N);
             If (N < MIN_NUMBER) Or (N > MAX_NUMBER) Then
+            Begin
                 WriteLn('Значение элемента массива должно лежать в диапазоне [', MIN_NUMBER, ';', MAX_NUMBER, '], попробуйте ещё раз.');
-                IsAllRight := False;
+                IsIncorrect := False;
+            End;
         Except
             WriteLn('Ошибка ввода, повторите попытку.');
-            IsAllRight := False;
+            IsIncorrect := False;
         End;
-        Until IsAllRight And (N > (MIN_NUMBER - 1)) AND (N < (MAX_NUMBER + 1));
+        Until IsIncorrect;
 
         A[I] := N;
     End;

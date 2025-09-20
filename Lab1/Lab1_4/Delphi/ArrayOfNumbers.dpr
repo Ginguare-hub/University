@@ -16,30 +16,30 @@ Var
     Lenght: Integer;
     I: Integer;
     N: Double;
-    IsAllRight: Boolean;
+    IsIncorrect: Boolean;
 
 Begin
 
     Lenght := 0;
     I := 0;
     N := 0.0;
-    IsAllRight := True;
+    IsIncorrect := False;
 
     Repeat
         Try
             Write('Введите число элементов массива A: ');
             ReadLn(Lenght);
-            IsAllRight := True;
+            IsIncorrect := False;
             If (Lenght < MIN_LENGHT) Or (Lenght > MAX_LENGHT) Then
             Begin
                 WriteLn('Число элементов массива должно лежать в диапазоне [', MIN_LENGHT, ';', MAX_LENGHT, '], попробуйте ещё раз.');
-                IsAllRight := False;
+                IsIncorrect := True;
             End;
         Except
             WriteLn('Ошибка ввода, повторите попытку.');
-            IsAllRight := False;
+            IsIncorrect := True;
         End;
-    Until IsAllRight;
+    Until IsIncorrect = False;
 
     SetLength(A, Lenght);
     SetLength(B, Lenght);
@@ -49,27 +49,25 @@ Begin
 
         Repeat
         Try
-            IsAllRight := True;
+            IsIncorrect := False;
             Write('Введите N', I + 1, ' элемент массива: ');
             ReadLn(N);
             If (N < MIN_NUMBER) Or (N > MAX_NUMBER) Then
             Begin
                 WriteLn('Значение элемента массива должно лежать в диапазоне [', MIN_NUMBER, ';', MAX_NUMBER, '], попробуйте ещё раз.');
-                IsAllRight := False;
+                IsIncorrect := True;
             End;
         Except
             WriteLn('Ошибка ввода, повторите попытку.');
-            IsAllRight := False;
+            IsIncorrect := True;
         End;
-        Until IsAllRight;
+        Until IsIncorrect = False;
 
         A[I] := N;
     End;
 
     For I := 0 To High(A) Do
-    Begin
         B[I] := 2 * A[I] + I + 1;
-    End;
 
     For I := 0 To (Lenght - 1) Do
         WriteLn('B[', I, '] = ', B[I]:4:4);
