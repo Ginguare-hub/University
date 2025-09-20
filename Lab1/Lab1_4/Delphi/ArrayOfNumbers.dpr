@@ -4,18 +4,18 @@ Uses
     System.SysUtils;
 
 Const
-    MAX_NUMBER: Double = 1024.0;
-    MIN_NUMBER: Double = -1024.0;
+    MAX_NUMBER: Real = 1024.0;
+    MIN_NUMBER: Real = -1024.0;
     MAX_LENGHT: Integer = 10;
     MIN_LENGHT: Integer = 1;
 
 
 Var
-    A: Array Of Double;
-    B: Array Of Double;
+    A: Array Of Real;
+    B: Array Of Real;
     Lenght: Integer;
     I: Integer;
-    N: Double;
+    N: Real;
     IsIncorrect: Boolean;
 
 Begin
