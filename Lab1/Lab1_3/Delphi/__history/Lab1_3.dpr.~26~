@@ -16,10 +16,10 @@ Begin
     X1 := 0.0;
     Derivative := 0.0;
     LowerLimit := 0.0;
-    UpperLimit := 1;
+    UpperLimit := 0.0;
 
-    //ReadLn(LowerLimit);
-    //ReadLn(UpperLimit);
+    ReadLn(LowerLimit);
+    ReadLn(UpperLimit);
 
     X1 := (LowerLimit + UpperLimit) / 2;
     X0 := X1;
@@ -41,7 +41,7 @@ Begin
     End
     Else
     Begin
-        WriteLn('Корней методом простой итерации на данном промежутке найти не удалось')
+        WriteLn('Корней методом простой итерации найти не удалось')
     End;
 
     ReadLn;

@@ -4,7 +4,7 @@ Uses
   System.SysUtils;
 
 Const
-    EPSILON: Real = 0.0001;
+    EPSILON: Real = 0.0000001;
 
 Var
     X0, X1, Derivative, LowerLimit, UpperLimit, FuncFromXEqualX : Real;
@@ -16,10 +16,10 @@ Begin
     X1 := 0.0;
     Derivative := 0.0;
     LowerLimit := 0.0;
-    UpperLimit := 1;
+    UpperLimit := 0.0;
 
-    //ReadLn(LowerLimit);
-    //ReadLn(UpperLimit);
+    ReadLn(LowerLimit);
+    ReadLn(UpperLimit);
 
     X1 := (LowerLimit + UpperLimit) / 2;
     X0 := X1;
@@ -41,8 +41,38 @@ Begin
     End
     Else
     Begin
-        WriteLn(' орней методом простой итерации на данном промежутке найти не удалось')
+        WriteLn(' орней методом простой итерации найти не удалось')
     End;
 
     ReadLn;
 End.
+
+
+
+//var
+//  x, x_prev: Real;
+//  epsilon: Real;
+//  iteration: Integer;
+//
+//function phi(x: Real): Real;
+//begin
+//  phi := (ln(7.622 * x) + 5) / 8.59;
+//end;
+//
+//begin
+//  x := 0.7; { Ќачальное приближение }
+//  epsilon := 0.0001; { “очность }
+//  iteration := 0;
+//
+//  repeat
+//    x_prev := x;
+//    x := phi(x_prev);
+//    iteration := iteration + 1;
+//    Writeln('Iteration ', iteration, ': x = ', x:0:6);
+//  until Abs(x - x_prev) < epsilon;
+//
+//  Writeln('Root: x = ', x:0:6);
+//  Writeln('Number of iterations: ', iteration);
+//  ReadLn;
+//end.
+
