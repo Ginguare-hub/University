@@ -25,6 +25,8 @@ public class Lab1_4 {
 
         Scanner scanner = new Scanner(System.in);
 
+        System.out.print("Программа получает массив a, и преобразует его в массив b, где b(k)=2*a(k)+k.\n");
+
         do {
 
             isIncorrect = false;
