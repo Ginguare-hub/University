@@ -99,5 +99,5 @@ int main()
         std::cout << "B[" << i << "] = " << b[i] << std::endl;
     }
 
-    return (0);
+    return 0;
 }
