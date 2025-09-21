@@ -1,0 +1,52 @@
+Program Sum;
+
+Uses
+    System.SysUtils;
+
+Const
+    MAX_N: Integer = 30;
+    MIN_N: Integer = 1;
+
+
+Var
+    N, I, SumOfNumbers, Number: Integer;
+    IsCorrect: Boolean;
+
+Begin
+    N := 0;
+    I := 0;
+    SumOfNumbers := 0;
+    Number := 1;
+    IsCorrect := False;
+
+    WriteLn('Программа считает сумму заданную в условии задачи №2 варианта №20');
+
+    Repeat
+    Begin
+        Try
+            Write('Введите верхнюю границу суммирования: ');
+            ReadLn(N);
+            IsCorrect := False;
+            If (N < MIN_N) Or (N > MAX_N) Then
+            Begin
+                WriteLn('Степенью может являться только целое положительное число, которое принадлежит диапазону [', MIN_N, ';', MAX_N, '].');
+                IsCorrect := True;
+            End;
+        Except
+            WriteLn('Неправильный ввод, повторите попытку снова.');
+            IsCorrect := True;
+        End;
+    End;
+    Until IsCorrect = False;
+
+    For I := 1 To N Do
+    Begin
+        Number := Number * -2;
+        SumOfNumbers := SumOfNumbers + Number;
+    End;
+
+    Write('Сумма равна ');
+    WriteLn(SumOfNumbers);
+    ReadLn;
+
+End.

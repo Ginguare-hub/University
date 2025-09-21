@@ -10,14 +10,14 @@ Const
 
 Var
     N, I, SumOfNumbers, Number: Integer;
-    IsIncorrect: Boolean;
+    IsCorrect: Boolean;
 
 Begin
     N := 0;
     I := 0;
     SumOfNumbers := 0;
     Number := 1;
-    IsIncorrect := False;
+    IsCorrect := True;
 
     WriteLn('Программа считает сумму заданную в условии задачи №2 варианта №20');
 
@@ -26,18 +26,18 @@ Begin
         Try
             Write('Введите верхнюю границу суммирования: ');
             ReadLn(N);
-            IsIncorrect := False;
+            IsCorrect := True;
             If (N < MIN_N) Or (N > MAX_N) Then
             Begin
                 WriteLn('Степенью может являться только целое положительное число, которое принадлежит диапазону [', MIN_N, ';', MAX_N, '].');
-                IsIncorrect := True;
+                IsCorrect := False;
             End;
         Except
             WriteLn('Неправильный ввод, повторите попытку снова.');
-            IsIncorrect := True;
+            IsCorrect := False;
         End;
     End;
-    Until IsIncorrect = False;
+    Until IsCorrect;
 
     For I := 1 To N Do
     Begin
