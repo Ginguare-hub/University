@@ -12,14 +12,14 @@ Const
 Var
     A: Array Of Real;
     B: Array Of Real;
-    Length: Integer;
+    Lenght: Integer;
     I: Integer;
     N: Real;
     IsCorrect: Boolean;
 
 Begin
 
-    Length := 0;
+    Lenght := 0;
     I := 0;
     N := 0.0;
     IsCorrect := True;
@@ -30,8 +30,8 @@ Begin
         Write('¬ведите число элементов массива A: ');
         IsCorrect := True;
         Try
-            ReadLn(Length);
-            If (Length < MIN_LENGTH) Or (Length > MAX_LENGTH) Then
+            ReadLn(Lenght);
+            If (Lenght < MIN_LENGTH) Or (Lenght > MAX_LENGTH) Then
             Begin
                 WriteLn('„исло элементов массива должно лежать в диапазоне [', MIN_LENGTH, ';', MAX_LENGTH, '], попробуйте ещЄ раз.');
                 IsCorrect := False;
@@ -42,8 +42,8 @@ Begin
         End;
     Until IsCorrect;
 
-    SetLength(A, Length);
-    SetLength(B, Length);
+    SetLength(A, Lenght);
+    SetLength(B, Lenght);
 
     For I := 0 To High(A) Do
     Begin

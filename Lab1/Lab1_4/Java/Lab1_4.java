@@ -6,15 +6,15 @@ public class Lab1_4 {
 
         final double MAX_NUMBER = 1024.0;
         final double MIN_NUMBER = -1024.0;
-        final int MAX_LENGHT = 10;
-        final int MIN_LENGHT = 1;
+        final int MAX_LENGTH = 10;
+        final int MIN_LENGTH = 1;
 
-        int lenght;
+        int length;
         int i;
         double n;
         boolean isIncorrect;
 
-        lenght = 0;
+        length = 0;
         i = 0;
         n = 0.0;
         isIncorrect = false;
@@ -29,32 +29,32 @@ public class Lab1_4 {
         do {
 
             isIncorrect = false;
+            System.out.print("Введите число элементов массива a: ");
 
             try {
-                System.out.print("Введите число элементов массива a: ");
-                lenght = Integer.parseInt(scanner.nextLine());
+                length = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 isIncorrect = true;
                 System.out.println("Неправильный ввод, повторите попытку.");
             }
  
-            if (!isIncorrect && (lenght < MIN_LENGHT || lenght > MAX_LENGHT)) {
+            if (!isIncorrect && (length < MIN_LENGTH || length > MAX_LENGTH)) {
                 isIncorrect = true;
-                System.out.printf("Число элементов массива должно лежать в диапазоне [%d;%d], попробуйте ещё раз.\n", MIN_LENGHT, MAX_LENGHT);
+                System.out.printf("Число элементов массива должно лежать в диапазоне [%d;%d], попробуйте ещё раз.\n", MIN_LENGTH, MAX_LENGTH);
             }
 
         } while (isIncorrect);
 
-        a = new double[lenght];
-        b = new double[lenght];
+        a = new double[length];
+        b = new double[length];
 
-        for (i = 0; i < lenght; i++) {
+        for (i = 0; i < length; i++) {
             do {
 
                 isIncorrect = false;
+                System.out.printf("Введите N%d элемент массива: ", i);
 
                 try {
-                    System.out.printf("Введите N%d элемент массива: ", i);
                     n = Double.parseDouble(scanner.nextLine());
                 } catch (NumberFormatException e) {
                     isIncorrect = true;
@@ -73,7 +73,7 @@ public class Lab1_4 {
 
         scanner.close();
 
-        for (i = 0; i < lenght; i++) {
+        for (i = 0; i < length; i++) {
             b[i] = 2 * a[i] + i + 1;
             System.out.printf("B[%d] = %f\n", i, b[i]);
         }

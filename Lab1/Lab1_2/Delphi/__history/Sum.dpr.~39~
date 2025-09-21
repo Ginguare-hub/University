@@ -7,6 +7,7 @@ Const
     MAX_N: Integer = 30;
     MIN_N: Integer = 1;
 
+
 Var
     N, I, SumOfNumbers, Number: Integer;
     IsCorrect: Boolean;

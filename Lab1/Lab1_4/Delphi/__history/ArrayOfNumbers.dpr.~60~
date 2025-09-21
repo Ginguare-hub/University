@@ -3,42 +3,45 @@ Program ArrayOfNumbers;
 Uses
     System.SysUtils;
 
-Var
-    A: Array Of Double;
-    B: Array Of Double;
-    Lenght: Integer;
-    I: Integer;
-    N: Double;
-    IsAllRight: Boolean;
-
 Const
-    MAX_NUMBER: Double = 1024.0;
-    MIN_NUMBER: Double = -1024.0;
+    MAX_NUMBER: Real = 1024.0;
+    MIN_NUMBER: Real = -1024.0;
     MAX_LENGHT: Integer = 10;
     MIN_LENGHT: Integer = 1;
 
+
+Var
+    A: Array Of Real;
+    B: Array Of Real;
+    Lenght: Integer;
+    I: Integer;
+    N: Real;
+    IsCorrect: Boolean;
+
 Begin
 
-    Lenght := 1;
+    Lenght := 0;
     I := 0;
-    N := 1.0;
-    IsAllRight := True;
+    N := 0.0;
+    IsCorrect := True;
+
+    WriteLn('Программа получает массив a, и преобразует его в массив b, где b(k)=2*a(k)+k.');
 
     Repeat
         Try
             Write('Введите число элементов массива A: ');
             ReadLn(Lenght);
-            IsAllRight := True;
+            IsCorrect := True;
             If (Lenght < MIN_LENGHT) Or (Lenght > MAX_LENGHT) Then
             Begin
                 WriteLn('Число элементов массива должно лежать в диапазоне [', MIN_LENGHT, ';', MAX_LENGHT, '], попробуйте ещё раз.');
-                IsAllRight := False;
+                IsCorrect := False;
             End;
         Except
             WriteLn('Ошибка ввода, повторите попытку.');
-            IsAllRight := False;
+            IsCorrect := False;
         End;
-    Until IsAllRight;
+    Until IsCorrect;
 
     SetLength(A, Lenght);
     SetLength(B, Lenght);
@@ -48,19 +51,19 @@ Begin
 
         Repeat
         Try
-            IsAllRight := True;
+            IsCorrect := True;
             Write('Введите N', I + 1, ' элемент массива: ');
             ReadLn(N);
             If (N < MIN_NUMBER) Or (N > MAX_NUMBER) Then
             Begin
                 WriteLn('Значение элемента массива должно лежать в диапазоне [', MIN_NUMBER, ';', MAX_NUMBER, '], попробуйте ещё раз.');
-                IsAllRight := False;
+                IsCorrect := False;
             End;
         Except
             WriteLn('Ошибка ввода, повторите попытку.');
-            IsAllRight := False;
+            IsCorrect := False;
         End;
-        Until IsAllRight;
+        Until IsCorrect;
 
         A[I] := N;
     End;
@@ -68,11 +71,8 @@ Begin
     For I := 0 To High(A) Do
     Begin
         B[I] := 2 * A[I] + I + 1;
+        WriteLn('B[', I, '] = ', B[I]:4:4);
     End;
 
-    For I := 0 To (Lenght - 1) Do
-        WriteLn('B[', I, '] = ', B[I]:4:4);
-
     ReadLn;
-
 End.

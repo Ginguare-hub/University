@@ -23,9 +23,9 @@ public class Lab1_2 {
         do {
 
             isIncorrect = false;
+            System.out.print("Введите верхнюю границу суммирования: ");
 
             try {
-                System.out.print("Введите верхнюю границу суммирования: ");
                 n = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 isIncorrect = true;
