@@ -18,23 +18,23 @@ public class Lab1_2 {
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Программа считает сумму заданную в условии задачи №2 варианта №20");
+        System.out.println("РџСЂРѕРіСЂР°РјРјР° СЃС‡РёС‚Р°РµС‚ СЃСѓРјРјСѓ Р·Р°РґР°РЅРЅСѓСЋ РІ СѓСЃР»РѕРІРёРё Р·Р°РґР°С‡Рё в„–2 РІР°СЂРёР°РЅС‚Р° в„–20");
 
         do {
 
             isIncorrect = false;
 
             try {
-                System.out.print("Введите верхнюю границу суммирования: ");
+                System.out.print("Р’РІРµРґРёС‚Рµ РІРµСЂС…РЅСЋСЋ РіСЂР°РЅРёС†Сѓ СЃСѓРјРјРёСЂРѕРІР°РЅРёСЏ: ");
                 n = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 isIncorrect = true;
-                System.out.println("Неправильный ввод, повторите попытку.");
+                System.out.println("РќРµРїСЂР°РІРёР»СЊРЅС‹Р№ РІРІРѕРґ, РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.");
             }
  
             if (!isIncorrect && (n < MIN_N || n > MAX_N)) {
                 isIncorrect = true;
-                System.out.printf("Степенью может являться только целое положительное число, которое принадлежит диапазону [%d;%d].\n", MIN_N, MAX_N);
+                System.out.printf("РЎС‚РµРїРµРЅСЊСЋ РјРѕР¶РµС‚ СЏРІР»СЏС‚СЊСЃСЏ С‚РѕР»СЊРєРѕ С†РµР»РѕРµ РїРѕР»РѕР¶РёС‚РµР»СЊРЅРѕРµ С‡РёСЃР»Рѕ, РєРѕС‚РѕСЂРѕРµ РїСЂРёРЅР°РґР»РµР¶РёС‚ РґРёР°РїР°Р·РѕРЅСѓ [%d;%d].\n", MIN_N, MAX_N);
             }
 
         } while (isIncorrect);
@@ -46,6 +46,6 @@ public class Lab1_2 {
             sumOfNumbers = sumOfNumbers + number;
         }
 
-        System.out.printf("Сумма равна %d", sumOfNumbers);
+        System.out.printf("РЎСѓРјРјР° СЂР°РІРЅР° %d", sumOfNumbers);
     }
 }

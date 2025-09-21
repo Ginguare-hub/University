@@ -16,14 +16,14 @@ Var
     Lenght: Integer;
     I: Integer;
     N: Real;
-    IsIncorrect: Boolean;
+    IsCorrect: Boolean;
 
 Begin
 
     Lenght := 0;
     I := 0;
     N := 0.0;
-    IsIncorrect := False;
+    IsCorrect := True;
 
     WriteLn('Программа получает массив a, и преобразует его в массив b, где b(k)=2*a(k)+k.');
 
@@ -31,17 +31,17 @@ Begin
         Try
             Write('Введите число элементов массива A: ');
             ReadLn(Lenght);
-            IsIncorrect := False;
+            IsCorrect := True;
             If (Lenght < MIN_LENGHT) Or (Lenght > MAX_LENGHT) Then
             Begin
                 WriteLn('Число элементов массива должно лежать в диапазоне [', MIN_LENGHT, ';', MAX_LENGHT, '], попробуйте ещё раз.');
-                IsIncorrect := True;
+                IsCorrect := False;
             End;
         Except
             WriteLn('Ошибка ввода, повторите попытку.');
-            IsIncorrect := True;
+            IsCorrect := False;
         End;
-    Until IsIncorrect = False;
+    Until IsCorrect;
 
     SetLength(A, Lenght);
     SetLength(B, Lenght);
@@ -51,19 +51,19 @@ Begin
 
         Repeat
         Try
-            IsIncorrect := False;
+            IsCorrect := True;
             Write('Введите N', I + 1, ' элемент массива: ');
             ReadLn(N);
             If (N < MIN_NUMBER) Or (N > MAX_NUMBER) Then
             Begin
                 WriteLn('Значение элемента массива должно лежать в диапазоне [', MIN_NUMBER, ';', MAX_NUMBER, '], попробуйте ещё раз.');
-                IsIncorrect := True;
+                IsCorrect := False;
             End;
         Except
             WriteLn('Ошибка ввода, повторите попытку.');
-            IsIncorrect := True;
+            IsCorrect := False;
         End;
-        Until IsIncorrect = False;
+        Until IsCorrect;
 
         A[I] := N;
     End;

@@ -3,11 +3,11 @@ Program Lab1_3;
 Uses
   System.SysUtils;
 
-Const
-    EPSILON: Real = 0.0001;
+//Const
+//    EPSILON: Real = 0.0001;
 
 Var
-    X0, X1, Derivative, LowerLimit, UpperLimit, FuncFromXEqualX : Real;
+    X0, X1, Derivative, LowerLimit, UpperLimit, FuncFromXEqualX, Epsilon : Real;
     Count : Integer = 0;
 
 Begin
@@ -16,7 +16,11 @@ Begin
     X1 := 0.0;
     Derivative := 0.0;
     LowerLimit := 0.0;
-    UpperLimit := 1;
+    UpperLimit := 1.0;
+
+    WriteLn('ѕрограмма находит корень уравнени€ ln(7,622x) Ц 8,59х + 5 = 0 с точностью эпсилон методом простой итерации.');
+    WriteLn('¬ведите число эпсилон, рекомендуемое значение от 0.1');
+    ReadLn(Epsilon);
 
     //ReadLn(LowerLimit);
     //ReadLn(UpperLimit);
