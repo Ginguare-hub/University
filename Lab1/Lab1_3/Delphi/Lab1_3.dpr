@@ -40,7 +40,7 @@ Begin
             FuncFromXEqualX := (ln(7.622 * X0) + 5) / 8.59;
             X1 := FuncFromXEqualX;
 
-        Until ((Abs(X1 - X0)) < EPSILON) Or (Count > 100);
+        Until ((Abs(X1 - X0)) < Epsilon) Or (Count > 100);
         WriteLn('X = ', X1:3:10, '  ', count);
     End
     Else
