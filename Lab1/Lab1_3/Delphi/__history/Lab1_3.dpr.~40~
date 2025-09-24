@@ -10,12 +10,12 @@ Const
     UPPER_LIMIT : Double = 0.5;
     LOWER_LIMIT : Double = 1.0;
     MAX_ITERATIONS : Integer = 20;
-//    NUMB_PRECISION : Integer = 15;
+    NUMB_PRECISION : Integer = 15;
 
 Var
     X0, X1, Derivative, EquivEquation, Epsilon, Diff : Real;
     Count : Integer;
-    IsCorrect : Boolean;
+    IsIncorrect : Boolean;
 
 Begin
 
@@ -26,28 +26,30 @@ Begin
     Epsilon := 1;
     Diff := 0.0;
     Count := 0;
-    IsCorrect := True;
+    IsIncorrect := False;
 
-    WriteLn('ѕрограмма находит корень уравнени€ ln(', A:7:4 ,'x) Ц ', B:7:4 ,'х + ', C:7:4 ,' = 0 с точностью эпсилон методом простой итерации.');
+    WriteLn('ѕрограмма находит корень уравнени€ ln(', A ,'x) Ц ', B ,'х + ', C ,' = 0 с точностью эпсилон методом простой итерации.');
+    ReadLn(Epsilon);
+
 
     Repeat
         WriteLn('¬ведите положительное число эпсилон, рекомендуемое значение менее 0.1');
-        IsCorrect := True;
+        IsIncorrect := False;
 
         Try
             ReadLn(Epsilon);
         Except
             WriteLn('Ќеправильный ввод, повторите попытку снова.');
-            IsCorrect := False;
+            IsIncorrect := True;
         End;
 
-        If IsCorrect And ((Epsilon < 0) Or (Epsilon = 0)) Then
+        If IsIncorrect And ((Epsilon < 0) Or (Epsilon = 0)) Then
         Begin
             WriteLn('Ёпсилон - положительное сколь угодно малое вещественное число, эпсилон должен быть больше 0');
-            IsCorrect := False;
+            IsIncorrect := True;
         End;
 
-    Until IsCorrect;
+    Until IsIncorrect;
 
     X1 := (LOWER_LIMIT + UPPER_LIMIT) / 2;
     X0 := X1;
@@ -64,7 +66,7 @@ Begin
             X1 := EquivEquation;
             Diff := Abs(X1 - X0);
         Until ((Diff < Epsilon) Or (Count > MAX_ITERATIONS));
-        WriteLn('X = ', X1:7:10);
+        WriteLn('X = ', X1:3:10, '  ', count);
     End
     Else
     Begin

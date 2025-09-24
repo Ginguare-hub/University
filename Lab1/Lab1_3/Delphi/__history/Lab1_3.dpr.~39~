@@ -10,12 +10,12 @@ Const
     UPPER_LIMIT : Double = 0.5;
     LOWER_LIMIT : Double = 1.0;
     MAX_ITERATIONS : Integer = 20;
-//    NUMB_PRECISION : Integer = 15;
+    NUMB_PRECISION : Integer = 15;
 
 Var
     X0, X1, Derivative, EquivEquation, Epsilon, Diff : Real;
-    Count : Integer;
-    IsCorrect : Boolean;
+    Count : Integer = 0;
+    IsIncorrect : Boolean = False;
 
 Begin
 
@@ -25,46 +25,49 @@ Begin
     EquivEquation := 0.0;
     Epsilon := 1;
     Diff := 0.0;
-    Count := 0;
-    IsCorrect := True;
 
-    WriteLn('ѕрограмма находит корень уравнени€ ln(', A:7:4 ,'x) Ц ', B:7:4 ,'х + ', C:7:4 ,' = 0 с точностью эпсилон методом простой итерации.');
+    WriteLn('ѕрограмма находит корень уравнени€ ln(', A ,'x) Ц ', B ,'х + ', C ,' = 0 с точностью эпсилон методом простой итерации.');
+    ReadLn(Epsilon);
+
 
     Repeat
         WriteLn('¬ведите положительное число эпсилон, рекомендуемое значение менее 0.1');
-        IsCorrect := True;
+        IsIncorrect := True;
 
         Try
             ReadLn(Epsilon);
         Except
             WriteLn('Ќеправильный ввод, повторите попытку снова.');
-            IsCorrect := False;
+            IsIncorrect := False;
         End;
 
-        If IsCorrect And ((Epsilon < 0) Or (Epsilon = 0)) Then
+        If IsIncorrect And ((N < MIN_N) Or (N > MAX_N)) Then
         Begin
             WriteLn('Ёпсилон - положительное сколь угодно малое вещественное число, эпсилон должен быть больше 0');
-            IsCorrect := False;
+            IsIncorrect := False;
         End;
 
-    Until IsCorrect;
+    Until IsIncorrect;
+
+
 
     X1 := (LOWER_LIMIT + UPPER_LIMIT) / 2;
     X0 := X1;
 
-    EquivEquation := (ln(A * X0) + C) / B;
-    Derivative := 1 / (B * X0);
+    FuncFromXEqualX := (ln(7.622*X0) + 5) / 8.59;
+
+    Derivative := 1 / (8.59 * X0);
 
     If Abs(Derivative) < 1 Then
     Begin
         Repeat
             Count := Count + 1;
             X0 := X1;
-            EquivEquation := (ln(A * X0) + C) / B;
-            X1 := EquivEquation;
-            Diff := Abs(X1 - X0);
-        Until ((Diff < Epsilon) Or (Count > MAX_ITERATIONS));
-        WriteLn('X = ', X1:7:10);
+            FuncFromXEqualX := (ln(7.622 * X0) + 5) / 8.59;
+            X1 := FuncFromXEqualX;
+
+        Until ((Abs(X1 - X0)) < Epsilon) Or (Count > 100);
+        WriteLn('X = ', X1:3:10, '  ', count);
     End
     Else
     Begin

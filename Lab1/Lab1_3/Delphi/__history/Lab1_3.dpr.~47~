@@ -64,7 +64,7 @@ Begin
             X1 := EquivEquation;
             Diff := Abs(X1 - X0);
         Until ((Diff < Epsilon) Or (Count > MAX_ITERATIONS));
-        WriteLn('X = ', X1:7:10);
+        WriteLn('X = ', X1:7:10, '  ', count);
     End
     Else
     Begin
