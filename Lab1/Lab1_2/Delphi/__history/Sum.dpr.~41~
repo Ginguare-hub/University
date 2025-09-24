@@ -45,6 +45,8 @@ Begin
         SumOfNumbers := SumOfNumbers + Number;
     End;
 
-    Write('Сумма равна ', SumOfNumbers);
+    Write('Сумма равна ');
+    WriteLn(SumOfNumbers);
+
     ReadLn;
 End.

@@ -99,5 +99,7 @@ int main()
         std::cout << "B[" << i << "] = " << b[i] << std::endl;
     }
 
+    delete[] a;
+    delete[] b;
     return 0;
 }
