@@ -10,6 +10,9 @@ int main()
     const double C = 5.0;
     const double UPPER_LIMIT = 0.5;
     const double LOWER_LIMIT = 1.0;
+    const int MAX_ITERATIONS = 20;
+    const int NUMB_PRECISION = 15;
+
 
     double x0, x1, derivative, equivEquation, epsilon, diff;
     int count = 0;
@@ -31,7 +34,7 @@ int main()
 
         isIncorrect = false;
 
-        if (std::cin.fail())
+        if (std::cin.fail() || std::cin.get() != '\n')
         {
             isIncorrect = true;
             std::cout << "Неправильный ввод, повторите попытку снова." << std::endl;
@@ -39,12 +42,12 @@ int main()
             while (std::cin.get() != '\n');
         }
 
-        if (!isIncorrect && std::cin.get() != '\n')
-        {
-            isIncorrect = true;
-            std::cout << "Неправильный ввод, повторите попытку снова." << std::endl;
-            while (std::cin.get() != '\n');
-        }
+        // if (!isIncorrect && std::cin.get() != '\n')
+        // {
+        //     isIncorrect = true;
+        //     std::cout << "Неправильный ввод, повторите попытку снова." << std::endl;
+        //     while (std::cin.get() != '\n');
+        // }
 
         if (!isIncorrect && ((epsilon < 0.0) || (epsilon == 0)))
         {
@@ -69,7 +72,7 @@ int main()
             equivEquation = (log(A * x0) + C) / B;
             x1 = equivEquation;
             diff = abs(x1 - x0);
-        } while ((diff > epsilon) && (count < 20));
+        } while ((diff > epsilon) && (count < MAX_ITERATIONS));
 
         std::cout.precision(15);
         std::cout << "X = " << x1 << " " << count << std::endl; 
