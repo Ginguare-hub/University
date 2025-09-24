@@ -75,7 +75,7 @@ int main()
         } while ((diff > epsilon) && (count < MAX_ITERATIONS));
 
         std::cout.precision(15);
-        std::cout << "X = " << x1 << " " << count << std::endl; 
+        std::cout << "X = " << x1 << " " << std::endl; 
     } 
     else
     {
