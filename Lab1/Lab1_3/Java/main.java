@@ -59,7 +59,7 @@ class Lab1_3 {
                 diff = Math.abs(x1 - x0);
             } while ((diff > epsilon) && (count < MAX_ITERATIONS));
 
-            System.out.printf("X = %f", x1); 
+            System.out.printf("X = %.15f", x1); 
 
         } else {
 
