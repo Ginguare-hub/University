@@ -5,25 +5,28 @@ int main()
 {
     setlocale(LC_ALL, "Russian");
 
-    const double a = 7.622;
-    const double b = 8.59;
-    const double c = 5.0;
+    const double A = 7.622;
+    const double B = 8.59;
+    const double C = 5.0;
+    const double UPPER_LIMIT = 0.5;
+    const double LOWER_LIMIT = 1.0;
 
-    double x0, x1, derivative, lowerLimit, upperLimit, equivEquation, epsilon;
+    double x0, x1, derivative, equivEquation, epsilon, diff;
     int count = 0;
     bool isIncorrect = false;
 
     x0 = 0.0;
     x1 = 0.0;
     derivative = 0.0;
-    lowerLimit = 1.0;
-    upperLimit = 0.5;
+    equivEquation = 0.0;
+    epsilon = 1;
+    diff = 0.0;
 
-    std::cout << "Программа находит корень уравнения ln(" << a << "x) - " << b << "х + " << c << " = 0 с точностью эпсилон методом простой итерации." << std::endl;
+    std::cout << "Программа находит корень уравнения ln(" << A << "x) - " << B << "х + " << C << " = 0 с точностью эпсилон методом простой итерации." << std::endl;
 
     do
     {
-        std::cout << "Введите число эпсилон, рекомендуемое значение от 0.1" << std::endl;
+        std::cout << "Введите положительное число эпсилон, рекомендуемое значение менее 0.1" << std::endl;
         std::cin >> epsilon;
 
         isIncorrect = false;
@@ -43,7 +46,7 @@ int main()
             while (std::cin.get() != '\n');
         }
 
-        if (!isIncorrect && ((epsilon < 0.0) || (epsilon = 0)))
+        if (!isIncorrect && ((epsilon < 0.0) || (epsilon == 0)))
         {
             isIncorrect = true;
             std::cout << "Эпсилон - положительное сколь угодно малое вещественное число, эпсилон должен быть больше 0" << std::endl;
@@ -51,11 +54,11 @@ int main()
 
     } while (isIncorrect);
 
-    x1 = (lowerLimit + upperLimit) / 2;
+    x1 = (LOWER_LIMIT + UPPER_LIMIT) / 2;
     x0 = x1;
 
-    equivEquation = ((log(a * x0) + c) / b);
-    derivative = 1 / (c * x0);
+    equivEquation = ((log(A * x0) + C) / B);
+    derivative = 1 / (C * x0);
 
     if (abs(derivative)  < 1)
     {
@@ -63,11 +66,13 @@ int main()
         {
             count = count + 1;
             x0 = x1;
-            equivEquation = (log(a * x0) + c) / b;
+            equivEquation = (log(A * x0) + C) / B;
             x1 = equivEquation;
-        } while (((abs(x1 - x0)) > epsilon) && (count < 100));
+            diff = abs(x1 - x0);
+        } while ((diff > epsilon) && (count < 20));
 
-        std::cout << "X = " << x1 << " " << count << std::endl;  
+        std::cout.precision(15);
+        std::cout << "X = " << x1 << " " << count << std::endl; 
     } 
     else
     {
