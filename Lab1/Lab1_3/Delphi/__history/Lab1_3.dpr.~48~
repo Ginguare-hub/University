@@ -10,6 +10,7 @@ Const
     UPPER_LIMIT : Double = 0.5;
     LOWER_LIMIT : Double = 1.0;
     MAX_ITERATIONS : Integer = 20;
+//    NUMB_PRECISION : Integer = 15;
 
 Var
     X0, X1, Derivative, EquivEquation, Epsilon, Diff : Real;
@@ -63,10 +64,12 @@ Begin
             X1 := EquivEquation;
             Diff := Abs(X1 - X0);
         Until ((Diff < Epsilon) Or (Count > MAX_ITERATIONS));
-        WriteLn('X = ', X1:7:15);
+        WriteLn('X = ', X1:7:10);
     End
     Else
-        WriteLn('Корней методом простой итерации на данном промежутке найти не удалось');
+    Begin
+        WriteLn('Корней методом простой итерации на данном промежутке найти не удалось')
+    End;
 
     ReadLn;
 End.

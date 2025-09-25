@@ -10,7 +10,6 @@ class Lab1_3 {
         final double UPPER_LIMIT = 0.5;
         final double LOWER_LIMIT = 1.0;
         final int MAX_ITERATIONS = 20;
-        //final int NUMB_PRECISION = 15;
 
         double x0, x1, derivative, equivEquation, epsilon, diff;
         int count = 0;
