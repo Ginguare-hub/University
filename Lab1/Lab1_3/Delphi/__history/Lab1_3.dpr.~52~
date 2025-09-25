@@ -62,7 +62,7 @@ Begin
             EquivEquation := (Ln(A * X0) + C) / B;
             X1 := EquivEquation;
             Diff := Abs(X1 - X0);
-        Until (Diff < Epsilon) Or (Count > MAX_ITERATIONS);
+        Until ((Diff < Epsilon) Or (Count > MAX_ITERATIONS));
         WriteLn('X = ', X1:7:15);
     End
     Else
