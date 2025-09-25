@@ -42,13 +42,6 @@ int main()
             while (std::cin.get() != '\n');
         }
 
-        // if (!isIncorrect && std::cin.get() != '\n')
-        // {
-        //     isIncorrect = true;
-        //     std::cout << "Неправильный ввод, повторите попытку снова." << std::endl;
-        //     while (std::cin.get() != '\n');
-        // }
-
         if (!isIncorrect && ((epsilon < 0.0) || (epsilon == 0)))
         {
             isIncorrect = true;
@@ -74,7 +67,7 @@ int main()
             diff = abs(x1 - x0);
         } while ((diff > epsilon) && (count < MAX_ITERATIONS));
 
-        std::cout.precision(15);
+        std::cout.precision(NUMB_PRECISION);
         std::cout << "X = " << x1 << " " << std::endl; 
     } 
     else

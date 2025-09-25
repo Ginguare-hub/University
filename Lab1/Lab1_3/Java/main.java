@@ -10,7 +10,7 @@ class Lab1_3 {
         final double UPPER_LIMIT = 0.5;
         final double LOWER_LIMIT = 1.0;
         final int MAX_ITERATIONS = 20;
-        final int NUMB_PRECISION = 15;
+        //final int NUMB_PRECISION = 15;
 
         double x0, x1, derivative, equivEquation, epsilon, diff;
         int count = 0;
@@ -44,6 +44,8 @@ class Lab1_3 {
 
         } while (isIncorrect);
 
+        scanner.close();
+
         x1 = (LOWER_LIMIT + UPPER_LIMIT) / 2;
         x0 = x1;
 
@@ -62,10 +64,7 @@ class Lab1_3 {
             System.out.printf("X = %.15f", x1); 
 
         } else {
-
             System.out.print("Корней методом простой итерации на данном промежутке найти не удалось\n"); 
         } 
-
-        scanner.close();
     }   
 }
