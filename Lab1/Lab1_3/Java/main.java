@@ -52,6 +52,7 @@ class Lab1_3 {
         derivative = 1 / (B * x0);
 
         if (Math.abs(derivative)  < 1) {
+            
             do {
                 count = count + 1;
                 x0 = x1;
@@ -61,7 +62,6 @@ class Lab1_3 {
             } while ((diff > epsilon) && (count < MAX_ITERATIONS));
 
             System.out.printf("X = %.15f", x1); 
-
         } else {
             System.out.print("Корней методом простой итерации на данном промежутке найти не удалось\n"); 
         } 

@@ -1,20 +1,20 @@
 Program Lab1_3;
 
 Uses
-  System.SysUtils;
+    System.SysUtils;
 
 Const
-    A : Double = 7.622;
-    B : Double = 8.59;
-    C : Double = 5.0;
-    UPPER_LIMIT : Double = 0.5;
-    LOWER_LIMIT : Double = 1.0;
-    MAX_ITERATIONS : Integer = 20;
+    A: Double = 7.622;
+    B: Double = 8.59;
+    C: Double = 5.0;
+    UPPER_LIMIT: Double = 0.5;
+    LOWER_LIMIT: Double = 1.0;
+    MAX_ITERATIONS: Integer = 20;
 
 Var
-    X0, X1, Derivative, EquivEquation, Epsilon, Diff : Real;
-    Count : Integer;
-    IsCorrect : Boolean;
+    X0, X1, Derivative, EquivEquation, Epsilon, Diff: Real;
+    Count: Integer;
+    IsCorrect: Boolean;
 
 Begin
 
@@ -27,7 +27,7 @@ Begin
     Count := 0;
     IsCorrect := True;
 
-    WriteLn('Программа находит корень уравнения ln(', A:7:4 ,'x) – ', B:7:4 ,'х + ', C:7:4 ,' = 0 с точностью эпсилон методом простой итерации.');
+    WriteLn('Программа находит корень уравнения ln(', A:7:4, 'x) – ', B:7:4, 'х + ', C:7:4,' = 0 с точностью эпсилон методом простой итерации.');
 
     Repeat
         WriteLn('Введите положительное число эпсилон, рекомендуемое значение менее 0.1');
@@ -51,7 +51,7 @@ Begin
     X1 := (LOWER_LIMIT + UPPER_LIMIT) / 2;
     X0 := X1;
 
-    EquivEquation := (ln(A * X0) + C) / B;
+    EquivEquation := (Ln(A * X0) + C) / B;
     Derivative := 1 / (B * X0);
 
     If Abs(Derivative) < 1 Then
@@ -59,7 +59,7 @@ Begin
         Repeat
             Count := Count + 1;
             X0 := X1;
-            EquivEquation := (ln(A * X0) + C) / B;
+            EquivEquation := (Ln(A * X0) + C) / B;
             X1 := EquivEquation;
             Diff := Abs(X1 - X0);
         Until ((Diff < Epsilon) Or (Count > MAX_ITERATIONS));
@@ -69,4 +69,5 @@ Begin
         WriteLn('Корней методом простой итерации на данном промежутке найти не удалось');
 
     ReadLn;
+
 End.

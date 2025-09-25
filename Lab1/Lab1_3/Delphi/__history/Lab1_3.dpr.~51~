@@ -10,12 +10,11 @@ Const
     UPPER_LIMIT : Double = 0.5;
     LOWER_LIMIT : Double = 1.0;
     MAX_ITERATIONS : Integer = 20;
-    NUMB_PRECISION : Integer = 15;
 
 Var
     X0, X1, Derivative, EquivEquation, Epsilon, Diff : Real;
     Count : Integer;
-    IsIncorrect : Boolean;
+    IsCorrect : Boolean;
 
 Begin
 
@@ -26,30 +25,28 @@ Begin
     Epsilon := 1;
     Diff := 0.0;
     Count := 0;
-    IsIncorrect := False;
+    IsCorrect := True;
 
-    WriteLn('Программа находит корень уравнения ln(', A ,'x) – ', B ,'х + ', C ,' = 0 с точностью эпсилон методом простой итерации.');
-    ReadLn(Epsilon);
-
+    WriteLn('Программа находит корень уравнения ln(', A:7:4 ,'x) – ', B:7:4 ,'х + ', C:7:4 ,' = 0 с точностью эпсилон методом простой итерации.');
 
     Repeat
         WriteLn('Введите положительное число эпсилон, рекомендуемое значение менее 0.1');
-        IsIncorrect := False;
+        IsCorrect := True;
 
         Try
             ReadLn(Epsilon);
         Except
             WriteLn('Неправильный ввод, повторите попытку снова.');
-            IsIncorrect := True;
+            IsCorrect := False;
         End;
 
-        If IsIncorrect And ((Epsilon < 0) Or (Epsilon = 0)) Then
+        If IsCorrect And ((Epsilon < 0) Or (Epsilon = 0)) Then
         Begin
             WriteLn('Эпсилон - положительное сколь угодно малое вещественное число, эпсилон должен быть больше 0');
-            IsIncorrect := True;
+            IsCorrect := False;
         End;
 
-    Until IsIncorrect;
+    Until IsCorrect;
 
     X1 := (LOWER_LIMIT + UPPER_LIMIT) / 2;
     X0 := X1;
@@ -66,12 +63,10 @@ Begin
             X1 := EquivEquation;
             Diff := Abs(X1 - X0);
         Until ((Diff < Epsilon) Or (Count > MAX_ITERATIONS));
-        WriteLn('X = ', X1:7:10, '  ', count);
+        WriteLn('X = ', X1:7:15);
     End
     Else
-    Begin
-        WriteLn('Корней методом простой итерации на данном промежутке найти не удалось')
-    End;
+        WriteLn('Корней методом простой итерации на данном промежутке найти не удалось');
 
     ReadLn;
 End.
