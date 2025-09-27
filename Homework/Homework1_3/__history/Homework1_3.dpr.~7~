@@ -1,0 +1,70 @@
+Program Homework1_3;
+
+Uses
+    System.SysUtils;
+
+Var
+    A, B, C: Integer;
+    X1, X2: Double;
+
+Begin
+
+    ReadLn(A, B, C);
+
+    If (A = 0) Then
+    Begin
+        If (B = 0) Then
+        Begin
+
+            If (C = 0) Then
+                WriteLn('Бесконечность корней')
+            Else
+                WriteLn('Корней не существует');
+
+        End
+        Else
+        Begin
+            If (C = 0) Then
+                WriteLn('X = 0')
+            Else
+            Begin
+                X1 := (-B) / (2 * A);
+                WriteLn('X = ', X1:7:4);
+            End;
+        End;
+    End
+    Else
+    Begin
+        If (B = 0) Then
+        Begin
+            If (C = 0) Then
+                WriteLn('X = 0')
+            Else
+            Begin
+                X1 := Sqrt((-1) * C);
+                X2 := (-1) * Sqrt((-1) * C);
+                WriteLn('X1 = ', X1:7:4, ', X2 = ', X2:7:4);
+            End;
+        End
+        Else
+        Begin
+            If (C = 0) Then
+                WriteLn('X = 0')
+            Else
+            Begin
+                If (C < 0) Then
+                Begin
+                    X1 := (-B) + Sqrt(B * B - 4 * A * C) / (2 * A);
+                    X2 := (-B) - Sqrt(B * B - 4 * A * C) / (2 * A);
+                    WriteLn('X1 = ', X1:7:4, ', X2 = ', X2:7:4);
+                End
+                Else
+                    WriteLn('Действительных корней не существует');
+            End;
+        End;
+
+    End;
+
+    ReadLn;
+
+End.
