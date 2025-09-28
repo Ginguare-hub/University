@@ -1,0 +1,18 @@
+Program Matrix;
+
+uses
+  System.SysUtils;
+
+Var
+    A : Array Of Integer;
+    Sum, I : Integer;
+
+Begin
+    For I := 0 To  Do
+    Begin
+
+    End;
+
+
+
+End.
