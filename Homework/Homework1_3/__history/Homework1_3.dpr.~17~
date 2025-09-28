@@ -28,7 +28,7 @@ Begin
                 WriteLn('X = 0')
             Else
             Begin
-                X1 := (-B) / (2 * A);
+                X1 := ((-1)*C) / B;
                 WriteLn('X = ', X1:7:4);
             End;
         End;
@@ -39,23 +39,25 @@ Begin
         Begin
             If (C = 0) Then
                 WriteLn('X = 0')
-            Else
+            Else If (C < 0) Then
             Begin
-                X1 := Sqrt((-1) * C);
-                X2 := (-1) * Sqrt((-1) * C);
+                X1 := Sqrt(((-1)*C) / A);
+                X2 := (-1) * Sqrt(((-1)*C) / A);
                 WriteLn('X1 = ', X1:7:4, ', X2 = ', X2:7:4);
-            End;
+            End
+            Else
+                WriteLn('Действительных корней не существует');
         End
         Else
         Begin
             If (C = 0) Then
-                WriteLn('X = 0')
+                WriteLn('X1 = 0, X2 = ', (-1)*B / A)
             Else
             Begin
                 If (C < 0) Then
                 Begin
-                    X1 := (-B) + Sqrt(B * B - 4 * A * C) / (2 * A);
-                    X2 := (-B) - Sqrt(B * B - 4 * A * C) / (2 * A);
+                    X1 := ((-B) + Sqrt(B*B - 4*A*C)) / (2*A);
+                    X2 := ((-B) - Sqrt(B*B - 4*A*C)) / (2*A);
                     WriteLn('X1 = ', X1:7:4, ', X2 = ', X2:7:4);
                 End
                 Else

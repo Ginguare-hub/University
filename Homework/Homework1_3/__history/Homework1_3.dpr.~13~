@@ -1,7 +1,7 @@
 Program Homework1_3;
 
-uses
-  System.SysUtils;
+Uses
+    System.SysUtils;
 
 Var
     A, B, C: Integer;
@@ -28,8 +28,8 @@ Begin
                 WriteLn('X = 0')
             Else
             Begin
-                X1 := (-B) / (2 * A);
-                WriteLn('X = ', X1);
+                X1 := ((-1)*C) / B;
+                WriteLn('X = ', X1:7:4);
             End;
         End;
     End
@@ -40,9 +40,11 @@ Begin
             If (C = 0) Then
                 WriteLn('X = 0')
             Else
-                X1 := sqrt((-1) * C);
-                X2 := (-1) * sqrt((-1) * C);
-                WriteLn('X1 = ', X1, ', X2 = ', X2);
+            Begin
+                X1 := Sqrt(((-1) * C) / A);
+                X2 := (-1) * Sqrt(((-1) * C) / A);
+                WriteLn('X1 = ', X1:7:4, ', X2 = ', X2:7:4);
+            End;
         End
         Else
         Begin
@@ -50,13 +52,19 @@ Begin
                 WriteLn('X = 0')
             Else
             Begin
-                X1 := (-B) + sqrt(B*B - 4*A*C) / (2 * A);
-                X2 := (-B) - sqrt(B*B - 4*A*C) / (2 * A);
-                WriteLn('X1 = ', X1, ', X2 = ', X2);
+                If (C < 0) Then
+                Begin
+                    X1 := ((-B) + Sqrt(B * B - 4 * A * C)) / (2 * A);
+                    X2 := ((-B) - Sqrt(B * B - 4 * A * C)) / (2 * A);
+                    WriteLn('X1 = ', X1:7:4, ', X2 = ', X2:7:4);
+                End
+                Else
+                    WriteLn('Действительных корней не существует');
             End;
         End;
 
     End;
 
     ReadLn;
+
 End.
