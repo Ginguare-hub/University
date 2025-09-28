@@ -79,7 +79,7 @@ Begin
 
             If (I <= High(A)) And (Count - I <= High(A)) And (Count - I >= 0) And (Count - I <= I) Then
             Begin
-                Sum := Sum + A[Count - I, I];
+                Sum := Sum + A[Count - I][I];
             End;
 
             I := I - 1;
