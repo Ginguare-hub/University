@@ -63,10 +63,10 @@ Begin
     A[3][3] := 1;
 
 
-    If High(A[0]) Mod 2 = 0 Then
-        Half := High(A[0]) Div 2
+    If High(A) Mod 2 = 0 Then
+        Half := High(A) Div 2
     Else
-        Half := (High(A[0]) Div 2) + 1;
+        Half := (High(A) Div 2) - 1;
 
     //setlength(A, Length);
     //setlength(A[0], Length);
@@ -74,14 +74,13 @@ Begin
     //setlength(A[2], Length);
     //setlength(A[3], Length);
 
+    WriteLn(Half);
 
-    For I := Half To High(A[0]) Do
+
+    For I := Half To High(A) Do
     Begin
         SumVer := 0;
         SumHor := 0;
-
-        If High(A[0]) Mod 2 = 1 Then
-            Half := Half - 1;
 
         For J := 0 To Half Do
         Begin
@@ -89,13 +88,10 @@ Begin
             SumHor := SumHor + A[I, J];
         End;
 
-        If High(A[0]) Mod 2 = 1 Then
-            Half := Half + 1;
-
         SumAll := SumAll + SumVer + SumHor;
     End;
 
-    If High(A[0]) Mod 2 = 0 Then
+    If High(A) Mod 2 = 0 Then
         SumAll := SumAll - A[Half, Half];
 
     WriteLn(SumAll);
