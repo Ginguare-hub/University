@@ -1,0 +1,83 @@
+Program MatrixPlus;
+
+uses
+  System.SysUtils;
+
+Var
+    A: Array [0..4, 0..4] Of Integer;
+    I, J, Count, Sum, SumAll: Integer;
+
+
+
+Begin
+
+    Sum := 0;
+    SumAll := 0;
+    I := 0;
+    J := 0;
+
+    A[0][0] := 0;
+    A[0][1] := 7;
+    A[0][2] := 2;
+    A[0][3] := 1;
+    A[0][4] := 4;
+
+    A[1][0] := 3;
+    A[1][1] := 2;
+    A[1][2] := 1;
+    A[1][3] := 0;
+    A[1][4] := 1;
+
+    A[2][0] := 1;
+    A[2][1] := 9;
+    A[2][2] := 8;
+    A[2][3] := 5;
+    A[2][4] := 1;
+
+    A[3][0] := 1;
+    A[3][1] := 2;
+    A[3][2] := 7;
+    A[3][3] := 4;
+    A[3][4] := 2;
+
+    A[4][0] := 3;
+    A[4][1] := 5;
+    A[4][2] := 5;
+    A[4][3] := 2;
+    A[4][4] := 2;
+
+    I := 0;
+    J := 0;
+
+    WriteLn((High(A) + 1)*2 - 1);
+
+    For Count := 0 To ((High(A) + 1)*2 - 1) Do
+    Begin
+        I := Count;
+
+        While (I >= 0) And (Count - I <= I) Do
+        Begin
+
+            If (I <= High(A)) And (Count - I <= High(A)) And (Count - I >= 0) And (Count - I <= I) Then
+            Begin
+                Sum := Sum + A[Count - I][I];
+            End;
+
+            I := I - 1;
+        End;
+
+        Write(Sum, '  ');
+        SumAll := SumAll + Sum;
+        Sum := 0;
+        WriteLn(SumAll);
+    End;
+
+
+
+    //WriteLn(High(A));
+    //WriteLn(High(A[0]));
+
+    WriteLn('Всего: ', SumAll);
+
+    ReadLn;
+End.

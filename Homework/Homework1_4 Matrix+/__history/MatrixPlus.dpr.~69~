@@ -4,7 +4,7 @@ uses
   System.SysUtils;
 
 Var
-    A: Array [0..5, 0..5] Of Integer;
+    A: Array [0..4, 0..4] Of Integer;
     I, J, Count, Sum, SumAll: Integer;
 
 
@@ -46,26 +46,43 @@ Begin
     A[4][3] := 1;
     A[4][4] := 1;
 
-    For Count := 0 To ((High(A))*2 - 2) Do
-    Begin
-        I := 0;
-        J := 0;
+    I := 0;
+    J := 0;
 
-        While (I <= Count) And (I <= High(A)) Do
+    For Count := 0 To ((High(A) + 1)*2 - 1) Do
+    Begin
+        //I := 0;
+        //J := 0;
+        I := Count;
+
+        While (I <= Count) And (I >= 0) Do
         Begin
 
-            While (I <= J) And (J <= High(A[0])) And (J <= Count) And (I + J = Count) Do
+            If (I <= High(A)) And (I >= 0) And (Count - I <= High(A)) And (Count - I >= 0) Then
             Begin
-
-
-                Sum := Sum + A[I][J];
-                J := J + 1;
+                Sum := Sum + A[Count - I][I];
             End;
 
-            I := I + 1;
+
+
+
+
+//            While (I <= J) And (J <= High(A[0])) And (J >= Count) And (I + J = Count) Do
+//            Begin
+//                J := Count;
+//
+//
+//
+//                Sum := Sum + A[Count - J][J];
+////                J := J - 1;
+////                I := I + 1;
+//            End;
+//
+            I := I - 1;
+//            J := I;
         End;
 
-        //WriteLn(Sum);
+        Write(Sum, '  ');
         SumAll := SumAll + Sum;
         WriteLn(SumAll);
     End;
@@ -75,7 +92,7 @@ Begin
     //WriteLn(High(A));
     //WriteLn(High(A[0]));
 
-    WriteLn(SumAll);
+    WriteLn('Всего: ', SumAll);
 
     ReadLn;
 End.

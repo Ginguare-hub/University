@@ -85,10 +85,10 @@ Begin
             I := I - 1;
         End;
 
-        //Write(Sum, '  ');
+        Write(Sum, '  ');
         SumAll := SumAll + Sum;
         Sum := 0;
-        //WriteLn(SumAll);
+        WriteLn(SumAll);
     End;
 
 
