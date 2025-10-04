@@ -1,0 +1,56 @@
+Program Lab2_1;
+
+Uses
+    System.SysUtils;
+
+Type
+    TArr = Real;
+
+Var
+    Arr: Array Of TArr;
+    Length, I, Answer: Integer;
+    Num, MinDiff, SumOfNums, AbsDiff, ArithmMean: TArr;
+
+Begin
+
+    //Initialization
+    SumOfNums := 0;
+    MinDiff := 0;
+
+    //Проверку ввода и ввод Length
+    ReadLn(Length);
+
+    setlength(Arr, Length);
+
+    For I:= 0 To High(Arr) Do
+    Begin
+        //Проверку ввода
+        Write('Element ', I + 1, ' = ');
+        ReadLn(Num);
+        Arr[I] := Num;
+        SumOfNums := SumOfNums + Num;
+    End;
+
+    ArithmMean := SumOfNums / Length;
+    MinDiff := Abs(ArithmMean - Arr[0]);
+    AbsDiff := Arr[0];
+
+    For I:= 0 To High(Arr) Do
+    Begin
+        AbsDiff := Abs(ArithmMean - Arr[I]);
+
+        If MinDiff > AbsDiff Then
+        Begin
+            MinDiff := AbsDiff;
+            //WriteLn(MinDiff);
+            Answer := I + 1;
+        End;
+    End;
+
+//    WriteLn(SumOfNums:7:4);
+//    WriteLn(ArithmMean:7:4);
+//    WriteLn(MinDiff:7:4);
+
+    WriteLn('The element ', Answer, ' in the list is the number, that most fits with the arithmetic mean of the series.');
+    ReadLn;
+End.
