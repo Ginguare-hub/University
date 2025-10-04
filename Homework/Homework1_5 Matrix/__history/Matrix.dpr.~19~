@@ -4,21 +4,21 @@ uses
   System.SysUtils;
 
 Var
-    //A : Array [0..3, 0..3] Of Integer;
-    A : Array Of Array Of Integer;
+    A : Array [0..3, 0..3] Of Integer;
+    //A : Array Of Array Of Integer;
     SumVer, SumHor, SumAll, I, J, Length, LengthMinOne, Half : Integer;
 
 Begin
 
-    Length := 4;
+    Length := 5;
     LengthMinOne := Length - 1;
 
-    setlength(A, Length);
-
-    For I := 0 To LengthMinOne Do
-    Begin
-        setlength(A[I], Length);
-    End;
+//    setlength(A, Length);
+//
+//    For I := 0 To LengthMinOne Do
+//    Begin
+//        setlength(A[I], Length);
+//    End;
 
 //    A[0][0] := 0;
 //    A[0][1] := 7;

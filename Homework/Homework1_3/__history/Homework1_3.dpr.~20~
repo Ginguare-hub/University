@@ -80,6 +80,6 @@ Begin
 
 //End;
 
-    ReadLn;
+ReadLn;
 
 End.
