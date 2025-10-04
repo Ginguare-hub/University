@@ -9,7 +9,7 @@ Type
 Var
     Arr: Array Of TArr;
     Length, I, Answer: Integer;
-    Num, MinDiff, SumOfNums, AbsDiff, ArithmMean: TArr;
+    Num, MinDiff, AbsDiff, SumOfNums, ArithmMean: TArr;
 
 Begin
 
