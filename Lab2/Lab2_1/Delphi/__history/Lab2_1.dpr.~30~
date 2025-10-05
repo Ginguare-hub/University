@@ -31,7 +31,7 @@ Begin
 
     For I:= 0 To High(Arr) Do
     Begin
-        //Проверку ввода и ввод Num
+        //Проверку ввода
         Write('Element ', I + 1, ' = ');
         ReadLn(Num);
         Arr[I] := Num;
@@ -49,6 +49,7 @@ Begin
         If MinDiff > AbsDiff Then
         Begin
             MinDiff := AbsDiff;
+            //WriteLn(MinDiff);
             Answer := I + 1;
         End;
     End;

@@ -9,12 +9,20 @@ Type
 Var
     Arr: Array Of TArr;
     Length, I, Answer: Integer;
-    Num, MinDiff, SumOfNums, AbsDiff, ArithmMean: TArr;
+    Num, MinDiff, AbsDiff, SumOfNums, ArithmMean: TArr;
+    IsCorrect: boolean;
 
 Begin
 
-    //Initialization
+    Length := 1;
+    I := 0;
+    Answer := 1;
+    Num := 0;
+    ArithmMean := 0;
+    MinDiff := 0;
+    AbsDiff := 0;
     SumOfNums := 0;
+    IsCorrect := True;
 
     //Проверку ввода и ввод Length
     ReadLn(Length);
@@ -31,24 +39,25 @@ Begin
     End;
 
     ArithmMean := SumOfNums / Length;
+    MinDiff := Abs(ArithmMean - Arr[0]);
     AbsDiff := Arr[0];
 
     For I:= 0 To High(Arr) Do
     Begin
-
         AbsDiff := Abs(ArithmMean - Arr[I]);
 
         If MinDiff > AbsDiff Then
         Begin
             MinDiff := AbsDiff;
+            //WriteLn(MinDiff);
+            Answer := I + 1;
         End;
-
     End;
 
-    WriteLn(MinDiff:7:4);
+//    WriteLn(SumOfNums:7:4);
+//    WriteLn(ArithmMean:7:4);
+//    WriteLn(MinDiff:7:4);
 
-
-
-
+    WriteLn('The element ', Answer, ' in the list is the number, that most fits with the arithmetic mean of the series.');
     ReadLn;
 End.
