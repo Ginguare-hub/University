@@ -11,9 +11,17 @@ int main()
     tArr* arr; 
     int length, i, answer;
     tArr num, minDiff, absDiff, sumOfNums, arithmMean;
+    bool isIncorrect;
     
-    sumOfNums = 0;
+    length = 1;
+    i = 0;
+    answer = 1;
+    num = 0;
+    arithmMean = 0;
     minDiff = 0;
+    absDiff = 0;
+    sumOfNums = 0;
+    isIncorrect = false;
 
     cin >> length;
 
