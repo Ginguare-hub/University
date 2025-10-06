@@ -14,13 +14,13 @@ Const
 
 Var
     Arr: Array Of TArr;
-    Length, I, Answer: Integer;
+    ArrLength, I, Answer: Integer;
     Num, MinDiff, AbsDiff, SumOfNums, ArithmMean: TArr;
     IsCorrect: Boolean;
 
 Begin
 
-    Length := 1;
+    ArrLength := 1;
     I := 0;
     Answer := 1;
     Num := 0;
@@ -36,13 +36,13 @@ Begin
         IsCorrect := True;
 
         Try
-            ReadLn(Length);
+            ReadLn(ArrLength);
         Except
             WriteLn('Incorrect input, try again.');
             IsCorrect := False;
         End;
 
-        If IsCorrect And ((Length < MIN_LENGTH) Or (Length > MAX_LENGTH)) Then
+        If IsCorrect And ((ArrLength < MIN_LENGTH) Or (ArrLength > MAX_LENGTH)) Then
         Begin
             WriteLn('The number must fit the range [', MIN_LENGTH, ',', MAX_LENGTH, '].');
             IsCorrect := False;
@@ -50,7 +50,7 @@ Begin
 
     Until IsCorrect;
 
-    Setlength(Arr, Length);
+    Setlength(Arr, ArrLength);
 
     For I := 0 To High(Arr) Do
     Begin
@@ -79,7 +79,7 @@ Begin
         SumOfNums := SumOfNums + Num;
     End;
 
-    ArithmMean := SumOfNums / Length;
+    ArithmMean := SumOfNums / ArrLength;
     MinDiff := Abs(ArithmMean - Arr[0]);
     AbsDiff := Arr[0];
 

@@ -36,8 +36,7 @@ int main()
             isIncorrect = true;
             std::cout << "Ошибка ввода, повторите попытку." << std::endl;
             std::cin.clear();
-            while (std::cin.get() != '\n')
-                ;
+            while (std::cin.get() != '\n');
         }
 
         if (!isIncorrect && std::cin.get() != '\n')
