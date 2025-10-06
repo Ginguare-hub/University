@@ -82,7 +82,7 @@ public class Lab2_1 {
         minDiff = Math.abs(arithmMean - arr[0]);
         absDiff = arr[0];
 
-        for (i = 0; i < length; i++){
+        for (i = 0; i < length; i++) {
             absDiff = Math.abs(arithmMean - arr[i]);
             if (minDiff > absDiff) {
                 minDiff = absDiff;
