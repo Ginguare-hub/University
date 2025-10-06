@@ -95,7 +95,7 @@ Begin
     End;
 
     //Harder --------------
-    Write('The element(s) ');
+    Write('The elements ');
 
     For I := 0 To High(Arr) Do
     Begin
@@ -108,7 +108,7 @@ Begin
         End;
     End;
 
-    Write('in the list is the number(s), that most fits with the arithmetic mean of the series.');
+    Write('in the list is the numbers, that most fits with the arithmetic mean of the series.');
     //Harder --------------
 
 
