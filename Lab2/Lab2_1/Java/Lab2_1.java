@@ -8,14 +8,14 @@ public class Lab2_1 {
 
         final int MAX_LENGTH = 20;
         final int MIN_LENGTH = 1;
-        final double MAX_NUM = 12345.0;
+        final double MAX_NUM =  12345.0;
         final double MIN_NUM = -12345.0;
-
-        double[] arr;
 
         int length, i, answer;
         double num, arithmMean, minDiff, absDiff, sumOfNums;
         boolean isIncorrect;
+        
+        double[] arr;
 
         //initialization
         length = 1;
@@ -33,7 +33,7 @@ public class Lab2_1 {
         do {
 
             isIncorrect = false;
-            System.out.print("Enter the number of numbers in the list:\n");
+            System.out.print("Enter the number of numbers in the list: ");
 
             try {
                 length = Integer.parseInt(scan.nextLine());
@@ -46,7 +46,7 @@ public class Lab2_1 {
  
             if (!isIncorrect && (length < MIN_LENGTH || length > MAX_LENGTH)) {
                 isIncorrect = true;
-                System.out.printf("The number must fit the range [%d,%d]\n", MIN_LENGTH, MAX_LENGTH);
+                System.out.printf("The number must fit the range [%d,%d].\n", MIN_LENGTH, MAX_LENGTH);
 
             }
 
@@ -72,7 +72,7 @@ public class Lab2_1 {
  
                 if (!isIncorrect && (num < MIN_NUM || num > MAX_NUM)) {
                     isIncorrect = true;
-                    System.out.printf("The number must fit the range [%d,%d]\n", MIN_NUM, MAX_NUM);
+                    System.out.printf("The number must fit the range [%d,%d].\n", MIN_NUM, MAX_NUM);
 
                 }
 

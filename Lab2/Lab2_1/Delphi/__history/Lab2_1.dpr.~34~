@@ -6,6 +6,12 @@ Uses
 Type
     TArr = Real;
 
+Const
+    MAX_LENGTH: Integer = 20;
+    MIN_LENGTH: Integer =  1;
+    MAX_NUM: TArr =  12345;
+    MIN_NUM: TArr = -12345;
+
 Var
     Arr: Array Of TArr;
     Length, I, Answer: Integer;
@@ -24,8 +30,24 @@ Begin
     SumOfNums := 0;
     IsCorrect := True;
 
-    //Проверку ввода и ввод Length
-    ReadLn(Length);
+    Repeat
+
+        Write('Enter the number of numbers in the list: ');
+        IsCorrect := True;
+
+        Try
+            ReadLn(Length);
+            If (Length < MIN_LENGTH) Or (Length > MAX_LENGTH) Then
+            Begin
+                WriteLn('The number must fit the range [', MIN_LENGTH, ',', MAX_LENGTH, ']');
+                IsCorrect := False;
+            End;
+        Except
+            WriteLn('Incorrect input, try again.');
+            IsCorrect := False;
+        End;
+
+    Until IsCorrect;
 
     setlength(Arr, Length);
 
@@ -49,7 +71,6 @@ Begin
         If MinDiff > AbsDiff Then
         Begin
             MinDiff := AbsDiff;
-            //WriteLn(MinDiff);
             Answer := I + 1;
         End;
     End;

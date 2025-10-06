@@ -94,7 +94,6 @@ Begin
         End;
     End;
 
-    //Harder --------------
     Write('The elements ');
 
     For I := 0 To High(Arr) Do
@@ -103,14 +102,12 @@ Begin
 
         If MinDiff = AbsDiff Then
         Begin
-            Write(I + 1, ', ');
+            Write(I + 1);
             Answer := I + 1;
         End;
     End;
 
-    Write('in the list is the numbers, that most fits with the arithmetic mean of the series.');
-    //Harder --------------
-
+    Write(' in the list is the numbers, that most fits with the arithmetic mean of the series.');
 
     //WriteLn('The element ', Answer, ' in the list is the number, that most fits with the arithmetic mean of the series.');
     ReadLn;

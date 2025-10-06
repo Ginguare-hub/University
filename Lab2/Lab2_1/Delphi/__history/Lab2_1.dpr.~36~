@@ -44,7 +44,7 @@ Begin
 
         If IsCorrect And ((Length < MIN_LENGTH) Or (Length > MAX_LENGTH)) Then
         Begin
-            WriteLn('The number must fit the range [', MIN_LENGTH, ',', MAX_LENGTH, '].');
+            WriteLn('The number must fit the range [', MIN_LENGTH, ',', MAX_LENGTH, ']');
             IsCorrect := False;
         End;
 
@@ -69,7 +69,7 @@ Begin
 
             If IsCorrect And ((Num < MIN_Num) Or (Num > MAX_Num)) Then
             Begin
-                WriteLn('The number must fit the range [', MIN_NUM:8:0, ',', MAX_NUM:8:0, '].');
+                WriteLn('The number must fit the range [', MIN_NUM:7:4, ',', MAX_NUM:7:4, ']');
                 IsCorrect := False;
             End;
 
@@ -90,28 +90,11 @@ Begin
         If MinDiff > AbsDiff Then
         Begin
             MinDiff := AbsDiff;
-            //Answer := I + 1;
-        End;
-    End;
-
-    //Harder --------------
-    Write('The elements ');
-
-    For I := 0 To High(Arr) Do
-    Begin
-        AbsDiff := Abs(ArithmMean - Arr[I]);
-
-        If MinDiff = AbsDiff Then
-        Begin
-            Write(I + 1, ', ');
             Answer := I + 1;
         End;
     End;
 
-    Write('in the list is the numbers, that most fits with the arithmetic mean of the series.');
-    //Harder --------------
-
-
-    //WriteLn('The element ', Answer, ' in the list is the number, that most fits with the arithmetic mean of the series.');
+    WriteLn('The element ', Answer, ' in the list is the number, that most fits with the arithmetic mean of the series.');
     ReadLn;
+
 End.
