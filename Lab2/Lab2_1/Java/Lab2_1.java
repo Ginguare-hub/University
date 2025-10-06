@@ -37,17 +37,14 @@ public class Lab2_1 {
 
             try {
                 length = Integer.parseInt(scan.nextLine());
-
             } catch (NumberFormatException e) {
                 isIncorrect = true;
                 System.out.print("Incorrect input, try again.\n");
-
             }
  
             if (!isIncorrect && (length < MIN_LENGTH || length > MAX_LENGTH)) {
                 isIncorrect = true;
                 System.out.printf("The number must fit the range [%d,%d].\n", MIN_LENGTH, MAX_LENGTH);
-
             }
 
         } while (isIncorrect);
@@ -63,17 +60,14 @@ public class Lab2_1 {
 
                 try {
                     num = Integer.parseInt(scan.nextLine());
-
                 } catch (NumberFormatException e) {
                     isIncorrect = true;
                     System.out.print("Incorrect input, try again.\n");
-
                 }
  
                 if (!isIncorrect && (num < MIN_NUM || num > MAX_NUM)) {
                     isIncorrect = true;
                     System.out.printf("The number must fit the range [%d,%d].\n", MIN_NUM, MAX_NUM);
-
                 }
 
             } while (isIncorrect);
@@ -90,13 +84,11 @@ public class Lab2_1 {
 
         for (i = 0; i < length; i++){
             absDiff = Math.abs(arithmMean - arr[i]);
-
             if (minDiff > absDiff) {
                 minDiff = absDiff;
                 answer = i + 1;
             }
         }
-
         System.out.print(answer);
     }
 }
