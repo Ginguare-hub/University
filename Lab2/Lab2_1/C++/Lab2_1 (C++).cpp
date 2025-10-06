@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int main() 
+int main()
 {
 
     typedef double tArr;
@@ -13,48 +13,48 @@ int main()
     const tArr MAX_NUM = 12345.0;
     const tArr MIN_NUM = -12345.0;
 
-    int arrLength, i, answer;
+    int arrLength, i;
     bool isIncorrect;
-    tArr num, minDiff, absDiff, sumOfNums, arithmMean;
-    tArr* arr; 
+    tArr num, minDiff, currDiff, sumOfNums, arithmMean;
+    tArr *arr;
 
     arrLength = 1;
     i = 0;
-    answer = 1;
     num = 0;
     arithmMean = 0;
     minDiff = 0;
-    absDiff = 0;
+    currDiff = 0;
     sumOfNums = 0;
     isIncorrect = false;
-    
+
+    cout << "Programm finds the element(s) in the list, that most fits with the arithmetic mean of the series." << endl;
+
     do
+    {
+        std::cout << "Enter the number of numbers in the list: ";
+        std::cin >> arrLength;
+
+        isIncorrect = false;
+
+        if (std::cin.get() != '\n' || std::cin.fail())
         {
-            std::cout << "Enter the number of numbers in the list: ";
-            std::cin >> arrLength;
+            isIncorrect = true;
+            std::cout << "Incorrect input, try again." << std::endl;
+            std::cin.clear();
+            while (std::cin.get() != '\n');
+        }
 
-            isIncorrect = false;
+        if (!isIncorrect && ((arrLength < MIN_LENGTH) || (arrLength > MAX_LENGTH)))
+        {
+            isIncorrect = true;
+            std::cout << "The number must fit the range [" << MIN_LENGTH << "," << MAX_LENGTH << "]." << std::endl;
+        }
 
-            if (std::cin.get() != '\n' || std::cin.fail())
-            {
-                isIncorrect = true;
-                std::cout << "Incorrect input, try again." << std::endl;
-                std::cin.clear();
-                while (std::cin.get() != '\n');
-            }
-
-            if (!isIncorrect && ((arrLength < MIN_LENGTH) || (arrLength > MAX_LENGTH)))
-            {
-                isIncorrect = true;
-                std::cout << "The number must fit the range [" << MIN_LENGTH << "," << MAX_LENGTH << "]." << std::endl;
-                while (std::cin.get() != '\n');
-            }  
-
-        } while (isIncorrect);
+    } while (isIncorrect);
 
     arr = new tArr[arrLength];
 
-    for (i = 0; i < arrLength; i++) 
+    for (i = 0; i < arrLength; i++)
     {
         do
         {
@@ -76,30 +76,40 @@ int main()
                 isIncorrect = true;
                 std::cout << "The number must fit the range [" << MIN_NUM << "," << MAX_NUM << "]." << std::endl;
                 while (std::cin.get() != '\n');
-            }  
+            }
 
         } while (isIncorrect);
-        
+
         arr[i] = num;
         sumOfNums = sumOfNums + num;
-    } 
+    }
 
     arithmMean = sumOfNums / arrLength;
     minDiff = abs(arithmMean - arr[0]);
-    absDiff = arr[0];
 
     for (i = 0; i < arrLength; i++)
     {
-        absDiff = abs(arithmMean - arr[i]);
+        currDiff = abs(arithmMean - arr[i]);
 
-        if (minDiff > absDiff) 
+        if (minDiff > currDiff)
         {
-            minDiff = absDiff;
-            answer = i + 1;
+            minDiff = currDiff;
         }
     }
 
-    cout << "The element " << answer << " in the list is the number, that most fits with the arithmetic mean of the series." << endl;
+    cout << "The element(s) ";
+
+    for (i = 0; i < arrLength; i++)
+    {
+        currDiff = abs(arithmMean - arr[i]);
+
+        if (minDiff = currDiff)
+        {
+            cout << i + 1 << " ";
+        }
+    }
+
+    cout << "in the list is the number(s), that most fits with the arithmetic mean of the series." << endl;
 
     delete[] arr;
     return 0;

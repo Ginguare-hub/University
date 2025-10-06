@@ -11,8 +11,8 @@ public class Lab2_1 {
         final double MAX_NUM =  12345.0;
         final double MIN_NUM = -12345.0;
 
-        int length, i, answer;
-        double num, arithmMean, minDiff, absDiff, sumOfNums;
+        int length, i;
+        double num, arithmMean, minDiff, currDiff, sumOfNums;
         boolean isIncorrect;
         
         double[] arr;
@@ -20,11 +20,10 @@ public class Lab2_1 {
         //initialization
         length = 1;
         i = 0;
-        answer = 1;
         num = 0;
         arithmMean = 0;
         minDiff = 0;
-        absDiff = 0;
+        currDiff = 0;
         sumOfNums = 0;
         isIncorrect = false;
 
@@ -80,15 +79,13 @@ public class Lab2_1 {
 
         arithmMean = sumOfNums / length;
         minDiff = Math.abs(arithmMean - arr[0]);
-        absDiff = arr[0];
 
         for (i = 0; i < length; i++) {
-            absDiff = Math.abs(arithmMean - arr[i]);
-            if (minDiff > absDiff) {
-                minDiff = absDiff;
-                answer = i + 1;
+            currDiff = Math.abs(arithmMean - arr[i]);
+            if (minDiff > currDiff) {
+                minDiff = currDiff;
             }
         }
-        System.out.print(answer);
+        System.out.print();
     }
 }

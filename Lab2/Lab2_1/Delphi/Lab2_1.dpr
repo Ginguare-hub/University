@@ -13,22 +13,23 @@ Const
     MIN_NUM: TArr = -12345;
 
 Var
-    Arr: Array Of TArr;
-    ArrLength, I, Answer: Integer;
-    Num, MinDiff, AbsDiff, SumOfNums, ArithmMean: TArr;
+    ArrLength, I: Integer;
     IsCorrect: Boolean;
+    Num, MinDiff, CurrDiff, SumOfNums, ArithmMean: TArr;
+    Arr: Array Of TArr;
 
 Begin
 
     ArrLength := 1;
     I := 0;
-    Answer := 1;
     Num := 0;
     ArithmMean := 0;
     MinDiff := 0;
-    AbsDiff := 0;
+    CurrDiff := 0;
     SumOfNums := 0;
     IsCorrect := True;
+
+    WriteLn('Programm finds the element(s) in the list, that most fits with the arithmetic mean of the series.');
 
     Repeat
 
@@ -81,37 +82,26 @@ Begin
 
     ArithmMean := SumOfNums / ArrLength;
     MinDiff := Abs(ArithmMean - Arr[0]);
-    AbsDiff := Arr[0];
 
     For I := 0 To High(Arr) Do
     Begin
-        AbsDiff := Abs(ArithmMean - Arr[I]);
+        CurrDiff := Abs(ArithmMean - Arr[I]);
 
-        If MinDiff > AbsDiff Then
-        Begin
-            MinDiff := AbsDiff;
-            //Answer := I + 1;
-        End;
+        If MinDiff > CurrDiff Then
+            MinDiff := CurrDiff;
     End;
 
-    //Harder --------------
     Write('The element(s) ');
 
     For I := 0 To High(Arr) Do
     Begin
-        AbsDiff := Abs(ArithmMean - Arr[I]);
+        CurrDiff := Abs(ArithmMean - Arr[I]);
 
-        If MinDiff = AbsDiff Then
-        Begin
+        If MinDiff = CurrDiff Then
             Write(I + 1, ' ');
-            Answer := I + 1;
-        End;
     End;
 
-    Write('in the list is the number(s), that most fits with the arithmetic mean of the series.');
-    //Harder --------------
-
-
-    //WriteLn('The element ', Answer, ' in the list is the number, that most fits with the arithmetic mean of the series.');
+    WriteLn('in the list is the number(s), that most fits with the arithmetic mean of the series.');
     ReadLn;
+
 End.
