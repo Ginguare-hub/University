@@ -86,6 +86,16 @@ public class Lab2_1 {
                 minDiff = currDiff;
             }
         }
-        System.out.print();
+
+        System.out.print("The element(s) ");
+
+        for (i = 0; i < length; i++) {
+            currDiff = Math.abs(arithmMean - arr[i]);
+            if (minDiff == currDiff) {
+                System.out.printf("%d ", i + 1);
+            }
+        }
+
+        System.out.print("in the list is the number(s), that most fits with the arithmetic mean of the series.\n");
     }
 }

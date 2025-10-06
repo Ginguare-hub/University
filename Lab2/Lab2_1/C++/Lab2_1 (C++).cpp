@@ -103,7 +103,7 @@ int main()
     {
         currDiff = abs(arithmMean - arr[i]);
 
-        if (minDiff = currDiff)
+        if (minDiff == currDiff)
         {
             cout << i + 1 << " ";
         }
