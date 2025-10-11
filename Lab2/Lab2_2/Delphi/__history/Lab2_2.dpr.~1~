@@ -1,0 +1,34 @@
+Program Lab2_2;
+
+uses
+  System.SysUtils;
+
+Function GetPrimeNumber(Number: Integer): Integer;
+Begin
+
+    Var
+        IsNumberOdd: Boolean;
+        Count: Integer;
+
+
+
+    IsNumberOdd := Odd(Number);
+
+    If Number = 1 Then
+        GetPrimeNumber := 2
+    Else If Number = 2 Then
+        GetPrimeNumber := 3;
+
+    While (Count < Number) Do
+
+
+End;
+
+Var
+    N: Integer;
+    IsCorrect: Boolean;
+
+Begin
+
+
+End.
