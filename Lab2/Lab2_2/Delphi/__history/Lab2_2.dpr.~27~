@@ -3,11 +3,6 @@ Program Lab2_2;
 Uses
     System.SysUtils;
 
-Function IsNumberPrime(PNumber: Integer): Boolean;
-Begin
-
-End;
-
 Function GetPrimeNumber(InputNum: Integer): Integer;
 Begin
 
@@ -68,44 +63,20 @@ End;
 Function LucasLehmerTest(Number: Integer): Boolean; //принимает номер простого числа в последовательности простых чисел
 Begin                                               //и проверяет является ли оно числом Марсена
     Var MNumber, K, I, S: Integer;
-    Var RealNumber, Epsilon: Real;
 
-    Epsilon := 0.00001;
-    S := 4;
-    K := 1;
+    Repeat
+        If Number = 1 Then
+            S := 4
+        Else
+            S := S*S - 2;
 
-//    Repeat
-//        If (Number = 1) Or (Number = 2) Then
-//            S := 4
-//        Else
-//            S := S*S - 2;
-//
-//        WriteLn(S, ' ');
-//    Until;
+        //WriteLn(S, ' ');
+    Until S > GetPrimeNumber(Number);
 
-    RealNumber := Ln(GetPrimeNumber(Number)) / Ln(2);
-
-    If Abs(RealNumber - Round(RealNumber)) < Epsilon Then
-        While RealNumber > GetPrimeNumber(K) Do
-        Begin
-
-            If GetPrimeNumber(K) = RealNumber Then
-                LucasLehmerTest := True;
-
-            K := K + 1;
-        End;
-
-
-
-
-
-//    If Number = 1 Then
-//        LucasLehmerTest := False
-//    Else
-//    If S Mod GetPrimeNumber(Number) = 0 Then
-//        LucasLehmerTest := True
-//    Else
-//        LucasLehmerTest := False;
+    If S Mod GetPrimeNumber(Number) = 0 Then
+        LucasLehmerTest := True
+    Else
+        LucasLehmerTest := False;
 End;
 
 Var
@@ -116,7 +87,7 @@ Begin
 
     WriteLn(GetPrimeNumber(20));
     WriteLn(LucasLehmerTest(1));
-    WriteLn(LucasLehmerTest(2));
+//    WriteLn(LucasLehmerTest(2));
 //    WriteLn(LucasLehmerTest(3));
 //    WriteLn(LucasLehmerTest(4));
 //    WriteLn(LucasLehmerTest(5));

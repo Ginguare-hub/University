@@ -3,11 +3,6 @@ Program Lab2_2;
 Uses
     System.SysUtils;
 
-Function IsNumberPrime(PNumber: Integer): Boolean;
-Begin
-
-End;
-
 Function GetPrimeNumber(InputNum: Integer): Integer;
 Begin
 
@@ -67,12 +62,9 @@ End;
 
 Function LucasLehmerTest(Number: Integer): Boolean; //принимает номер простого числа в последовательности простых чисел
 Begin                                               //и проверяет является ли оно числом Марсена
-    Var MNumber, K, I, S: Integer;
-    Var RealNumber, Epsilon: Real;
+    Var MNumber, K, I, S, IntNumber: Integer;
 
-    Epsilon := 0.00001;
     S := 4;
-    K := 1;
 
 //    Repeat
 //        If (Number = 1) Or (Number = 2) Then
@@ -83,18 +75,11 @@ Begin                                               //и проверяет является ли он
 //        WriteLn(S, ' ');
 //    Until;
 
-    RealNumber := Ln(GetPrimeNumber(Number)) / Ln(2);
-
-    If Abs(RealNumber - Round(RealNumber)) < Epsilon Then
-        While RealNumber > GetPrimeNumber(K) Do
-        Begin
-
-            If GetPrimeNumber(K) = RealNumber Then
-                LucasLehmerTest := True;
-
-            K := K + 1;
-        End;
-
+    Try
+        IntNumber := Ln(GetPrimeNumber(Number)) / Ln(2);
+    Except
+        LucasLehmerTest := False;
+    End;
 
 
 

@@ -3,11 +3,6 @@ Program Lab2_2;
 Uses
     System.SysUtils;
 
-Function IsNumberPrime(PNumber: Integer): Boolean;
-Begin
-
-End;
-
 Function GetPrimeNumber(InputNum: Integer): Integer;
 Begin
 
