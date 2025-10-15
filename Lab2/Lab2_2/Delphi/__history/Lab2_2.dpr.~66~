@@ -60,37 +60,56 @@ Begin
     End;
 End;
 
-Function LucasLehmerTest(Number: Integer): Boolean; //принимает номер простого числа в последовательности простых чисел
-Begin                                               //и проверяет является ли оно числом Марсена
-    Var MNumber, K, I, S, IntNumber: Integer;
+Function DiscoverIsNumberPrime(Number: Integer): Boolean;
+Begin
+    Var I: Integer;
+    Var IsShouldStop: Boolean;
 
-    S := 4;
+    IsShouldStop := False;
+    DiscoverIsNumberPrime := False;
 
-//    Repeat
-//        If (Number = 1) Or (Number = 2) Then
-//            S := 4
-//        Else
-//            S := S*S - 2;
-//
-//        WriteLn(S, ' ');
-//    Until;
-
-    Try
-        IntNumber := Ln(GetPrimeNumber(Number)) / Ln(2);
-    Except
-        LucasLehmerTest := False;
+    For I := 2 To (Number - 1) Do
+    Begin
+        If (Number Mod I = 0) And (Not IsShouldStop) Then
+        Begin
+            DiscoverIsNumberPrime := False;
+            IsShouldStop := True;
+        End
+        Else
+        If Not IsShouldStop Then
+            DiscoverIsNumberPrime := True;
     End;
 
+    If Number = 2 Then
+        DiscoverIsNumberPrime := True;
 
+End;
 
+Procedure GetMersenneNumbers(N: Integer);
+Begin
 
-//    If Number = 1 Then
-//        LucasLehmerTest := False
-//    Else
-//    If S Mod GetPrimeNumber(Number) = 0 Then
-//        LucasLehmerTest := True
-//    Else
-//        LucasLehmerTest := False;
+    Var I, J, Answer, MersenneNumber: Integer;
+
+    I := 1;
+    Answer := 3;
+    MersenneNumber := 2;
+
+    While Answer < N Do
+    Begin
+
+        MersenneNumber := 2;
+
+        For J := 2 To GetPrimeNumber(I) Do
+            MersenneNumber := MersenneNumber * 2;
+
+        MersenneNumber := MersenneNumber - 1;
+        Answer := MersenneNumber;
+
+        If (DiscoverIsNumberPrime(Answer) = True) And (Answer < N) Then
+            WriteLn(Answer);
+
+        I := I + 1;
+    End;
 End;
 
 Var
@@ -98,20 +117,7 @@ Var
     IsCorrect: Boolean;
 
 Begin
-
-    WriteLn(GetPrimeNumber(20));
-    WriteLn(LucasLehmerTest(1));
-    WriteLn(LucasLehmerTest(2));
-//    WriteLn(LucasLehmerTest(3));
-//    WriteLn(LucasLehmerTest(4));
-//    WriteLn(LucasLehmerTest(5));
-
-
-
-
+    GetMersenneNumbers(524288);
 
     ReadLn;
-
-
-
 End.

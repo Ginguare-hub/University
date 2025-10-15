@@ -7,7 +7,7 @@ Function GetPrimeNumber(InputNum: Integer): Integer;
 Begin
 
     Var
-        Number, J, Counter: Integer;
+        I, J, Counter: Integer;
     Var
         IsShouldStop, IsMustStop: Boolean;
 
@@ -17,7 +17,7 @@ Begin
     IsMustStop := False;
     IsShouldStop := False;
 
-    Number := 2;
+    I := 2;
 
     If InputNum = 1 Then
         GetPrimeNumber := 2
@@ -32,10 +32,10 @@ Begin
 
                 IsShouldStop := False;
 
-                For J := 2 To (Number - 1) Do
+                For J := 2 To (I - 1) Do
                 Begin
 
-                    If (Number Mod J = 0) And (Not IsShouldStop) Then
+                    If (I Mod J = 0) And (Not IsShouldStop) Then
                     Begin
                         IsShouldStop := True;
                     End
@@ -51,10 +51,10 @@ Begin
                 If Counter = InputNum Then
                 Begin
                     IsMustStop := True;
-                    GetPrimeNumber := Number;
+                    GetPrimeNumber := I;
                 End;
 
-                Number := Number + 1;
+                I := I + 1;
 
             End;
         End;
@@ -122,4 +122,5 @@ Begin
     GetMersenneNumbers(524288);
 
     ReadLn;
+
 End.
