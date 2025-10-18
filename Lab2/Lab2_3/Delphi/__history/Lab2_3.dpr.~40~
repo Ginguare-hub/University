@@ -64,7 +64,7 @@ Begin
     I := 0;
     J := 0;
     Limiter := High(ArrayA);
-    BoubleSortLimiter := Length(ArrayA) * (Length(ArrayA) Mod 2);
+    BoubleSortLimiter := Length(ArrayA) * (Length(ArrayA) Div 2);
 
     For K := 1 To BoubleSortLimiter Do
     Begin
@@ -95,14 +95,17 @@ Begin
 
                     End
                     Else
-                    If (I + 2 < High(ArrayA)) Or (I + 2 = High(ArrayA)) Then
-                    Begin
+                        If (I + 2 < High(ArrayA)) Or (I + 2 = High(ArrayA)) Then
+                        Begin
 
-                        ArrayA[I, J] := ArrayA[I, J] + ArrayA[I + 2, 0];
-                        ArrayA[I + 2, 0] := ArrayA[I, J] - ArrayA[I + 2, 0];
-                        ArrayA[I, J] := ArrayA[I, J] - ArrayA[I + 2, 0];
+                            If ArrayA[I, J] < ArrayA[I + 2, 0] Then
+                            Begin
+                                ArrayA[I, J] := ArrayA[I, J] + ArrayA[I + 2, 0];
+                                ArrayA[I + 2, 0] := ArrayA[I, J] - ArrayA[I + 2, 0];
+                                ArrayA[I, J] := ArrayA[I, J] - ArrayA[I + 2, 0];
+                            End;
 
-                    End;
+                        End;
 
                 End;
 
