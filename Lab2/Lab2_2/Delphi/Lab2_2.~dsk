@@ -23,7 +23,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=9896
 ClientHeight=8918
-TBDockHeight=8875
+TBDockHeight=8918
 LRDockWidth=9896
 Dockable=1
 StayOnTop=0
@@ -46,9 +46,9 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 [View0]
 CustomEditViewType=TEditView
 Module=C:\GitHub\University\Lab2\Lab2_2\Delphi\Lab2_2.dpr
-CursorX=5
-CursorY=8
-TopLine=1
+CursorX=108
+CursorY=98
+TopLine=86
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -278,8 +278,8 @@ TBDockHeight=364
 LRDockWidth=273
 Dockable=1
 StayOnTop=0
-Name=5
-Description=5
+Name=15
+Description=42
 filter=1
 
 [DebugLogView]
