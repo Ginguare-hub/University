@@ -83,7 +83,7 @@ Begin
                 For J := 0 To Limiter Do
                 Begin
 
-                    If (J + 1 < High(ArrayA[I])) Or (J + 1 = High(ArrayA[I])) Then
+                    If (J + 1 < High(ArrayA[I])) Or (J + 1 = High(ArrayA[I])) Then // Можно запихнуть в функцию
                     Begin
 
                         If ArrayA[I, J] < ArrayA[I, J + 1] Then
