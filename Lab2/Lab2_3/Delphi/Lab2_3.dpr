@@ -84,24 +84,28 @@ Begin
                 Begin
 
                     If (J + 1 < High(ArrayA[I])) Or (J + 1 = High(ArrayA[I])) Then
+                    Begin
+
                         If ArrayA[I, J] < ArrayA[I, J + 1] Then
                         Begin
                             ArrayA[I, J] := ArrayA[I, J] + ArrayA[I, J + 1];
                             ArrayA[I, J + 1] := ArrayA[I, J] - ArrayA[I, J + 1];
                             ArrayA[I, J] := ArrayA[I, J] - ArrayA[I, J + 1];
-                        End
-                    Else
-                        If (I + 2 < High(ArrayA)) Or (I + 2 = High(ArrayA)) Then
-                        Begin
-
-                            If ArrayA[I, J] < ArrayA[I + 2, 0] Then
-                            Begin
-                                ArrayA[I, J] := ArrayA[I, J] + ArrayA[I + 2, 0];
-                                ArrayA[I + 2, 0] := ArrayA[I, J] - ArrayA[I + 2, 0];
-                                ArrayA[I, J] := ArrayA[I, J] - ArrayA[I + 2, 0];
-                            End;
-
                         End;
+
+                    End
+                    Else
+                    If (I + 2 < High(ArrayA)) Or (I + 2 = High(ArrayA)) Then
+                    Begin
+
+                        If ArrayA[I, J] < ArrayA[I + 2, 0] Then
+                        Begin
+                            ArrayA[I, J] := ArrayA[I, J] + ArrayA[I + 2, 0];
+                            ArrayA[I + 2, 0] := ArrayA[I, J] - ArrayA[I + 2, 0];
+                            ArrayA[I, J] := ArrayA[I, J] - ArrayA[I + 2, 0];
+                        End;
+
+                    End;
 
                 End;
 
