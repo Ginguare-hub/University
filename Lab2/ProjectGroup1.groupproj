@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{DEF0605A-8F1A-4531-9724-D81EE4EB7B01}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Lab2_4\Delphi\Lab2_4.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Lab2_3\Delphi\Lab2_3.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Lab2_4">
+        <MSBuild Projects="Lab2_4\Delphi\Lab2_4.dproj"/>
+    </Target>
+    <Target Name="Lab2_4:Clean">
+        <MSBuild Projects="Lab2_4\Delphi\Lab2_4.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Lab2_4:Make">
+        <MSBuild Projects="Lab2_4\Delphi\Lab2_4.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Lab2_3">
+        <MSBuild Projects="Lab2_3\Delphi\Lab2_3.dproj"/>
+    </Target>
+    <Target Name="Lab2_3:Clean">
+        <MSBuild Projects="Lab2_3\Delphi\Lab2_3.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Lab2_3:Make">
+        <MSBuild Projects="Lab2_3\Delphi\Lab2_3.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Lab2_4;Lab2_3"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Lab2_4:Clean;Lab2_3:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Lab2_4:Make;Lab2_3:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

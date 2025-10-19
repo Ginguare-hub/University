@@ -1,15 +1,10 @@
 ﻿[Modules]
-Module0=C:\GitHub\University\Lab2\Lab2_3\Delphi\Lab2_3.dproj
-Count=1
+Count=0
 EditWindowCount=1
 
-[C:\GitHub\University\Lab2\Lab2_3\Delphi\Lab2_3.dproj]
-ModuleType=TBaseProject
-
 [EditWindow0]
-ViewCount=1
-CurrentEditView=C:\GitHub\University\Lab2\Lab2_3\Delphi\Lab2_3.dpr
-View0=0
+ViewCount=0
+CurrentView=-1
 PercentageSizes=1
 Create=1
 Visible=1
@@ -23,8 +18,8 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=9896
 ClientHeight=8918
-TBDockHeight=13543
-LRDockWidth=12070
+TBDockHeight=8918
+LRDockWidth=9896
 Dockable=1
 StayOnTop=0
 DockedToMainForm=1
@@ -37,22 +32,11 @@ RightPanelSize=1999
 RightPanelClients=DockSite2,DockSite4
 RightPanelData=000008000101000000000A1100000000000001CF0700000000000001000000004A12000009000000446F636B53697465320100000000431B000009000000446F636B5369746534FFFFFFFF
 BottomPanelSize=1484
-BottomPanelClients=DockSite1,MessageView
+BottomPanelClients=MessageView,DockSite1
 BottomPanelData=0000080001020100000009000000446F636B5369746531D93D00000000000002CC050000000000000100000000D93D00000F0000004D65737361676556696577466F726DFFFFFFFF
 BottomMiddlePanelSize=0
 BottomMiddlePanelClients=DockSite0,GraphDrawingModel
 BottomMiddelPanelData=0000080001020200000009000000446F636B536974653010000000477261706844726177696E67566965779A1D00000000000002F506000000000000FFFFFFFF
-
-[View0]
-CustomEditViewType=TEditView
-Module=C:\GitHub\University\Lab2\Lab2_3\Delphi\Lab2_3.dpr
-CursorX=143
-CursorY=96
-TopLine=72
-LeftCol=1
-Elisions=
-Bookmarks=
-EditViewName=C:\GitHub\University\Lab2\Lab2_3\Delphi\Lab2_3.dpr
 
 [Watches]
 Count=0
@@ -193,11 +177,11 @@ State=0
 Left=0
 Top=0
 Width=1999
-Height=12935
+Height=8310
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1999
-ClientHeight=12935
+ClientHeight=8310
 TBDockHeight=5957
 LRDockWidth=2510
 Dockable=1
@@ -209,8 +193,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-78
-Top=-367
+Left=-8
+Top=-8
 Width=1846
 Height=3141
 MaxLeft=-1
@@ -455,11 +439,11 @@ State=0
 Left=0
 Top=0
 Width=1999
-Height=12935
+Height=8310
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1999
-ClientHeight=12935
+ClientHeight=8310
 TBDockHeight=4880
 LRDockWidth=7148
 Dockable=1
@@ -538,11 +522,11 @@ State=0
 Left=0
 Top=0
 Width=1999
-Height=12935
+Height=8310
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1999
-ClientHeight=12935
+ClientHeight=8310
 TBDockHeight=4880
 LRDockWidth=5309
 Dockable=1
@@ -689,4 +673,7 @@ StayOnTop=0
 TabPosition=1
 ActiveTabID=ToolForm
 TabDockClients=ToolForm,TemplateView
+
+[ActiveProject]
+ActiveProject=2
 
