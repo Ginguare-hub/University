@@ -152,7 +152,7 @@ Begin
     //
     //WriteOutArray(A);
 
-    WriteOutArray(BinaryToHexidecimal(0));
+    WriteOutArray(BinaryToHexidecimal(110010101));
 
     ReadLn;
 

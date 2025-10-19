@@ -3,13 +3,37 @@ Program Lab2_4;
 {$APPTYPE CONSOLE}
 {$R *.res}
 
-uses
-  System.SysUtils;
+Uses
+    System.SysUtils;
 
 Type
     TArrC = Array Of Char;
 
     //Õ¿œ»—¿“‹ ‘”Õ ÷»ﬁ œ–Œ¬≈– »
+
+Function GetNumberOfDigits(Number: Integer): Integer;
+
+Var
+    Answer: Integer;
+
+Begin
+
+    Answer := 0;
+    If Number <> 0 Then
+    Begin
+        While Number <> 0 Do
+        Begin
+            Number := Number Div 10;
+            Answer := Answer + 1;
+        End;
+    End
+    Else
+    If Number = 0 Then
+        Answer := 1;
+
+GetNumberOfDigits := Answer;
+
+End;
 
 Function PowerOfTwo(Power: Integer): Integer;
 
@@ -17,7 +41,7 @@ Var
     I, Answer: Integer;
 
 Begin
-    // œ–Œ¬≈– ¿ Õ≈ Ã≈Õ‹ÿ≈ À» «¿ 0 » Õ≈ ¡ŒÀ‹ÿ≈ «¿ ~30
+    //œ–Œ¬≈– ¿ Õ≈ Ã≈Õ‹ÿ≈ À» «¿ 0 » Õ≈ ¡ŒÀ‹ÿ≈ «¿ ~30
     Answer := 1;
 
     For I := 1 To Power Do
@@ -41,8 +65,8 @@ Begin
     While Tetrade <> 0 Do
     Begin
 
-        Answer := Answer + (Tetrade mod 10) * PowerOfTwo(I);
-        Tetrade := Tetrade div 10;
+        Answer := Answer + (Tetrade Mod 10) * PowerOfTwo(I);
+        Tetrade := Tetrade Div 10;
 
         I := I + 1;
     End;
@@ -53,40 +77,41 @@ End;
 
 //Function BinatyArrayLength
 
-
 Function BinaryToHexidecimal(BNumber: Integer): TArrC;
 
 Const
     Base: Integer = 2;
 
 Var
-    Counter, Tetrade, ALength: Integer;
+    Counter, Tetrade, ALength, I: Integer;
     AnswerArray: TArrC;
 
 Begin
-    ALength := BNumber div 10000;
-    If BNumber div 10000 > 0 Then
-        ALength := ALength + 1;
 
-    WriteLn(ALength);
+    ALength := 0;
+
+    ALength := GetNumberOfDigits(BNumber) Div 4;
+
+    If (GetNumberOfDigits(BNumber) mod 4) > 0 Then
+        ALength := ALength + 1;
 
     Counter := 0;
 
     SetLength(AnswerArray, ALength);
 
+
+
     While BNumber <> 0 Do
     Begin
 
-        Tetrade := BNumber mod 10000;
-        BNumber := BNumber div 10000;
-
-        //AnswerArray[Counter] := TetradeToHexidecimal(Tetrade);
-
-        //WriteLn(AnswerArray[Counter]);
+        Tetrade := BNumber Mod 10000;
+        BNumber := BNumber Div 10000;
+        AnswerArray[Counter] := TetradeToHexidecimal(Tetrade);
 
         Counter := Counter + 1;
     End;
 
+    BinaryToHexidecimal := AnswerArray;
 End;
 
 Procedure WriteOutArray(ArrayA: TArrC);
@@ -98,29 +123,27 @@ Begin
 
     I := 0;
 
+    Write('The answer is: ');
+
     For I := High(ArrayA) DownTo 0 Do
-    Begin
-        Write(ArrayA[I], ' ');
-    End;
+        Write(ArrayA[I]);
 
 End;
 
 Var
-    A: TArrC;
+    A, B: TArrC;
+    BLength: Integer;
 
 Begin
 
 //    SetLength(A, 4);
 //
-//    A := ['0', '1', '2', '3'];
+//    A := ['1'];
 //
 //    WriteOutArray(A);
 
-    WriteOutArray(BinaryToHexidecimal(1));
-
-
-
-
+    WriteOutArray(BinaryToHexidecimal(16);
 
     ReadLn;
+
 End.
