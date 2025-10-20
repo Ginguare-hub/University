@@ -46,9 +46,9 @@ BottomMiddelPanelData=0000080001020100000010000000477261706844726177696E67566965
 [View0]
 CustomEditViewType=TEditView
 Module=C:\GitHub\University\Lab2\Lab2_1\Delphi\Lab2_1.dpr
-CursorX=111
-CursorY=110
-TopLine=100
+CursorX=53
+CursorY=15
+TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -278,8 +278,8 @@ TBDockHeight=364
 LRDockWidth=273
 Dockable=1
 StayOnTop=0
-Name=5
-Description=5
+Name=30
+Description=84
 filter=1
 
 [DebugLogView]
