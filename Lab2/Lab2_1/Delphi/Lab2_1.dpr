@@ -4,19 +4,19 @@ Uses
     System.SysUtils;
 
 Type
-    TArr = Real;
+    TArr = Array Of Real;
 
 Const
     MAX_LENGTH: Integer = 20;
     MIN_LENGTH: Integer = 1;
-    MAX_NUM: TArr = 12345;
-    MIN_NUM: TArr = -12345;
+    MAX_NUM: Real = 12345.0;
+    MIN_NUM: Real = -12345.0;
 
 Var
     ArrLength, I: Integer;
     IsCorrect: Boolean;
-    Num, MinDiff, CurrDiff, SumOfNums, ArithmMean: TArr;
-    Arr: Array Of TArr;
+    Num, MinDiff, CurrDiff, SumOfNums, ArithmMean: Real;
+    Arr: TArr;
 
 Begin
 
@@ -91,7 +91,7 @@ Begin
             MinDiff := CurrDiff;
     End;
 
-    Write('The element(s) ');
+    Write('The element(s) number');
 
     For I := 0 To High(Arr) Do
     Begin
