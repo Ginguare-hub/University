@@ -91,7 +91,7 @@ Begin
             MinDiff := CurrDiff;
     End;
 
-    Write('The element(s) number');
+    Write('The element(s) ');
 
     For I := 0 To High(Arr) Do
     Begin

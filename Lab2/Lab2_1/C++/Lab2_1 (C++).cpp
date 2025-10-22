@@ -6,17 +6,15 @@ using namespace std;
 int main()
 {
 
-    typedef double tArr;
-
     const int MAX_LENGTH = 20;
     const int MIN_LENGTH = 1;
-    const tArr MAX_NUM = 12345.0;
-    const tArr MIN_NUM = -12345.0;
+    const double MAX_NUM = 12345.0;
+    const double MIN_NUM = -12345.0;
 
     int arrLength, i;
     bool isIncorrect;
-    tArr num, minDiff, currDiff, sumOfNums, arithmMean;
-    tArr *arr;
+    double num, minDiff, currDiff, sumOfNums, arithmMean;
+    double *arr;
 
     arrLength = 1;
     i = 0;
@@ -52,7 +50,7 @@ int main()
 
     } while (isIncorrect);
 
-    arr = new tArr[arrLength];
+    arr = new double[arrLength];
 
     for (i = 0; i < arrLength; i++)
     {
