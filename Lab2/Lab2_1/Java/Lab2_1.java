@@ -15,7 +15,6 @@ public class Lab2_1 {
         
         double[] arr;
 
-        //initialization
         length = 1;
         i = 0;
         num = 0;
@@ -26,6 +25,8 @@ public class Lab2_1 {
         isIncorrect = false;
 
         Scanner scan = new Scanner(System.in);
+
+        System.out.print("Programm finds the element(s) in the list, that most fits with the arithmetic mean of the series.\n");
 
         do {
 
