@@ -4,8 +4,6 @@ public class Lab2_1 {
 
     public static void main(String[] args) {
 
-        //type tArr = double;
-
         final int MAX_LENGTH = 20;
         final int MIN_LENGTH = 1;
         final double MAX_NUM =  12345.0;
