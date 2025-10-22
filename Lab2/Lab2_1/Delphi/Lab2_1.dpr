@@ -23,10 +23,10 @@ Begin
     ArrLength := 1;
     I := 0;
     Num := 0;
-    ArithmMean := 0;
-    MinDiff := 0;
-    CurrDiff := 0;
-    SumOfNums := 0;
+    ArithmMean := 0.0;
+    MinDiff := 0.0;
+    CurrDiff := 0.0;
+    SumOfNums := 0.0;
     IsCorrect := True;
 
     WriteLn('Programm finds the element(s) in the list, that most fits with the arithmetic mean of the series.');

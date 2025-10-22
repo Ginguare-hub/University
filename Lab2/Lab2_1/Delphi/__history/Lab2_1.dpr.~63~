@@ -4,29 +4,28 @@ Uses
     System.SysUtils;
 
 Type
-    TArr = Real;
+    TArr = Array Of Real;
 
 Const
     MAX_LENGTH: Integer = 20;
     MIN_LENGTH: Integer = 1;
-    MAX_NUM: TArr = 12345;
-    MIN_NUM: TArr = -12345;
+    MAX_NUM: Real = 12345.0;
+    MIN_NUM: Real = -12345.0;
 
 Var
-    ArrLength, I, Answer: Integer;
+    ArrLength, I: Integer;
     IsCorrect: Boolean;
-    Num, MinDiff, AbsDiff, SumOfNums, ArithmMean: TArr;
-    Arr: Array Of TArr;
+    Num, MinDiff, CurrDiff, SumOfNums, ArithmMean: Real;
+    Arr: TArr;
 
 Begin
 
     ArrLength := 1;
     I := 0;
-    Answer := 1;
     Num := 0;
     ArithmMean := 0;
     MinDiff := 0;
-    AbsDiff := 0;
+    CurrDiff := 0;
     SumOfNums := 0;
     IsCorrect := True;
 
@@ -83,30 +82,26 @@ Begin
 
     ArithmMean := SumOfNums / ArrLength;
     MinDiff := Abs(ArithmMean - Arr[0]);
-    AbsDiff := Arr[0];
 
     For I := 0 To High(Arr) Do
     Begin
-        AbsDiff := Abs(ArithmMean - Arr[I]);
+        CurrDiff := Abs(ArithmMean - Arr[I]);
 
-        If MinDiff > AbsDiff Then
-            MinDiff := AbsDiff;
+        If MinDiff > CurrDiff Then
+            MinDiff := CurrDiff;
     End;
 
     Write('The element(s) ');
 
     For I := 0 To High(Arr) Do
     Begin
-        AbsDiff := Abs(ArithmMean - Arr[I]);
+        CurrDiff := Abs(ArithmMean - Arr[I]);
 
-        If MinDiff = AbsDiff Then
-        Begin
-            Answer := I + 1;
-            Write(Answer, ' ');
-        End;
+        If MinDiff = CurrDiff Then
+            Write(I + 1, ' ');
     End;
 
-    Write('in the list is the number(s), that most fits with the arithmetic mean of the series.');
+    WriteLn('in the list is the number(s), that most fits with the arithmetic mean of the series.');
     ReadLn;
 
 End.
