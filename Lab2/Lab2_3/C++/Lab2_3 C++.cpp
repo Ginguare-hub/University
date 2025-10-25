@@ -127,7 +127,7 @@ int **sortConditional(int **arrayA) // Попробовать не возвращать знавение а прос
                 for (j = 0; j < limiter + 1; j++)
                 {
 
-                    if ((j + 1 < sizeof(arrayA[i]) - 1) || (j + 1 == sizeof(arrayA[i]) - 1))
+                    if (((j + 1) < (sizeof(arrayA[i]) - 1)) || ((j + 1) == (sizeof(arrayA[i]) - 1)))
                     {
                         if (arrayA[i][j] < arrayA[i][j + 1]) 
                         {
@@ -136,7 +136,7 @@ int **sortConditional(int **arrayA) // Попробовать не возвращать знавение а прос
                             arrayA[i][j] = arrayA[i][j] - arrayA[i][j + 1];
                         }
                     }
-                    else if ((i + 2 < sizeof(arrayA[i]) - 1) || (i + 2 == sizeof(arrayA[i]) - 1))
+                    else if (((i + 2) < (sizeof(arrayA[i]) - 1)) || ((i + 2) == (sizeof(arrayA[i]) - 1)))
                     {
                         if (arrayA[i][j] < arrayA[i + 2][0]) 
                         {
@@ -155,6 +155,8 @@ int **sortConditional(int **arrayA) // Попробовать не возвращать знавение а прос
 
 int main()
 {
+
+    //Исправить: все массивы меньше 4 выдают ошибку в java и C++
     const int MIN_ORDER = 1;
     const int MAX_ORDER = 10;
     

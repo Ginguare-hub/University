@@ -6,6 +6,42 @@ Uses
 Type
     TArr = Array Of Array Of Integer;
 
+Function ReadAndVerify(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer): Integer;
+
+Var
+    IsCorrect: Boolean;
+    Num: Integer;
+
+Begin
+
+    Num := 0;
+    IsCorrect := True;
+
+    Repeat
+
+        Write('Enter the number N: ');
+        IsCorrect := True;
+
+        Try
+            ReadLn(Num);
+        Except
+            WriteLn('Incorrect input, try again.');
+            IsCorrect := False;
+        End;
+
+        If IsCorrect And ((Num < MIN_NUMBER) Or (NUM > MAX_NUMBER)) Then
+        Begin
+            WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+            IsCorrect := False;
+        End;
+
+    Until IsCorrect;
+
+    ReadAndVerify := Num;
+
+End;
+
+
 Function WriteInMatrix(N: Integer): TArr;
 
 Var
