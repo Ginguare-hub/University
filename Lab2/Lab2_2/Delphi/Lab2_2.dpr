@@ -34,6 +34,9 @@ End;
 
 Function ReadAndVerify(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer): Integer;
 
+Const
+    LOWEST_MERS: Integer = 3;
+
 Var
     IsCorrect: Boolean;
     Num: Integer;
@@ -58,7 +61,7 @@ Begin
         If IsCorrect And ((Num < MIN_NUMBER) Or (NUM > MAX_NUMBER)) Then
         Begin
             WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
-            if Num < MIN_NUMBER then
+            if Num < (LOWEST_MERS + 1) then
                 WriteLn('There are no prime Mersenne numbers, lower then 3.');
 
             IsCorrect := False;
@@ -73,13 +76,12 @@ End;
 Function GetPrimeNumber(InputNum: Integer): Integer;
 
 Var
-    Number, I, Counter: Integer;
+    Number, Counter: Integer;
     IsMustStop: Boolean;
 
 Begin
 
     Number := 2;
-    I := 2;
     Counter := 0;
 
     IsMustStop := False;

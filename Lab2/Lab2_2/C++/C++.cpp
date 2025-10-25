@@ -27,6 +27,8 @@ bool discoverIsNumberPrime(int number)
 
 int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER) 
 {
+    const int LOWEST_MERS = 3;
+    
     bool isIncorrect;
     int num;
     
@@ -53,7 +55,7 @@ int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER)
         {
             isIncorrect = true;
             cout << "The number must fit the range [" << MIN_NUMBER << "," << MAX_NUMBER << "]." << endl;
-            if (num < MIN_NUMBER) 
+            if (num < (LOWEST_MERS + 1)) 
                 cout << "There are no prime Mersenne numbers, lower then 3." << endl;
         }
 
@@ -65,13 +67,11 @@ int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER)
 int getPrimeNumber(int inputNum)
 {
     int number;
-    int i;
     int counter;
     int primeNumber;
     bool isMustStop;
 
     number = 2;
-    i = 2;
     counter = 0;
     primeNumber = 2;
     isMustStop = false;
@@ -92,8 +92,7 @@ int getPrimeNumber(int inputNum)
                 isMustStop = true;
                 primeNumber = number;
             }
-            //cout << "sdfa" << endl;
-
+            
             number++;
         }
     }    
@@ -141,6 +140,8 @@ int main()
     const int MAX_N = 600000;
     
     int n;
+
+    cout << "Programm is finding all numbers lower then N that is prime Mersenne numbers." << endl;
 
     n = readAndVerify(MIN_N, MAX_N);
     getMersenneNumbers(n);
