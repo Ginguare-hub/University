@@ -16,6 +16,7 @@ Begin
 
     Number := 0;
     I := 0;
+    J := 0;
 
     SetLength(ArrayA, N);
     For I := 0 To High(ArrayA) Do
@@ -24,7 +25,7 @@ Begin
     For I := 0 To High(ArrayA) Do
         For J := 0 To High(ArrayA[I]) Do
         Begin
-            Write('Write element [', I + 1, ',', J + 1, '] if matrix: ');
+            Write('Write element [', I + 1, ',', J + 1, '] of matrix: ');
             ReadLn(Number);
             ArrayA[I, J] := Number;
         End;
@@ -122,6 +123,8 @@ Var
 Begin
 
     N := 1;
+
+    WriteLn('The program takes a two-dimensional square matrix of order n and arranges the elements of the rows with even numbers of the matrix in descending order.');
 
     Write('Write the order of the matrix: ');
     ReadLn(N);

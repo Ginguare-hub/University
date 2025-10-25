@@ -2,7 +2,7 @@
 
 using namespace std;
 
-int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER) 
+int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string str) 
 {
     
     bool isIncorrect;
@@ -13,6 +13,7 @@ int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER)
 
     do
     {
+        cout << str;
         isIncorrect = false;
 
         cin >> num;
@@ -41,11 +42,11 @@ int **writeInMatrix(int n)
     const int MIN_NUMBER = -100000;
     const int MAX_NUMBER = 100000;
 
-
     int i;
     int j;
     int k;
     int **arrayA;
+    std::string str;
 
     i = 0;
     j = 0;
@@ -61,8 +62,14 @@ int **writeInMatrix(int n)
     {
         for (j = 0; j < n; j++)
         {
+            // str = "Write element [" + i;
+            // str = str + "][";
+            // str = str + std::to_string();
+            // str = str + "] of matrix: ";
+
+            //std::string str{"Write element [" + std::to_string(i) + "][" + std::to_string(j) + "] of matrix: "};
             cout << "Write element [" << i << "][" << j << "] of matrix: ";
-            arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER);
+            arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "Write element: ");
         }
     }
 
@@ -157,8 +164,7 @@ int main()
 
     i = 0;
 
-    cout << "Write the order of the matrix: ";
-    n = readAndVerify(MIN_ORDER, MAX_ORDER);
+    n = readAndVerify(MIN_ORDER, MAX_ORDER, "Write the order of the matrix: ");
 
     a = writeInMatrix(n);
 
