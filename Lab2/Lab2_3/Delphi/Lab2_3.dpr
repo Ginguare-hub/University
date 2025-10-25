@@ -1,8 +1,5 @@
 Program Lab2_3;
 
-{$APPTYPE CONSOLE}
-{$R *.res}
-
 Uses
     System.SysUtils;
 
