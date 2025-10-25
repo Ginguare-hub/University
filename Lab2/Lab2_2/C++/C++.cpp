@@ -137,8 +137,8 @@ void getMersenneNumbers(int n)
 
 int main()
 {
-    const int MIN_N = 5;
-    const int MAX_N = 599999;
+    const int MIN_N = 4;
+    const int MAX_N = 600000;
     
     int n;
 
