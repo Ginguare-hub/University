@@ -25,11 +25,8 @@ bool discoverIsNumberPrime(int number)
     return isNumberPrime;
 }
 
-int readAndVerify() 
+int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER) 
 {
-    const int MAX_NUMBER = 600000;
-    const int MIN_NUMBER = 4;
-
     bool isIncorrect;
     int num;
     
@@ -140,15 +137,13 @@ void getMersenneNumbers(int n)
 
 int main()
 {
+    const int MIN_N = 5;
+    const int MAX_N = 599999;
+    
     int n;
 
-    //cout << discoverIsNumberPrime(3);
-    n = readAndVerify();
-    //cout << getPrimeNumber(20) << endl;
-
+    n = readAndVerify(MIN_N, MAX_N);
     getMersenneNumbers(n);
-
-    //cout << "Press ENTER to close the terminal.";
     
     return 0;
 }

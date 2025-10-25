@@ -32,11 +32,7 @@ Begin
 
 End;
 
-Function ReadAndVerify(): Integer;
-
-Const
-    MAX_NUMBER: Integer = 600000;
-    MIN_NUMBER: Integer = 4;
+Function ReadAndVerify(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer): Integer;
 
 Var
     IsCorrect: Boolean;
@@ -152,6 +148,10 @@ Begin
     End;
 End;
 
+Const
+    MIN_N: Integer = 4;
+    MAX_N: Integer = 600000;
+
 Var
     N: Integer;
 
@@ -163,8 +163,8 @@ Begin
 
     //WriteLn(GetPrimeNumber(20));
 
-    //N := ReadAndVerify();
-    //GetMersenneNumbers(N);
+    N := ReadAndVerify(MIN_N, MAX_N);
+    GetMersenneNumbers(N);
 
     Write('Press ENTER to close the terminal.');
 
