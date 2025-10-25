@@ -2,15 +2,51 @@
 
 using namespace std;
 
+int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER) 
+{
+    
+    bool isIncorrect;
+    int num;
+    
+    num = 0;
+    isIncorrect = true;
+
+    do
+    {
+        isIncorrect = false;
+
+        cin >> num;
+
+        if (cin.fail() || cin.get() != '\n')
+        {
+            isIncorrect = true;
+            cout << "Incorrect input, try again." << endl;
+            cin.clear();
+            while (cin.get() != '\n');
+        }
+
+        if (!isIncorrect && ((num < MIN_NUMBER) || (num > MAX_NUMBER)))
+        {
+            isIncorrect = true;
+            cout << "The number must fit the range [" << MIN_NUMBER << "," << MAX_NUMBER << "]." << endl;
+        }
+
+    } while (isIncorrect);
+    
+    return num;
+}
+
 int **writeInMatrix(int n)
 {
-    int number;
+    const int MIN_NUMBER = -100000;
+    const int MAX_NUMBER = 100000;
+
+
     int i;
     int j;
     int k;
     int **arrayA;
 
-    number = 0;
     i = 0;
     j = 0;
     k = 0;
@@ -26,7 +62,7 @@ int **writeInMatrix(int n)
         for (j = 0; j < n; j++)
         {
             cout << "Write element [" << i << "][" << j << "] of matrix: ";
-            cin >> arrayA[i][j];
+            arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER);
         }
     }
 
@@ -112,6 +148,9 @@ int **sortConditional(int **arrayA) // ѕопробовать не возвращать знавение а прос
 
 int main()
 {
+    const int MIN_ORDER = 1;
+    const int MAX_ORDER = 10;
+    
     int n;
     int **a;
     int i;
@@ -119,7 +158,7 @@ int main()
     i = 0;
 
     cout << "Write the order of the matrix: ";
-    cin >> n;
+    n = readAndVerify(MIN_ORDER, MAX_ORDER);
 
     a = writeInMatrix(n);
 
