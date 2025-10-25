@@ -25,13 +25,130 @@ bool discoverIsNumberPrime(int number)
     return isNumberPrime;
 }
 
+int readAndVerify() 
+{
+    const int MAX_NUMBER = 600000;
+    const int MIN_NUMBER = 4;
 
+    bool isIncorrect;
+    int num;
+    
+    num = 0;
+    isIncorrect = true;
+
+    do
+    {
+      
+        cout << "Enter the number N: ";
+        isIncorrect = false;
+
+        cin >> num;
+
+        if (cin.fail() || cin.get() != '\n')
+        {
+            isIncorrect = true;
+            cout << "Incorrect input, try again." << endl;
+            cin.clear();
+            while (cin.get() != '\n');
+        }
+
+        if (!isIncorrect && ((num < MIN_NUMBER) || (num > MAX_NUMBER)))
+        {
+            isIncorrect = true;
+            cout << "The number must fit the range [" << MIN_NUMBER << "," << MAX_NUMBER << "]." << endl;
+            if (num < MIN_NUMBER) 
+                cout << "There are no prime Mersenne numbers, lower then 3." << endl;
+        }
+
+    } while (isIncorrect);
+    
+    return num;
+}
+
+int getPrimeNumber(int inputNum)
+{
+    int number;
+    int i;
+    int counter;
+    int primeNumber;
+    bool isMustStop;
+
+    number = 2;
+    i = 2;
+    counter = 0;
+    primeNumber = 2;
+    isMustStop = false;
+
+    //cout << inputNum << endl;
+
+    if (inputNum == 2)
+        primeNumber = 3;
+    else 
+    {
+        while (!isMustStop) 
+        {
+            if (discoverIsNumberPrime(number)) 
+                counter++;
+
+            if (counter == inputNum)
+            {
+                isMustStop = true;
+                primeNumber = number;
+            }
+            //cout << "sdfa" << endl;
+
+            number++;
+        }
+    }    
+    return primeNumber;
+}
+
+void getMersenneNumbers(int n)
+{
+    const int MIN_ANSWER = 3;
+
+    int i;
+    int j;
+    int answer;
+    int mersenneNumber;
+
+    i = 1;
+    j = 2;
+    answer = MIN_ANSWER;
+    mersenneNumber = 2;
+
+    while (answer < n)
+    { 
+        mersenneNumber = 2;
+        
+        for (j = 2; j < (getPrimeNumber(i) + 1); j++)
+            mersenneNumber = mersenneNumber * 2;
+
+        mersenneNumber = mersenneNumber - 1;
+        answer = mersenneNumber;
+
+        if ((discoverIsNumberPrime(answer) == true) && (answer < n))
+        {
+            if (i == 1)
+                cout << "The answers is: " << endl;
+            cout << answer << endl;
+        }
+
+        i++;
+    }
+}
 
 int main()
 {
-    
-    cout << discoverIsNumberPrime(3);
-    
+    int n;
+
+    //cout << discoverIsNumberPrime(3);
+    n = readAndVerify();
+    //cout << getPrimeNumber(20) << endl;
+
+    getMersenneNumbers(n);
+
+    //cout << "Press ENTER to close the terminal.";
     
     return 0;
 }

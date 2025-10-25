@@ -32,7 +32,7 @@ Begin
 
 End;
 
-Procedure Verify(Number: Integer);
+Function ReadAndVerify(): Integer;
 
 Const
     MAX_NUMBER: Integer = 600000;
@@ -44,11 +44,12 @@ Var
 
 Begin
 
+    Num := 0;
     IsCorrect := True;
 
     Repeat
 
-        Write('Enter the number: ');
+        Write('Enter the number N: ');
         IsCorrect := True;
 
         Try
@@ -61,10 +62,15 @@ Begin
         If IsCorrect And ((Num < MIN_NUMBER) Or (NUM > MAX_NUMBER)) Then
         Begin
             WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+            if Num < MIN_NUMBER then
+                WriteLn('There are no prime Mersenne numbers, lower then 3.');
+
             IsCorrect := False;
         End;
 
     Until IsCorrect;
+
+    ReadAndVerify := Num;
 
 End;
 
@@ -72,7 +78,7 @@ Function GetPrimeNumber(InputNum: Integer): Integer;
 
 Var
     Number, I, Counter: Integer;
-    IsShouldStop, IsMustStop: Boolean;
+    IsMustStop: Boolean;
 
 Begin
 
@@ -81,7 +87,6 @@ Begin
     Counter := 0;
 
     IsMustStop := False;
-    IsShouldStop := False;
 
     If InputNum = 1 Then
         GetPrimeNumber := 2
@@ -94,21 +99,6 @@ Begin
         While (Not IsMustStop) Do
         Begin
 
-                //IsShouldStop := False;
-                //
-                //For I := 2 To (Number - 1) Do
-                //Begin
-                //
-                //If (Number Mod I = 0) And (Not IsShouldStop) Then
-                //Begin
-                //IsShouldStop := True;
-                //End
-                //Else
-                //If (Not IsShouldStop) Then
-                //IsShouldStop := False;
-                //
-                //End;
-                //
             If DiscoverIsNumberPrime(Number) Then
                 Counter := Counter + 1;
 
@@ -120,11 +110,16 @@ Begin
 
             Number := Number + 1;
 
-            End;
         End;
+
+    End;
+
 End;
 
 Procedure GetMersenneNumbers(N: Integer);
+
+Const
+    MIN_ANSWER: Integer = 3;
 
 Var
     I, J, Answer, MersenneNumber: Integer;
@@ -133,7 +128,7 @@ Begin
 
     I := 1;
     J := 2;
-    Answer := 3;
+    Answer := MIN_ANSWER;
     MersenneNumber := 2;
 
     While Answer < N Do
@@ -164,11 +159,12 @@ Begin
 
     N := 0;
 
-    WriteLn('Programm is finding all numbers lower then N that is Mersenne numbers.');
-    Write('Write number N: ');
-    ReadLn(N);
+    WriteLn('Programm is finding all numbers lower then N that is prime Mersenne numbers.');
+
+    N := ReadAndVerify();
     GetMersenneNumbers(N);
 
-    ReadLn;
+    Write('Press Enter to close the terminal.');
 
+    ReadLn;
 End.

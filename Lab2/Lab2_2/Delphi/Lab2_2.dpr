@@ -44,6 +44,7 @@ Var
 
 Begin
 
+    Num := 0;
     IsCorrect := True;
 
     Repeat
@@ -87,7 +88,7 @@ Begin
 
     IsMustStop := False;
 
-    If InputNum = 1 Then
+    If InputNum = 1 Then   //Входное число больше 0 и меньше максимального какого-то
         GetPrimeNumber := 2
     Else
     If InputNum = 2 Then
@@ -160,10 +161,12 @@ Begin
 
     WriteLn('Programm is finding all numbers lower then N that is prime Mersenne numbers.');
 
-    N := ReadAndVerify();
-    GetMersenneNumbers(N);
+    //WriteLn(GetPrimeNumber(20));
 
-    Write('Press Enter to close the terminal.');
+    //N := ReadAndVerify();
+    //GetMersenneNumbers(N);
+
+    Write('Press ENTER to close the terminal.');
 
     ReadLn;
 End.
