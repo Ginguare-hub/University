@@ -2,7 +2,7 @@ import java.util.Scanner;
 
 public class Lab2_3 {
 
-    public static int readAndVerify(final int MIN_NUMBER, final int MAX_NUMBER/* , String str*/) {
+    public static int readAndVerify(final int MIN_NUMBER, final int MAX_NUMBER, String str) {
 
         boolean isIncorrect;
         int num;
@@ -14,7 +14,7 @@ public class Lab2_3 {
 
         do {
 
-            //System.out.print(str);
+            System.out.print(str);
             isIncorrect = false;
 
             try {
@@ -37,8 +37,8 @@ public class Lab2_3 {
     }
 
     public static int[][] writeInMatrix(int n) {
-        final int MIN_NUMBER = -100000;
-        final int MAX_NUMBER = 100000;
+        //final int MIN_NUMBER = -100000;
+        //final int MAX_NUMBER = 100000;
 
         int i;
         int j;
@@ -53,15 +53,20 @@ public class Lab2_3 {
         // arrayA = new int[n][];
         // for (k = 0; k < n; k++)
         //     arrayA[k] = new int[n];
+        Scanner scnr = new Scanner(System.in);
 
-        System.out.print(arrayA.length);
+        //System.out.print(arrayA.length + "\n");
+        //System.out.print(arrayA[0].length);
 
         for (i = 0; i < n; i++) {
             for (j = 0; j < n; j++) {
                 System.out.printf("Write element [%d][%d] of matrix: ", i, j);
-                arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER/*, "Write element: "*/);
+                //arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "Write element: ");
+                arrayA[i][j] = Integer.parseInt(scnr.nextLine());
             }
         }
+
+        scnr.close();
 
         return arrayA;
     }
@@ -140,7 +145,9 @@ public class Lab2_3 {
         int n;
         int[][] a;
 
-        n = readAndVerify(MIN_ORDER, MAX_ORDER/* , "Write the order of the matrix: "*/);
+        n = readAndVerify(MIN_ORDER, MAX_ORDER, "Write the order of the matrix: ");
+
+        //System.out.print(n + "N \n");
 
         a = writeInMatrix(n);
 
