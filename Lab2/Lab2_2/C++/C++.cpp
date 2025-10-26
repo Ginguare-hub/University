@@ -76,8 +76,6 @@ int getPrimeNumber(int inputNum)
     primeNumber = 2;
     isMustStop = false;
 
-    //cout << inputNum << endl;
-
     if (inputNum == 2)
         primeNumber = 3;
     else 

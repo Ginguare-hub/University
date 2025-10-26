@@ -86,7 +86,7 @@ Begin
 
     IsMustStop := False;
 
-    If InputNum = 1 Then   //Входное число больше 0 и меньше максимального какого-то
+    If InputNum = 1 Then
         GetPrimeNumber := 2
     Else
     If InputNum = 2 Then
@@ -162,8 +162,6 @@ Begin
     N := 0;
 
     WriteLn('Programm is finding all numbers lower then N that is prime Mersenne numbers.');
-
-    //WriteLn(GetPrimeNumber(20));
 
     N := ReadAndVerify(MIN_N, MAX_N);
     GetMersenneNumbers(N);

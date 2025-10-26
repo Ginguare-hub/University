@@ -6,6 +6,111 @@ Uses
 Type
     TArr = Array Of Array Of Integer;
 
+// ПРОВЕРКИ ФАЙЛОВ   (Добавить проверку на данные в файле)
+
+Function CheckIsFileText(FName: String): Boolean;
+
+Var
+    FileExt: String;
+    IsText: Boolean;
+
+Begin
+
+    FileExt := ExtractFileExt(FName);
+    If FileExt = '.txt' Then
+        IsText := True
+    Else
+        IsText := False;
+
+    CheckIsFileText := IsText;
+End;
+
+Function CanRead(Var FileVar: TextFile): Boolean;
+
+Var
+    IsReady: Boolean;
+
+Begin
+
+    IsReady := True;
+
+    Try
+        Reset(FileVar);
+        CloseFile(FileVar);
+    Except
+        IsReady := False;
+    End;
+
+    CanRead := IsReady;
+End;
+
+//не знаю нужна ли
+Function CanWrite(Var FileVar: TextFile): Boolean;
+
+Var
+    IsReady: Boolean;
+
+Begin
+
+    Try
+        Append(FileVar);
+        CloseFile(FileVar);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanWrite := IsReady;
+End;
+
+
+Function IsFileNotEmpty(Var FileVar: TextFile): Boolean;
+
+Var
+    IsNotEmpty: Boolean;
+
+Begin
+
+    Try
+        Reset(FileVar);
+        IsNotEmpty := Not Eof(FileVar);
+    Finally
+        CloseFile(FileVar);
+    End;
+
+    IsFileNotEmpty := IsNotEmpty;
+End;
+
+Function CheckInputFile(Var InputFile: TextFile; Var FileName: String): Boolean;
+
+Var
+    CheckInput: Boolean;
+
+Begin
+
+    CheckInput := False;
+
+    If Not FileExists(FileName) Then
+        Writeln('Ошибка, файла ввода не существует')     //поменять
+    Else
+        If Not CheckIsFileText(FileName) Then
+            Writeln('Ошибка, файл ввода не текстовый')   //поменять
+        Else
+            If Not CanRead(InputFile) Then
+                Writeln('Ошибка, файл ввода недоступен') //поменять
+            Else
+                If Not IsFileNotEmpty(InputFile) Then
+                    Writeln('Ошибка, файл ввода пуст')   //поменять
+                Else
+                Begin
+                    CheckInput := True;
+                End;
+
+    CheckInputFile := CheckInput;
+End;
+
+// ПРОВЕРКИ ФАЙЛОВ
+
 Function ReadAndVerify(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer): Integer;
 
 Var
@@ -40,7 +145,6 @@ Begin
     ReadAndVerify := Num;
 
 End;
-
 
 Function WriteInMatrix(N: Integer): TArr;
 
@@ -117,7 +221,7 @@ Begin
                 For J := 0 To Limiter Do
                 Begin
 
-                    If (J + 1 < High(ArrayA[I])) Or (J + 1 = High(ArrayA[I])) Then // Можно запихнуть в функцию
+                    If (J + 1 < High(ArrayA[I])) Or (J + 1 = High(ArrayA[I])) Then
                     Begin
 
                         If ArrayA[I, J] < ArrayA[I, J + 1] Then
@@ -155,19 +259,54 @@ End;
 Var
     MyArray: TArr;
     N: Integer;
+    TFile: TextFile;
+    FOrC: Integer;
 
 Begin
 
     N := 1;
 
-    WriteLn('The program takes a two-dimensional square matrix of order n and arranges the elements of the rows with even numbers of the matrix in descending order.');
+    WriteLn('Type 1 if you need to work with file, or type 2 if console.');
+    ReadLn(FOrC);
 
-    Write('Write the order of the matrix: ');
-    ReadLn(N);
+    AssignFile(TFile, 'C:\GitHub\University\Lab2\Lab2_3\Delphi');
+
+    //ПРОВЕРИТЬ РАБОТАЮТ ЛИ ПРОВЕРКИ
+
+    If FOrC = 1 Then
+    Begin
+//        Reset(TFile);
+//        Rewrite(TFIle);
+//        WriteLn(TFile, 'The program takes a two-dimensional square matrix of order n and arranges the elements of the rows with even numbers of the matrix in descending order.');
+//
+//        Reset(TFile);
+
+        //AssignFile(TFile, 'data\input.txt');
+        //Reset(TFile);
+
+        CloseFile(TFile);
+
+    End
+    Else
+    Begin
+
+        WriteLn('The program takes a two-dimensional square matrix of order n and arranges the elements of the rows with even numbers of the matrix in descending order.');
+
+        Write('Write the order of the matrix: ');
+        ReadLn(N);
+
+
+
+
+
+    End;
 
     MyArray := WriteInMatrix(N);
     MyArray := SortConditional(MyArray);
     WriteOutMatrix(MyArray);
+
+
+    CloseFile(TFile);
 
     ReadLn;
 

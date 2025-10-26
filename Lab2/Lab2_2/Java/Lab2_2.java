@@ -23,7 +23,7 @@ public class Lab2_2 {
         return isNumberPrime;
     }
 
-    public static int readAndVerify(final int MIN_NUMBER, final int MAX_NUMBER) {
+    public static int readAndVerify(final int MIN_NUMBER, final int MAX_NUMBER, Scanner scanner) {
 
         final int LOWEST_MERS = 3;
 
@@ -133,9 +133,11 @@ public class Lab2_2 {
 
         int n;
 
+        Scanner scanner = new Scanner(System.in);
+
         System.out.println("Programm is finding all numbers lower then N that is prime Mersenne numbers.");
         
-        n = readAndVerify(MIN_N, MAX_N);
+        n = readAndVerify(MIN_N, MAX_N, scanner);
         getMersenneNumbers(n);
     }
 }
