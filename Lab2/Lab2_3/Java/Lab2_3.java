@@ -2,7 +2,7 @@ import java.util.Scanner;
 
 public class Lab2_3 {
 
-    public static int readAndVerify(final int MIN_NUMBER, final int MAX_NUMBER, String str) {
+    public static int readAndVerify(final int MIN_NUMBER, final int MAX_NUMBER, String str, Scanner scanner) {
 
         boolean isIncorrect;
         int num;
@@ -10,15 +10,13 @@ public class Lab2_3 {
         num = 0;
         isIncorrect = true;
 
-        Scanner scnr = new Scanner(System.in);
-
         do {
 
             System.out.print(str);
             isIncorrect = false;
 
             try {
-                num = Integer.parseInt(scnr.nextLine());
+                num = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 isIncorrect = true;
                 System.out.println("Incorrect input, try again.");
@@ -31,43 +29,29 @@ public class Lab2_3 {
 
         } while (isIncorrect);
 
-        scnr.close();
-
         return num;
     }
 
-    public static int[][] writeInMatrix(int n) {
-        //final int MIN_NUMBER = -100000;
-        //final int MAX_NUMBER = 100000;
+    public static int[][] writeInMatrix(int n, Scanner scanner) {
+        final int MIN_NUMBER = -100000;
+        final int MAX_NUMBER = 100000;
 
         int i;
         int j;
-        //int k;
+
         int[][] arrayA;
 
         i = 0;
         j = 0;
-        //k = 0;
 
         arrayA = new int[n][n];
-        // arrayA = new int[n][];
-        // for (k = 0; k < n; k++)
-        //     arrayA[k] = new int[n];
-        Scanner scnr = new Scanner(System.in);
-
-        //System.out.print(arrayA.length + "\n");
-        //System.out.print(arrayA[0].length);
 
         for (i = 0; i < n; i++) {
             for (j = 0; j < n; j++) {
                 System.out.printf("Write element [%d][%d] of matrix: ", i, j);
-                //arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "Write element: ");
-                arrayA[i][j] = Integer.parseInt(scnr.nextLine());
+                arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "Write element: ", scanner);
             }
         }
-
-        scnr.close();
-
         return arrayA;
     }
 
@@ -88,7 +72,7 @@ public class Lab2_3 {
         }
     }
 
-    public static int[][] sortConditional(int[][] arrayA) { // Попробовать не возвращать знавение а просто ссылкой менять массив
+    public static int[][] sortConditional(int[][] arrayA) {
 
         int i;
         int j;
@@ -100,9 +84,9 @@ public class Lab2_3 {
         i = 0;
         j = 0;
         k = 1;
-        limiter = arrayA.length - 1;
-        boubleSortLimiter = arrayA.length * (arrayA.length / 2);
         arrLength = arrayA.length;
+        limiter = arrLength - 1;
+        boubleSortLimiter = arrLength * (arrLength / 2);
 
         for (k = 1; k < (boubleSortLimiter + 1); k++) {
 
@@ -145,15 +129,17 @@ public class Lab2_3 {
         int n;
         int[][] a;
 
-        n = readAndVerify(MIN_ORDER, MAX_ORDER, "Write the order of the matrix: ");
+        Scanner scanner = new Scanner(System.in);
 
-        //System.out.print(n + "N \n");
+        n = readAndVerify(MIN_ORDER, MAX_ORDER, "Write the order of the matrix: ", scanner);
 
-        a = writeInMatrix(n);
+        a = writeInMatrix(n, scanner);
 
-        //a = sortConditional(a);
+        a = sortConditional(a);
 
-        //writeOutMatrix(a);
+        writeOutMatrix(a);
+
+        scanner.close();
 
     }
 }
