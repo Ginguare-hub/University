@@ -158,7 +158,6 @@ int **sortConditional(int **arrayA, int arrLength) // Попробовать не возвращать 
 int main()
 {
 
-    //Исправить: все массивы меньше 4 выдают ошибку в java и C++
     const int MIN_ORDER = 1;
     const int MAX_ORDER = 10;
     

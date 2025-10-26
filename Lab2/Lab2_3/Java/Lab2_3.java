@@ -2,7 +2,7 @@ import java.util.Scanner;
 
 public class Lab2_3 {
 
-    public static int readAndVerify(final int MIN_NUMBER, final int MAX_NUMBER, String str) {
+    public static int readAndVerify(final int MIN_NUMBER, final int MAX_NUMBER/* , String str*/) {
 
         boolean isIncorrect;
         int num;
@@ -14,7 +14,7 @@ public class Lab2_3 {
 
         do {
 
-            System.out.print(str);
+            //System.out.print(str);
             isIncorrect = false;
 
             try {
@@ -50,15 +50,16 @@ public class Lab2_3 {
         //k = 0;
 
         arrayA = new int[n][n];
+        // arrayA = new int[n][];
         // for (k = 0; k < n; k++)
         //     arrayA[k] = new int[n];
 
-        // cout << sizeof(arrayA);
+        System.out.print(arrayA.length);
 
         for (i = 0; i < n; i++) {
             for (j = 0; j < n; j++) {
                 System.out.printf("Write element [%d][%d] of matrix: ", i, j);
-                arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "Write element: ");
+                arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER/*, "Write element: "*/);
             }
         }
 
@@ -139,13 +140,13 @@ public class Lab2_3 {
         int n;
         int[][] a;
 
-        n = readAndVerify(MIN_ORDER, MAX_ORDER, "Write the order of the matrix: ");
+        n = readAndVerify(MIN_ORDER, MAX_ORDER/* , "Write the order of the matrix: "*/);
 
         a = writeInMatrix(n);
 
-        a = sortConditional(a);
+        //a = sortConditional(a);
 
-        writeOutMatrix(a);
+        //writeOutMatrix(a);
 
     }
 }
