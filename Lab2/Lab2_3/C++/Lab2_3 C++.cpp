@@ -46,7 +46,6 @@ int **writeInMatrix(int n)
     int j;
     int k;
     int **arrayA;
-    std::string str;
 
     i = 0;
     j = 0;
@@ -56,18 +55,14 @@ int **writeInMatrix(int n)
     for (k = 0; k < n; k++)
         arrayA[k] = new int[n];
 
-    // cout << sizeof(arrayA);
+    
+    //cout << n << endl;
+    //cout << sizeof(arrayA) << endl;
 
     for (i = 0; i < n; i++)
     {
         for (j = 0; j < n; j++)
         {
-            // str = "Write element [" + i;
-            // str = str + "][";
-            // str = str + std::to_string();
-            // str = str + "] of matrix: ";
-
-            //std::string str{"Write element [" + std::to_string(i) + "][" + std::to_string(j) + "] of matrix: "};
             cout << "Write element [" << i << "][" << j << "] of matrix: ";
             arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "Write element: ");
         }
@@ -84,7 +79,10 @@ void writeOutMatrix(int **arrayA)
 
     i = 0;
     j = 0;
-    n = sizeof(arrayA);
+    n = sizeof(arrayA) / sizeof(arrayA[0][0]);
+
+    cout << sizeof(arrayA) << endl;
+    cout << sizeof(arrayA[0][0]) << endl;
 
     for (i = 0; i < n; i++)
     {
@@ -104,30 +102,33 @@ int **sortConditional(int **arrayA) // ѕопробовать не возвращать знавение а прос
     int k;
     int limiter;
     int boubleSortLimiter;
+    int arrLength;
 
     i = 0;
     j = 0;
     k = 1;
-    limiter = sizeof(arrayA) - 1;
-    boubleSortLimiter = sizeof(arrayA) * (sizeof(arrayA) / 2);
+    arrLength = sizeof(arrayA) / sizeof(int);
+    limiter = arrLength - 1;
+    boubleSortLimiter = arrLength * (arrLength / 2);
+    arrLength = arrLength;
 
     for (k = 1; k < (boubleSortLimiter + 1); k++)
     {
 
-        limiter = sizeof(arrayA) - 1;
+        limiter = arrLength - 1;
 
-        for (i = 0; i < sizeof(arrayA); i++)
+        for (i = 0; i < arrLength; i++)
         {
 
             if (i % 2 == 1) 
             {
-                if (i == 2 * (sizeof(arrayA) / 2))
-                    limiter = (sizeof(arrayA) - 1) - 1;
+                if (i == (2 * (arrLength / 2)))
+                    limiter = (arrLength - 1) - 1;
 
-                for (j = 0; j < limiter + 1; j++)
+                for (j = 0; j < (limiter + 1); j++)
                 {
 
-                    if (((j + 1) < (sizeof(arrayA[i]) - 1)) || ((j + 1) == (sizeof(arrayA[i]) - 1)))
+                    if ((j + 1 < (arrLength - 1)) || (j + 1 == (arrLength - 1)))
                     {
                         if (arrayA[i][j] < arrayA[i][j + 1]) 
                         {
@@ -136,7 +137,7 @@ int **sortConditional(int **arrayA) // ѕопробовать не возвращать знавение а прос
                             arrayA[i][j] = arrayA[i][j] - arrayA[i][j + 1];
                         }
                     }
-                    else if (((i + 2) < (sizeof(arrayA[i]) - 1)) || ((i + 2) == (sizeof(arrayA[i]) - 1)))
+                    else if ((i + 2 < (sizeof(arrayA[i]) - 1)) || (i + 2 == (sizeof(arrayA[i]) - 1)))
                     {
                         if (arrayA[i][j] < arrayA[i + 2][0]) 
                         {
