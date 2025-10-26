@@ -71,7 +71,7 @@ int **writeInMatrix(int n)
     return arrayA;
 }
 
-void writeOutMatrix(int **arrayA)
+void writeOutMatrix(int **arrayA, int arrayLength)
 {
     int i;
     int j;
@@ -79,14 +79,15 @@ void writeOutMatrix(int **arrayA)
 
     i = 0;
     j = 0;
-    n = sizeof(arrayA) / sizeof(arrayA[0][0]);
+    //n = sizeof(arrayA) / sizeof(arrayA[0][0]);
 
-    cout << sizeof(arrayA) << endl;
-    cout << sizeof(arrayA[0][0]) << endl;
+    //cout << sizeof(arrayA) << endl;
+    //cout << sizeof(arrayA[0][0]) << endl;
+    //cout << n << endl;
 
-    for (i = 0; i < n; i++)
+    for (i = 0; i < arrayLength; i++)
     {
-        for (j = 0; j < n; j++)
+        for (j = 0; j < arrayLength; j++)
         {
             cout << arrayA[i][j] << " ";
         }
@@ -94,7 +95,7 @@ void writeOutMatrix(int **arrayA)
     }
 }
 
-int **sortConditional(int **arrayA) // Попробовать не возвращать знавение а просто ссылкой менять массив
+int **sortConditional(int **arrayA, int arrLength) // Попробовать не возвращать знавение а просто ссылкой менять массив
 {
 
     int i;
@@ -102,15 +103,15 @@ int **sortConditional(int **arrayA) // Попробовать не возвращать знавение а прос
     int k;
     int limiter;
     int boubleSortLimiter;
-    int arrLength;
+    //int arrLength;
 
     i = 0;
     j = 0;
     k = 1;
-    arrLength = sizeof(arrayA) / sizeof(int);
+    //arrLength = sizeof(arrayA) / sizeof(int);
     limiter = arrLength - 1;
     boubleSortLimiter = arrLength * (arrLength / 2);
-    arrLength = arrLength;
+    //arrLength = arrLength;
 
     for (k = 1; k < (boubleSortLimiter + 1); k++)
     {
@@ -137,7 +138,7 @@ int **sortConditional(int **arrayA) // Попробовать не возвращать знавение а прос
                             arrayA[i][j] = arrayA[i][j] - arrayA[i][j + 1];
                         }
                     }
-                    else if ((i + 2 < (sizeof(arrayA[i]) - 1)) || (i + 2 == (sizeof(arrayA[i]) - 1)))
+                    else if ((i + 2 < (arrLength - 1)) || (i + 2 == (arrLength - 1)))
                     {
                         if (arrayA[i][j] < arrayA[i + 2][0]) 
                         {
@@ -173,9 +174,9 @@ int main()
 
     //cout << sizeof(a) << endl;
 
-    a = sortConditional(a);
+    a = sortConditional(a, n);
 
-    writeOutMatrix(a);
+    writeOutMatrix(a, n);
 
     for (i = 0; i < n; i++)
         delete[] a[i];
