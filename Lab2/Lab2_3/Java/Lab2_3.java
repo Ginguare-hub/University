@@ -132,14 +132,10 @@ public class Lab2_3 {
         Scanner scanner = new Scanner(System.in);
 
         n = readAndVerify(MIN_ORDER, MAX_ORDER, "Write the order of the matrix: ", scanner);
-
         a = writeInMatrix(n, scanner);
-
         a = sortConditional(a);
-
         writeOutMatrix(a);
 
         scanner.close();
-
     }
 }
