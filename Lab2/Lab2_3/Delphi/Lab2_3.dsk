@@ -46,8 +46,8 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 [View0]
 CustomEditViewType=TEditView
 Module=C:\GitHub\University\Lab2\Lab2_3\Delphi\Lab2_3.dpr
-CursorX=37
-CursorY=114
+CursorX=27
+CursorY=11
 TopLine=1
 LeftCol=1
 Elisions={{28,49},{45,3},{''}}{{48,50},{64,3},{''}}{{67,56},{82,3},{''}}{{84,80},{110,3},{''}}{{114,86},{147,3},{''}}{{149,41},{175,3},{''}}{{177,39},{194,3},{''}}{{196,45},{257,3},{''}}

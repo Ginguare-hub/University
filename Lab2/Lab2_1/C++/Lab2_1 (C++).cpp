@@ -29,23 +29,23 @@ int main()
 
     do
     {
-        std::cout << "Enter the number of numbers in the list: ";
-        std::cin >> arrLength;
+        cout << "Enter the number of numbers in the list: ";
+        cin >> arrLength;
 
         isIncorrect = false;
 
-        if (std::cin.get() != '\n' || std::cin.fail())
+        if (cin.get() != '\n' || cin.fail())
         {
             isIncorrect = true;
-            std::cout << "Incorrect input, try again." << std::endl;
-            std::cin.clear();
-            while (std::cin.get() != '\n');
+            cout << "Incorrect input, try again." << endl;
+            cin.clear();
+            while (cin.get() != '\n');
         }
 
         if (!isIncorrect && ((arrLength < MIN_LENGTH) || (arrLength > MAX_LENGTH)))
         {
             isIncorrect = true;
-            std::cout << "The number must fit the range [" << MIN_LENGTH << "," << MAX_LENGTH << "]." << std::endl;
+            cout << "The number must fit the range [" << MIN_LENGTH << "," << MAX_LENGTH << "]." << endl;
         }
 
     } while (isIncorrect);
@@ -56,24 +56,24 @@ int main()
     {
         do
         {
-            std::cout << "Element " << i + 1 << " = ";
-            std::cin >> num;
+            cout << "Element " << i + 1 << " = ";
+            cin >> num;
 
             isIncorrect = false;
 
-            if (std::cin.get() != '\n' || std::cin.fail())
+            if (cin.get() != '\n' || cin.fail())
             {
                 isIncorrect = true;
-                std::cout << "Incorrect input, try again." << std::endl;
-                std::cin.clear();
-                while (std::cin.get() != '\n');
+                cout << "Incorrect input, try again." << endl;
+                cin.clear();
+                while (cin.get() != '\n');
             }
 
             if (!isIncorrect && ((num < MIN_NUM) || (num > MAX_NUM)))
             {
                 isIncorrect = true;
-                std::cout << "The number must fit the range [" << MIN_NUM << "," << MAX_NUM << "]." << std::endl;
-                while (std::cin.get() != '\n');
+                cout << "The number must fit the range [" << MIN_NUM << "," << MAX_NUM << "]." << endl;
+                while (cin.get() != '\n');
             }
 
         } while (isIncorrect);
