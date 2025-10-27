@@ -33,15 +33,13 @@ public class Lab2_2 {
         num = 0;
         isIncorrect = true;
 
-        Scanner scnr = new Scanner(System.in);
-
         do {
 
             System.out.print("Enter the number N: ");
             isIncorrect = false;
 
             try {
-                num = Integer.parseInt(scnr.nextLine());
+                num = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 isIncorrect = true;
                 System.out.println("Incorrect input, try again.");
@@ -55,8 +53,6 @@ public class Lab2_2 {
             }
 
         } while (isIncorrect);
-
-        scnr.close();
 
         return num;
     }
@@ -138,6 +134,10 @@ public class Lab2_2 {
         System.out.println("Programm is finding all numbers lower then N that is prime Mersenne numbers.");
         
         n = readAndVerify(MIN_N, MAX_N, scanner);
+
+        scanner.close();
+
         getMersenneNumbers(n);
+
     }
 }

@@ -16,7 +16,7 @@ Var
 
 Begin
 
-    FileExt := ExtractFileExt(FName);
+    FileExt := ExtractFileExt(FName);    //Переписать
     If FileExt = '.txt' Then
         IsText := True
     Else
