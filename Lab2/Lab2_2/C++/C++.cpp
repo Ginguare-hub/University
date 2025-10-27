@@ -4,9 +4,12 @@ using namespace std;
 
 bool discoverIsNumberPrime(int number) 
 {
-    int i = 2;
-    bool isShouldStop = false;
-    bool isNumberPrime = false;
+    int i;
+    bool isShouldStop, isNumberPrime;
+
+    i = 2;
+    isShouldStop = false;
+    isNumberPrime = false;
 
     for (i = 2; i < number; i++) 
     {
@@ -66,9 +69,7 @@ int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER)
 
 int getPrimeNumber(int inputNum)
 {
-    int number;
-    int counter;
-    int primeNumber;
+    int number, counter, primeNumber;
     bool isMustStop;
 
     number = 2;
@@ -101,10 +102,7 @@ void getMersenneNumbers(int n)
 {
     const int MIN_ANSWER = 3;
 
-    int i;
-    int j;
-    int answer;
-    int mersenneNumber;
+    int i, j, answer, mersenneNumber;
 
     i = 1;
     j = 2;

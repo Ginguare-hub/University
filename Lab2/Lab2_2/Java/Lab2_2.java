@@ -4,9 +4,12 @@ public class Lab2_2 {
 
     public static boolean discoverIsNumberPrime(int number) {
 
-        int i = 2;
-        boolean isShouldStop = false;
-        boolean isNumberPrime = false;
+        int i;
+        boolean isShouldStop, isNumberPrime;
+
+        i = 2;
+        isShouldStop = false;
+        isNumberPrime = false;
 
         for (i = 2; i < number; i++) {
 
@@ -59,9 +62,7 @@ public class Lab2_2 {
 
     public static int getPrimeNumber(int inputNum) {
 
-        int number;
-        int counter;
-        int primeNumber;
+        int number, counter, primeNumber;
         boolean isMustStop;
 
         number = 2;
@@ -91,10 +92,7 @@ public class Lab2_2 {
 
         final int MIN_ANSWER = 3;
 
-        int i;
-        int j;
-        int answer;
-        int mersenneNumber;
+        int i, j, answer, mersenneNumber;
 
         i = 1;
         j = 2;

@@ -61,7 +61,7 @@ Begin
         If IsCorrect And ((Num < MIN_NUMBER) Or (NUM > MAX_NUMBER)) Then
         Begin
             WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
-            if Num < (LOWEST_MERS + 1) then
+            If Num < (LOWEST_MERS + 1) Then
                 WriteLn('There are no prime Mersenne numbers, lower then 3.');
 
             IsCorrect := False;
@@ -89,28 +89,28 @@ Begin
     If InputNum = 1 Then
         GetPrimeNumber := 2
     Else
-    If InputNum = 2 Then
-        GetPrimeNumber := 3
-    Else
-    Begin
-
-        While (Not IsMustStop) Do
+        If InputNum = 2 Then
+            GetPrimeNumber := 3
+        Else
         Begin
 
-            If DiscoverIsNumberPrime(Number) Then
-                Counter := Counter + 1;
-
-            If Counter = InputNum Then
+            While (Not IsMustStop) Do
             Begin
-                IsMustStop := True;
-                GetPrimeNumber := Number;
+
+                If DiscoverIsNumberPrime(Number) Then
+                    Counter := Counter + 1;
+
+                If Counter = InputNum Then
+                Begin
+                    IsMustStop := True;
+                    GetPrimeNumber := Number;
+                End;
+
+                Number := Number + 1;
+
             End;
 
-            Number := Number + 1;
-
         End;
-
-    End;
 
 End;
 
@@ -169,4 +169,5 @@ Begin
     Write('Press ENTER to close the terminal.');
 
     ReadLn;
+
 End.

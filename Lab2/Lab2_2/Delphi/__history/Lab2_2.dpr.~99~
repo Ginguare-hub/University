@@ -32,11 +32,10 @@ Begin
 
 End;
 
-Function ReadAndVerify(): Integer;
+Function ReadAndVerify(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer): Integer;
 
 Const
-    MAX_NUMBER: Integer = 600000;
-    MIN_NUMBER: Integer = 4;
+    LOWEST_MERS: Integer = 3;
 
 Var
     IsCorrect: Boolean;
@@ -44,6 +43,7 @@ Var
 
 Begin
 
+    Num := 0;
     IsCorrect := True;
 
     Repeat
@@ -61,7 +61,7 @@ Begin
         If IsCorrect And ((Num < MIN_NUMBER) Or (NUM > MAX_NUMBER)) Then
         Begin
             WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
-            if Num < MIN_NUMBER then
+            if Num < (LOWEST_MERS + 1) then
                 WriteLn('There are no prime Mersenne numbers, lower then 3.');
 
             IsCorrect := False;
@@ -76,13 +76,12 @@ End;
 Function GetPrimeNumber(InputNum: Integer): Integer;
 
 Var
-    Number, I, Counter: Integer;
+    Number, Counter: Integer;
     IsMustStop: Boolean;
 
 Begin
 
     Number := 2;
-    I := 2;
     Counter := 0;
 
     IsMustStop := False;
@@ -151,6 +150,10 @@ Begin
     End;
 End;
 
+Const
+    MIN_N: Integer = 4;
+    MAX_N: Integer = 600000;
+
 Var
     N: Integer;
 
@@ -160,10 +163,10 @@ Begin
 
     WriteLn('Programm is finding all numbers lower then N that is prime Mersenne numbers.');
 
-    N := ReadAndVerify();
+    N := ReadAndVerify(MIN_N, MAX_N);
     GetMersenneNumbers(N);
 
-    Write('Press Enter to close the terminal.');
+    Write('Press ENTER to close the terminal.');
 
     ReadLn;
 End.
