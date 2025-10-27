@@ -90,9 +90,7 @@ int main()
         currDiff = abs(arithmMean - arr[i]);
 
         if (minDiff > currDiff)
-        {
             minDiff = currDiff;
-        }
     }
 
     cout << "The element(s) ";
