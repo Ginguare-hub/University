@@ -102,9 +102,7 @@ int main()
         currDiff = abs(arithmMean - arr[i]);
 
         if (minDiff == currDiff)
-        {
             cout << i + 1 << " ";
-        }
     }
 
     cout << "in the list is the number(s), that most fits with the arithmetic mean of the series." << endl;
