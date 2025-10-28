@@ -6,19 +6,39 @@ Uses
 Type
     TArr = Array Of Array Of Integer;
 
-Function CheckIsFileText(FName: String): Boolean;
+// ПРОВЕРКИ ФАЙЛОВ   (Добавить проверку на данные в файле)
+
+Function CheckIsFileText(FileName: String): Boolean;
 
 Var
-    FileExt: String;
+    FileExt, TxtExt: String;
     IsText: Boolean;
+    I, FirstIndex, LastIndex: Integer;
 
 Begin
 
-    FileExt := ExtractFileExt(FName);
-    If FileExt = '.txt' Then
-        IsText := True
-    Else
-        IsText := False;
+    FirstIndex := FileName.length - 4;
+    FirstIndex := FileName.length - 1;
+    TxtExt := '.txt';
+
+    For I := FirstIndex To LastIndex Do
+    Begin
+        FileExt := FileExt + FileName[I];
+    End;
+
+    WriteLn(FileExt);
+
+
+
+
+
+
+
+//    FileExt := ExtractFileExt(FName);    //Переписать
+//    If FileExt = '.txt' Then
+//        IsText := True
+//    Else
+//        IsText := False;
 
     CheckIsFileText := IsText;
 End;
@@ -42,6 +62,72 @@ Begin
     CanRead := IsReady;
 End;
 
+//не знаю нужна ли
+Function CanWrite(Var FileVar: TextFile): Boolean;
+
+Var
+    IsReady: Boolean;
+
+Begin
+
+    Try
+        Append(FileVar);
+        CloseFile(FileVar);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanWrite := IsReady;
+End;
+
+
+Function IsFileNotEmpty(Var FileVar: TextFile): Boolean;
+
+Var
+    IsNotEmpty: Boolean;
+
+Begin
+
+    Try
+        Reset(FileVar);
+        IsNotEmpty := Not Eof(FileVar);
+    Finally
+        CloseFile(FileVar);
+    End;
+
+    IsFileNotEmpty := IsNotEmpty;
+End;
+
+Function CheckInputFile(Var InputFile: TextFile; Var FileName: String): Boolean;
+
+Var
+    CheckInput: Boolean;
+
+Begin
+
+    CheckInput := False;
+
+    If Not FileExists(FileName) Then
+        Writeln('Ошибка, файла ввода не существует')     //поменять
+    Else
+        If Not CheckIsFileText(FileName) Then
+            Writeln('Ошибка, файл ввода не текстовый')   //поменять
+        Else
+            If Not CanRead(InputFile) Then
+                Writeln('Ошибка, файл ввода недоступен') //поменять
+            Else
+                If Not IsFileNotEmpty(InputFile) Then
+                    Writeln('Ошибка, файл ввода пуст')   //поменять
+                Else
+                Begin
+                    CheckInput := True;
+                End;
+
+    CheckInputFile := CheckInput;
+End;
+
+// ПРОВЕРКИ ФАЙЛОВ
 
 Function ReadAndVerify(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer): Integer;
 
@@ -198,45 +284,58 @@ Begin
 
     N := 1;
 
-    WriteLn('Type 1 if you need to work with file, or type 2 if console.');
-    ReadLn(FOrC);
+    //WriteLn('Type 1 if you need to work with file, or type 2 if console.');
+    //ReadLn(FOrC);
 
-    AssignFile(TFile, 'data\input.txt');
+    //AssignFile(TFile, 'C:\GitHub\University\Lab2\Lab2_3\Delphi');
+
+
+    //CheckIsFileText('C:\\FSDJF.txt');
+
+
 
     //ПРОВЕРИТЬ РАБОТАЮТ ЛИ ПРОВЕРКИ
 
-    If FOrC = 1 Then
-    Begin
-        Reset(TFile);
-        Rewrite(TFIle);
-        WriteLn(TFile, 'The program takes a two-dimensional square matrix of order n and arranges the elements of the rows with even numbers of the matrix in descending order.');
+//    If FOrC = 1 Then
+//    Begin
+////        Reset(TFile);
+////        Rewrite(TFIle);
+////        WriteLn(TFile, 'The program takes a two-dimensional square matrix of order n and arranges the elements of the rows with even numbers of the matrix in descending order.');
+////
+////        Reset(TFile);
+//
+//        //AssignFile(TFile, 'data\input.txt');
+//        //Reset(TFile);
+//
+//        CloseFile(TFile);
+//
+//    End
+//    Else
+//    Begin
+//
+//        WriteLn('The program takes a two-dimensional square matrix of order n and arranges the elements of the rows with even numbers of the matrix in descending order.');
+//
+//        Write('Write the order of the matrix: ');
+//        ReadLn(N);
+//
+//
+//
+//
+//
+//    End;
 
-        Reset(TFile);
 
+    WriteLn('The program takes a two-dimensional square matrix of order n and arranges the elements of the rows with even numbers of the matrix in descending order.');
 
-
-
-    End
-    Else
-    Begin
-
-        WriteLn('The program takes a two-dimensional square matrix of order n and arranges the elements of the rows with even numbers of the matrix in descending order.');
-
-        Write('Write the order of the matrix: ');
-        ReadLn(N);
-
-
-
-
-
-    End;
+    Write('Write the order of the matrix: ');
+    ReadLn(N);
 
     MyArray := WriteInMatrix(N);
     MyArray := SortConditional(MyArray);
     WriteOutMatrix(MyArray);
 
 
-    CloseFile(TFile);
+    //CloseFile(TFile);
 
     ReadLn;
 

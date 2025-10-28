@@ -8,19 +8,37 @@ Type
 
 // ПРОВЕРКИ ФАЙЛОВ   (Добавить проверку на данные в файле)
 
-Function CheckIsFileText(FName: String): Boolean;
+Function CheckIsFileText(FileName: String): Boolean;
 
 Var
-    FileExt: String;
+    FileExt, TxtExt: String;
     IsText: Boolean;
+    I, FirstIndex, LastIndex: Integer;
 
 Begin
 
-    FileExt := ExtractFileExt(FName);
-    If FileExt = '.txt' Then
-        IsText := True
-    Else
-        IsText := False;
+    FirstIndex := FileName.length - 4;
+    FirstIndex := FileName.length - 1;
+    TxtExt := '.txt';
+
+    For I := FirstIndex To LastIndex Do
+    Begin
+        FileExt := FileExt + FileName[I];
+    End;
+
+    WriteLn(FileExt);
+
+
+
+
+
+
+
+//    FileExt := ExtractFileExt(FName);    //Переписать
+//    If FileExt = '.txt' Then
+//        IsText := True
+//    Else
+//        IsText := False;
 
     CheckIsFileText := IsText;
 End;
@@ -266,45 +284,14 @@ Begin
 
     N := 1;
 
-    WriteLn('Type 1 if you need to work with file, or type 2 if console.');
-    ReadLn(FOrC);
+    WriteLn('The program takes a two-dimensional square matrix of order n and arranges the elements of the rows with even numbers of the matrix in descending order.');
 
-    AssignFile(TFile, 'data\input.txt');
-
-    //ПРОВЕРИТЬ РАБОТАЮТ ЛИ ПРОВЕРКИ
-
-    If FOrC = 1 Then
-    Begin
-        Reset(TFile);
-        Rewrite(TFIle);
-        WriteLn(TFile, 'The program takes a two-dimensional square matrix of order n and arranges the elements of the rows with even numbers of the matrix in descending order.');
-
-        Reset(TFile);
-
-
-
-
-    End
-    Else
-    Begin
-
-        WriteLn('The program takes a two-dimensional square matrix of order n and arranges the elements of the rows with even numbers of the matrix in descending order.');
-
-        Write('Write the order of the matrix: ');
-        ReadLn(N);
-
-
-
-
-
-    End;
+    Write('Write the order of the matrix: ');
+    ReadLn(N);
 
     MyArray := WriteInMatrix(N);
     MyArray := SortConditional(MyArray);
     WriteOutMatrix(MyArray);
-
-
-    CloseFile(TFile);
 
     ReadLn;
 
