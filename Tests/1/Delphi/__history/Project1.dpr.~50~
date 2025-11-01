@@ -1,0 +1,53 @@
+Program Project1;
+
+Uses
+    System.SysUtils;
+
+Var
+    I, J, Number, InputNum: Integer;
+    ShouldStop, MustStop: Boolean;
+
+Begin
+    InputNum := 1;
+    MustStop := False;
+    ShouldStop := False;
+    J := 2;
+    Number := 0;
+
+    ReadLn(InputNum);
+
+    //I := 3;
+
+    While (Not MustStop) Do
+    Begin
+
+        ShouldStop := False;
+
+        For J := 2 To (I - 1) Do
+        Begin
+
+            If (I Mod J = 0) And (Not ShouldStop) Then
+            Begin
+                ShouldStop := True;
+            End
+            Else
+            If (Not ShouldStop) Then
+                ShouldStop := False;
+
+        End;
+
+        If Not ShouldStop Then
+        Begin
+            Write(I, ' ');
+            Number := Number + 1;
+        End;
+
+        If Number = InputNum Then
+            MustStop := True;
+
+        I := I + 1;
+
+    End;
+    ReadLn;
+End.
+

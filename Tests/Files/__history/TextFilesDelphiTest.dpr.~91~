@@ -1,0 +1,215 @@
+Program TextFilesDelphiTest;
+
+Uses
+    System.SysUtils;
+
+Function ReadAndVerify(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer; MyString: String): Integer;
+
+Var
+    IsCorrect: Boolean;
+    Number: Integer;
+
+Begin
+
+    Number := 0;
+    IsCorrect := True;
+
+    Repeat
+
+        Write(MyString);
+        IsCorrect := True;
+
+        Try
+            ReadLn(Number);
+        Except
+            WriteLn('Incorrect input, try again.');
+            IsCorrect := False;
+        End;
+
+        If IsCorrect And ((Number < MIN_NUMBER) Or (Number > MAX_NUMBER)) Then
+        Begin
+            WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+            IsCorrect := False;
+        End;
+
+    Until IsCorrect;
+
+    ReadAndVerify := Number;
+End;
+
+Function WorkWithConsoleOrFile(IsOutput: Boolean): Boolean;
+
+Var
+    Number: Integer;
+    IsFromFile: Boolean;
+
+Begin
+    Number := 0;
+
+    If IsOutput Then
+        WriteLn('If data is output to the console write 0, if from file write 1.')
+    Else
+        WriteLn('If data is entered from the console write 0, if from file write 1.');
+
+    Number := ReadAndVerify(0, 1, '> ');
+
+    If Number = 0 Then
+    Begin
+        IsFromFile := False;
+        If IsOutput Then
+            WriteLn('The data is output to the console')
+        Else
+            WriteLn('The data is entered from the console');
+    End
+    Else
+    Begin
+        IsFromFile := True;
+        If IsOutput Then
+            WriteLn('The data is output to a file')
+        Else
+            WriteLn('The data is entered from a file');
+    End;
+
+    WorkWithConsoleOrFile := IsFromFile;
+End;
+
+Function IsFileText(FileName: String): Boolean;
+
+Var
+    FileExt: String;
+    IsText: Boolean;
+
+Begin
+
+    FileExt := ExtractFileExt(FileName);
+
+    If FileExt = '.txt' Then
+        IsText := True
+    Else
+        IsText := False;
+
+    IsFileText := IsText;
+
+End;
+
+Procedure ReadAndWriteNumberToConsole(Var InputFile: TextFile);
+
+Var
+    Number: Integer;
+
+Begin
+
+End;
+
+Function ReadNumberFromFile(Var InputFile: TextFile): Integer;
+
+Var
+    Number: Integer;
+
+Begin
+
+    Try
+        ReadLn(InputFile, Number);
+    Finally
+
+    End;
+
+    ReadNumberFromFile := Number;
+End;
+
+Procedure AssignAndResetFile(Var InputFile: TextFile; FileName: String);
+
+Var
+    Number: Integer;
+    IsCorrect: Boolean;
+
+Begin
+
+    IsCorrect := True;
+
+    Repeat
+
+        Try
+            AssignFile(InputFile, FileName);
+        Except
+            WriteLn('Error with assigning.');
+        End;
+
+        If IsFileText(FileName) Then
+            WriteLn('Assigning')
+        Else
+            WriteLn('Problem with assigning, the filename is not .txt');
+
+    Until IsCorrect;
+
+    Reset(InputFile);
+
+End;
+
+Function AskTheFilePath(): String;
+
+Var
+    FilePath: String;
+
+Begin
+
+    Write('Input the file path: ');
+
+    Try
+        ReadLn(FilePath);
+    Finally
+        AskTheFilePath := FilePath;
+    End;
+
+    //AskTheFilePath := FilePath;
+End;
+
+//Function ReadNumberFromFile(Var InputFile: TextFile): Integer;
+//
+//Var
+//Number: Integer;
+//
+//Begin
+//Reset(InputFile);
+// //Reset(InputFile);
+//
+//ReadLn(InputFile, Number);
+//
+//WriteLn(Number);
+//
+//End;
+
+Var
+    MyFile: TextFile;
+    FilePath: String;
+    Number: Integer;
+    IsFromFile: Boolean;
+    IsToFile: Boolean;
+    IsOutput: Boolean;
+
+Begin
+
+    IsOutput := False;
+
+    IsFromFile := WorkWithConsoleOrFile(IsOutput);
+
+    If IsFromFile Then
+    Begin
+
+        FilePath := AskTheFilePath();
+        AssignAndResetFile(MyFile, FilePath);
+
+        Number := ReadNumberFromFile(MyFile);
+        WriteLn(Number);
+
+    End;
+
+    Number := ReadAndVerify(-10000, 10000, 'Write the number: ');
+    WriteLn(Number);
+
+    ReadLn;
+
+    If IsFromFile Then
+        CloseFile(MyFile);
+
+End.
