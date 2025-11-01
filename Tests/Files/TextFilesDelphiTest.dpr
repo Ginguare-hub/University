@@ -37,6 +37,31 @@ Begin
     ReadAndVerify := Number;
 End;
 
+//Function CheckInputFile(Var InputFile: TextFile; Var FileName: String): Boolean;
+//
+//Var
+//    CheckInput: Boolean;
+//
+//Begin
+//    CheckInput := False;
+//    If Not FileExists(FileName) Then
+//        Writeln('Ошибка, файла ввода не существует')
+//    Else
+//        If Not IsFileText(FileName) Then
+//            Writeln('Ошибка, файл ввода не текстовый')
+//        Else
+//            If Not CanRead(InputFile) Then
+//                Writeln('Ошибка, файл ввода недоступен')
+//            Else
+//                If Not IsFileNotEmpty(InputFile) Then
+//                    Writeln('Ошибка, файл ввода пуст')
+//                Else
+//                Begin
+//                    CheckInput := True;
+//                End;
+//    CheckInputFile := CheckInput;
+//End;
+
 Function WorkWithConsoleOrFile(IsOutput: Boolean): Boolean;
 
 Var

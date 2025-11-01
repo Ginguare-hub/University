@@ -3,7 +3,7 @@ Program TextFilesDelphiTest;
 Uses
     System.SysUtils;
 
-Function ReadAndVerify(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer): Integer;
+Function ReadAndVerify(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer; MyString: String): Integer;
 
 Var
     IsCorrect: Boolean;
@@ -16,7 +16,7 @@ Begin
 
     Repeat
 
-        Write('> ');
+        Write(MyString);
         IsCorrect := True;
 
         Try
@@ -47,27 +47,27 @@ Begin
     Number := 0;
 
     If IsOutput Then
-        WriteLn('If data is output to the console, write 0, if from file, write 1.')
+        WriteLn('If data is output to the console write 0, if from file write 1.')
     Else
-        WriteLn('If data is entered from the console, write 0, if from file, write 1.');
+        WriteLn('If data is entered from the console write 0, if from file write 1.');
 
-    Number := ReadAndVerify(0, 1);
+    Number := ReadAndVerify(0, 1, '> ');
 
     If Number = 0 Then
     Begin
         IsFromFile := False;
         If IsOutput Then
-            WriteLn('The data is output to the console')
+            WriteLn('The data is output to the console.')
         Else
-            WriteLn('The data is entered from the console');
+            WriteLn('The data is entered from the console.');
     End
     Else
     Begin
         IsFromFile := True;
         If IsOutput Then
-            WriteLn('The data is output to a file')
+            WriteLn('The data is output to a file.')
         Else
-            WriteLn('The data is entered from a file');
+            WriteLn('The data is entered from a file.');
     End;
 
     WorkWithConsoleOrFile := IsFromFile;
@@ -117,27 +117,6 @@ Begin
     ReadNumberFromFile := Number;
 End;
 
-Procedure AssignTheFile(Var InputFile: TextFile; FileName: String);
-
-Var
-    Number: Integer;
-
-Begin
-
-    Try
-        AssignFile(InputFile, FileName);
-        Reset(InputFile);
-    Except
-        WriteLn('Error with assigning.');
-    End;
-
-    If IsFileText(FileName) Then
-        WriteLn('Assigning')
-    Else
-        WriteLn('Problem with assigning, the filename is not .txt');
-
-End;
-
 Function AskTheFilePath(): String;
 
 Var
@@ -145,7 +124,7 @@ Var
 
 Begin
 
-    Write('Input the file path: ');
+    Write('Write the existing file path: ');
 
     Try
         ReadLn(FilePath);
@@ -153,7 +132,51 @@ Begin
         AskTheFilePath := FilePath;
     End;
 
-    //AskTheFilePath := FilePath;
+End;
+
+Procedure AssignAndResetFile(Var InputFile: TextFile);
+
+Var
+    Number: Integer;
+    IsCorrect: Boolean;
+    FilePath: String;
+
+Begin
+
+    IsCorrect := True;
+
+    Repeat
+
+        FilePath := AskTheFilePath();
+
+        IsCorrect := True;
+
+        Try
+            AssignFile(InputFile, FilePath);
+        Except
+            WriteLn('Error with assigning.');
+            IsCorrect := False;
+        End;
+
+        Try
+            Reset(InputFile);
+        Except
+            WriteLn('Error with assigning, the file is not existing.');
+            IsCorrect := False;
+        End;
+
+        If IsCorrect And IsFileText(FilePath) Then
+            WriteLn('Assigning is completed.')
+        Else
+        Begin
+            WriteLn('Problem with assigning, the filename is not .txt');
+            IsCorrect := False;
+        End;
+
+    Until IsCorrect;
+
+    Reset(InputFile);
+
 End;
 
 //Function ReadNumberFromFile(Var InputFile: TextFile): Integer;
@@ -173,7 +196,7 @@ End;
 
 Var
     MyFile: TextFile;
-    FilePath: String;
+    //FilePath: String;
     Number: Integer;
     IsFromFile: Boolean;
     IsToFile: Boolean;
@@ -188,15 +211,14 @@ Begin
     If IsFromFile Then
     Begin
 
-        FilePath := AskTheFilePath();
-        AssignTheFile(MyFile, FilePath);
+        AssignAndResetFile(MyFile);
 
         Number := ReadNumberFromFile(MyFile);
         WriteLn(Number);
 
     End;
 
-    Number := ReadAndVerify(-10000, 10000);
+    Number := ReadAndVerify(-10000, 10000, 'Write the number: ');
     WriteLn(Number);
 
     ReadLn;
