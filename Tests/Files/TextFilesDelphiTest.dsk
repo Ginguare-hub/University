@@ -1,10 +1,15 @@
 ﻿[Modules]
-Count=0
+Module0=C:\GitHub\University\Tests\Files\TextFilesDelphiTest.dproj
+Count=1
 EditWindowCount=1
 
+[C:\GitHub\University\Tests\Files\TextFilesDelphiTest.dproj]
+ModuleType=TBaseProject
+
 [EditWindow0]
-ViewCount=0
-CurrentView=-1
+ViewCount=1
+CurrentEditView=C:\GitHub\University\Tests\Files\TextFilesDelphiTest.dpr
+View0=0
 PercentageSizes=1
 Create=1
 Visible=1
@@ -37,6 +42,17 @@ BottomPanelData=0000080001020200000009000000446F636B53697465310F0000004D65737361
 BottomMiddlePanelSize=0
 BottomMiddlePanelClients=DockSite0,GraphDrawingModel
 BottomMiddelPanelData=0000080001020200000009000000446F636B536974653010000000477261706844726177696E67566965779A1D00000000000002F506000000000000FFFFFFFF
+
+[View0]
+CustomEditViewType=TEditView
+Module=C:\GitHub\University\Tests\Files\TextFilesDelphiTest.dpr
+CursorX=1
+CursorY=1
+TopLine=31
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=C:\GitHub\University\Tests\Files\TextFilesDelphiTest.dpr
 
 [Watches]
 Count=2
@@ -195,8 +211,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-127
-Top=-416
+Left=-470
+Top=-759
 Width=1846
 Height=3141
 MaxLeft=-1
