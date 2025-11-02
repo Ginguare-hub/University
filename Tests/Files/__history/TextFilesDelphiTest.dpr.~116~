@@ -75,7 +75,7 @@ Begin
     IsFileNotEmpty := IsNotEmpty;
 End;
 
-Function CanRead(Var InputFile: TextFile): Boolean;
+Function CanRead(Var FileVar: TextFile): Boolean;
 
 Var
     IsReady: Boolean;
@@ -83,8 +83,8 @@ Var
 Begin
 
     Try
-        Reset(InputFile);
-        CloseFile(InputFile);
+        Reset(FileVar);
+        CloseFile(FileVar);
         IsReady := True;
     Except
         IsReady := False;
@@ -220,6 +220,8 @@ Begin
 
         FilePath := AskTheFilePath();
 
+        IsCorrect := CheckInputFile(InputFile, FilePath);
+
         Try
             AssignFile(InputFile, FilePath);
         Except
@@ -227,8 +229,6 @@ Begin
             FilePath := AskTheFilePath();
             IsCorrect := False;
         End;
-
-        IsCorrect := CheckInputFile(InputFile, FilePath);
 
 //        Try
 //            Reset(InputFile);

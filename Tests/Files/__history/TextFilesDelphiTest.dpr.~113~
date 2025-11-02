@@ -3,6 +3,8 @@ Program TextFilesDelphiTest;
 Uses
     System.SysUtils;
 
+//Проверки----------------------------------------------------------------------
+
 Function ReadAndVerify(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer; MyString: String): Integer;
 
 Var
@@ -36,6 +38,90 @@ Begin
 
     ReadAndVerify := Number;
 End;
+
+Function IsFileText(FilePath: String): Boolean;
+
+Var
+    FileExt: String;
+    IsText: Boolean;
+
+Begin
+
+    FileExt := ExtractFileExt(FilePath);
+
+    If FileExt = '.txt' Then
+        IsText := True
+    Else
+        IsText := False;
+
+    IsFileText := IsText;
+
+End;
+
+Function IsFileNotEmpty(Var InputFile: TextFile): Boolean;
+
+Var
+    IsNotEmpty: Boolean;
+
+Begin
+
+    Try
+        //Reset(InputFile);
+        IsNotEmpty := Not EOF(InputFile);
+    Finally
+        CloseFile(InputFile);
+    End;
+
+    IsFileNotEmpty := IsNotEmpty;
+End;
+
+//Function CanRead(Var FileVar: TextFile): Boolean;
+//
+//Var
+//    IsReady: Boolean;
+//
+//Begin
+//
+//    Try
+//        Reset(FileVar);
+//        CloseFile(FileVar);
+//        IsReady := True;
+//    Except
+//        IsReady := False;
+//    End;
+//
+//    CanRead := IsReady;
+//End;
+
+Function CheckInputFile(Var InputFile: TextFile; FilePath: String): Boolean;
+
+Var
+    CheckInput: Boolean;
+
+Begin
+    CheckInput := False;
+
+    If Not FileExists(FilePath) Then
+        Writeln('Error, file with path <', FilePath, '> is not exists.')
+    Else
+        If Not IsFileText(FilePath) Then
+            Writeln('Error, filename is not .txt')
+        Else
+//            If Not CanRead(InputFile) Then
+//                Writeln('Error, no access to read the file.')
+//            Else
+//                If Not IsFileNotEmpty(InputFile) Then
+//                    Writeln('Error, file is empty.')
+//                Else
+                Begin
+                    CheckInput := True;
+                    WriteLn('Assigning is completed successfully.');
+                End;
+
+    CheckInputFile := CheckInput;
+End;
+
+//Проверки----------------------------------------------------------------------
 
 Function WorkWithConsoleOrFile(IsOutput: Boolean): Boolean;
 
@@ -71,25 +157,6 @@ Begin
     End;
 
     WorkWithConsoleOrFile := IsFromFile;
-End;
-
-Function IsFileText(FileName: String): Boolean;
-
-Var
-    FileExt: String;
-    IsText: Boolean;
-
-Begin
-
-    FileExt := ExtractFileExt(FileName);
-
-    If FileExt = '.txt' Then
-        IsText := True
-    Else
-        IsText := False;
-
-    IsFileText := IsText;
-
 End;
 
 Procedure ReadAndWriteNumberToConsole(Var InputFile: TextFile);
@@ -147,31 +214,28 @@ Begin
 
     Repeat
 
+        //Reset(InputFile);
+
+        //IsCorrect := True;
+
         FilePath := AskTheFilePath();
 
-        IsCorrect := True;
+        IsCorrect := CheckInputFile(InputFile, FilePath);
 
         Try
             AssignFile(InputFile, FilePath);
         Except
             WriteLn('Error with assigning.');
+            FilePath := AskTheFilePath();
             IsCorrect := False;
         End;
 
-        Try
-            Reset(InputFile);
-        Except
-            WriteLn('Error with assigning, the file is not existing.');
-            IsCorrect := False;
-        End;
-
-        If IsCorrect And IsFileText(FilePath) Then
-            WriteLn('Assigning is completed.')
-        Else
-        Begin
-            WriteLn('Problem with assigning, the filename is not .txt');
-            IsCorrect := False;
-        End;
+//        Try
+//            Reset(InputFile);
+//        Except
+//            WriteLn('Error with assigning, the file is not existing.');
+//            IsCorrect := False;
+//        End;
 
     Until IsCorrect;
 
@@ -213,17 +277,22 @@ Begin
 
         AssignAndResetFile(MyFile);
 
+        //CheckInputFile(MyFile, AskTheFilePath());
+
         Number := ReadNumberFromFile(MyFile);
         WriteLn(Number);
 
-    End;
+    End
+    Else
+    Begin
 
-    Number := ReadAndVerify(-10000, 10000, 'Write the number: ');
-    WriteLn(Number);
+        Number := ReadAndVerify(-10000, 10000, 'Write the number: ');
+        WriteLn(Number);
+
+    End;
 
     ReadLn;
 
     If IsFromFile Then
         CloseFile(MyFile);
-
 End.

@@ -75,23 +75,23 @@ Begin
     IsFileNotEmpty := IsNotEmpty;
 End;
 
-Function CanRead(Var InputFile: TextFile): Boolean;
-
-Var
-    IsReady: Boolean;
-
-Begin
-
-    Try
-        Reset(InputFile);
-        CloseFile(InputFile);
-        IsReady := True;
-    Except
-        IsReady := False;
-    End;
-
-    CanRead := IsReady;
-End;
+//Function CanRead(Var FileVar: TextFile): Boolean;
+//
+//Var
+//    IsReady: Boolean;
+//
+//Begin
+//
+//    Try
+//        Reset(FileVar);
+//        CloseFile(FileVar);
+//        IsReady := True;
+//    Except
+//        IsReady := False;
+//    End;
+//
+//    CanRead := IsReady;
+//End;
 
 Function CheckInputFile(Var InputFile: TextFile; FilePath: String): Boolean;
 
@@ -107,12 +107,12 @@ Begin
         If Not IsFileText(FilePath) Then
             Writeln('Error, filename is not .txt')
         Else
-            If Not CanRead(InputFile) Then
-                Writeln('Error, no access to read the file.')
-            Else
-                If Not IsFileNotEmpty(InputFile) Then
-                    Writeln('Error, file is empty.')
-                Else
+//            If Not CanRead(InputFile) Then
+//                Writeln('Error, no access to read the file.')
+//            Else
+//                If Not IsFileNotEmpty(InputFile) Then
+//                    Writeln('Error, file is empty.')
+//                Else
                 Begin
                     CheckInput := True;
                     WriteLn('Assigning is completed successfully.');
@@ -220,6 +220,8 @@ Begin
 
         FilePath := AskTheFilePath();
 
+        IsCorrect := CheckInputFile(InputFile, FilePath);
+
         Try
             AssignFile(InputFile, FilePath);
         Except
@@ -227,8 +229,6 @@ Begin
             FilePath := AskTheFilePath();
             IsCorrect := False;
         End;
-
-        IsCorrect := CheckInputFile(InputFile, FilePath);
 
 //        Try
 //            Reset(InputFile);
