@@ -205,7 +205,7 @@ Begin
     Close(InputFile);
 
     If Number = ErrorNumber Then
-        WriteLn('Error, incorrect number in file.')
+        WriteLn('Error, incorrect input.')
     Else
     Begin
         If (Number < MIN_NUMBER) Or (Number > MAX_NUMBER) Then
@@ -273,7 +273,7 @@ Begin
 
     Until IsCorrect;
 
-    Reset(InputFile);
+    //Reset(InputFile);
 
 End;
 
@@ -316,15 +316,19 @@ Begin
 
         Repeat
 
+            IsAllDone := True;
+
             AssignAndResetFile(MyFile);
 
             //CheckInputFile(MyFile, AskTheFilePath());
 
             Number := ReadNumberFromFile(-10000, 10000, MyFile);
-            If Not Number = ErrorNumber Then
-                WriteLn(Number)
+            If Not (Number = ErrorNumber) Then
+            Begin
+                WriteLn(Number);
+            End
             Else
-            IsAllDone := False;
+                IsAllDone := False;
 
         Until IsAllDone;
 
@@ -339,7 +343,7 @@ Begin
 
     ReadLn;
 
-    If IsFromFile Then
-        CloseFile(MyFile);
+//    If (IsFromFile And CheckInputFile(MyFile)) Then
+//        CloseFile(MyFile);
 
 End.

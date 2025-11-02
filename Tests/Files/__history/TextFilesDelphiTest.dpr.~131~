@@ -5,7 +5,7 @@ Uses
 
 //Проверки----------------------------------------------------------------------
 
-Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String; IsFile: Boolean; Var InputFile: TextFile): Integer;
+Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
 
 Var
     IsCorrect: Boolean;
@@ -16,40 +16,45 @@ Begin
     Number := 0;
     IsCorrect := True;
 
-    If IsFile Then
-    Begin
+    Repeat
 
-        ReadLn(InputFile, Number);
+        Write(MyString);
+        IsCorrect := True;
 
-        If ((Number < MIN_NUMBER) Or (Number > MAX_NUMBER)) Then
-            WriteLn('Incorrect input. The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+        Try
+            ReadLn(Number);
+        Except
+            WriteLn('Incorrect input, try again.');
+            IsCorrect := False;
+        End;
 
-    End
-    Else
-    Begin
-        Repeat
+        If IsCorrect And ((Number < MIN_NUMBER) Or (Number > MAX_NUMBER)) Then
+        Begin
+            WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+            IsCorrect := False;
+        End;
 
-            Write(MyString);
-            IsCorrect := True;
-
-            Try
-                ReadLn(Number);
-            Except
-                WriteLn('Incorrect input, try again.');
-                IsCorrect := False;
-            End;
-
-            If IsCorrect And ((Number < MIN_NUMBER) Or (Number > MAX_NUMBER)) Then
-            Begin
-                WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
-                IsCorrect := False;
-            End;
-
-        Until IsCorrect;
-    End;
+    Until IsCorrect;
 
     ReadAndVerify := Number;
 End;
+
+//Function ReadAndVerifyFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
+//
+//Var
+//Number: Integer;
+//
+//Begin
+//
+//If (Number < MIN_NUMBER) Or (Number > MAX_NUMBER) Then
+//Begin
+//WriteLn('Incorrect input, the number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+//End;
+//
+//
+//
+//ReadAndVerifyFromFile := Number;
+//End;
 
 Function IsFileText(FilePath: String): Boolean;
 
@@ -180,7 +185,7 @@ End;
 //
 //End;
 
-Function ReadNumberFromFile(Var InputFile: TextFile): Integer;
+Function ReadNumberFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; Var InputFile: TextFile): Integer;
 
 Const
     ErrorNumber: Integer = 37707;
@@ -200,7 +205,15 @@ Begin
     Close(InputFile);
 
     If Number = ErrorNumber Then
-        WriteLn('Error, incorrect number in file.');
+        WriteLn('Error, incorrect number in file.')
+    Else
+    Begin
+        If (Number < MIN_NUMBER) Or (Number > MAX_NUMBER) Then
+        Begin
+            WriteLn('Incorrect input, the number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+            Number := ErrorNumber;
+        End;
+    End;
 
     ReadNumberFromFile := Number;
 End;
@@ -289,6 +302,7 @@ Var
     IsFromFile: Boolean;
     IsToFile: Boolean;
     IsOutput: Boolean;
+    IsAllDone: Boolean;
 
 Begin
 
@@ -299,13 +313,20 @@ Begin
     If IsFromFile Then
     Begin
 
-        AssignAndResetFile(MyFile);
 
-        //CheckInputFile(MyFile, AskTheFilePath());
+        Repeat
 
-        Number := ReadNumberFromFile(MyFile);
-        If Not Number = ErrorNumber Then
-            WriteLn(Number);
+            AssignAndResetFile(MyFile);
+
+            //CheckInputFile(MyFile, AskTheFilePath());
+
+            Number := ReadNumberFromFile(-10000, 10000, MyFile);
+            If Not Number = ErrorNumber Then
+                WriteLn(Number)
+            Else
+            IsAllDone := False;
+
+        Until IsAllDone;
 
     End
     Else
