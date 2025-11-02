@@ -58,7 +58,7 @@ Begin
             IsCorrect := False;
         End;
 
-        If IsCorrect And ((Num < MIN_NUMBER) Or (NUM > MAX_NUMBER)) Then
+        If IsCorrect And ((Num < MIN_NUMBER) Or (Num > MAX_NUMBER)) Then
         Begin
             WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
             If Num < (LOWEST_MERS + 1) Then
