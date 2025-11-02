@@ -5,7 +5,7 @@ Uses
 
 //Проверки----------------------------------------------------------------------
 
-Function ReadAndVerify(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer; MyString: String): Integer;
+Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
 
 Var
     IsCorrect: Boolean;
@@ -38,6 +38,23 @@ Begin
 
     ReadAndVerify := Number;
 End;
+
+//Function ReadAndVerifyFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
+//
+//Var
+//Number: Integer;
+//
+//Begin
+//
+//If (Number < MIN_NUMBER) Or (Number > MAX_NUMBER) Then
+//Begin
+//WriteLn('Incorrect input, the number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+//End;
+//
+//
+//
+//ReadAndVerifyFromFile := Number;
+//End;
 
 Function IsFileText(FilePath: String): Boolean;
 
@@ -159,16 +176,19 @@ Begin
     WorkWithConsoleOrFile := IsFromFile;
 End;
 
-Procedure ReadAndWriteNumberToConsole(Var InputFile: TextFile);
+//Procedure ReadAndWriteNumberToConsole(Var InputFile: TextFile);
+//
+//Var
+//Number: Integer;
+//
+//Begin
+//
+//End;
 
-Var
-    Number: Integer;
+Function ReadNumberFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; Var InputFile: TextFile): Integer;
 
-Begin
-
-End;
-
-Function ReadNumberFromFile(Var InputFile: TextFile): Integer;
+Const
+    ErrorNumber: Integer = 37707;
 
 Var
     Number: Integer;
@@ -176,9 +196,23 @@ Var
 Begin
 
     Try
+        Reset(InputFile);
         ReadLn(InputFile, Number);
-    Finally
+    Except
+        Number := ErrorNumber;
+    End;
 
+    Close(InputFile);
+
+    If Number = ErrorNumber Then
+        WriteLn('Error, incorrect number in file.')
+    Else
+    Begin
+        If (Number < MIN_NUMBER) Or (Number > MAX_NUMBER) Then
+        Begin
+            WriteLn('Incorrect input, the number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+            Number := ErrorNumber;
+        End;
     End;
 
     ReadNumberFromFile := Number;
@@ -230,12 +264,12 @@ Begin
 
         IsCorrect := CheckInputFile(InputFile, FilePath);
 
-//        Try
-//            Reset(InputFile);
-//        Except
-//            WriteLn('Error with assigning, the file is not existing.');
-//            IsCorrect := False;
-//        End;
+        //Try
+        //Reset(InputFile);
+        //Except
+        //WriteLn('Error with assigning, the file is not existing.');
+        //IsCorrect := False;
+        //End;
 
     Until IsCorrect;
 
@@ -258,6 +292,9 @@ End;
 //
 //End;
 
+Const
+    ErrorNumber: Integer = 37707;
+
 Var
     MyFile: TextFile;
     //FilePath: String;
@@ -265,6 +302,7 @@ Var
     IsFromFile: Boolean;
     IsToFile: Boolean;
     IsOutput: Boolean;
+    IsAllDone: Boolean;
 
 Begin
 
@@ -275,12 +313,20 @@ Begin
     If IsFromFile Then
     Begin
 
-        AssignAndResetFile(MyFile);
 
-        //CheckInputFile(MyFile, AskTheFilePath());
+        Repeat
 
-        Number := ReadNumberFromFile(MyFile);
-        WriteLn(Number);
+            AssignAndResetFile(MyFile);
+
+            //CheckInputFile(MyFile, AskTheFilePath());
+
+            Number := ReadNumberFromFile(-10000, 10000, MyFile);
+            If Not Number = ErrorNumber Then
+                WriteLn(Number)
+            Else
+            IsAllDone := False;
+
+        Until IsAllDone;
 
     End
     Else
@@ -295,4 +341,5 @@ Begin
 
     If IsFromFile Then
         CloseFile(MyFile);
+
 End.

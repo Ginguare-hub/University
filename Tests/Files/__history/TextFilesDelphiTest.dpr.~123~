@@ -5,7 +5,7 @@ Uses
 
 //Проверки----------------------------------------------------------------------
 
-Function ReadAndVerify(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer; MyString: String): Integer;
+Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String; IsFile: Boolean; Var InputFile: TextFile): Integer;
 
 Var
     IsCorrect: Boolean;
@@ -16,25 +16,37 @@ Begin
     Number := 0;
     IsCorrect := True;
 
-    Repeat
+    If IsFile Then
+    Begin
 
-        Write(MyString);
-        IsCorrect := True;
+        ReadLn(InputFile, Number);
 
-        Try
-            ReadLn(Number);
-        Except
-            WriteLn('Incorrect input, try again.');
-            IsCorrect := False;
-        End;
+        If ((Number < MIN_NUMBER) Or (Number > MAX_NUMBER)) Then
+            WriteLn('Incorrect input. The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
 
-        If IsCorrect And ((Number < MIN_NUMBER) Or (Number > MAX_NUMBER)) Then
-        Begin
-            WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
-            IsCorrect := False;
-        End;
+    End
+    Else
+    Begin
+        Repeat
 
-    Until IsCorrect;
+            Write(MyString);
+            IsCorrect := True;
+
+            Try
+                ReadLn(Number);
+            Except
+                WriteLn('Incorrect input, try again.');
+                IsCorrect := False;
+            End;
+
+            If IsCorrect And ((Number < MIN_NUMBER) Or (Number > MAX_NUMBER)) Then
+            Begin
+                WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+                IsCorrect := False;
+            End;
+
+        Until IsCorrect;
+    End;
 
     ReadAndVerify := Number;
 End;
@@ -75,23 +87,23 @@ Begin
     IsFileNotEmpty := IsNotEmpty;
 End;
 
-//Function CanRead(Var FileVar: TextFile): Boolean;
-//
-//Var
-//    IsReady: Boolean;
-//
-//Begin
-//
-//    Try
-//        Reset(FileVar);
-//        CloseFile(FileVar);
-//        IsReady := True;
-//    Except
-//        IsReady := False;
-//    End;
-//
-//    CanRead := IsReady;
-//End;
+Function CanRead(Var InputFile: TextFile): Boolean;
+
+Var
+    IsReady: Boolean;
+
+Begin
+
+    Try
+        Reset(InputFile);
+        CloseFile(InputFile);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanRead := IsReady;
+End;
 
 Function CheckInputFile(Var InputFile: TextFile; FilePath: String): Boolean;
 
@@ -107,9 +119,9 @@ Begin
         If Not IsFileText(FilePath) Then
             Writeln('Error, filename is not .txt')
         Else
-//            If Not CanRead(InputFile) Then
-//                Writeln('Error, no access to read the file.')
-//            Else
+            If Not CanRead(InputFile) Then
+                Writeln('Error, no access to read the file.')
+            Else
                 If Not IsFileNotEmpty(InputFile) Then
                     Writeln('Error, file is empty.')
                 Else
@@ -159,16 +171,19 @@ Begin
     WorkWithConsoleOrFile := IsFromFile;
 End;
 
-Procedure ReadAndWriteNumberToConsole(Var InputFile: TextFile);
-
-Var
-    Number: Integer;
-
-Begin
-
-End;
+//Procedure ReadAndWriteNumberToConsole(Var InputFile: TextFile);
+//
+//Var
+//Number: Integer;
+//
+//Begin
+//
+//End;
 
 Function ReadNumberFromFile(Var InputFile: TextFile): Integer;
+
+Const
+    ErrorNumber: Integer = 37707;
 
 Var
     Number: Integer;
@@ -176,10 +191,16 @@ Var
 Begin
 
     Try
+        Reset(InputFile);
         ReadLn(InputFile, Number);
-    Finally
-
+    Except
+        Number := ErrorNumber;
     End;
+
+    Close(InputFile);
+
+    If Number = ErrorNumber Then
+        WriteLn('Error, incorrect number in file.');
 
     ReadNumberFromFile := Number;
 End;
@@ -214,13 +235,11 @@ Begin
 
     Repeat
 
-        Reset(InputFile);
+        //Reset(InputFile);
 
         //IsCorrect := True;
 
         FilePath := AskTheFilePath();
-
-        IsCorrect := CheckInputFile(InputFile, FilePath);
 
         Try
             AssignFile(InputFile, FilePath);
@@ -230,12 +249,14 @@ Begin
             IsCorrect := False;
         End;
 
-//        Try
-//            Reset(InputFile);
-//        Except
-//            WriteLn('Error with assigning, the file is not existing.');
-//            IsCorrect := False;
-//        End;
+        IsCorrect := CheckInputFile(InputFile, FilePath);
+
+        //Try
+        //Reset(InputFile);
+        //Except
+        //WriteLn('Error with assigning, the file is not existing.');
+        //IsCorrect := False;
+        //End;
 
     Until IsCorrect;
 
@@ -257,6 +278,9 @@ End;
 //WriteLn(Number);
 //
 //End;
+
+Const
+    ErrorNumber: Integer = 37707;
 
 Var
     MyFile: TextFile;
@@ -280,12 +304,17 @@ Begin
         //CheckInputFile(MyFile, AskTheFilePath());
 
         Number := ReadNumberFromFile(MyFile);
+        If Not Number = ErrorNumber Then
+            WriteLn(Number);
+
+    End
+    Else
+    Begin
+
+        Number := ReadAndVerify(-10000, 10000, 'Write the number: ');
         WriteLn(Number);
 
     End;
-
-    Number := ReadAndVerify(-10000, 10000, 'Write the number: ');
-    WriteLn(Number);
 
     ReadLn;
 
