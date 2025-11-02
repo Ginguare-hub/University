@@ -1,4 +1,7 @@
-﻿[Modules]
+﻿[Closed Files]
+File_0=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\RTL\SYS\System.pas',0,1,12297,1,12321,0,0,,
+
+[Modules]
 Module0=C:\GitHub\University\Tests\Files\TextFilesDelphiTest.dproj
 Count=1
 EditWindowCount=1
@@ -46,9 +49,9 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 [View0]
 CustomEditViewType=TEditView
 Module=C:\GitHub\University\Tests\Files\TextFilesDelphiTest.dpr
-CursorX=1
-CursorY=304
-TopLine=206
+CursorX=114
+CursorY=184
+TopLine=160
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -81,7 +84,8 @@ Dockable=1
 StayOnTop=0
 
 [Breakpoints]
-Count=0
+Count=1
+Breakpoint0='C:\GitHub\University\Tests\Files\TextFilesDelphiTest.dpr',170,'',0,1,'',1,0,0,'',1,'','','',0,''
 
 [EmbarcaderoWin32Debugger_AddressBreakpoints]
 Count=0
@@ -95,14 +99,14 @@ Create=1
 Visible=1
 Docked=0
 State=2
-Left=146
-Top=272
-Width=8932
-Height=8522
+Left=0
+Top=0
+Width=8411
+Height=8391
 MaxLeft=-3
 MaxTop=-5
-MaxWidth=8932
-MaxHeight=8522
+MaxWidth=8411
+MaxHeight=8391
 ClientWidth=10000
 ClientHeight=10071
 BottomPanelSize=8547
@@ -280,8 +284,8 @@ TBDockHeight=364
 LRDockWidth=273
 Dockable=1
 StayOnTop=0
-Name=8
-Description=21
+Name=5
+Description=5
 filter=1
 
 [DebugLogView]
@@ -558,11 +562,11 @@ Docked=0
 State=0
 Left=0
 Top=0
-Width=1826
+Width=1829
 Height=6174
 MaxLeft=-3
 MaxTop=-5
-ClientWidth=1742
+ClientWidth=1745
 ClientHeight=5788
 TBDockHeight=6174
 LRDockWidth=1826

@@ -39,23 +39,6 @@ Begin
     ReadAndVerify := Number;
 End;
 
-//Function ReadAndVerifyFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
-//
-//Var
-//Number: Integer;
-//
-//Begin
-//
-//If (Number < MIN_NUMBER) Or (Number > MAX_NUMBER) Then
-//Begin
-//WriteLn('Incorrect input, the number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
-//End;
-//
-//
-//
-//ReadAndVerifyFromFile := Number;
-//End;
-
 Function IsFileText(FilePath: String): Boolean;
 
 Var
@@ -176,15 +159,6 @@ Begin
     WorkWithConsoleOrFile := IsFromFile;
 End;
 
-//Procedure ReadAndWriteNumberToConsole(Var InputFile: TextFile);
-//
-//Var
-//Number: Integer;
-//
-//Begin
-//
-//End;
-
 Function ReadNumberFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; Var InputFile: TextFile): Integer;
 
 Const
@@ -194,6 +168,8 @@ Var
     Number: Integer;
 
 Begin
+
+    Number := ErrorNumber;
 
     Try
         Reset(InputFile);
@@ -248,10 +224,6 @@ Begin
 
     Repeat
 
-        //Reset(InputFile);
-
-        //IsCorrect := True;
-
         FilePath := AskTheFilePath();
 
         Try
@@ -264,40 +236,15 @@ Begin
 
         IsCorrect := CheckInputFile(InputFile, FilePath);
 
-        //Try
-        //Reset(InputFile);
-        //Except
-        //WriteLn('Error with assigning, the file is not existing.');
-        //IsCorrect := False;
-        //End;
-
     Until IsCorrect;
 
-    //Reset(InputFile);
-
 End;
-
-//Function ReadNumberFromFile(Var InputFile: TextFile): Integer;
-//
-//Var
-//Number: Integer;
-//
-//Begin
-//Reset(InputFile);
-// //Reset(InputFile);
-//
-//ReadLn(InputFile, Number);
-//
-//WriteLn(Number);
-//
-//End;
 
 Const
     ErrorNumber: Integer = 37707;
 
 Var
     MyFile: TextFile;
-    //FilePath: String;
     Number: Integer;
     IsFromFile: Boolean;
     IsToFile: Boolean;
@@ -312,7 +259,6 @@ Begin
 
     If IsFromFile Then
     Begin
-
 
         Repeat
 
@@ -342,8 +288,4 @@ Begin
     End;
 
     ReadLn;
-
-//    If (IsFromFile And CheckInputFile(MyFile)) Then
-//        CloseFile(MyFile);
-
 End.

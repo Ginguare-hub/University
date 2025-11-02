@@ -176,15 +176,6 @@ Begin
     WorkWithConsoleOrFile := IsFromFile;
 End;
 
-//Procedure ReadAndWriteNumberToConsole(Var InputFile: TextFile);
-//
-//Var
-//Number: Integer;
-//
-//Begin
-//
-//End;
-
 Function ReadNumberFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; Var InputFile: TextFile): Integer;
 
 Const
@@ -205,7 +196,7 @@ Begin
     Close(InputFile);
 
     If Number = ErrorNumber Then
-        WriteLn('Error, incorrect number in file.')
+        WriteLn('Error, incorrect input.')
     Else
     Begin
         If (Number < MIN_NUMBER) Or (Number > MAX_NUMBER) Then
@@ -248,10 +239,6 @@ Begin
 
     Repeat
 
-        //Reset(InputFile);
-
-        //IsCorrect := True;
-
         FilePath := AskTheFilePath();
 
         Try
@@ -264,44 +251,20 @@ Begin
 
         IsCorrect := CheckInputFile(InputFile, FilePath);
 
-        //Try
-        //Reset(InputFile);
-        //Except
-        //WriteLn('Error with assigning, the file is not existing.');
-        //IsCorrect := False;
-        //End;
-
     Until IsCorrect;
 
-    Reset(InputFile);
-
 End;
-
-//Function ReadNumberFromFile(Var InputFile: TextFile): Integer;
-//
-//Var
-//Number: Integer;
-//
-//Begin
-//Reset(InputFile);
-// //Reset(InputFile);
-//
-//ReadLn(InputFile, Number);
-//
-//WriteLn(Number);
-//
-//End;
 
 Const
     ErrorNumber: Integer = 37707;
 
 Var
     MyFile: TextFile;
-    //FilePath: String;
     Number: Integer;
     IsFromFile: Boolean;
     IsToFile: Boolean;
     IsOutput: Boolean;
+    IsAllDone: Boolean;
 
 Begin
 
@@ -312,15 +275,24 @@ Begin
     If IsFromFile Then
     Begin
 
-        AssignAndResetFile(MyFile);
 
-        //CheckInputFile(MyFile, AskTheFilePath());
+        Repeat
 
-        Number := ReadNumberFromFile(-10000, 10000, MyFile);
-        If Not Number = ErrorNumber Then
-            WriteLn(Number)
-        Else
+            IsAllDone := True;
+
             AssignAndResetFile(MyFile);
+
+            //CheckInputFile(MyFile, AskTheFilePath());
+
+            Number := ReadNumberFromFile(-10000, 10000, MyFile);
+            If Not (Number = ErrorNumber) Then
+            Begin
+                WriteLn(Number);
+            End
+            Else
+                IsAllDone := False;
+
+        Until IsAllDone;
 
     End
     Else
@@ -333,7 +305,7 @@ Begin
 
     ReadLn;
 
-    If IsFromFile Then
-        CloseFile(MyFile);
+//    If (IsFromFile And CheckInputFile(MyFile)) Then
+//        CloseFile(MyFile);
 
 End.
