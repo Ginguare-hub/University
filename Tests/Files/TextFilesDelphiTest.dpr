@@ -93,7 +93,25 @@ Begin
     CanRead := IsReady;
 End;
 
-Function CheckInputFile(Var InputFile: TextFile; FilePath: String): Boolean;
+Function CanWrite(Var FileVar: TextFile): Boolean; //проверить работоспособность
+
+Var
+    IsReady: Boolean;
+
+Begin
+
+    Try
+        Append(FileVar);
+        CloseFile(FileVar);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanWrite := IsReady;
+End;
+
+Function CheckMyFile(Var InputFile: TextFile; FilePath: String; IsFileOutput: Boolean): Boolean;
 
 Var
     CheckInput: Boolean;
@@ -107,18 +125,21 @@ Begin
         If Not IsFileText(FilePath) Then
             Writeln('Error, filename is not .txt')
         Else
-            If Not CanRead(InputFile) Then
+            If (Not IsFileOutput) And (Not CanRead(InputFile)) Then
                 Writeln('Error, no access to read the file.')
             Else
-                If Not IsFileNotEmpty(InputFile) Then
-                    Writeln('Error, file is empty.')
+                If IsFileOutput And (Not CanWrite(InputFile)) Then
+                    Writeln('Error, no access to write into the file.')
                 Else
-                Begin
-                    CheckInput := True;
-                    WriteLn('Assigning is completed successfully.');
-                End;
+                    If Not IsFileNotEmpty(InputFile) Then
+                        Writeln('Error, file is empty.')
+                    Else
+                    Begin
+                        CheckInput := True;
+                        WriteLn('Assigning is completed successfully.');
+                    End;
 
-    CheckInputFile := CheckInput;
+    CheckMyFile := CheckInput;
 End;
 
 //ѕроверки----------------------------------------------------------------------
@@ -178,7 +199,7 @@ Begin
         Number := ErrorNumber;
     End;
 
-    Close(InputFile);
+    CloseFile(InputFile);
 
     If Number = ErrorNumber Then
         WriteLn('Error, incorrect input.')
@@ -192,6 +213,25 @@ Begin
     End;
 
     ReadNumberFromFile := Number;
+End;
+
+Procedure WriteNumberIntoFile(Var OutputFile: TextFile; Number: Integer);
+
+//Var
+
+Begin
+
+    Try
+        Rewrite(OutputFile);
+        Write(OutputFile, 'The number is: ');
+        WriteLn(OutputFile, Number);
+        Write('The number is: ');
+        WriteLn(Number);
+    Except
+        WriteLn('The unexpected error is found.');
+    End;
+
+    CloseFile(OutputFile);
 End;
 
 Function AskTheFilePath(): String;
@@ -211,7 +251,7 @@ Begin
 
 End;
 
-Procedure AssignAndResetFile(Var InputFile: TextFile);
+Procedure AssignMyFile(Var InputFile: TextFile; IsFileOutput: Boolean);
 
 Var
     Number: Integer;
@@ -234,7 +274,7 @@ Begin
             IsCorrect := False;
         End;
 
-        IsCorrect := CheckInputFile(InputFile, FilePath);
+        IsCorrect := CheckMyFile(InputFile, FilePath, IsFileOutput);
 
     Until IsCorrect;
 
@@ -264,12 +304,12 @@ Begin
 
             IsAllDone := True;
 
-            AssignAndResetFile(MyFile);
+            AssignMyFile(MyFile, IsOutput);
 
             //CheckInputFile(MyFile, AskTheFilePath());
 
             Number := ReadNumberFromFile(-10000, 10000, MyFile);
-            If Not (Number = ErrorNumber) Then
+            If Not(Number = ErrorNumber) Then
             Begin
                 WriteLn(Number);
             End
@@ -287,5 +327,36 @@ Begin
 
     End;
 
+    IsOutput := True;
+    IsFromFile := WorkWithConsoleOrFile(IsOutput);
+
+    If IsFromFile Then
+    Begin
+
+        Repeat
+
+            IsAllDone := True;
+            AssignMyFile(MyFile, IsOutput);
+
+            If Not(Number = ErrorNumber) Then
+            Begin
+                WriteNumberIntoFile(MyFile, Number);
+            End
+            Else
+                IsAllDone := False;
+
+        Until IsAllDone;
+
+    End
+    Else
+    Begin
+
+        Write('The number is: ');
+        WriteLn(Number);
+
+    End;
+
+    WriteLn('Press ENTER to close the programm.');
     ReadLn;
+
 End.
