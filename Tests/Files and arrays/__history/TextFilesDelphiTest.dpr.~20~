@@ -1,0 +1,462 @@
+Program TextFilesDelphiTest;
+
+Uses
+  System.SysUtils;
+
+Type
+    TMatrix = Array Of Array Of Integer;
+
+//Проверки----------------------------------------------------------------------
+
+Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
+
+Var
+    IsCorrect: Boolean;
+    Number: Integer;
+
+Begin
+
+    Number := 0;
+    IsCorrect := True;
+
+    Repeat
+
+        Write(MyString);
+        IsCorrect := True;
+
+        Try
+            ReadLn(Number);
+        Except
+            WriteLn('Incorrect input, try again.');
+            IsCorrect := False;
+        End;
+
+        If IsCorrect And ((Number < MIN_NUMBER) Or (Number > MAX_NUMBER)) Then
+        Begin
+            WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+            IsCorrect := False;
+        End;
+
+    Until IsCorrect;
+
+    ReadAndVerify := Number;
+End;
+
+Function IsFileText(FilePath: String): Boolean;
+
+Var
+    FileExt: String;
+    IsText: Boolean;
+
+Begin
+
+    FileExt := ExtractFileExt(FilePath);
+
+    If FileExt = '.txt' Then
+        IsText := True
+    Else
+        IsText := False;
+
+    IsFileText := IsText;
+
+End;
+
+Function IsFileNotEmpty(Var InputFile: TextFile): Boolean;
+
+Var
+    IsNotEmpty: Boolean;
+
+Begin
+
+    Try
+        Reset(InputFile);
+        IsNotEmpty := Not EOF(InputFile);
+    Finally
+        CloseFile(InputFile);
+    End;
+
+    IsFileNotEmpty := IsNotEmpty;
+End;
+
+Function CanRead(Var InputFile: TextFile): Boolean;
+
+Var
+    IsReady: Boolean;
+
+Begin
+
+    Try
+        Reset(InputFile);
+        CloseFile(InputFile);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanRead := IsReady;
+End;
+
+Function CanWrite(Var FileVar: TextFile): Boolean; //проверить работоспособность
+
+Var
+    IsReady: Boolean;
+
+Begin
+
+    Try
+        Append(FileVar);
+        CloseFile(FileVar);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanWrite := IsReady;
+End;
+
+Function CheckMyFile(Var InputFile: TextFile; FilePath: String; IsFileOutput: Boolean): Boolean;
+
+Var
+    CheckInput: Boolean;
+
+Begin
+    CheckInput := False;
+
+    If Not FileExists(FilePath) Then
+        Writeln('Error, file with path <', FilePath, '> is not exists.')
+    Else
+        If Not IsFileText(FilePath) Then
+            Writeln('Error, filename is not .txt')
+        Else
+            If (Not IsFileOutput) And (Not CanRead(InputFile)) Then
+                Writeln('Error, no access to read the file.')
+            Else
+                If IsFileOutput And (Not CanWrite(InputFile)) Then
+                    Writeln('Error, no access to write into the file.')
+                Else
+                    If Not IsFileNotEmpty(InputFile) Then
+                        Writeln('Error, file is empty.')
+                    Else
+                    Begin
+                        CheckInput := True;
+                        WriteLn('Assigning is completed successfully.');
+                    End;
+
+    CheckMyFile := CheckInput;
+End;
+
+//Проверки----------------------------------------------------------------------
+
+Function WorkWithConsoleOrFile(IsOutput: Boolean): Boolean;
+
+Var
+    Number: Integer;
+    IsFromFile: Boolean;
+
+Begin
+    Number := 0;
+
+    If IsOutput Then
+        WriteLn('If data is output to the console write 0, if from file write 1.')
+    Else
+        WriteLn('If data is entered from the console write 0, if from file write 1.');
+
+    Number := ReadAndVerify(0, 1, '> ');
+
+    If Number = 0 Then
+    Begin
+        IsFromFile := False;
+        If IsOutput Then
+            WriteLn('The data is output to the console.')
+        Else
+            WriteLn('The data is entered from the console.');
+    End
+    Else
+    Begin
+        IsFromFile := True;
+        If IsOutput Then
+            WriteLn('The data is output to a file.')
+        Else
+            WriteLn('The data is entered from a file.');
+    End;
+
+    WorkWithConsoleOrFile := IsFromFile;
+End;
+
+Function ReadNumberFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; Var InputFile: TextFile): Integer;
+
+Const
+    ErrorNumber: Integer = 37707;
+
+Var
+    Number: Integer;
+
+Begin
+
+    Number := 0;
+
+    Try
+        Reset(InputFile);
+        ReadLn(InputFile, Number);
+    Except
+        Number := ErrorNumber;
+    End;
+
+    CloseFile(InputFile);
+
+    If Number = ErrorNumber Then
+        WriteLn('Error, incorrect input.')
+    Else
+    Begin
+        If (Number < MIN_NUMBER) Or (Number > MAX_NUMBER) Then
+        Begin
+            WriteLn('Incorrect input, the number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+            Number := ErrorNumber;
+        End;
+    End;
+
+    ReadNumberFromFile := Number;
+End;
+
+Function ReadMatrixFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; Var InputFile: TextFile): TMatrix;
+
+Const
+    ErrorNumber: Integer = 37707;
+    MIN_LENGTH: Integer = 1;
+    MAX_LENGTH: Integer = 20;
+
+Var
+    MatrixLength, I, J, MElement: Integer;
+    Matrix: TMatrix;
+
+Begin
+
+    MatrixLength := 0;
+    I := 0;
+    J := 0;
+
+    MElement := 0;
+
+    Try
+        Reset(InputFile);
+        ReadLn(InputFile, MatrixLength);
+    Except
+        MatrixLength := ErrorNumber;
+    End;
+
+    If Not (MatrixLength = ErrorNumber) Then
+    Begin
+        If (MatrixLength < MIN_NUMBER) Or (MatrixLength > MAX_NUMBER) Then
+        Begin
+            WriteLn('Incorrect matrix length, the number must fit the range [', MIN_LENGTH, ',', MAX_LENGTH, '].');
+            MatrixLength := ErrorNumber;
+        End;
+    End;
+
+    If Not (MatrixLength = ErrorNumber) Then
+    Begin
+
+        SetLength(Matrix, MatrixLength, MatrixLength);
+
+//        Try
+//            Read(InputFile, MElement);
+//        Except
+//            WriteLn('Unexpected error.');
+//        End;
+
+
+        For I := 0 To High(Matrix) Do
+        Begin
+            For J := 0 To High(Matrix[i]) Do
+                Read(InputFile, Matrix[i,j]);
+            ReadLn(InputFile);
+        End;
+
+    End
+    Else
+    Begin
+        SetLength(Matrix, 1, 1);
+        Matrix[0,0] := ErrorNumber;
+    End;
+
+    CloseFile(InputFile);
+
+    If MatrixLength = ErrorNumber Then
+    Begin
+        WriteLn('Error, incorrect matrix data.');
+        Matrix[0,0] := ErrorNumber;
+    End;
+
+    ReadMatrixFromFile := Matrix;
+End;
+
+Procedure WriteNumberIntoFile(Var OutputFile: TextFile; Number: Integer);
+
+//Var
+
+Begin
+
+    Try
+        Rewrite(OutputFile);
+        Write(OutputFile, 'The number is: ');
+        WriteLn(OutputFile, Number);
+        Write('The number is: ');
+        WriteLn(Number);
+    Except
+        WriteLn('The unexpected error is found.');
+    End;
+
+    CloseFile(OutputFile);
+End;
+
+Function AskTheFilePath(): String;
+
+Var
+    FilePath: String;
+
+Begin
+
+    Write('Write the existing file path: ');
+
+    Try
+        ReadLn(FilePath);
+    Finally
+        AskTheFilePath := FilePath;
+    End;
+
+End;
+
+Procedure AssignMyFile(Var InputFile: TextFile; IsFileOutput: Boolean);
+
+Var
+    Number: Integer;
+    IsCorrect: Boolean;
+    FilePath: String;
+
+Begin
+
+    IsCorrect := True;
+
+    Repeat
+
+        FilePath := AskTheFilePath();
+
+        Try
+            AssignFile(InputFile, FilePath);
+        Except
+            WriteLn('Error with assigning.');
+            FilePath := AskTheFilePath();
+            IsCorrect := False;
+        End;
+
+        IsCorrect := CheckMyFile(InputFile, FilePath, IsFileOutput);
+
+    Until IsCorrect;
+
+End;
+
+Procedure WriteMatrixIntoConsole(Matrix: TMatrix);
+
+Var
+    I, J: Integer;
+
+Begin
+    I := 0;
+    J := 0;
+
+    For I := 0 To High(Matrix) Do
+    Begin
+        For J := 0 To High(Matrix[I]) Do
+            Write(Matrix[I,J], ' ');
+        WriteLn;
+    End;
+
+End;
+
+Const
+    ErrorNumber: Integer = 37707;
+
+Var
+    MyFile: TextFile;
+    Number: Integer;
+    IsFromFile: Boolean;
+    IsToFile: Boolean;
+    IsOutput: Boolean;
+    IsAllDone: Boolean;
+    Matrix: TMatrix;
+
+Begin
+
+    IsOutput := False;
+
+    IsFromFile := WorkWithConsoleOrFile(IsOutput);
+
+    If IsFromFile Then
+    Begin
+
+        Repeat
+
+            IsAllDone := True;
+
+            AssignMyFile(MyFile, IsOutput);
+
+//            Number := ReadNumberFromFile(-10000, 10000, MyFile);
+//            If Not(Number = ErrorNumber) Then
+//            Begin
+//                WriteLn(Number);
+//            End
+//            Else
+//                IsAllDone := False;
+
+            Matrix := ReadMatrixFromFile(-10000,10000, MyFile);
+
+            If Not(Matrix[0,0] = ErrorNumber) Then
+            Begin
+                WriteLn('The matrix data is: ');
+                WriteMatrixIntoConsole(Matrix);
+            End
+            Else
+                IsAllDone := False;
+
+        Until IsAllDone;
+
+    End
+    Else
+    Begin
+
+        Number := ReadAndVerify(-10000, 10000, 'Write the number: ');
+        WriteLn(Number);
+
+    End;
+
+    IsOutput := True;
+    IsFromFile := WorkWithConsoleOrFile(IsOutput);
+
+    If IsFromFile Then
+    Begin
+
+        Repeat
+
+            IsAllDone := True;
+            AssignMyFile(MyFile, IsOutput);
+
+            If Not(Number = ErrorNumber) Then
+                WriteNumberIntoFile(MyFile, Number)
+            Else
+                IsAllDone := False;
+
+        Until IsAllDone;
+
+    End
+    Else
+    Begin
+
+        Write('The number is: ');
+        WriteLn(Number);
+
+    End;
+
+    WriteLn('Press ENTER to close the programm.');
+    ReadLn;
+
+End.
