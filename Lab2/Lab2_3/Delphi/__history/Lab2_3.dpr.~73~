@@ -6,37 +6,95 @@ Uses
 Type
     TArr = Array Of Array Of Integer;
 
-// ПРОВЕРКИ ФАЙЛОВ   (Добавить проверку на данные в файле)
+Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
 
-Function CheckIsFileText(FName: String): Boolean;
+Var
+    IsCorrect: Boolean;
+    Number: Integer;
+
+Begin
+
+    Number := 0;
+    IsCorrect := True;
+
+    Repeat
+
+        Write(MyString);
+        IsCorrect := True;
+
+        Try
+            ReadLn(Number);
+        Except
+            WriteLn('Incorrect input, try again.');
+            IsCorrect := False;
+        End;
+
+        If IsCorrect And ((Number < MIN_NUMBER) Or (Number > MAX_NUMBER)) Then
+        Begin
+            WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+            IsCorrect := False;
+        End;
+
+    Until IsCorrect;
+
+    ReadAndVerify := Number;
+End;
+
+Function IsFileText(FilePath: String): Boolean;
+
+Const
+    MIN_PATH_LENGTH: Integer = 3;
 
 Var
     FileExt: String;
     IsText: Boolean;
+    Index: Integer;
 
 Begin
+    Index := Length(FilePath);
+    IsText := False;
 
-    FileExt := ExtractFileExt(FName);    //Переписать
+    If Index > MIN_PATH_LENGTH Then
+        FileExt := FilePath[Index - 3] + FilePath[Index - 2] + FilePath[Index - 1] + FilePath[Index]
+    Else
+        IsText := False;
+
     If FileExt = '.txt' Then
         IsText := True
     Else
         IsText := False;
 
-    CheckIsFileText := IsText;
+    IsFileText := IsText;
 End;
 
-Function CanRead(Var FileVar: TextFile): Boolean;
+Function IsFileNotEmpty(Var InputFile: TextFile): Boolean;
+
+Var
+    IsNotEmpty: Boolean;
+
+Begin
+
+    Try
+        Reset(InputFile);
+        IsNotEmpty := Not EOF(InputFile);
+    Finally
+        CloseFile(InputFile);
+    End;
+
+    IsFileNotEmpty := IsNotEmpty;
+End;
+
+Function CanRead(Var InputFile: TextFile): Boolean;
 
 Var
     IsReady: Boolean;
 
 Begin
 
-    IsReady := True;
-
     Try
-        Reset(FileVar);
-        CloseFile(FileVar);
+        Reset(InputFile);
+        CloseFile(InputFile);
+        IsReady := True;
     Except
         IsReady := False;
     End;
@@ -44,7 +102,6 @@ Begin
     CanRead := IsReady;
 End;
 
-//не знаю нужна ли
 Function CanWrite(Var FileVar: TextFile): Boolean;
 
 Var
@@ -63,53 +120,36 @@ Begin
     CanWrite := IsReady;
 End;
 
-
-Function IsFileNotEmpty(Var FileVar: TextFile): Boolean;
-
-Var
-    IsNotEmpty: Boolean;
-
-Begin
-
-    Try
-        Reset(FileVar);
-        IsNotEmpty := Not Eof(FileVar);
-    Finally
-        CloseFile(FileVar);
-    End;
-
-    IsFileNotEmpty := IsNotEmpty;
-End;
-
-Function CheckInputFile(Var InputFile: TextFile; Var FileName: String): Boolean;
+Function CheckMyFile(Var InputFile: TextFile; FilePath: String; IsFileOutput: Boolean): Boolean;
 
 Var
     CheckInput: Boolean;
 
 Begin
-
     CheckInput := False;
 
-    If Not FileExists(FileName) Then
-        Writeln('Ошибка, файла ввода не существует')     //поменять
+    If Not FileExists(FilePath) Then
+        Writeln('Error, file with path <', FilePath, '> is not exists.')
     Else
-        If Not CheckIsFileText(FileName) Then
-            Writeln('Ошибка, файл ввода не текстовый')   //поменять
+        If Not IsFileText(FilePath) Then
+            Writeln('Error, filename is not .txt')
         Else
-            If Not CanRead(InputFile) Then
-                Writeln('Ошибка, файл ввода недоступен') //поменять
+            If (Not IsFileOutput) And (Not CanRead(InputFile)) Then
+                Writeln('Error, no access to read the file.')
             Else
-                If Not IsFileNotEmpty(InputFile) Then
-                    Writeln('Ошибка, файл ввода пуст')   //поменять
+                If IsFileOutput And (Not CanWrite(InputFile)) Then
+                    Writeln('Error, no access to write into the file.')
                 Else
-                Begin
-                    CheckInput := True;
-                End;
+                    If Not IsFileNotEmpty(InputFile) Then
+                        Writeln('Error, file is empty.')
+                    Else
+                    Begin
+                        CheckInput := True;
+                        WriteLn('Assigning is completed successfully.');
+                    End;
 
-    CheckInputFile := CheckInput;
+    CheckMyFile := CheckInput;
 End;
-
-// ПРОВЕРКИ ФАЙЛОВ
 
 Function ReadAndVerify(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer): Integer;
 
@@ -266,48 +306,14 @@ Begin
 
     N := 1;
 
-    WriteLn('Type 1 if you need to work with file, or type 2 if console.');
-    ReadLn(FOrC);
+    WriteLn('The program takes a two-dimensional square matrix of order n and arranges the elements of the rows with even numbers of the matrix in descending order.');
 
-    AssignFile(TFile, 'C:\GitHub\University\Lab2\Lab2_3\Delphi');
-
-    //ПРОВЕРИТЬ РАБОТАЮТ ЛИ ПРОВЕРКИ
-
-    If FOrC = 1 Then
-    Begin
-//        Reset(TFile);
-//        Rewrite(TFIle);
-//        WriteLn(TFile, 'The program takes a two-dimensional square matrix of order n and arranges the elements of the rows with even numbers of the matrix in descending order.');
-//
-//        Reset(TFile);
-
-        //AssignFile(TFile, 'data\input.txt');
-        //Reset(TFile);
-
-        CloseFile(TFile);
-
-    End
-    Else
-    Begin
-
-        WriteLn('The program takes a two-dimensional square matrix of order n and arranges the elements of the rows with even numbers of the matrix in descending order.');
-
-        Write('Write the order of the matrix: ');
-        ReadLn(N);
-
-
-
-
-
-    End;
+    Write('Write the order of the matrix: ');
+    ReadLn(N);
 
     MyArray := WriteInMatrix(N);
     MyArray := SortConditional(MyArray);
     WriteOutMatrix(MyArray);
 
-
-    CloseFile(TFile);
-
     ReadLn;
-
 End.

@@ -1,12 +1,10 @@
-Program TextFilesDelphiTest;
+Program Lab2_3;
 
 Uses
     System.SysUtils;
 
 Type
-    TMatrix = Array Of Array Of Integer;
-
-//Проверки----------------------------------------------------------------------
+    TArr = Array Of Array Of Integer;
 
 Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
 
@@ -45,7 +43,7 @@ End;
 Function IsFileText(FilePath: String): Boolean;
 
 Const
-    MIN_PATH_LENGTH: Integer = 4;
+    MIN_PATH_LENGTH: Integer = 3;
 
 Var
     FileExt: String;
@@ -54,12 +52,9 @@ Var
 
 Begin
     Index := Length(FilePath);
+    IsText := False;
 
-    //FileExt := ExtractFileExt(FilePath);
-
-    WriteLn(Index);
-
-    If Length(FileExt) > MIN_PATH_LENGTH Then
+    If Index > MIN_PATH_LENGTH Then
         FileExt := FilePath[Index - 3] + FilePath[Index - 2] + FilePath[Index - 1] + FilePath[Index]
     Else
         IsText := False;
@@ -156,8 +151,6 @@ Begin
     CheckMyFile := CheckInput;
 End;
 
-//Проверки----------------------------------------------------------------------
-
 Function WorkWithConsoleOrFile(IsOutput: Boolean): Boolean;
 
 Var
@@ -192,41 +185,6 @@ Begin
     End;
 
     WorkWithConsoleOrFile := IsFromFile;
-End;
-
-Function ReadNumberFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; Var InputFile: TextFile): Integer;
-
-Const
-    ErrorNumber: Integer = 37707;
-
-Var
-    Number: Integer;
-
-Begin
-
-    Number := 0;
-
-    Try
-        Reset(InputFile);
-        ReadLn(InputFile, Number);
-    Except
-        Number := ErrorNumber;
-    End;
-
-    CloseFile(InputFile);
-
-    If Number = ErrorNumber Then
-        WriteLn('Error, incorrect input.')
-    Else
-    Begin
-        If (Number < MIN_NUMBER) Or (Number > MAX_NUMBER) Then
-        Begin
-            WriteLn('Incorrect input, the number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
-            Number := ErrorNumber;
-        End;
-    End;
-
-    ReadNumberFromFile := Number;
 End;
 
 Function ReadMatrixFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; Var InputFile: TextFile): TMatrix;
@@ -276,7 +234,7 @@ Begin
                 Try
                     Read(InputFile, Matrix[I, J]);
                 Except
-                    Matrix[0,0] := ErrorNumber;
+                    Matrix[0, 0] := ErrorNumber;
                     WriteLn('Incorrect numeric data: matrix element.');
                 End;
             End;
@@ -328,19 +286,21 @@ Begin
         Begin
             Write('Write element [', I, ',', J, '] of matrix: ');
             Element := ReadAndVerify(MIN_NUMBER, MAX_NUMBER, '');
-            Matrix[I,J] := Element;
+            Matrix[I, J] := Element;
         End;
 
     ReadMatrixFromConsole := Matrix;
 End;
 
-Procedure WriteNumberIntoFile(Var OutputFile: TextFile; Number: Integer);
+Procedure WriteMatrixIntoFile(Var OutputFile: TextFile; Matrix: TMatrix);
 
 Var
+    I, J: Integer;
     IsReady: Boolean;
 
 Begin
-
+    I := 0;
+    J := 0;
     IsReady := True;
 
     Try
@@ -351,13 +311,38 @@ Begin
 
     If IsReady Then
     Begin
-        Write(OutputFile, 'The number is: ');
-        WriteLn(OutputFile, Number);
+        WriteLn(OutputFile, 'The result matrix is: ');
+
+        For I := 0 To High(Matrix) Do
+        Begin
+            For J := 0 To High(Matrix[I]) Do
+                Write(OutputFile, Matrix[I, J], ' ');
+            WriteLn(OutputFile);
+        End;
+
     End
     Else
         WriteLn('The unexpected error is found.');
 
     CloseFile(OutputFile);
+End;
+
+Procedure WriteMatrixIntoConsole(Matrix: TMatrix);
+
+Var
+    I, J: Integer;
+
+Begin
+    I := 0;
+    J := 0;
+
+    For I := 0 To High(Matrix) Do
+    Begin
+        For J := 0 To High(Matrix[I]) Do
+            Write(Matrix[I, J], ' ');
+        WriteLn;
+    End;
+
 End;
 
 Function AskTheFilePath(): String;
@@ -406,120 +391,134 @@ Begin
 
 End;
 
-Procedure WriteMatrixIntoConsole(Matrix: TMatrix);
+Function WriteInMatrix(N: Integer): TArr;
+
+Var
+    ArrayA: TArr;
+    Number, I, J: Integer;
+
+Begin
+
+    Number := 0;
+    I := 0;
+    J := 0;
+
+    SetLength(ArrayA, N);
+    For I := 0 To High(ArrayA) Do
+        SetLength(ArrayA[I], N);
+
+    For I := 0 To High(ArrayA) Do
+        For J := 0 To High(ArrayA[I]) Do
+        Begin
+            Write('Write element [', I + 1, ',', J + 1, '] of matrix: ');
+            ReadLn(Number);
+            ArrayA[I, J] := Number;
+        End;
+
+    WriteInMatrix := ArrayA;
+
+End;
+
+Procedure WriteOutMatrix(ArrayA: TArr);
 
 Var
     I, J: Integer;
 
 Begin
+
     I := 0;
     J := 0;
 
-    For I := 0 To High(Matrix) Do
+    For I := 0 To High(ArrayA) Do
     Begin
-        For J := 0 To High(Matrix[I]) Do
-            Write(Matrix[I, J], ' ');
+        For J := 0 To High(ArrayA[I]) Do
+            Write(ArrayA[I, J], ' ');
         WriteLn;
     End;
 
 End;
 
-Procedure WriteMatrixIntoFile(Var OutputFile: TextFile; Matrix: TMatrix);
+Function SortConditional(ArrayA: TArr): TArr;
 
 Var
-    I, J: Integer;
-    IsReady: Boolean;
+    I, J, K, Limiter, BoubleSortLimiter: Integer;
 
 Begin
     I := 0;
     J := 0;
-    IsReady := True;
+    Limiter := High(ArrayA);
+    BoubleSortLimiter := Length(ArrayA) * (Length(ArrayA) Div 2);
 
-    Try
-        Rewrite(OutputFile);
-    Except
-        IsReady := False;
+    For K := 1 To BoubleSortLimiter Do
+    Begin
+
+        Limiter := High(ArrayA);
+
+        For I := 0 To High(ArrayA) Do
+        Begin
+
+            If Odd(I) Then
+            Begin
+
+                If I = 2 * (Length(ArrayA) Div 2) Then
+                    Limiter := High(ArrayA) - 1;
+
+                For J := 0 To Limiter Do
+                Begin
+
+                    If (J + 1 < High(ArrayA[I])) Or (J + 1 = High(ArrayA[I])) Then
+                    Begin
+
+                        If ArrayA[I, J] < ArrayA[I, J + 1] Then
+                        Begin
+                            ArrayA[I, J] := ArrayA[I, J] + ArrayA[I, J + 1];
+                            ArrayA[I, J + 1] := ArrayA[I, J] - ArrayA[I, J + 1];
+                            ArrayA[I, J] := ArrayA[I, J] - ArrayA[I, J + 1];
+                        End;
+
+                    End
+                    Else
+                    If (I + 2 < High(ArrayA)) Or (I + 2 = High(ArrayA)) Then
+                    Begin
+
+                        If ArrayA[I, J] < ArrayA[I + 2, 0] Then
+                        Begin
+                            ArrayA[I, J] := ArrayA[I, J] + ArrayA[I + 2, 0];
+                            ArrayA[I + 2, 0] := ArrayA[I, J] - ArrayA[I + 2, 0];
+                            ArrayA[I, J] := ArrayA[I, J] - ArrayA[I + 2, 0];
+                        End;
+
+                    End;
+
+                End;
+
+            End;
+
+        End;
     End;
 
-    If IsReady Then
-    Begin
-        WriteLn(OutputFile, 'The result matrix is: ');
+    SortConditional := ArrayA;
 
-        For I := 0 To High(Matrix) Do
-        Begin
-            For J := 0 To High(Matrix[I]) Do
-                Write(OutputFile, Matrix[I, J], ' ');
-            WriteLn(OutputFile);
-        End;
-
-    End
-    Else
-        WriteLn('The unexpected error is found.');
-
-    CloseFile(OutputFile);
 End;
 
-Const
-    ErrorNumber: Integer = 37707;
-
 Var
-    MyFile: TextFile;
-    Number: Integer;
-    IsFromFile: Boolean;
-    IsToFile: Boolean;
-    IsOutput: Boolean;
-    IsAllDone: Boolean;
-    Matrix: TMatrix;
+    MyArray: TArr;
+    N: Integer;
+    TFile: TextFile;
+    FOrC: Integer;
 
 Begin
 
-    IsOutput := False;
+    N := 1;
 
-    WriteLn(IsFileText('.txt'));
+    WriteLn('The program takes a two-dimensional square matrix of order n and arranges the elements of the rows with even numbers of the matrix in descending order.');
 
-    IsFromFile := WorkWithConsoleOrFile(IsOutput);
+    Write('Write the order of the matrix: ');
+    ReadLn(N);
 
-    If IsFromFile Then
-    Begin
+    MyArray := WriteInMatrix(N);
+    MyArray := SortConditional(MyArray);
+    WriteOutMatrix(MyArray);
 
-        Repeat
-
-            IsAllDone := True;
-
-            AssignMyFile(MyFile, IsOutput);
-
-            Matrix := ReadMatrixFromFile(-10000, 10000, MyFile);
-
-            If Matrix[0,0] = ErrorNumber Then
-                IsAllDone := False;
-
-        Until IsAllDone;
-
-    End
-    Else
-    Begin
-
-        Matrix := ReadMatrixFromConsole();
-    End;
-
-    IsOutput := True;
-    IsFromFile := WorkWithConsoleOrFile(IsOutput);
-
-    If IsFromFile Then
-    Begin
-
-        AssignMyFile(MyFile, IsOutput);
-        WriteMatrixIntoFile(MyFile, Matrix);
-
-    End
-    Else
-    Begin
-
-        WriteMatrixIntoConsole(Matrix);
-
-    End;
-
-    WriteLn('Press ENTER to close the programm.');
     ReadLn;
-
 End.

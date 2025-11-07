@@ -6,7 +6,7 @@ Uses
 Type
     TMatrix = Array Of Array Of Integer;
 
-//Проверки----------------------------------------------------------------------
+    //Проверки----------------------------------------------------------------------
 
 Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
 
@@ -273,7 +273,7 @@ Begin
                 Try
                     Read(InputFile, Matrix[I, J]);
                 Except
-                    Matrix[0,0] := ErrorNumber;
+                    Matrix[0, 0] := ErrorNumber;
                     WriteLn('Incorrect numeric data: matrix element.');
                 End;
             End;
@@ -325,7 +325,7 @@ Begin
         Begin
             Write('Write element [', I, ',', J, '] of matrix: ');
             Element := ReadAndVerify(MIN_NUMBER, MAX_NUMBER, '');
-            Matrix[I,J] := Element;
+            Matrix[I, J] := Element;
         End;
 
     ReadMatrixFromConsole := Matrix;
@@ -485,7 +485,7 @@ Begin
 
             Matrix := ReadMatrixFromFile(-10000, 10000, MyFile);
 
-            If Matrix[0,0] = ErrorNumber Then
+            If Matrix[0, 0] = ErrorNumber Then
                 IsAllDone := False;
 
         Until IsAllDone;
