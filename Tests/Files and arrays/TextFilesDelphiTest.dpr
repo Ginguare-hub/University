@@ -6,7 +6,7 @@ Uses
 Type
     TMatrix = Array Of Array Of Integer;
 
-    //Проверки----------------------------------------------------------------------
+//Проверки----------------------------------------------------------------------
 
 Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
 
@@ -44,13 +44,22 @@ End;
 
 Function IsFileText(FilePath: String): Boolean;
 
+Const
+    MIN_PATH_LENGTH: Integer = 3;
+
 Var
     FileExt: String;
     IsText: Boolean;
+    Index: Integer;
 
 Begin
+    Index := Length(FilePath);
+    IsText := False;
 
-    FileExt := ExtractFileExt(FilePath);
+    If Index > MIN_PATH_LENGTH Then
+        FileExt := FilePath[Index - 3] + FilePath[Index - 2] + FilePath[Index - 1] + FilePath[Index]
+    Else
+        IsText := False;
 
     If FileExt = '.txt' Then
         IsText := True
@@ -58,7 +67,6 @@ Begin
         IsText := False;
 
     IsFileText := IsText;
-
 End;
 
 Function IsFileNotEmpty(Var InputFile: TextFile): Boolean;
@@ -96,7 +104,7 @@ Begin
     CanRead := IsReady;
 End;
 
-Function CanWrite(Var FileVar: TextFile): Boolean; //проверить работоспособность
+Function CanWrite(Var FileVar: TextFile): Boolean;
 
 Var
     IsReady: Boolean;
@@ -258,12 +266,6 @@ Begin
 
         SetLength(Matrix, MatrixLength, MatrixLength);
 
-        //Try
-        //Read(InputFile, MElement);
-        //Except
-        //WriteLn('Unexpected error.');
-        //End;
-
         For I := 0 To High(Matrix) Do
         Begin
             For J := 0 To High(Matrix[I]) Do
@@ -296,6 +298,39 @@ Begin
     ReadMatrixFromFile := Matrix;
 End;
 
+Function ReadMatrixFromConsole(): TMatrix;
+
+Const
+    MIN_LENGTH: Integer = 1;
+    MAX_LENGTH: Integer = 20;
+    MIN_NUMBER: Integer = -10000;
+    MAX_NUMBER: Integer = 10000;
+
+Var
+    Matrix: TMatrix;
+    I, J, MatrixLength, Element: Integer;
+
+Begin
+    I := 0;
+    J := 0;
+    MatrixLength := 0;
+    Element := 0;
+
+    MatrixLength := ReadAndVerify(MIN_LENGTH, MAX_LENGTH, 'Write matrix length: ');
+
+    SetLength(Matrix, MatrixLength, MatrixLength);
+
+    For I := 0 To High(Matrix) Do
+        For J := 0 To High(Matrix[I]) Do
+        Begin
+            Write('Write element [', I, ',', J, '] of matrix: ');
+            Element := ReadAndVerify(MIN_NUMBER, MAX_NUMBER, '');
+            Matrix[I,J] := Element;
+        End;
+
+    ReadMatrixFromConsole := Matrix;
+End;
+
 Procedure WriteNumberIntoFile(Var OutputFile: TextFile; Number: Integer);
 
 Var
@@ -315,8 +350,6 @@ Begin
     Begin
         Write(OutputFile, 'The number is: ');
         WriteLn(OutputFile, Number);
-        //Write('The number is: ');
-        //WriteLn(Number);
     End
     Else
         WriteLn('The unexpected error is found.');
@@ -461,9 +494,7 @@ Begin
     Else
     Begin
 
-//        Number := ReadAndVerify(-10000, 10000, 'Write the number: ');
-//        WriteLn(Number);
-
+        Matrix := ReadMatrixFromConsole();
     End;
 
     IsOutput := True;
@@ -472,21 +503,14 @@ Begin
     If IsFromFile Then
     Begin
 
-
-        //Repeat
-
-            //IsAllDone := True;
         AssignMyFile(MyFile, IsOutput);
         WriteMatrixIntoFile(MyFile, Matrix);
-
-        //Until IsAllDone;
-
 
     End
     Else
     Begin
 
-
+        WriteMatrixIntoConsole(Matrix);
 
     End;
 

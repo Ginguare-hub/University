@@ -1,7 +1,7 @@
 Program TextFilesDelphiTest;
 
 Uses
-  System.SysUtils;
+    System.SysUtils;
 
 Type
     TMatrix = Array Of Array Of Integer;
@@ -44,13 +44,25 @@ End;
 
 Function IsFileText(FilePath: String): Boolean;
 
+Const
+    MIN_PATH_LENGTH: Integer = 3;
+
 Var
     FileExt: String;
     IsText: Boolean;
+    Index: Integer;
 
 Begin
+    Index := High(FilePath);
 
-    FileExt := ExtractFileExt(FilePath);
+    //FileExt := ExtractFileExt(FilePath);
+
+    WriteLn(Index);
+
+    If Length(FileExt) > MIN_PATH_LENGTH Then
+        FileExt := FilePath[Index - 3] + FilePath[Index - 2] + FilePath[Index - 1] + FilePath[Index]
+    Else
+        IsText := False;
 
     If FileExt = '.txt' Then
         IsText := True
@@ -58,7 +70,6 @@ Begin
         IsText := False;
 
     IsFileText := IsText;
-
 End;
 
 Function IsFileNotEmpty(Var InputFile: TextFile): Boolean;
@@ -96,7 +107,7 @@ Begin
     CanRead := IsReady;
 End;
 
-Function CanWrite(Var FileVar: TextFile): Boolean; //проверить работоспособность
+Function CanWrite(Var FileVar: TextFile): Boolean;
 
 Var
     IsReady: Boolean;
@@ -244,7 +255,7 @@ Begin
         MatrixLength := ErrorNumber;
     End;
 
-    If Not (MatrixLength = ErrorNumber) Then
+    If Not(MatrixLength = ErrorNumber) Then
     Begin
         If (MatrixLength < MIN_NUMBER) Or (MatrixLength > MAX_NUMBER) Then
         Begin
@@ -253,22 +264,22 @@ Begin
         End;
     End;
 
-    If Not (MatrixLength = ErrorNumber) Then
+    If Not(MatrixLength = ErrorNumber) Then
     Begin
 
         SetLength(Matrix, MatrixLength, MatrixLength);
 
-//        Try
-//            Read(InputFile, MElement);
-//        Except
-//            WriteLn('Unexpected error.');
-//        End;
-
-
         For I := 0 To High(Matrix) Do
         Begin
-            For J := 0 To High(Matrix[i]) Do
-                Read(InputFile, Matrix[i,j]);
+            For J := 0 To High(Matrix[I]) Do
+            Begin
+                Try
+                    Read(InputFile, Matrix[I, J]);
+                Except
+                    Matrix[0,0] := ErrorNumber;
+                    WriteLn('Incorrect numeric data: matrix element.');
+                End;
+            End;
             ReadLn(InputFile);
         End;
 
@@ -276,7 +287,7 @@ Begin
     Else
     Begin
         SetLength(Matrix, 1, 1);
-        Matrix[0,0] := ErrorNumber;
+        Matrix[0, 0] := ErrorNumber;
     End;
 
     CloseFile(InputFile);
@@ -284,27 +295,67 @@ Begin
     If MatrixLength = ErrorNumber Then
     Begin
         WriteLn('Error, incorrect matrix data.');
-        Matrix[0,0] := ErrorNumber;
+        Matrix[0, 0] := ErrorNumber;
     End;
 
     ReadMatrixFromFile := Matrix;
 End;
 
+Function ReadMatrixFromConsole(): TMatrix;
+
+Const
+    MIN_LENGTH: Integer = 1;
+    MAX_LENGTH: Integer = 20;
+    MIN_NUMBER: Integer = -10000;
+    MAX_NUMBER: Integer = 10000;
+
+Var
+    Matrix: TMatrix;
+    I, J, MatrixLength, Element: Integer;
+
+Begin
+    I := 0;
+    J := 0;
+    MatrixLength := 0;
+    Element := 0;
+
+    MatrixLength := ReadAndVerify(MIN_LENGTH, MAX_LENGTH, 'Write matrix length: ');
+
+    SetLength(Matrix, MatrixLength, MatrixLength);
+
+    For I := 0 To High(Matrix) Do
+        For J := 0 To High(Matrix[I]) Do
+        Begin
+            Write('Write element [', I, ',', J, '] of matrix: ');
+            Element := ReadAndVerify(MIN_NUMBER, MAX_NUMBER, '');
+            Matrix[I,J] := Element;
+        End;
+
+    ReadMatrixFromConsole := Matrix;
+End;
+
 Procedure WriteNumberIntoFile(Var OutputFile: TextFile; Number: Integer);
 
-//Var
+Var
+    IsReady: Boolean;
 
 Begin
 
+    IsReady := True;
+
     Try
         Rewrite(OutputFile);
+    Except
+        IsReady := False;
+    End;
+
+    If IsReady Then
+    Begin
         Write(OutputFile, 'The number is: ');
         WriteLn(OutputFile, Number);
-        Write('The number is: ');
-        WriteLn(Number);
-    Except
+    End
+    Else
         WriteLn('The unexpected error is found.');
-    End;
 
     CloseFile(OutputFile);
 End;
@@ -367,10 +418,45 @@ Begin
     For I := 0 To High(Matrix) Do
     Begin
         For J := 0 To High(Matrix[I]) Do
-            Write(Matrix[I,J], ' ');
+            Write(Matrix[I, J], ' ');
         WriteLn;
     End;
 
+End;
+
+Procedure WriteMatrixIntoFile(Var OutputFile: TextFile; Matrix: TMatrix);
+
+Var
+    I, J: Integer;
+    IsReady: Boolean;
+
+Begin
+    I := 0;
+    J := 0;
+    IsReady := True;
+
+    Try
+        Rewrite(OutputFile);
+    Except
+        IsReady := False;
+    End;
+
+    If IsReady Then
+    Begin
+        WriteLn(OutputFile, 'The result matrix is: ');
+
+        For I := 0 To High(Matrix) Do
+        Begin
+            For J := 0 To High(Matrix[I]) Do
+                Write(OutputFile, Matrix[I, J], ' ');
+            WriteLn(OutputFile);
+        End;
+
+    End
+    Else
+        WriteLn('The unexpected error is found.');
+
+    CloseFile(OutputFile);
 End;
 
 Const
@@ -389,6 +475,8 @@ Begin
 
     IsOutput := False;
 
+    WriteLn(IsFileText('.txt'));
+
     IsFromFile := WorkWithConsoleOrFile(IsOutput);
 
     If IsFromFile Then
@@ -400,22 +488,9 @@ Begin
 
             AssignMyFile(MyFile, IsOutput);
 
-//            Number := ReadNumberFromFile(-10000, 10000, MyFile);
-//            If Not(Number = ErrorNumber) Then
-//            Begin
-//                WriteLn(Number);
-//            End
-//            Else
-//                IsAllDone := False;
+            Matrix := ReadMatrixFromFile(-10000, 10000, MyFile);
 
-            Matrix := ReadMatrixFromFile(-10000,10000, MyFile);
-
-            If Not(Matrix[0,0] = ErrorNumber) Then
-            Begin
-                WriteLn('The matrix data is: ');
-                WriteMatrixIntoConsole(Matrix);
-            End
-            Else
+            If Matrix[0,0] = ErrorNumber Then
                 IsAllDone := False;
 
         Until IsAllDone;
@@ -424,9 +499,7 @@ Begin
     Else
     Begin
 
-        Number := ReadAndVerify(-10000, 10000, 'Write the number: ');
-        WriteLn(Number);
-
+        Matrix := ReadMatrixFromConsole();
     End;
 
     IsOutput := True;
@@ -435,24 +508,14 @@ Begin
     If IsFromFile Then
     Begin
 
-        Repeat
-
-            IsAllDone := True;
-            AssignMyFile(MyFile, IsOutput);
-
-            If Not(Number = ErrorNumber) Then
-                WriteNumberIntoFile(MyFile, Number)
-            Else
-                IsAllDone := False;
-
-        Until IsAllDone;
+        AssignMyFile(MyFile, IsOutput);
+        WriteMatrixIntoFile(MyFile, Matrix);
 
     End
     Else
     Begin
 
-        Write('The number is: ');
-        WriteLn(Number);
+        WriteMatrixIntoConsole(Matrix);
 
     End;
 
