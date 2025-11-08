@@ -148,7 +148,7 @@ void assignMyFile(ifstream& InputFile, bool isFileOutput)
 
         cout << inputFile.fail();
 
-        if (inputFile.fail())
+        if (!inputFile.is_open())
         {
             isIncorrect = true;
             cout << "Error with assigning, try again." << endl;
