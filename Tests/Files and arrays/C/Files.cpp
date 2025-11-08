@@ -149,12 +149,7 @@ void assignMyFile(ifstream& InputFile, bool isFileOutput)
         cout << inputFile.fail();
 
         if (!inputFile.is_open())
-        {
-            isIncorrect = true;
             cout << "Error with assigning, try again." << endl;
-            cin.clear();
-            while (cin.get() != '\n');
-        }
         else
             isIncorrect = false;
 
@@ -193,13 +188,9 @@ int main()
 
             assignMyFile(myFile, isOutput);
 
-        } while (isFromFile);
+        } while (isAllUndone);
         
     }
-
-
-
-
 
     isOutput = false;
 
