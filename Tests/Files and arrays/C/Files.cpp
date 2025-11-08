@@ -54,7 +54,23 @@ bool isFileText(string filePath)
     return isText;
 }
 
-bool 
+bool isFileNotEmpty(fstream* InputFile)
+{
+
+
+}
+
+void checkAppendToFile(bool& isIncorrect, std::ofstream& inputFile)
+{
+    if (inputFile.fail())
+	    {
+	        isIncorrect = true;
+	        std::cout << "" << std::endl;
+	        inputFile.close();
+	    }
+}
+
+
 
 int main() 
 {
