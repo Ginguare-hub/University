@@ -45,9 +45,7 @@ bool isFileText(string filePath)
 
     string fileExt;
     bool isText;
-    //int strIndex;
-
-    //strIndex = filePath.length();
+    
     isText = true;
 
     if ((filePath.length() < MIN_PATH_LENGTH) || (filePath.find(".txt") == string::npos))
@@ -55,6 +53,8 @@ bool isFileText(string filePath)
 
     return isText;
 }
+
+bool 
 
 int main() 
 {
