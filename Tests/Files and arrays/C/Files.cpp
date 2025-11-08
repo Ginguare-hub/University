@@ -4,17 +4,17 @@
 
 using namespace std;
 
-int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string myString) 
+int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string myString)
 {
     bool isIncorrect;
     int number;
-    
+
     number = 0;
     isIncorrect = false;
 
     do
     {
-      
+
         cout << myString;
         isIncorrect = false;
 
@@ -35,7 +35,7 @@ int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string myString)
         }
 
     } while (isIncorrect);
-    
+
     return number;
 }
 
@@ -45,7 +45,7 @@ bool isFileText(string filePath)
 
     string fileExt;
     bool isText;
-    
+
     isText = true;
 
     if ((filePath.length() < MIN_PATH_LENGTH) || (filePath.find(".txt") == string::npos))
@@ -54,27 +54,156 @@ bool isFileText(string filePath)
     return isText;
 }
 
-bool isFileNotEmpty(fstream* InputFile)
+bool isFileNotEmpty(fstream &inputFile)
 {
+    bool isFileNotEmpty;
 
+    isFileNotEmpty = true;
 
+    if (inputFile.eof())
+        isFileNotEmpty = false;
+
+    return isFileNotEmpty;
 }
 
-void checkAppendToFile(bool& isIncorrect, std::ofstream& inputFile)
+bool canRead(fstream &inputFile)
 {
-    if (inputFile.fail())
-	    {
-	        isIncorrect = true;
-	        std::cout << "" << std::endl;
-	        inputFile.close();
-	    }
+    bool isReady;
+
+    isReady = inputFile.is_open();
+    inputFile.close();
+
+    return isReady;
 }
 
+// CanWrite
 
+// CheckMyFile
 
-int main() 
+bool workWithConsoleOrFile(bool isOutput)
 {
-    cout << isFileText("faf.txt");
+    int number;
+    bool isFromFile;
+
+    number = 0;
+
+    if (isOutput)
+        cout << "If data is output to the console write 0, if from file write 1." << endl;
+    else
+        cout << "If data is entered from the console write 0, if from file write 1." << endl;
+
+    number = readAndVerify(0, 1, "> ");
+
+    if (number == 0)
+    {
+        isFromFile = false;
+        if (isOutput)
+            cout << "The data is output to the console." << endl;
+        else
+            cout << "The data is entered from the console." << endl;
+    }
+    else
+    {
+        isFromFile = true;
+        if (isOutput)
+            cout << "The data is output to a file." << endl;
+        else
+            cout << "The data is entered from a file." << endl;
+    }
+
+    return isFromFile;
+}
+
+string askTheFilePath()
+{
+    string filePath;
+
+    cout << "Write the existing file path: ";
+
+    cin >> filePath;
+
+    // if (cin.fail() || cin.get() != '\n')
+    // {
+    //     cin.clear();
+    //     while (cin.get() != '\n');
+    // }
+
+    return filePath;
+}
+
+void assignMyFile(ifstream& InputFile, bool isFileOutput)
+{
+    int number;
+    bool isIncorrect; 
+    string filePath;
+
+    isIncorrect = false;
+
+    do
+    {
+        isIncorrect = true;
+        
+        filePath = askTheFilePath();
+        ifstream inputFile(filePath, ios::in/* | ios::out*/);
+
+        cout << inputFile.fail();
+
+        if (inputFile.fail())
+        {
+            isIncorrect = true;
+            cout << "Error with assigning, try again." << endl;
+            cin.clear();
+            while (cin.get() != '\n');
+        }
+        else
+            isIncorrect = false;
+
+        //IsCorrect := CheckMyFile(InputFile, FilePath, IsFileOutput);
+
+    } while (isIncorrect);
+    
+}
+
+// void checkAppendToFile(bool& isIncorrect, std::ofstream& inputFile)
+// {
+//     if (inputFile.fail())
+// 	    {
+// 	        isIncorrect = true;
+// 	        std::cout << "" << std::endl;
+// 	        inputFile.close();
+// 	    }
+// }
+
+int main()
+{
+    // cout << isFileText("faf.txt");
+
+    ifstream myFile;
+    bool isOutput, isFromFile, isAllUndone;
+
+    isOutput = true;
+
+    isFromFile = workWithConsoleOrFile(isOutput);
+
+    if (isFromFile) 
+    {
+        do
+        {
+            isAllUndone = false;
+
+            assignMyFile(myFile, isOutput);
+
+        } while (isFromFile);
+        
+    }
+
+
+
+
+
+    isOutput = false;
+
+    isFromFile = workWithConsoleOrFile(isOutput);
 
     return 0;
 }
