@@ -71,7 +71,7 @@ bool canRead(ifstream &inputFile, string filePath)
 {
     bool isReady;
 
-    ifstream inputFile(filePath);
+    inputFile.open(filePath);
 
     if (inputFile.is_open())
     {
@@ -88,7 +88,7 @@ bool canWrite(ofstream &inputFile, string filePath)
 {
     bool isReady;
 
-    ofstream inputFile(filePath);
+    inputFile.open(filePath);
 
     if (inputFile.is_open())
     {
@@ -109,17 +109,20 @@ bool checkMyFile(ifstream &inputFile, string filePath)
 
     if (!(inputFile.good()))
         cout << "Error, file with path <" << filePath << "> is not exists." << endl;
-    else if (!isFileText(filePath))
-        cout << "Error, filename is not .txt" << endl;
-    else if (!(canRead(inputFile, filePath)))
-        cout << "Error, no access to read the file." << endl;
-    else if (!(isFileNotEmpty(inputFile)))
-        cout << "Error, file is empty." << endl;
-    else
-    {
-        checkInput = true;
-        cout << "Assigning is completed successfully." << endl;
-    }
+    else 
+        if (!isFileText(filePath))
+            cout << "Error, filename is not .txt" << endl;
+        else 
+            if (!(canRead(inputFile, filePath)))
+                cout << "Error, no access to read the file." << endl;
+            else 
+                if (!(isFileNotEmpty(inputFile)))
+                    cout << "Error, file is empty." << endl;
+                else
+                {
+                    checkInput = true;
+                    cout << "Assigning is completed successfully." << endl;
+                }
 
     return checkInput;
 }
@@ -168,7 +171,7 @@ int readNumberFromFile(const int MIN_NUMBER, const int MAX_NUMBER, ifstream &inp
     number = 0;
     isIncorrect = false;
 
-    ifstream inputFile(filePath);
+    inputFile.open(filePath);
     inputFile >> number;
 
     if (cin.fail() || cin.get() != '\n')
@@ -184,7 +187,7 @@ int readNumberFromFile(const int MIN_NUMBER, const int MAX_NUMBER, ifstream &inp
         cout << "The number must fit the range [" << MIN_NUMBER << "," << MAX_NUMBER << "]." << endl;
     }
 
-    cout << "THE NUMBER IS " << number << endl;  //GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+    cout << "THE NUMBER IS " << number << endl; // GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
 
     return number;
 }
@@ -219,15 +222,18 @@ void assignMyFile(ifstream &inputFile, bool isFileOutput)
         isIncorrect = false;
 
         filePath = askTheFilePath();
-        ifstream inputFile(filePath, ios::in /* | ios::out*/);
+
+        ifstream inputFile(filePath);
 
         if ((inputFile.rdstate() & ifstream::failbit) != 0)
         {
-            cout << "Error with assigning.";
+            //cout << "Error with assigning." << endl;
             isIncorrect = true;
         }
 
-        // IsCorrect := CheckMyFile(InputFile, FilePath, IsFileOutput);
+        isIncorrect = !(checkMyFile(inputFile, filePath));
+
+        readNumberFromFile(1, 1000, inputFile, filePath);
 
     } while (isIncorrect);
 }
