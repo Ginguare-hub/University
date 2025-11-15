@@ -108,6 +108,7 @@ void getMersenneNumbers(int n)
     j = 2;
     answer = MIN_ANSWER;
     mersenneNumber = 2;
+    mersenneNumberP1 = 0;
 
     while (answer < n)
     { 

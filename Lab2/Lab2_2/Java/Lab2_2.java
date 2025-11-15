@@ -5,18 +5,19 @@ public class Lab2_2 {
     public static boolean discoverIsNumberPrime(int number) {
 
         int i;
-        boolean isShouldStop, isNumberPrime;
+        boolean isShouldNotStop;
+        boolean isNumberPrime;
 
         i = 2;
-        isShouldStop = false;
+        isShouldNotStop = true;
         isNumberPrime = false;
 
         for (i = 2; i < number; i++) {
 
-            if ((number % i == 0) && (!isShouldStop)) {
+            if ((number % i == 0) && (isShouldNotStop)) {
                 isNumberPrime = false;
-                isShouldStop = true;
-            } else if (!isShouldStop)
+                isShouldNotStop = false;
+            } else if (isShouldNotStop)
                 isNumberPrime = true;
         }
 
@@ -33,8 +34,8 @@ public class Lab2_2 {
         boolean isIncorrect;
         int num;
 
-        num = 0;
         isIncorrect = true;
+        num = 0;
 
         do {
 
@@ -62,23 +63,26 @@ public class Lab2_2 {
 
     public static int getPrimeNumber(int inputNum) {
 
-        int number, counter, primeNumber;
-        boolean isMustStop;
+        int number;
+        int counter;
+        int primeNumber;
+        boolean isMustNotStop;
 
         number = 2;
         counter = 0;
         primeNumber = 2;
-        isMustStop = false;
+        isMustNotStop = true;
 
         if (inputNum == 2)
             primeNumber = 3;
         else {
-            while (!isMustStop) {
+            while (isMustNotStop) {
+
                 if (discoverIsNumberPrime(number))
                     counter++;
 
                 if (counter == inputNum) {
-                    isMustStop = true;
+                    isMustNotStop = false;
                     primeNumber = number;
                 }
 
@@ -92,30 +96,34 @@ public class Lab2_2 {
 
         final int MIN_ANSWER = 3;
 
-        int i, j, answer, mersenneNumber;
+        int i;
+        int j;
+        int answer;
+        int mersenneNumber;
+        int mersenneNumberP1;
 
         i = 1;
         j = 2;
         answer = MIN_ANSWER;
         mersenneNumber = 2;
+        mersenneNumberP1 = 0;
 
         while (answer < n) {
 
             mersenneNumber = 2;
+            mersenneNumberP1 = getPrimeNumber(i) + 1;
 
-            for (j = 2; j < (getPrimeNumber(i) + 1); j++) 
+            for (j = 2; j < mersenneNumberP1; j++) 
                 mersenneNumber = mersenneNumber * 2;
             
-
             mersenneNumber = mersenneNumber - 1;
             answer = mersenneNumber;
 
-            if ((discoverIsNumberPrime(answer) == true) && (answer < n)) {
+            if ((discoverIsNumberPrime(answer)) && (answer < n)) {
                 if (i == 1)
                     System.out.println("The answers is: ");
                 System.out.println(answer);
             }
-
             i++;
         }
     }
@@ -126,16 +134,12 @@ public class Lab2_2 {
         final int MAX_N = 600000;
 
         int n;
-
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Programm is finding all numbers lower then N that is prime Mersenne numbers.");
         
         n = readAndVerify(MIN_N, MAX_N, scanner);
-
         scanner.close();
-
         getMersenneNumbers(n);
-
     }
 }
