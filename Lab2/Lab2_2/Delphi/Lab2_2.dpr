@@ -1,4 +1,4 @@
-Program Lab2_2;
+﻿Program Lab2_2;
 
 Uses
     System.SysUtils;
@@ -6,24 +6,25 @@ Uses
 Function DiscoverIsNumberPrime(Number: Integer): Boolean;
 
 Var
-    I: Integer;
-    IsShouldStop: Boolean;
+    I, NumberP1: Integer;
+    IsShouldNotStop: Boolean;
 
 Begin
 
     I := 2;
-    IsShouldStop := False;
+    numberP1 := Number - 1;
+    IsShouldNotStop := True;
     DiscoverIsNumberPrime := False;
 
-    For I := 2 To (Number - 1) Do
+    For I := 2 To NumberP1 Do
     Begin
-        If (Number Mod I = 0) And (Not IsShouldStop) Then
+        If (Number Mod I = 0) And (IsShouldNotStop) Then
         Begin
             DiscoverIsNumberPrime := False;
-            IsShouldStop := True;
+            IsShouldNotStop := False;
         End
         Else
-            If Not IsShouldStop Then
+            If IsShouldNotStop Then
                 DiscoverIsNumberPrime := True;
     End;
 
@@ -70,7 +71,6 @@ Begin
     Until IsCorrect;
 
     ReadAndVerify := Num;
-
 End;
 
 Function GetPrimeNumber(InputNum: Integer): Integer;
@@ -83,7 +83,6 @@ Begin
 
     Number := 2;
     Counter := 0;
-
     IsMustStop := False;
 
     If InputNum = 1 Then

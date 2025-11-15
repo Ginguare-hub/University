@@ -127,7 +127,6 @@ void getMersenneNumbers(int n)
                 cout << "The answers is: " << endl;
             cout << answer << endl;
         }
-
         i++;
     }
 }
