@@ -14,7 +14,7 @@ public class Lab2_2 {
 
         for (i = 2; i < number; i++) {
 
-            if ((number % i == 0) && (isShouldNotStop)) {
+            if ((number % i == 0) && isShouldNotStop) {
                 isNumberPrime = false;
                 isShouldNotStop = false;
             } else if (isShouldNotStop)
