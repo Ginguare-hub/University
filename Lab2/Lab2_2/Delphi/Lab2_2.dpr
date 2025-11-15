@@ -1,4 +1,4 @@
-﻿Program Lab2_2;
+Program Lab2_2;
 
 Uses
     System.SysUtils;
@@ -77,13 +77,13 @@ Function GetPrimeNumber(InputNum: Integer): Integer;
 
 Var
     Number, Counter: Integer;
-    IsMustStop: Boolean;
+    IsMustNotStop: Boolean;
 
 Begin
 
     Number := 2;
     Counter := 0;
-    IsMustStop := False;
+    IsMustNotStop := True;
 
     If InputNum = 1 Then
         GetPrimeNumber := 2
@@ -93,7 +93,7 @@ Begin
         Else
         Begin
 
-            While (Not IsMustStop) Do
+            While (IsMustNotStop) Do
             Begin
 
                 If DiscoverIsNumberPrime(Number) Then
@@ -101,16 +101,14 @@ Begin
 
                 If Counter = InputNum Then
                 Begin
-                    IsMustStop := True;
+                    IsMustNotStop := False;
                     GetPrimeNumber := Number;
                 End;
 
                 Number := Number + 1;
 
             End;
-
         End;
-
 End;
 
 Procedure GetMersenneNumbers(N: Integer);
@@ -168,5 +166,4 @@ Begin
     Write('Press ENTER to close the terminal.');
 
     ReadLn;
-
 End.

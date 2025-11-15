@@ -1,4 +1,4 @@
-Program Lab2_2;
+п»їProgram Lab2_2;
 
 Uses
     System.SysUtils;
@@ -6,24 +6,25 @@ Uses
 Function DiscoverIsNumberPrime(Number: Integer): Boolean;
 
 Var
-    I: Integer;
-    IsShouldStop: Boolean;
+    I, NumberP1: Integer;
+    IsShouldNotStop: Boolean;
 
 Begin
 
     I := 2;
-    IsShouldStop := False;
+    numberP1 := Number - 1;
+    IsShouldNotStop := True;
     DiscoverIsNumberPrime := False;
 
-    For I := 2 To (Number - 1) Do
+    For I := 2 To NumberP1 Do
     Begin
-        If (Number Mod I = 0) And (Not IsShouldStop) Then
+        If (Number Mod I = 0) And (IsShouldNotStop) Then
         Begin
             DiscoverIsNumberPrime := False;
-            IsShouldStop := True;
+            IsShouldNotStop := False;
         End
         Else
-            If Not IsShouldStop Then
+            If IsShouldNotStop Then
                 DiscoverIsNumberPrime := True;
     End;
 
@@ -33,6 +34,9 @@ Begin
 End;
 
 Function ReadAndVerify(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer): Integer;
+
+Const
+    LOWEST_MERS: Integer = 3;
 
 Var
     IsCorrect: Boolean;
@@ -55,10 +59,10 @@ Begin
             IsCorrect := False;
         End;
 
-        If IsCorrect And ((Num < MIN_NUMBER) Or (NUM > MAX_NUMBER)) Then
+        If IsCorrect And ((Num < MIN_NUMBER) Or (Num > MAX_NUMBER)) Then
         Begin
             WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
-            if Num < MIN_NUMBER then
+            If Num < (LOWEST_MERS + 1) Then
                 WriteLn('There are no prime Mersenne numbers, lower then 3.');
 
             IsCorrect := False;
@@ -67,48 +71,45 @@ Begin
     Until IsCorrect;
 
     ReadAndVerify := Num;
-
 End;
 
 Function GetPrimeNumber(InputNum: Integer): Integer;
 
 Var
-    Number, I, Counter: Integer;
+    Number, Counter: Integer;
     IsMustStop: Boolean;
 
 Begin
 
     Number := 2;
-    I := 2;
     Counter := 0;
-
     IsMustStop := False;
 
-    If InputNum = 1 Then   //Входное число больше 0 и меньше максимального какого-то
+    If InputNum = 1 Then
         GetPrimeNumber := 2
     Else
-    If InputNum = 2 Then
-        GetPrimeNumber := 3
-    Else
-    Begin
-
-        While (Not IsMustStop) Do
+        If InputNum = 2 Then
+            GetPrimeNumber := 3
+        Else
         Begin
 
-            If DiscoverIsNumberPrime(Number) Then
-                Counter := Counter + 1;
-
-            If Counter = InputNum Then
+            While (Not IsMustStop) Do
             Begin
-                IsMustStop := True;
-                GetPrimeNumber := Number;
+
+                If DiscoverIsNumberPrime(Number) Then
+                    Counter := Counter + 1;
+
+                If Counter = InputNum Then
+                Begin
+                    IsMustStop := True;
+                    GetPrimeNumber := Number;
+                End;
+
+                Number := Number + 1;
+
             End;
 
-            Number := Number + 1;
-
         End;
-
-    End;
 
 End;
 
@@ -150,7 +151,7 @@ End;
 
 Const
     MIN_N: Integer = 4;
-    MAX_N: Integer = 555555;
+    MAX_N: Integer = 600000;
 
 Var
     N: Integer;
@@ -161,12 +162,11 @@ Begin
 
     WriteLn('Programm is finding all numbers lower then N that is prime Mersenne numbers.');
 
-    //WriteLn(GetPrimeNumber(20));
-
     N := ReadAndVerify(MIN_N, MAX_N);
     GetMersenneNumbers(N);
 
     Write('Press ENTER to close the terminal.');
 
     ReadLn;
+
 End.
