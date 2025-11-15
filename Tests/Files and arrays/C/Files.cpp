@@ -166,22 +166,22 @@ int readNumberFromFile(const int MIN_NUMBER, const int MAX_NUMBER, ifstream &inp
     const int ERROR_NUMBER = 37707;
 
     int number;
-    bool isIncorrect;
+    bool isCorrect;
 
     number = 0;
-    isIncorrect = false;
+    isCorrect = true;
 
     inputFile.open(filePath);
     inputFile >> number;
 
     if (cin.fail() || cin.get() != '\n')
     {
-        isIncorrect = true;
+        isCorrect = false;
         number = ERROR_NUMBER;
         cout << "Error, incorrect input." << endl;
     }
 
-    if (!isIncorrect && ((number < MIN_NUMBER) || (number > MAX_NUMBER)))
+    if (isCorrect && ((number < MIN_NUMBER) || (number > MAX_NUMBER)))
     {
         number = ERROR_NUMBER;
         cout << "The number must fit the range [" << MIN_NUMBER << "," << MAX_NUMBER << "]." << endl;
@@ -227,13 +227,12 @@ void assignMyFile(ifstream &inputFile, bool isFileOutput)
 
         if ((inputFile.rdstate() & ifstream::failbit) != 0)
         {
-            //cout << "Error with assigning." << endl;
             isIncorrect = true;
         }
 
         isIncorrect = !(checkMyFile(inputFile, filePath));
 
-        readNumberFromFile(1, 1000, inputFile, filePath);
+        //readNumberFromFile(1, 1000, inputFile, filePath);
 
     } while (isIncorrect);
 }
@@ -250,8 +249,10 @@ void assignMyFile(ifstream &inputFile, bool isFileOutput)
 
 int main()
 {
-    ifstream myFile;
+    ifstream myIFile;
+    ofstream myOFile;
     bool isOutput, isFromFile, isAllUndone;
+    int number;
 
     isOutput = false;
 
@@ -263,7 +264,9 @@ int main()
         {
             isAllUndone = false;
 
-            assignMyFile(myFile, isOutput);
+            assignMyFile(myIFile, isOutput);
+
+            readNumberFromFile(-10000, 10000, myIFile, );
 
         } while (isAllUndone);
     }

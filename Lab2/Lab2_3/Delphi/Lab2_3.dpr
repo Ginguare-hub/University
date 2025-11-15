@@ -391,53 +391,6 @@ Begin
 
 End;
 
-//Function WriteInMatrix(N: Integer): TArr;
-//
-//Var
-//    ArrayA: TArr;
-//    Number, I, J: Integer;
-//
-//Begin
-//
-//    Number := 0;
-//    I := 0;
-//    J := 0;
-//
-//    SetLength(ArrayA, N);
-//    For I := 0 To High(ArrayA) Do
-//        SetLength(ArrayA[I], N);
-//
-//    For I := 0 To High(ArrayA) Do
-//        For J := 0 To High(ArrayA[I]) Do
-//        Begin
-//            Write('Write element [', I + 1, ',', J + 1, '] of matrix: ');
-//            ReadLn(Number);
-//            ArrayA[I, J] := Number;
-//        End;
-//
-//    WriteInMatrix := ArrayA;
-//
-//End;
-
-//Procedure WriteOutMatrix(ArrayA: TArr);
-//
-//Var
-//    I, J: Integer;
-//
-//Begin
-//
-//    I := 0;
-//    J := 0;
-//
-//    For I := 0 To High(ArrayA) Do
-//    Begin
-//        For J := 0 To High(ArrayA[I]) Do
-//            Write(ArrayA[I, J], ' ');
-//        WriteLn;
-//    End;
-//
-//End;
-
 Function SortConditional(ArrayA: TMatrix): TMatrix;
 
 Var

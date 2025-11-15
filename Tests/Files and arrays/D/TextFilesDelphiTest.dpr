@@ -482,7 +482,6 @@ Begin
             IsAllDone := True;
 
             AssignMyFile(MyFile, IsOutput);
-
             Matrix := ReadMatrixFromFile(-10000, 10000, MyFile);
 
             If Matrix[0, 0] = ERROR_NUMBER Then

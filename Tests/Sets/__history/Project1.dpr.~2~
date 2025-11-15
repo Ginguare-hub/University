@@ -1,0 +1,11 @@
+Program SetsTest;
+
+Uses
+  System.SysUtils;
+
+Var
+    MySet: Set of SmallInt;
+
+Begin
+
+End.

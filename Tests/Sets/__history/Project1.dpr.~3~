@@ -1,0 +1,22 @@
+Program SetsTest;
+
+Uses
+  System.SysUtils;
+
+Var
+    MySet: Set of 0..255;
+    I: Integer;
+
+Begin
+
+
+
+
+    For I := 0 To 255 Do
+        If I In MySet Then
+            WriteLn(I);
+
+
+    ReadLn;
+
+End.
