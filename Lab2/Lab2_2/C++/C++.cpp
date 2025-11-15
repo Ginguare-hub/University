@@ -5,20 +5,20 @@ using namespace std;
 bool discoverIsNumberPrime(int number) 
 {
     int i;
-    bool isShouldStop, isNumberPrime;
+    bool isShouldNotStop, isNumberPrime;
 
     i = 2;
-    isShouldStop = false;
+    isShouldNotStop = true;
     isNumberPrime = false;
 
     for (i = 2; i < number; i++) 
     {
-        if  ((number % i == 0) && (!isShouldStop))
+        if  ((number % i == 0) && (isShouldNotStop))
         {
             isNumberPrime = false;
-            isShouldStop = true;
+            isShouldNotStop = false;
         } 
-        else if (!isShouldStop) 
+        else if (isShouldNotStop) 
             isNumberPrime = true;
     }
 
@@ -70,25 +70,25 @@ int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER)
 int getPrimeNumber(int inputNum)
 {
     int number, counter, primeNumber;
-    bool isMustStop;
+    bool isMustNotStop;
 
     number = 2;
     counter = 0;
     primeNumber = 2;
-    isMustStop = false;
+    isMustNotStop = true;
 
     if (inputNum == 2)
         primeNumber = 3;
     else 
     {
-        while (!isMustStop) 
+        while (isMustNotStop) 
         {
             if (discoverIsNumberPrime(number)) 
                 counter++;
 
             if (counter == inputNum)
             {
-                isMustStop = true;
+                isMustNotStop = false;
                 primeNumber = number;
             }
             
@@ -102,7 +102,7 @@ void getMersenneNumbers(int n)
 {
     const int MIN_ANSWER = 3;
 
-    int i, j, answer, mersenneNumber;
+    int i, j, answer, mersenneNumber, mersenneNumberP1;
 
     i = 1;
     j = 2;
@@ -112,14 +112,15 @@ void getMersenneNumbers(int n)
     while (answer < n)
     { 
         mersenneNumber = 2;
+        mersenneNumberP1 = getPrimeNumber(i) + 1;
         
-        for (j = 2; j < (getPrimeNumber(i) + 1); j++)
+        for (j = 2; j < mersenneNumberP1; j++)
             mersenneNumber = mersenneNumber * 2;
 
         mersenneNumber = mersenneNumber - 1;
         answer = mersenneNumber;
 
-        if ((discoverIsNumberPrime(answer) == true) && (answer < n))
+        if (discoverIsNumberPrime(answer) && (answer < n))
         {
             if (i == 1)
                 cout << "The answers is: " << endl;
