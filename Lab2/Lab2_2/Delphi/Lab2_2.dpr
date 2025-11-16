@@ -91,8 +91,6 @@ Begin
         If InputNum = 2 Then
             GetPrimeNumber := 3
         Else
-        Begin
-
             While (IsMustNotStop) Do
             Begin
 
@@ -108,7 +106,6 @@ Begin
                 Number := Number + 1;
 
             End;
-        End;
 End;
 
 Procedure GetMersenneNumbers(N: Integer);
