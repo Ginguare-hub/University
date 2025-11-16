@@ -88,15 +88,13 @@ bool canWrite(ofstream &inputFile, string filePath)
 {
     bool isReady;
 
-    inputFile.open(filePath);
+    isReady = true;
 
-    if (inputFile.is_open())
-    {
-        inputFile.close();
-        isReady = true;
-    }
-    else
-        isReady = false;
+    if (inputFile.fail())
+	{
+	    isReady = false;
+	    inputFile.close();
+	}
 
     return isReady;
 }
@@ -121,7 +119,6 @@ bool checkMyFile(ifstream &inputFile, string filePath)
                 else
                 {
                     checkInput = true;
-                    cout << "Assigning is completed successfully." << endl;
                 }
 
     return checkInput;
@@ -187,7 +184,7 @@ int readNumberFromFile(const int MIN_NUMBER, const int MAX_NUMBER, ifstream &inp
         cout << "The number must fit the range [" << MIN_NUMBER << "," << MAX_NUMBER << "]." << endl;
     }
 
-    cout << "THE NUMBER IS " << number << endl; // GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+    cout << "THE NUMBER IS " << number << endl; // Debug
 
     return number;
 }
@@ -209,11 +206,10 @@ string askTheFilePath()
     return filePath;
 }
 
-void assignMyFile(ifstream &inputFile, bool isFileOutput)
+void assignMyFile(ifstream &inputFile, bool isFileOutput, string &filePath)
 {
     int number;
     bool isIncorrect;
-    string filePath;
 
     isIncorrect = false;
 
@@ -221,36 +217,28 @@ void assignMyFile(ifstream &inputFile, bool isFileOutput)
     {
         isIncorrect = false;
 
-        filePath = askTheFilePath();
-
         ifstream inputFile(filePath);
 
         if ((inputFile.rdstate() & ifstream::failbit) != 0)
-        {
             isIncorrect = true;
-        }
 
         isIncorrect = !(checkMyFile(inputFile, filePath));
 
-        //readNumberFromFile(1, 1000, inputFile, filePath);
-
+        if (isIncorrect) 
+            filePath = askTheFilePath();
+        else
+        {
+            cout << "Assigning is completed successfully." << endl;
+            readNumberFromFile(1, 1000, inputFile, filePath);
+        }
     } while (isIncorrect);
 }
-
-// void checkAppendToFile(bool& isIncorrect, std::ofstream& inputFile)
-// {
-//     if (inputFile.fail())
-// 	    {
-// 	        isIncorrect = true;
-// 	        std::cout << "" << std::endl;
-// 	        inputFile.close();
-// 	    }
-// }
 
 int main()
 {
     ifstream myIFile;
     ofstream myOFile;
+    string filePath;
     bool isOutput, isFromFile, isAllUndone;
     int number;
 
@@ -264,9 +252,9 @@ int main()
         {
             isAllUndone = false;
 
-            assignMyFile(myIFile, isOutput);
+            filePath = askTheFilePath();
 
-            readNumberFromFile(-10000, 10000, myIFile, );
+            assignMyFile(myIFile, isOutput, filePath);
 
         } while (isAllUndone);
     }
