@@ -254,7 +254,6 @@ int **readMatrixFromFile(int MIN_NUMBER, int MAX_NUMBER, const string &filePath,
                 cout << "Incorrect numeric data: matrix element." << endl;
                 deleteMatrix(matrix, matrixSize);
                 inputFile.close();
-                return nullptr;
             }
         }
     }
@@ -270,15 +269,17 @@ int **readMatrixFromConsole(int &matrixSize)
     const int MIN_NUMBER = -10000;
     const int MAX_NUMBER = 10000;
 
-    matrixSize = readAndVerify(MIN_LENGTH, MAX_LENGTH, "Write matrix length: ");
+    int **matrix;
 
-    int **matrix = createMatrix(matrixSize);
+    matrix = createMatrix(matrixSize);
+
+    matrixSize = readAndVerify(MIN_LENGTH, MAX_LENGTH, "Write matrix length: ");
 
     for (int i = 0; i < matrixSize; i++)
         for (int j = 0; j < matrixSize; j++)
         {
-            string prompt = "Write element [" + to_string(i) + "," + to_string(j) + "] of matrix: ";
-            matrix[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, prompt);
+            cout << "Write element [" << i << "," << j << "] of matrix: " << endl;
+            matrix[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "");
         }
 
     return matrix;
