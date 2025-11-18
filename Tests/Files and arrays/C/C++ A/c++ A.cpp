@@ -214,9 +214,9 @@ void deleteMatrix(int **&matrix, int size)
 }
 
 int **readMatrixFromFile(int MIN_NUMBER, int MAX_NUMBER, const string &filePath, int &matrixSize)
-{
+{  //переделать
 
-    const int ERROR_NUMBER = 37707;
+    const int ERROR_NUMBER = 37707; 
     const int MIN_LENGTH = 1;
     const int MAX_LENGTH = 20;
     // const int MIN_NUMBER = -10000;
@@ -228,14 +228,12 @@ int **readMatrixFromFile(int MIN_NUMBER, int MAX_NUMBER, const string &filePath,
     {
         cout << "Error opening file." << endl;
         matrixSize = 0;
-        return nullptr;
     }
 
     if (!(inputFile >> matrixSize))
     {
         cout << "Error reading matrix length." << endl;
         inputFile.close();
-        return nullptr;
     }
 
     if (matrixSize < MIN_LENGTH || matrixSize > MAX_LENGTH)
@@ -243,7 +241,6 @@ int **readMatrixFromFile(int MIN_NUMBER, int MAX_NUMBER, const string &filePath,
         cout << "Incorrect matrix length, the number must fit the range ["
              << MIN_LENGTH << "," << MAX_LENGTH << "]." << endl;
         inputFile.close();
-        return nullptr;
     }
 
     int **matrix = createMatrix(matrixSize);
