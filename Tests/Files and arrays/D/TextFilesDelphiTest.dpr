@@ -456,6 +456,12 @@ Begin
     CloseFile(OutputFile);
 End;
 
+Procedure WriteTaskConditions;
+
+Begin
+    WriteLn('');
+End;
+
 Const
     ERROR_NUMBER: Integer = 37707;
 

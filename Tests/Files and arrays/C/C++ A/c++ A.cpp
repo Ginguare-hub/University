@@ -6,8 +6,6 @@ using namespace std;
 
 // const int ERROR_NUMBER = 37707;
 
-// Проверки ----------------------------------------------------------------------
-
 int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string myString)
 {
 
@@ -29,8 +27,7 @@ int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string myString)
             isIncorrect = true;
             cout << "Incorrect input, try again." << endl;
             cin.clear();
-            while (cin.get() != '\n')
-                ;
+            while (cin.get() != '\n');
         }
 
         if (!isIncorrect && ((number < MIN_NUMBER) || (number > MAX_NUMBER)))
@@ -114,8 +111,13 @@ bool canRead(string filePath)
 bool canWrite(const string &filePath)
 {
     ofstream file(filePath, ios::app);
-    bool canWrite = file.is_open();
+    bool canWrite;
+
+    canWrite = 0;
+
+    canWrite = file.is_open();
     file.close();
+
     return canWrite;
 }
 
@@ -157,11 +159,13 @@ bool checkMyFile(string filePath, bool isFileOutput)
     return checkInput;
 }
 
-// Проверки ----------------------------------------------------------------------
-
 bool workWithConsoleOrFile(bool isOutput)
 {
-    int number = 0;
+    int number;
+    bool isFromFile;
+
+    number = 0;
+    isFromFile = false;
 
     if (isOutput)
         cout << "If data is output to the console write 0, if from file write 1." << endl;
@@ -169,7 +173,11 @@ bool workWithConsoleOrFile(bool isOutput)
         cout << "If data is entered from the console write 0, if from file write 1." << endl;
 
     number = readAndVerify(0, 1, "> ");
-    bool isFromFile = (number == 1);
+
+    if (number == 1) 
+        isFromFile = true;
+    else 
+        isFromFile = false;
 
     if (isFromFile)
         if (isOutput)
@@ -187,7 +195,9 @@ bool workWithConsoleOrFile(bool isOutput)
 
 int **createMatrix(int size)
 {
-    int **matrix = new int *[size];
+    int **matrix;
+    
+    matrix = new int*[size];
 
     for (int i = 0; i < size; i++)
         matrix[i] = new int[size];
@@ -195,7 +205,7 @@ int **createMatrix(int size)
     return matrix;
 }
 
-void deleteMatrix(int **matrix, int size)
+void deleteMatrix(int **&matrix, int size)
 {
     for (int i = 0; i < size; i++)
         delete[] matrix[i];
@@ -206,6 +216,7 @@ void deleteMatrix(int **matrix, int size)
 int **readMatrixFromFile(int MIN_NUMBER, int MAX_NUMBER, const string &filePath, int &matrixSize)
 {
 
+    const int ERROR_NUMBER = 37707;
     const int MIN_LENGTH = 1;
     const int MAX_LENGTH = 20;
     // const int MIN_NUMBER = -10000;
@@ -337,50 +348,51 @@ void writeMatrixIntoFile(const string &filePath, int **matrix, int size)
 
 int main()
 {
+    const int ERROR_NUMBER = 37707;
     const int MIN_NUMBER = -10000;
     const int MAX_NUMBER = 10000;
 
-    bool isFromFile = false;
-    bool isToFile = false;
-    int **matrix = nullptr;
-    int matrixSize = 0;
+    bool isFromFile;
+    bool isToFile;
+    bool isAllUndone;
+    int **matrix;
+    int matrixSize;
+    string filePath;
+
+    isFromFile = false;
+    isToFile = false;
+    matrixSize = 0;
 
     isFromFile = workWithConsoleOrFile(false);
 
     if (isFromFile)
     {
-        bool isAllDone = false;
-
+        isAllUndone = true;
         do
         {
-            string filePath = assignMyFile(false);
+            filePath = assignMyFile(false);
             matrix = readMatrixFromFile(MIN_NUMBER, MAX_NUMBER, filePath, matrixSize);
 
-            // if (matrix != nullptr)
-            //     isAllDone = true;
-            // else
-            //     cout << "Error reading matrix from file. Please try again." << endl;
-        } while (!isAllDone);
+            if (matrix != nullptr)
+                isAllUndone = false;
+            else
+                cout << "Error reading matrix from file. Please try again." << endl;
+        } while (isAllUndone);
     }
     else
-    {
         matrix = readMatrixFromConsole(matrixSize);
-    }
 
-    // Вывод данных
     isToFile = workWithConsoleOrFile(true);
 
     if (isToFile)
     {
-        string filePath = assignMyFile(true);
+        filePath = assignMyFile(true);
         writeMatrixIntoFile(filePath, matrix, matrixSize);
     }
     else
-    {
         writeMatrixIntoConsole(matrix, matrixSize);
-    }
 
-    delete matrix;
+    deleteMatrix(matrix, matrixSize);
 
     return 0;
 }

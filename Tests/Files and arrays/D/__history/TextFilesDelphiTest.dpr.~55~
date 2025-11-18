@@ -6,7 +6,7 @@ Uses
 Type
     TMatrix = Array Of Array Of Integer;
 
-//Проверки----------------------------------------------------------------------
+    //Проверки----------------------------------------------------------------------
 
 Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
 
@@ -56,11 +56,7 @@ Begin
     Index := Length(FilePath);
     IsText := False;
 
-    //FileExt := ExtractFileExt(FilePath);
-
-    WriteLn(Index);
-
-    If Length(FileExt) > MIN_PATH_LENGTH Then
+    If Index > MIN_PATH_LENGTH Then
         FileExt := FilePath[Index - 3] + FilePath[Index - 2] + FilePath[Index - 1] + FilePath[Index]
     Else
         IsText := False;
@@ -198,7 +194,7 @@ End;
 Function ReadNumberFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; Var InputFile: TextFile): Integer;
 
 Const
-    ErrorNumber: Integer = 37707;
+    ERROR_NUMBER: Integer = 37707;
 
 Var
     Number: Integer;
@@ -211,19 +207,19 @@ Begin
         Reset(InputFile);
         ReadLn(InputFile, Number);
     Except
-        Number := ErrorNumber;
+        Number := ERROR_NUMBER;
     End;
 
     CloseFile(InputFile);
 
-    If Number = ErrorNumber Then
+    If Number = ERROR_NUMBER Then
         WriteLn('Error, incorrect input.')
     Else
     Begin
         If (Number < MIN_NUMBER) Or (Number > MAX_NUMBER) Then
         Begin
             WriteLn('Incorrect input, the number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
-            Number := ErrorNumber;
+            Number := ERROR_NUMBER;
         End;
     End;
 
@@ -233,7 +229,7 @@ End;
 Function ReadMatrixFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; Var InputFile: TextFile): TMatrix;
 
 Const
-    ErrorNumber: Integer = 37707;
+    ERROR_NUMBER: Integer = 37707;
     MIN_LENGTH: Integer = 1;
     MAX_LENGTH: Integer = 20;
 
@@ -253,19 +249,19 @@ Begin
         Reset(InputFile);
         ReadLn(InputFile, MatrixLength);
     Except
-        MatrixLength := ErrorNumber;
+        MatrixLength := ERROR_NUMBER;
     End;
 
-    If Not(MatrixLength = ErrorNumber) Then
+    If Not(MatrixLength = ERROR_NUMBER) Then
     Begin
         If (MatrixLength < MIN_NUMBER) Or (MatrixLength > MAX_NUMBER) Then
         Begin
             WriteLn('Incorrect matrix length, the number must fit the range [', MIN_LENGTH, ',', MAX_LENGTH, '].');
-            MatrixLength := ErrorNumber;
+            MatrixLength := ERROR_NUMBER;
         End;
     End;
 
-    If Not(MatrixLength = ErrorNumber) Then
+    If Not(MatrixLength = ERROR_NUMBER) Then
     Begin
 
         SetLength(Matrix, MatrixLength, MatrixLength);
@@ -277,7 +273,7 @@ Begin
                 Try
                     Read(InputFile, Matrix[I, J]);
                 Except
-                    Matrix[0,0] := ErrorNumber;
+                    Matrix[0, 0] := ERROR_NUMBER;
                     WriteLn('Incorrect numeric data: matrix element.');
                 End;
             End;
@@ -288,15 +284,15 @@ Begin
     Else
     Begin
         SetLength(Matrix, 1, 1);
-        Matrix[0, 0] := ErrorNumber;
+        Matrix[0, 0] := ERROR_NUMBER;
     End;
 
     CloseFile(InputFile);
 
-    If MatrixLength = ErrorNumber Then
+    If MatrixLength = ERROR_NUMBER Then
     Begin
         WriteLn('Error, incorrect matrix data.');
-        Matrix[0, 0] := ErrorNumber;
+        Matrix[0, 0] := ERROR_NUMBER;
     End;
 
     ReadMatrixFromFile := Matrix;
@@ -329,7 +325,7 @@ Begin
         Begin
             Write('Write element [', I, ',', J, '] of matrix: ');
             Element := ReadAndVerify(MIN_NUMBER, MAX_NUMBER, '');
-            Matrix[I,J] := Element;
+            Matrix[I, J] := Element;
         End;
 
     ReadMatrixFromConsole := Matrix;
@@ -461,7 +457,7 @@ Begin
 End;
 
 Const
-    ErrorNumber: Integer = 37707;
+    ERROR_NUMBER: Integer = 37707;
 
 Var
     MyFile: TextFile;
@@ -476,8 +472,6 @@ Begin
 
     IsOutput := False;
 
-    WriteLn(IsFileText('.txt'));
-
     IsFromFile := WorkWithConsoleOrFile(IsOutput);
 
     If IsFromFile Then
@@ -488,10 +482,9 @@ Begin
             IsAllDone := True;
 
             AssignMyFile(MyFile, IsOutput);
-
             Matrix := ReadMatrixFromFile(-10000, 10000, MyFile);
 
-            If Matrix[0,0] = ErrorNumber Then
+            If Matrix[0, 0] = ERROR_NUMBER Then
                 IsAllDone := False;
 
         Until IsAllDone;
