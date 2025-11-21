@@ -39,7 +39,7 @@ int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string str)
     return number;
 }
 
-int *createArray()
+int *createArray(int &arrLength)
 {
     const int MIN_LENGTH = 1;
     const int MAX_LENGTH = 30;
@@ -47,12 +47,11 @@ int *createArray()
     const int MAX_NUMBER = 100000;
 
     int *myArray;
-    int i, number, arrLength;
+    int i, number;
     bool isIncorrect;
 
     i = 0;
     number = 0;
-    arrLength = 0;
     isIncorrect = false;
 
     arrLength = readAndVerify(MIN_LENGTH, MAX_LENGTH, "Write length of array: ");
@@ -64,6 +63,7 @@ int *createArray()
         do
         {
             cout << "Element of array[" << i << "] = ";
+            cin >> number;
             isIncorrect = false;
 
             if (cin.fail() || cin.get() != '\n')
@@ -71,7 +71,8 @@ int *createArray()
                 isIncorrect = true;
                 cout << "Incorrect input, try again." << endl;
                 cin.clear();
-                while (cin.get() != '\n');
+                while (cin.get() != '\n')
+                    ;
             }
 
             if (!isIncorrect && ((number < MIN_NUMBER) || (number > MAX_NUMBER)))
@@ -84,19 +85,61 @@ int *createArray()
 
         myArray[i] = number;
     }
+
+    return myArray;
 }
 
-void writeArray(int* myArray) 
+void writeArray(int *myArray, int arrLength)
 {
     int i;
+    i = 0;
+    for (i = 0; i < arrLength; i++)
+        cout << myArray[i] << endl;
+}
+
+void changeArray(int *&myArray, int arrLength)
+{
+    const int limit = 2;
+
+    int i, j, k;
 
     i = 0;
+    j = 0;
+    k = 0;
 
-
+    for (i = 0; i < limit; i++)
+        if (i == 0)
+        {
+            for (j = 0; j < arrLength; j++)
+                for (k = 0; k < arrLength; k++)
+                    if ((myArray[k] == 0) && !(myArray[j] == 0) && (j < k))
+                    {
+                        myArray[k] = myArray[k] + myArray[j];
+                        myArray[j] = myArray[k] - myArray[j];
+                        myArray[k] = myArray[k] - myArray[j];
+                    }
+        }
+        else
+            for (j = 0; j < arrLength; j++)
+                for (k = 0; k < arrLength; k++)
+                    if ((myArray[k] < 0) && !(myArray[j] == 0) && !(myArray[j] < 0) && (j < k))
+                    {
+                        myArray[k] = myArray[k] + myArray[j];
+                        myArray[j] = myArray[k] - myArray[j];
+                        myArray[k] = myArray[k] - myArray[j];
+                    }
 }
 
 int main()
 {
+    int arrLength;
+    int *arrayA;
 
+    arrLength = 0;
+    arrayA = createArray(arrLength);
+    changeArray(arrayA, arrLength);
+    writeArray(arrayA, arrLength);
+    
+    delete[] arrayA;
     return 0;
 }

@@ -106,8 +106,10 @@ End;
 
 Procedure ChangeArray(Var MyArray: TArrayOI);
 
+Const
+    Limit: Integer = 2;
+
 Var
-    SpecialMatrix: TArrayOI;
     I, J, K: Integer;
 
 Begin
@@ -115,10 +117,7 @@ Begin
     J := 0;
     K := 0;
 
-    SetLength(SpecialMatrix, Length(MyArray));
-
-    For I := 1 To 2 Do
-    Begin
+    For I := 1 To Limit Do
         If I = 1 Then
         Begin
             For J := 0 To High(MyArray) Do
@@ -131,16 +130,14 @@ Begin
                     End;
         End
         Else
-            If I = 2 Then
-                For J := 0 To High(MyArray) Do
-                    For K := 0 To High(MyArray) Do
-                        If (MyArray[K] < 0) And (MyArray[J] <> 0) And (Not(MyArray[J] < 0)) And (J < K) Then
-                        Begin
-                            MyArray[K] := MyArray[K] + MyArray[J];
-                            MyArray[J] := MyArray[K] - MyArray[J];
-                            MyArray[K] := MyArray[K] - MyArray[J];
-                        End;
-    End;
+            For J := 0 To High(MyArray) Do
+                For K := 0 To High(MyArray) Do
+                    If (MyArray[K] < 0) And (MyArray[J] <> 0) And (Not(MyArray[J] < 0)) And (J < K) Then
+                    Begin
+                        MyArray[K] := MyArray[K] + MyArray[J];
+                        MyArray[J] := MyArray[K] - MyArray[J];
+                        MyArray[K] := MyArray[K] - MyArray[J];
+                    End;
 End;
 
 Var
@@ -152,4 +149,5 @@ Begin
     WriteArray(ArrayA);
 
     ReadLn;
+
 End.

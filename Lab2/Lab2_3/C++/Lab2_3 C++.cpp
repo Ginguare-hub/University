@@ -15,7 +15,6 @@ int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string str)
     {
         cout << str;
         isIncorrect = false;
-
         cin >> num;
 
         if (cin.fail() || cin.get() != '\n')
