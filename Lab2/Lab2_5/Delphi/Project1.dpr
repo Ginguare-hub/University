@@ -117,7 +117,7 @@ Begin
 
     SetLength(SpecialMatrix, Length(MyArray));
 
-    For I := 1 To 3 Do
+    For I := 1 To 2 Do
     Begin
         If I = 1 Then
         Begin
