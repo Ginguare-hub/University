@@ -127,7 +127,7 @@ Begin
 
                 For K := 0 To High(MyArray) Do
                 Begin
-                    If (MyArray[K] = 0) And (MyArray[J] <> 0) Then
+                    If (MyArray[K] = 0) And (MyArray[J] <> 0) And (J < K) Then
                     Begin
                         MyArray[K] := MyArray[K] + MyArray[J];
                         MyArray[J] := MyArray[K] - MyArray[J];
@@ -137,15 +137,29 @@ Begin
 
             End;
 
+        End
+        Else
+            If I = 2 Then
+            Begin
 
+                For J := 0 To High(MyArray) Do
+                Begin
 
-        End;
+                    For K := 0 To High(MyArray) Do
+                    Begin
+                        If (MyArray[K] < 0) And (MyArray[J] <> 0) And (Not(MyArray[J] < 0)) And (J < K) Then
+                        Begin
+                            MyArray[K] := MyArray[K] + MyArray[J];
+                            MyArray[J] := MyArray[K] - MyArray[J];
+                            MyArray[K] := MyArray[K] - MyArray[J];
+                        End;
+                    End;
 
+                End;
 
-
+            End;
 
     End;
-
 End;
 
 Var
@@ -154,10 +168,10 @@ Var
 Begin
 
     ArrayA := CreateArray;
+    WriteArray(ArrayA);
     ChangeArray(ArrayA);
     WriteArray(ArrayA);
 
-
-
     ReadLn;
+
 End.
