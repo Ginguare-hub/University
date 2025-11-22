@@ -33,13 +33,44 @@ public class myFiles {
         return num;
     }
 
+    public static boolean workWithConsoleOrFile(boolean isOutput, Scanner scanner) {
+        int number;
+        boolean isFromFile;
+
+        number = 0;
+        isFromFile = false;
+
+        if (isOutput)
+            System.out.print("If data is output to the console write 0, if from file write 1.\n");
+        else
+            System.out.print("If data is entered from the console write 0, if from file write 1.\n");
+
+        number = readAndVerify(0, 1, "> ", scanner);
+
+        if (number == 1)
+            isFromFile = true;
+        else
+            isFromFile = false;
+
+        if (isFromFile)
+            if (isOutput)
+                System.out.print("The data is output to a file.\n");
+            else
+                System.out.print("The data is entered from a file.\n");
+        else if (isOutput)
+            System.out.print("The data is output to the console.\n");
+        else
+            System.out.print("The data is entered from the console.\n");
+
+        return isFromFile;
+    }
+
     public static int[][] writeInMatrix(int n, Scanner scanner) {
         final int MIN_NUMBER = -100000;
         final int MAX_NUMBER = 100000;
 
         int i;
         int j;
-
         int[][] arrayA;
 
         i = 0;
@@ -80,8 +111,15 @@ public class myFiles {
 
         int n;
         int[][] a;
-
+        boolean isFromFile;
+        boolean isOutput;
         Scanner scanner = new Scanner(System.in);
+
+        n = 0;
+        isFromFile = false;
+        isOutput = false;
+
+        isFromFile = workWithConsoleOrFile(isOutput, scanner);
 
         n = readAndVerify(MIN_ORDER, MAX_ORDER, "Write the order of the matrix: ", scanner);
         a = writeInMatrix(n, scanner);

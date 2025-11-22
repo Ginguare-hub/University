@@ -24,8 +24,7 @@ int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string str)
             isIncorrect = true;
             cout << "Incorrect input, try again." << endl;
             cin.clear();
-            while (cin.get() != '\n')
-                ;
+            while (cin.get() != '\n');
         }
 
         if (!isIncorrect && ((number < MIN_NUMBER) || (number > MAX_NUMBER)))
@@ -99,7 +98,7 @@ void writeArray(int *myArray, int arrLength)
 
 void changeArray(int *&myArray, int arrLength)
 {
-    const int limit = 2;
+    const int LIMIT = 2;
 
     int i, j, k;
 
@@ -107,7 +106,7 @@ void changeArray(int *&myArray, int arrLength)
     j = 0;
     k = 0;
 
-    for (i = 0; i < limit; i++)
+    for (i = 0; i < LIMIT; i++)
         if (i == 0)
         {
             for (j = 0; j < arrLength; j++)
