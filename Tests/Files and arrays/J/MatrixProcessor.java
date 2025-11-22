@@ -1,6 +1,5 @@
 import java.util.Scanner;
 import java.io.*;
-import java.util.Scanner;
 
 public class MatrixProcessor {
     // Константы
