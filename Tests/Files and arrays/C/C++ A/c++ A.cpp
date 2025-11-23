@@ -59,7 +59,6 @@ bool isFileText(string filePath)
 
 bool isFileNotEmpty(string filePath)
 {
-
     bool isFileNotEmpty;
     ifstream testFile(filePath);
 
@@ -193,7 +192,7 @@ bool workWithConsoleOrFile(bool isOutput)
     return isFromFile;
 }
 
-int **createMatrix(int size)
+int **createMatrix(int &size)
 {
     int **matrix;
     
@@ -238,11 +237,10 @@ int **readMatrixFromFile(int MIN_NUMBER, int MAX_NUMBER, const string &filePath,
 
     if (matrixSize < MIN_LENGTH || matrixSize > MAX_LENGTH)
     {
-        cout << "Incorrect matrix length, the number must fit the range ["
-             << MIN_LENGTH << "," << MAX_LENGTH << "]." << endl;
+        cout << "Incorrect matrix length, the number must fit the range [" << MIN_LENGTH << "," << MAX_LENGTH << "]." << endl;
         inputFile.close();
-    }
-
+    } 
+    
     int **matrix = createMatrix(matrixSize);
 
     for (int i = 0; i < matrixSize; i++)
@@ -350,9 +348,7 @@ int main()
     const int MIN_NUMBER = -10000;
     const int MAX_NUMBER = 10000;
 
-    bool isFromFile;
-    bool isToFile;
-    bool isAllUndone;
+    bool isFromFile, isToFile, isAllUndone, i;
     int **matrix;
     int matrixSize;
     string filePath;
@@ -375,6 +371,7 @@ int main()
                 isAllUndone = false;
             else
                 cout << "Error reading matrix from file. Please try again." << endl;
+
         } while (isAllUndone);
     }
     else
@@ -391,6 +388,5 @@ int main()
         writeMatrixIntoConsole(matrix, matrixSize);
 
     deleteMatrix(matrix, matrixSize);
-
     return 0;
 }

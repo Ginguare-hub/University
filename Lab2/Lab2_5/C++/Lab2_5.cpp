@@ -24,7 +24,8 @@ int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string str)
             isIncorrect = true;
             cout << "Incorrect input, try again." << endl;
             cin.clear();
-            while (cin.get() != '\n');
+            while (cin.get() != '\n')
+                ;
         }
 
         if (!isIncorrect && ((number < MIN_NUMBER) || (number > MAX_NUMBER)))
@@ -100,33 +101,28 @@ void changeArray(int *&myArray, int arrLength)
 {
     const int LIMIT = 2;
 
-    int i, j, k;
+    int i, j;
 
     i = 0;
     j = 0;
-    k = 0;
 
-    for (i = 0; i < LIMIT; i++)
-        if (i == 0)
-        {
-            for (j = 0; j < arrLength; j++)
-                for (k = 0; k < arrLength; k++)
-                    if ((myArray[k] == 0) && !(myArray[j] == 0) && (j < k))
-                    {
-                        myArray[k] = myArray[k] + myArray[j];
-                        myArray[j] = myArray[k] - myArray[j];
-                        myArray[k] = myArray[k] - myArray[j];
-                    }
-        }
-        else
-            for (j = 0; j < arrLength; j++)
-                for (k = 0; k < arrLength; k++)
-                    if ((myArray[k] < 0) && !(myArray[j] == 0) && !(myArray[j] < 0) && (j < k))
-                    {
-                        myArray[k] = myArray[k] + myArray[j];
-                        myArray[j] = myArray[k] - myArray[j];
-                        myArray[k] = myArray[k] - myArray[j];
-                    }
+    for (i = 0; i < arrLength; i++)
+        for (j = 0; j < arrLength; j++)
+            if ((myArray[j] == 0) && !(myArray[i] == 0) && (i < j))
+            {
+                myArray[j] = myArray[j] + myArray[i];
+                myArray[i] = myArray[j] - myArray[i];
+                myArray[j] = myArray[j] - myArray[i];
+            }
+
+    for (i = 0; i < arrLength; i++)
+        for (j = 0; j < arrLength; j++)
+            if ((myArray[j] < 0) && !(myArray[i] == 0) && !(myArray[i] < 0) && (i < j))
+            {
+                myArray[j] = myArray[j] + myArray[i];
+                myArray[i] = myArray[j] - myArray[i];
+                myArray[j] = myArray[j] - myArray[i];
+            }
 }
 
 int main()
@@ -138,7 +134,7 @@ int main()
     arrayA = createArray(arrLength);
     changeArray(arrayA, arrLength);
     writeArray(arrayA, arrLength);
-    
+
     delete[] arrayA;
     return 0;
 }

@@ -65,7 +65,7 @@ public class myFiles {
         return isFromFile;
     }
 
-    public static int[][] writeInMatrix(int n, Scanner scanner) {
+    public static int[][] writeInMatrix(int arrLength, Scanner scanner) {
         final int MIN_NUMBER = -100000;
         final int MAX_NUMBER = 100000;
 
@@ -76,10 +76,10 @@ public class myFiles {
         i = 0;
         j = 0;
 
-        arrayA = new int[n][n];
+        arrayA = new int[arrLength][arrLength];
 
-        for (i = 0; i < n; i++) {
-            for (j = 0; j < n; j++) {
+        for (i = 0; i < arrLength; i++) {
+            for (j = 0; j < arrLength; j++) {
                 System.out.printf("Write element [%d][%d] of matrix: ", i, j);
                 arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "Write element: ", scanner);
             }

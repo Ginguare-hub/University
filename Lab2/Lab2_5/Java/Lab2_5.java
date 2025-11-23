@@ -79,33 +79,28 @@ public class Lab2_5 {
     }
 
     public static int[] changeArray(int[] myArray, int arrLength) {
-        final int LIMIT = 2;
 
         int i;
         int j;
-        int k;
 
         i = 0;
         j = 0;
-        k = 0;
 
-        for (i = 0; i < LIMIT; i++)
-            if (i == 0) {
-                for (j = 0; j < arrLength; j++)
-                    for (k = 0; k < arrLength; k++)
-                        if ((myArray[k] == 0) && !(myArray[j] == 0) && (j < k)) {
-                            myArray[k] = myArray[k] + myArray[j];
-                            myArray[j] = myArray[k] - myArray[j];
-                            myArray[k] = myArray[k] - myArray[j];
-                        }
-            } else
-                for (j = 0; j < arrLength; j++)
-                    for (k = 0; k < arrLength; k++)
-                        if ((myArray[k] < 0) && !(myArray[j] == 0) && !(myArray[j] < 0) && (j < k)) {
-                            myArray[k] = myArray[k] + myArray[j];
-                            myArray[j] = myArray[k] - myArray[j];
-                            myArray[k] = myArray[k] - myArray[j];
-                        }
+        for (i = 0; i < arrLength; i++)
+            for (j = 0; j < arrLength; j++)
+                if ((myArray[j] == 0) && !(myArray[i] == 0) && (i < j)) {
+                    myArray[j] = myArray[j] + myArray[i];
+                    myArray[i] = myArray[j] - myArray[i];
+                    myArray[j] = myArray[j] - myArray[i];
+                }
+
+        for (i = 0; i < arrLength; i++)
+            for (j = 0; j < arrLength; j++)
+                if ((myArray[j] < 0) && !(myArray[i] == 0) && !(myArray[i] < 0) && (i < j)) {
+                    myArray[j] = myArray[j] + myArray[i];
+                    myArray[i] = myArray[j] - myArray[i];
+                    myArray[j] = myArray[j] - myArray[i];
+                }
         return myArray;
     }
 
