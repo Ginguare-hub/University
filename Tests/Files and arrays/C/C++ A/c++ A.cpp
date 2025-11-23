@@ -324,7 +324,8 @@ int **readMatrixFromFile(const int MIN_NUMBER, const int MAX_NUMBER, string file
             if (inputFile.fail())
             {
                 cout << "Error with reading matrix data, bad file read." << endl;
-                delete[] matrix;
+                //delete[] matrix;
+                deleteMatrix(matrix, matrixSize);
                 matrix = 0;
             }
         }
@@ -429,7 +430,7 @@ int main()
 
     isFromFile = false;
     isToFile = false;
-    matrixSize = 0;
+    matrixSize = 0;       
 
     isFromFile = workWithConsoleOrFile(false);
 
