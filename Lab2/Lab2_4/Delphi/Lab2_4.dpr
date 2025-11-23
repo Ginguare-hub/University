@@ -1,8 +1,5 @@
 Program Lab2_4;
 
-{$APPTYPE CONSOLE}
-{$R *.res}
-
 Uses
     System.SysUtils;
 
@@ -11,10 +8,10 @@ Type
 
     //Õ¿œ»—¿“‹ ‘”Õ ÷»ﬁ œ–Œ¬≈– »
 
-Function GetNumberOfDigits(Number: Integer): Integer;
+Function GetNumberOfDigits(Number: Int64): Int64;
 
 Var
-    Answer: Integer;
+    Answer: Int64;
 
 Begin
 
@@ -35,10 +32,10 @@ Begin
 
 End;
 
-Function PowerOfTwo(Power: Integer): Integer;
+Function PowerOfTwo(Power: Int64): Int64;
 
 Var
-    I, Answer: Integer;
+    I, Answer: Int64;
 
 Begin
     //œ–Œ¬≈– ¿ Õ≈ Ã≈Õ‹ÿ≈ À» «¿ 0 » Õ≈ ¡ŒÀ‹ÿ≈ «¿ ~30
@@ -51,11 +48,11 @@ Begin
 
 End;
 
-Function TetradeToHexidecimal(Tetrade: Integer): Char;
+Function TetradeToHexidecimal(Tetrade: Int64): Char;
 
 Var
     CArray: TArrC;
-    Answer, I: Integer;
+    Answer, I: Int64;
 
 Begin
     Answer := 0;
@@ -77,13 +74,13 @@ End;
 
 //Function BinatyArrayLength
 
-Function BinaryToHexidecimal(BNumber: Integer): TArrC;
+Function BinaryToHexidecimal(BNumber: Int64): TArrC;
 
 Const
-    Base: Integer = 2;
+    BASE: Int64 = 2;
 
 Var
-    Counter, Tetrade, ALength, I: Integer;
+    Counter, Tetrade, ALength, I: Int64;
     AnswerArray: TArrC;
 
 Begin
@@ -127,7 +124,7 @@ End;
 Procedure WriteOutArray(ArrayA: TArrC);
 
 Var
-    I: Integer;
+    I: Int64;
 
 Begin
 
@@ -142,7 +139,7 @@ End;
 
 Var
     A, B: TArrC;
-    BLength: Integer;
+    BLength: Int64;
 
 Begin
 
@@ -152,7 +149,7 @@ Begin
     //
     //WriteOutArray(A);
 
-    WriteOutArray(BinaryToHexidecimal(0));
+    WriteOutArray(BinaryToHexidecimal(1000101010001));
 
     ReadLn;
 
