@@ -6,9 +6,9 @@ public class myFiles {
     public static int readAndVerify(final int MIN_NUMBER, final int MAX_NUMBER, String str, Scanner scanner) {
 
         boolean isIncorrect;
-        int num;
+        int number;
 
-        num = 0;
+        number = 0;
         isIncorrect = true;
 
         do {
@@ -17,20 +17,20 @@ public class myFiles {
             isIncorrect = false;
 
             try {
-                num = Integer.parseInt(scanner.nextLine());
+                number = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 isIncorrect = true;
                 System.out.println("Incorrect input, try again.");
             }
 
-            if (!isIncorrect && (num < MIN_NUMBER || num > MAX_NUMBER)) {
+            if (!isIncorrect && (number < MIN_NUMBER || number > MAX_NUMBER)) {
                 isIncorrect = true;
                 System.out.printf("The number must fit the range [%d,%d].\n", MIN_NUMBER, MAX_NUMBER);
             }
 
         } while (isIncorrect);
 
-        return num;
+        return number;
     }
 
     public static boolean workWithConsoleOrFile(boolean isOutput, Scanner scanner) {
@@ -65,26 +65,72 @@ public class myFiles {
         return isFromFile;
     }
 
-    public static int[][] writeInMatrix(int arrLength, Scanner scanner) {
-        final int MIN_NUMBER = -100000;
-        final int MAX_NUMBER = 100000;
+    // public static int[][] writeInMatrix(int arrLength, Scanner scanner) {
+    //     final int MIN_NUMBER = -100000;
+    //     final int MAX_NUMBER = 100000;
 
+    //     int i;
+    //     int j;
+    //     int[][] arrayA;
+
+    //     i = 0;
+    //     j = 0;
+
+    //     arrayA = new int[arrLength][arrLength];
+
+    //     for (i = 0; i < arrLength; i++) {
+    //         for (j = 0; j < arrLength; j++) {
+    //             System.out.printf("Write element [%d][%d] of matrix: ", i, j);
+    //             arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "Write element: ", scanner);
+    //         }
+    //     }
+    //     return arrayA;
+    // }
+
+    public static int[][] createMatrix(int size) {
+        int[][] matrix;
+
+        matrix = new int[size][size];
+
+        // for (int i = 0; i < size; i++)
+        // matrix[i] = new int[size];
+
+        return matrix;
+    }
+
+    public static int[][] readMatrixFromConsole(final int MIN_NUMBER, final int MAX_NUMBER, Scanner scanner) {
+        final int MIN_LENGTH = 1;
+        final int MAX_LENGTH = 30;
+
+        int[][] matrix;
+        int matrixSize;
         int i;
         int j;
-        int[][] arrayA;
 
         i = 0;
         j = 0;
+        matrixSize = 0;
 
-        arrayA = new int[arrLength][arrLength];
+        matrixSize = readAndVerify(MIN_LENGTH, MAX_LENGTH, "Write matrix length: ", scanner);
 
-        for (i = 0; i < arrLength; i++) {
-            for (j = 0; j < arrLength; j++) {
-                System.out.printf("Write element [%d][%d] of matrix: ", i, j);
-                arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "Write element: ", scanner);
+        matrix = createMatrix(matrixSize);
+
+        for (i = 0; i < matrixSize; i++)
+            for (j = 0; j < matrixSize; j++) {
+                System.out.printf("Write element [%d,%d] of matrix: ", i, j);
+                matrix[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "", scanner);
             }
+
+        return matrix;
+    }
+
+    public static void writeMatrixIntoConsole(int[][] matrix, int size) {
+        System.out.print("The result matrix is: \n");
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++)
+                System.out.print(matrix[i][j] + " ");
+            System.out.print("\n");
         }
-        return arrayA;
     }
 
     public static void writeOutMatrix(int[][] arrayA) {
@@ -106,23 +152,20 @@ public class myFiles {
 
     public static void main(String[] args) {
 
-        final int MIN_ORDER = 1;
-        final int MAX_ORDER = 10;
+        final int MIN_NUMBER = -100000;
+        final int MAX_NUMBER =  100000;
 
-        int n;
         int[][] a;
         boolean isFromFile;
         boolean isOutput;
         Scanner scanner = new Scanner(System.in);
 
-        n = 0;
         isFromFile = false;
         isOutput = false;
 
         isFromFile = workWithConsoleOrFile(isOutput, scanner);
 
-        n = readAndVerify(MIN_ORDER, MAX_ORDER, "Write the order of the matrix: ", scanner);
-        a = writeInMatrix(n, scanner);
+        a = readMatrixFromConsole(MIN_NUMBER, MAX_NUMBER, scanner);
         writeOutMatrix(a);
 
         scanner.close();

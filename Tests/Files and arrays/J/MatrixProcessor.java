@@ -2,122 +2,118 @@ import java.util.Scanner;
 import java.io.*;
 
 public class MatrixProcessor {
-    // Константы
-    private static final int ERROR_NUMBER = 37707;
-    private static final int MIN_LENGTH = 1;
-    private static final int MAX_LENGTH = 20;
-    private static final int MIN_NUMBER = -10000;
-    private static final int MAX_NUMBER = 10000;
+
+    // private static final int ERROR_NUMBER = 37707;
+    // private static final int MIN_LENGTH = 1;
+    // private static final int MAX_LENGTH = 20;
+    // private static final int MIN_NUMBER = -10000;
+    // private static final int MAX_NUMBER = 10000;
     
-    // Проверки ----------------------------------------------------------------------
-    
-    public static int readAndVerify(Scanner scanner, int minNumber, int maxNumber, String message) {
-        int number = 0;
-        boolean isCorrect = false;
+    public static int readAndVerify(int MIN_NUMBER, int MAX_NUMBER, String message, Scanner scanner) {
+        int number;
+        boolean isIncorrect;
+
+        number = 0;
+        isIncorrect = false;
         
         do {
             System.out.print(message);
             
-            if (scanner.hasNextInt()) {
-                number = scanner.nextInt();
-                scanner.nextLine();
-                
-                if (number < minNumber || number > maxNumber) {
-                    System.out.println("The number must fit the range [" + minNumber + "," + maxNumber + "].");
-                    isCorrect = false;
-                } else {
-                    isCorrect = true;
-                }
-            } else {
+            try {
+                number = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                isIncorrect = true;
                 System.out.println("Incorrect input, try again.");
-                scanner.nextLine();
-                isCorrect = false;
             }
-        } while (!isCorrect);
+
+            if (!isIncorrect && (number < MIN_NUMBER || number > MAX_NUMBER)) {
+                isIncorrect = true;
+                System.out.printf("The number must fit the range [%d,%d].\n", MIN_NUMBER, MAX_NUMBER);
+            }
+            
+        } while (isIncorrect);
         
         return number;
     }
     
-    public static boolean isFileText(String filePath) {
-        if (filePath.length() <= 4) {
-            return false;
-        }
+    // public static boolean isFileText(String filePath) {
+    //     if (filePath.length() <= 4) {
+    //         return false;
+    //     }
         
-        return filePath.endsWith(".txt");
-    }
+    //     return filePath.endsWith(".txt");
+    // }
     
-    public static boolean isFileNotEmpty(String filePath) {
-        try {
-            FileInputStream file = new FileInputStream(filePath);
-            int fileSize = file.available();
-            file.close();
-            return fileSize > 0;
-        } catch (IOException e) {
-            return false;
-        }
-    }
+    // public static boolean isFileNotEmpty(String filePath) {
+    //     try {
+    //         FileInputStream file = new FileInputStream(filePath);
+    //         int fileSize = file.available();
+    //         file.close();
+    //         return fileSize > 0;
+    //     } catch (IOException e) {
+    //         return false;
+    //     }
+    // }
     
-    public static boolean canRead(String filePath) {
-        try {
-            FileInputStream file = new FileInputStream(filePath);
-            file.close();
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
+    // public static boolean canRead(String filePath) {
+    //     try {
+    //         FileInputStream file = new FileInputStream(filePath);
+    //         file.close();
+    //         return true;
+    //     } catch (IOException e) {
+    //         return false;
+    //     }
+    // }
     
-    public static boolean canWrite(String filePath) {
-        try {
-            FileOutputStream file = new FileOutputStream(filePath, true);
-            file.close();
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
+    // public static boolean canWrite(String filePath) {
+    //     try {
+    //         FileOutputStream file = new FileOutputStream(filePath, true);
+    //         file.close();
+    //         return true;
+    //     } catch (IOException e) {
+    //         return false;
+    //     }
+    // }
     
-    public static boolean fileExists(String filePath) {
-        try {
-            FileInputStream file = new FileInputStream(filePath);
-            file.close();
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
+    // public static boolean fileExists(String filePath) {
+    //     try {
+    //         FileInputStream file = new FileInputStream(filePath);
+    //         file.close();
+    //         return true;
+    //     } catch (IOException e) {
+    //         return false;
+    //     }
+    // }
     
-    public static boolean checkMyFile(String filePath, boolean isFileOutput) {
-        if (!fileExists(filePath)) {
-            System.out.println("Error, file with path <" + filePath + "> is not exists.");
-            return false;
-        }
+    // public static boolean checkMyFile(String filePath, boolean isFileOutput) {
+    //     if (!fileExists(filePath)) {
+    //         System.out.println("Error, file with path <" + filePath + "> is not exists.");
+    //         return false;
+    //     }
         
-        if (!isFileText(filePath)) {
-            System.out.println("Error, filename is not .txt");
-            return false;
-        }
+    //     if (!isFileText(filePath)) {
+    //         System.out.println("Error, filename is not .txt");
+    //         return false;
+    //     }
         
-        if (!isFileOutput && !canRead(filePath)) {
-            System.out.println("Error, no access to read the file.");
-            return false;
-        }
+    //     if (!isFileOutput && !canRead(filePath)) {
+    //         System.out.println("Error, no access to read the file.");
+    //         return false;
+    //     }
         
-        if (isFileOutput && !canWrite(filePath)) {
-            System.out.println("Error, no access to write into the file.");
-            return false;
-        }
+    //     if (isFileOutput && !canWrite(filePath)) {
+    //         System.out.println("Error, no access to write into the file.");
+    //         return false;
+    //     }
         
-        if (!isFileOutput && !isFileNotEmpty(filePath)) {
-            System.out.println("Error, file is empty.");
-            return false;
-        }
+    //     if (!isFileOutput && !isFileNotEmpty(filePath)) {
+    //         System.out.println("Error, file is empty.");
+    //         return false;
+    //     }
         
-        System.out.println("Assigning is completed successfully.");
-        return true;
-    }
-    
-    // Основные функции ------------------------------------------------------------
+    //     System.out.println("Assigning is completed successfully.");
+    //     return true;
+    // }
     
     public static boolean workWithConsoleOrFile(Scanner scanner, boolean isOutput) {
         int number = 0;
