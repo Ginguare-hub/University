@@ -133,6 +133,61 @@ public class myFiles {
         }
     }
 
+    int[][] readMatrixFromFile(final int MIN_NUMBER, final int MAX_NUMBER, string filePath, int &matrixSize)
+{
+    final int MIN_LENGTH = 1;
+    final int MAX_LENGTH = 30;
+
+    File inputFile;
+    int[][] matrix;
+    int i, j;
+
+    matrixSize = 0;
+    i = 0;
+    j = 0;
+
+    inputFile = new File(filePath);
+
+    inputFile >> matrixSize;
+
+    if (inputFile.eof())
+    {
+        cout << "FILE IS EMPTY" << endl;
+        matrix = 0;
+    }
+    else
+    {
+
+        if (matrixSize < MIN_LENGTH || matrixSize > MAX_LENGTH)
+        {
+            cout << "Incorrect matrix length, the number must fit the range [" << MIN_LENGTH << "," << MAX_LENGTH << "]." << endl;
+            matrix = 0;
+        }
+        else
+        {
+            matrix = createMatrix(matrixSize);
+
+            for (i = 0; i < matrixSize; i++)
+                for (j = 0; j < matrixSize; j++)
+                {
+                    // cout << "good: " << inputFile.good() << endl; // fsadfdfaff
+                    inputFile >> matrix[i][j];
+                }
+
+            if (inputFile.fail())
+            {
+                //cout << "Error with reading matrix data, bad file read." << endl;
+                //delete[] matrix;
+                deleteMatrix(matrix, matrixSize);
+                matrix = 0;
+            }
+        }
+    }
+
+    inputFile.close();
+    return matrix;
+}
+
     public static void writeOutMatrix(int[][] arrayA) {
         int i;
         int j;
