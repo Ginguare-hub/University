@@ -4,16 +4,13 @@
 
 using namespace std;
 
-// const int ERROR_NUMBER = 37707;
-
 int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string myString)
 {
-
     bool isIncorrect;
     int number;
 
-    number = 0;
     isIncorrect = false;
+    number = 0;
 
     do
     {
@@ -44,7 +41,6 @@ int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string myString)
 
 bool isFileText(string filePath)
 {
-
     const int MIN_PATH_LENGTH = 4;
 
     string fileExt;
@@ -58,42 +54,12 @@ bool isFileText(string filePath)
     return isText;
 }
 
-// bool isFileNotEmpty(string filePath)
-// {
-//     bool isFileNotEmpty;
-//     ifstream testFile(filePath);
-
-//     // if (!testFile.is_open()) {
-//     //     return false;
-//     // }
-
-//     isFileNotEmpty = true;
-
-//     if (testFile.eof())
-//         isFileNotEmpty = false;
-
-//     testFile.close();
-
-//     return isFileNotEmpty;
-// }
-
-// bool isFileNotEmpty(ifstream &inputFile)
-// {
-//     bool isFileNotEmpty;
-
-//     isFileNotEmpty = true;
-
-//     if (inputFile.eof())
-//         isFileNotEmpty = false;
-
-//     return isFileNotEmpty;
-// }
-
 bool canRead(string filePath)
 {
-
     bool isReady;
-    ifstream testFile(filePath);
+    ifstream testFile;
+
+    isReady = false;
 
     testFile.open(filePath);
 
@@ -102,54 +68,44 @@ bool canRead(string filePath)
         testFile.close();
         isReady = true;
     }
-    else
-        isReady = false;
 
     return isReady;
 }
 
 bool canWrite(const string &filePath)
 {
-    ofstream file(filePath, ios::app);
+    ofstream outputFile;
     bool canWrite;
-
+    
     canWrite = 0;
-
-    canWrite = file.is_open();
-    file.close();
+    
+    outputFile.open(filePath, ios::app);
+    canWrite = outputFile.is_open();
+    outputFile.close();
 
     return canWrite;
 }
 
 bool checkMyFile(string filePath, bool isFileOutput)
 {
-
-    ifstream testFile(filePath);
+    ifstream testFile;
     bool checkInput;
-
+    
     checkInput = false;
 
-    if (testFile.bad())
+    testFile.open(filePath);
+
+    if (testFile.fail())
     {
-        cout << "Error, file with path <" << filePath << "> is not exists." << endl;
+        cout << "Error, file with path <" << filePath << "> is not exists or cannot be read." << endl;
         testFile.close();
     }
     else if (!isFileText(filePath))
-    {
         cout << "Error, filename is not .txt" << endl;
-    }
     else if (!isFileOutput && !canRead(filePath))
-    {
         cout << "Error, no access to read the file." << endl;
-    }
     else if (isFileOutput && !canWrite(filePath))
-    {
         cout << "Error, no access to write into the file." << endl;
-    }
-    // else if (!isFileOutput && !isFileNotEmpty(filePath))
-    // {
-    //     cout << "Error, file is empty." << endl;
-    // }
     else
     {
         checkInput = true;
@@ -213,63 +169,6 @@ void deleteMatrix(int **&matrix, int size)
     matrix = 0;
 }
 
-// int **readMatrixFromFile(int MIN_NUMBER, int MAX_NUMBER, const string &filePath, int &matrixSize)
-// {  //переделать
-
-//     const int ERROR_NUMBER = 377070000;
-//     const int MIN_LENGTH = 1;
-//     const int MAX_LENGTH = 20;
-//     // const int MIN_NUMBER = -10000;
-//     // const int MAX_NUMBER = 10000;
-
-//     ifstream inputFile(filePath);
-
-//     if (!inputFile.is_open())
-//     {
-//         cout << "Error opening file." << endl;
-//         matrixSize = 0;
-//     }
-
-//     if (!(inputFile >> matrixSize))
-//     {
-//         cout << "Error reading matrix length." << endl;
-//         inputFile.close();
-//     }
-
-//     if (matrixSize < MIN_LENGTH || matrixSize > MAX_LENGTH)
-//     {
-//         cout << "Incorrect matrix length, the number must fit the range [" << MIN_LENGTH << "," << MAX_LENGTH << "]." << endl;
-//         inputFile.close();
-//     }
-
-//     int **matrix = createMatrix(matrixSize);
-
-//     for (int i = 0; i < matrixSize; i++)
-//     {
-//         for (int j = 0; j < matrixSize; j++)
-//         {
-//             if (!(inputFile >> matrix[i][j]))
-//             {
-//                 cout << "Incorrect numeric data: matrix element." << endl;
-//                 deleteMatrix(matrix, matrixSize);
-//                 inputFile.close();
-//             }
-//         }
-//     }
-
-//     int a;
-
-//     if (!(a += 3))
-//             {
-//                 cout << "Incorrect numeric data: matrix element." << endl;
-//                 deleteMatrix(matrix, matrixSize);
-//                 inputFile.close();
-//             }
-
-//     inputFile.close();
-//     return matrix;
-// }
-
 void writeMatrixIntoConsole(int **matrix, int size)
 {
     cout << "The result matrix is: " << endl;
@@ -284,7 +183,7 @@ void writeMatrixIntoConsole(int **matrix, int size)
 int **readMatrixFromFile(const int MIN_NUMBER, const int MAX_NUMBER, string filePath, int &matrixSize)
 {
     const int MIN_LENGTH = 1;
-    const int MAX_LENGTH = 20;
+    const int MAX_LENGTH = 30;
 
     ifstream inputFile;
     int **matrix;
@@ -323,7 +222,7 @@ int **readMatrixFromFile(const int MIN_NUMBER, const int MAX_NUMBER, string file
 
             if (inputFile.fail())
             {
-                cout << "Error with reading matrix data, bad file read." << endl;
+                //cout << "Error with reading matrix data, bad file read." << endl;
                 //delete[] matrix;
                 deleteMatrix(matrix, matrixSize);
                 matrix = 0;
@@ -335,23 +234,25 @@ int **readMatrixFromFile(const int MIN_NUMBER, const int MAX_NUMBER, string file
     return matrix;
 }
 
-int **readMatrixFromConsole(int &matrixSize)
+int **readMatrixFromConsole(const int MIN_NUMBER, const int MAX_NUMBER, int &matrixSize)
 {
     const int MIN_LENGTH = 1;
-    const int MAX_LENGTH = 20;
-    const int MIN_NUMBER = -10000;
-    const int MAX_NUMBER = 10000;
+    const int MAX_LENGTH = 30;
 
     int **matrix;
+    int i, j;
+
+    i, j = 0;
+
+    
+    matrixSize = readAndVerify(MIN_LENGTH, MAX_LENGTH, "Write matrix length: ");
 
     matrix = createMatrix(matrixSize);
 
-    matrixSize = readAndVerify(MIN_LENGTH, MAX_LENGTH, "Write matrix length: ");
-
-    for (int i = 0; i < (matrixSize); i++)
-        for (int j = 0; j < matrixSize; j++)
+    for (i = 0; i < matrixSize; i++)
+        for (j = 0; j < matrixSize; j++)
         {
-            cout << "Write element [" << i << "," << j << "] of matrix: " << endl;
+            cout << "Write element [" << i << "," << j << "] of matrix: ";
             matrix[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "");
         }
 
@@ -419,7 +320,6 @@ void writeMatrixIntoFile(const string &filePath, int **matrix, int size)
 
 int main()
 {
-    //const int ERROR_NUMBER = 37707;
     const int MIN_NUMBER = -10000;
     const int MAX_NUMBER = 10000;
 
@@ -443,14 +343,14 @@ int main()
             matrix = readMatrixFromFile(MIN_NUMBER, MAX_NUMBER, filePath, matrixSize);
 
             if (matrix == 0)
-                cout << "Error reading matrix from file. Please try again." << endl;
+                cout << "Error with reading matrix data, bad file read." << endl;
             else
                 isAllUndone = false;
 
         } while (isAllUndone);
     }
     else
-        matrix = readMatrixFromConsole(matrixSize);
+        matrix = readMatrixFromConsole(MIN_NUMBER, MAX_NUMBER, matrixSize);
 
     isToFile = workWithConsoleOrFile(true);
 
