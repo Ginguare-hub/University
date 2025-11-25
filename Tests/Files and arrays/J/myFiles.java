@@ -33,6 +33,43 @@ public class myFiles {
         return number;
     }
 
+    public static boolean isFileText(String filePath) {
+        final int MIN_PATH_LENGTH = 4;
+
+        //String fileExt;
+        boolean isText;
+        int pathLength = filePath.length();
+
+        isText = true;
+
+        if ((filePath.length() < MIN_PATH_LENGTH) || (filePath.charAt(pathLength - 1) != 't') || (filePath.charAt(pathLength - 2) != 'x') || (filePath.charAt(pathLength - 3) != 't') || (filePath.charAt(pathLength - 4) != '.'))
+            isText = false;
+
+        return isText;
+    }
+
+    public static boolean checkMyFile(File testFile, boolean isFileOutput) {
+        boolean checkInput;
+        String filePath;
+        checkInput = false;
+        filePath = testFile.getAbsolutePath();
+
+        if (testFile.exists()) {
+            System.out.print("Error, file with path <" + filePath + "> is not exists.\n");
+        } else if (!isFileText(filePath))
+            System.out.print("Error, filename is not .txt\n");
+        else if (!isFileOutput && !testFile.canRead())
+            System.out.print("Error, no access to read the file.\n");
+        else if (isFileOutput && !testFile.canWrite())
+            System.out.print("Error, no access to write into the file.\n");
+        else {
+            checkInput = true;
+            System.out.print("Assigning is completed successfully.\n");
+        }
+
+        return checkInput;
+    }
+
     public static boolean workWithConsoleOrFile(boolean isOutput, Scanner scanner) {
         int number;
         boolean isFromFile;
@@ -134,7 +171,7 @@ public class myFiles {
         return filePath;
     }
 
-    public static String assignMyFile(boolean isFileOutput, Scanner scanner) {
+    public static String assignMyFile(boolean isFileOutput, File testFile, Scanner scanner) {
         String filePath;
         boolean isIncorrect;
 
@@ -142,7 +179,7 @@ public class myFiles {
 
         do {
             filePath = askTheFilePath(scanner);
-            // isIncorrect = !checkMyFile(filePath, isFileOutput);
+            isIncorrect = !checkMyFile(filePath, testFile, isFileOutput);
         } while (isIncorrect);
 
         return filePath;
@@ -185,7 +222,7 @@ public class myFiles {
         } catch (IOException e) {
             System.out.print("Error, IOException.");
         }
-        //System.out.print(matrixSize);
+        // System.out.print(matrixSize);
 
         // if (inputFile.eof())
         // {
@@ -203,20 +240,20 @@ public class myFiles {
             matrix = createMatrix(matrixSize);
 
             // for (i = 0; i < matrixSize; i++)
-            //     for (j = 0; j < matrixSize; j++) {
-            //         matrix[i][j] = Integer.parseInt(fileScanner.nextLine());
-            //     }
+            // for (j = 0; j < matrixSize; j++) {
+            // matrix[i][j] = Integer.parseInt(fileScanner.nextLine());
+            // }
 
             for (i = 0; i < matrixSize; i++) {
                 try {
-                    //elements = null;
+                    // elements = null;
                     line = fileReader.readLine();
                     elements = line.split(" ");
                     for (j = 0; j < matrixSize; j++) {
                         matrix[i][j] = Integer.parseInt(elements[j]);
                     }
                 } catch (IOException e) {
-                    System.out.print("Error, something went wrong with matrix read from file.");   
+                    System.out.print("Error, something went wrong with matrix read from file.");
                 }
             }
 
@@ -259,7 +296,7 @@ public class myFiles {
         boolean isOutput;
         String filePath;
         BufferedReader bufReader;
-        Scanner fileScanner;
+        //Scanner fileScanner;
         Scanner consoleScanner = new Scanner(System.in);
         // BufferedReader bufReader = new BufferedReader(new FileReader(filePath));
 
@@ -268,7 +305,7 @@ public class myFiles {
         isOutput = false;
         isAllUndone = true;
 
-        fileScanner = null;
+        //fileScanner = null;
         bufReader = null;
 
         isFromFile = workWithConsoleOrFile(isOutput, consoleScanner);
@@ -297,7 +334,7 @@ public class myFiles {
 
                 try {
                     bufReader = new BufferedReader(new FileReader(filePath));
-                    fileScanner = new Scanner(bufReader);
+                    //fileScanner = new Scanner(bufReader);
                 } catch (FileNotFoundException e) {
                     System.out.print("Error, file not found.");
                 }
@@ -313,7 +350,6 @@ public class myFiles {
         } else
             matrix = readMatrixFromConsole(MIN_NUMBER, MAX_NUMBER, consoleScanner);
 
-
         writeMatrixIntoConsole(matrix);
 
         // filePath = assignMyFile(isOutput, scanner);
@@ -327,7 +363,7 @@ public class myFiles {
         // System.out.print("Error, file not found.");
         // }
 
-        fileScanner.close();
+        //fileScanner.close();
         consoleScanner.close();
     }
 }
