@@ -325,23 +325,26 @@ int main()
     const int MIN_NUMBER = -10000;
     const int MAX_NUMBER = 10000;
 
-    bool isFromFile, isToFile, isAllUndone, i;
+    bool isFromFile, isToFile, isAllUndone, isOutput;
     int **matrix;
     int matrixSize;
     string filePath;
 
     isFromFile = false;
     isToFile = false;
+    isOutput = false;
+    isAllUndone = true;
     matrixSize = 0;       
 
     isFromFile = workWithConsoleOrFile(false);
+    isOutput = false;
 
     if (isFromFile)
     {
         isAllUndone = true;
         do
         {
-            filePath = assignMyFile(false);
+            filePath = assignMyFile(isOutput);
             matrix = readMatrixFromFile(MIN_NUMBER, MAX_NUMBER, filePath, matrixSize);
 
             if (matrix == 0)
@@ -355,10 +358,11 @@ int main()
         matrix = readMatrixFromConsole(MIN_NUMBER, MAX_NUMBER, matrixSize);
 
     isToFile = workWithConsoleOrFile(true);
+    isOutput = true;
 
     if (isToFile)
     {
-        filePath = assignMyFile(true);
+        filePath = assignMyFile(isOutput);
         writeMatrixIntoFile(filePath, matrix, matrixSize);
     }
     else
