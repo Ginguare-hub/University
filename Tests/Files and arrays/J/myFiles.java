@@ -66,25 +66,26 @@ public class myFiles {
     }
 
     // public static int[][] writeInMatrix(int arrLength, Scanner scanner) {
-    //     final int MIN_NUMBER = -100000;
-    //     final int MAX_NUMBER = 100000;
+    // final int MIN_NUMBER = -100000;
+    // final int MAX_NUMBER = 100000;
 
-    //     int i;
-    //     int j;
-    //     int[][] arrayA;
+    // int i;
+    // int j;
+    // int[][] arrayA;
 
-    //     i = 0;
-    //     j = 0;
+    // i = 0;
+    // j = 0;
 
-    //     arrayA = new int[arrLength][arrLength];
+    // arrayA = new int[arrLength][arrLength];
 
-    //     for (i = 0; i < arrLength; i++) {
-    //         for (j = 0; j < arrLength; j++) {
-    //             System.out.printf("Write element [%d][%d] of matrix: ", i, j);
-    //             arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "Write element: ", scanner);
-    //         }
-    //     }
-    //     return arrayA;
+    // for (i = 0; i < arrLength; i++) {
+    // for (j = 0; j < arrLength; j++) {
+    // System.out.printf("Write element [%d][%d] of matrix: ", i, j);
+    // arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "Write element: ",
+    // scanner);
+    // }
+    // }
+    // return arrayA;
     // }
 
     public static int[][] createMatrix(int size) {
@@ -124,6 +125,29 @@ public class myFiles {
         return matrix;
     }
 
+    public static String askTheFilePath(Scanner scanner) {
+        String filePath;
+
+        System.out.print("Write the existing file path: ");
+        filePath = scanner.nextLine();
+
+        return filePath;
+    }
+
+    public static String assignMyFile(boolean isFileOutput, Scanner scanner) {
+        String filePath;
+        boolean isIncorrect;
+
+        isIncorrect = false;
+
+        do {
+            filePath = askTheFilePath(scanner);
+            // isIncorrect = !checkMyFile(filePath, isFileOutput);
+        } while (isIncorrect);
+
+        return filePath;
+    }
+
     public static void writeMatrixIntoConsole(int[][] matrix, int size) {
         System.out.print("The result matrix is: \n");
         for (int i = 0; i < size; i++) {
@@ -133,60 +157,64 @@ public class myFiles {
         }
     }
 
-    int[][] readMatrixFromFile(final int MIN_NUMBER, final int MAX_NUMBER, string filePath, int &matrixSize)
-{
-    final int MIN_LENGTH = 1;
-    final int MAX_LENGTH = 30;
+    int[][] readMatrixFromFile(final int MIN_NUMBER, final int MAX_NUMBER, String filePath, /*int matrixSize,*/ BufferedReader bufReader) {
+        final int MIN_LENGTH = 1;
+        final int MAX_LENGTH = 30;
 
-    File inputFile;
-    int[][] matrix;
-    int i, j;
+        File inputFile;
+        int[][] matrix;
+        int matrixSize;
+        int i, j;
 
-    matrixSize = 0;
-    i = 0;
-    j = 0;
+        matrixSize = 0;
+        i = 0;
+        j = 0;
 
-    inputFile = new File(filePath);
+        //matrixSize = matrix.length;
 
-    inputFile >> matrixSize;
+        inputFile = new File(filePath);
 
-    if (inputFile.eof())
-    {
-        cout << "FILE IS EMPTY" << endl;
-        matrix = 0;
+        matrixSize = bufReader.read();
+
+        System.out.print(matrixSize);
+
+        // if (inputFile.eof())
+        // {
+        // cout << "FILE IS EMPTY" << endl;
+        // matrix = 0;
+        // }
+        // else
+        // {
+
+        // if (matrixSize < MIN_LENGTH || matrixSize > MAX_LENGTH)
+        // {
+        // System.out.printf("Incorrect matrix length, the number must fit the range [%d,%d].\n", MIN_LENGTH, MAX_LENGTH);
+        // matrix = 0;
+        // }
+        // else
+        // {
+        // matrix = createMatrix(matrixSize);
+
+        // for (i = 0; i < matrixSize; i++)
+        // for (j = 0; j < matrixSize; j++)
+        // {
+        // // cout << "good: " << inputFile.good() << endl; // fsadfdfaff
+        // inputFile >> matrix[i][j];
+        // }
+
+        // if (inputFile.fail())
+        // {
+        // //cout << "Error with reading matrix data, bad file read." << endl;
+        // //delete[] matrix;
+        // deleteMatrix(matrix, matrixSize);
+        // matrix = 0;
+        // }
+        // }
+        // }
+
+        // inputFile.close();
+        return matrix;
     }
-    else
-    {
-
-        if (matrixSize < MIN_LENGTH || matrixSize > MAX_LENGTH)
-        {
-            cout << "Incorrect matrix length, the number must fit the range [" << MIN_LENGTH << "," << MAX_LENGTH << "]." << endl;
-            matrix = 0;
-        }
-        else
-        {
-            matrix = createMatrix(matrixSize);
-
-            for (i = 0; i < matrixSize; i++)
-                for (j = 0; j < matrixSize; j++)
-                {
-                    // cout << "good: " << inputFile.good() << endl; // fsadfdfaff
-                    inputFile >> matrix[i][j];
-                }
-
-            if (inputFile.fail())
-            {
-                //cout << "Error with reading matrix data, bad file read." << endl;
-                //delete[] matrix;
-                deleteMatrix(matrix, matrixSize);
-                matrix = 0;
-            }
-        }
-    }
-
-    inputFile.close();
-    return matrix;
-}
 
     public static void writeOutMatrix(int[][] arrayA) {
         int i;
@@ -208,21 +236,28 @@ public class myFiles {
     public static void main(String[] args) {
 
         final int MIN_NUMBER = -100000;
-        final int MAX_NUMBER =  100000;
+        final int MAX_NUMBER = 100000;
 
         int[][] a;
         boolean isFromFile;
         boolean isOutput;
+        String filePath;
         Scanner scanner = new Scanner(System.in);
+        BufferedReader bufReader;
 
         isFromFile = false;
         isOutput = false;
 
         isFromFile = workWithConsoleOrFile(isOutput, scanner);
 
+        filePath = assignMyFile(isOutput, scanner);
+
+        bufReader = new BufferedReader(new FileReader(filePath));
+
         a = readMatrixFromConsole(MIN_NUMBER, MAX_NUMBER, scanner);
         writeOutMatrix(a);
 
+        bufReader.close();
         scanner.close();
     }
 }

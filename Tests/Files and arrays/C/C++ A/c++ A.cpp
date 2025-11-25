@@ -272,7 +272,9 @@ string askTheFilePath()
 string assignMyFile(bool isFileOutput)
 {
     string filePath;
-    bool isIncorrect = true;
+    bool isIncorrect;
+    
+    isIncorrect = false;               //fdfafadsfdasff
 
     do
     {
