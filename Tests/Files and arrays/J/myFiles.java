@@ -48,7 +48,7 @@ public class myFiles {
         return isText;
     }
 
-    public static boolean checkMyFile(File testFile, boolean isFileOutput) {
+    public static boolean checkMyFile(/*File testFile, */boolean isFileOutput) {
         boolean checkInput;
         String filePath;
         checkInput = false;
@@ -171,7 +171,7 @@ public class myFiles {
         return filePath;
     }
 
-    public static String assignMyFile(boolean isFileOutput, File testFile, Scanner scanner) {
+    public static String assignMyFile(boolean isFileOutput, Scanner scanner) {
         String filePath;
         boolean isIncorrect;
 
@@ -179,7 +179,7 @@ public class myFiles {
 
         do {
             filePath = askTheFilePath(scanner);
-            isIncorrect = !checkMyFile(filePath, testFile, isFileOutput);
+            isIncorrect = !checkMyFile(filePath, isFileOutput);
         } while (isIncorrect);
 
         return filePath;
