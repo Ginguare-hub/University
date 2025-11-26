@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import java.io.*;
+//import java.io.File;
 
 public class myFiles {
 
@@ -57,19 +58,20 @@ public class myFiles {
         checkInput = false;
         testFile = new File(filePath);
 
-        if (!testFile.exists()) 
+        if (!testFile.exists())
             System.out.print("Error, file with path <" + filePath + "> is not exists.\n");
         else if (!isFileText(filePath))
             System.out.print("Error, filename is not .txt\n");
         else if (!isFileOutput && !testFile.canRead())
             System.out.print("Error, no access to read the file.\n");
-        else if (!isFileOutput && !testFile.canWrite())
+        else if (isFileOutput && !testFile.canWrite())
             System.out.print("Error, no access to write into the file.\n");
         else {
             checkInput = true;
             System.out.print("Assigning is completed successfully.\n");
         }
-        //System.out.print(testFile.canRead());
+        System.out.print(testFile.canRead());
+        testFile.delete();
         return checkInput;
     }
 
