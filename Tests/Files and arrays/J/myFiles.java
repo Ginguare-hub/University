@@ -71,7 +71,6 @@ public class myFiles {
             System.out.print("Assigning is completed successfully.\n");
         }
         System.out.print(testFile.canRead());
-        testFile.delete();
         return checkInput;
     }
 
