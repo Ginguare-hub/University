@@ -36,37 +36,40 @@ public class myFiles {
     public static boolean isFileText(String filePath) {
         final int MIN_PATH_LENGTH = 4;
 
-        //String fileExt;
+        // String fileExt;
         boolean isText;
         int pathLength = filePath.length();
 
         isText = true;
 
-        if ((filePath.length() < MIN_PATH_LENGTH) || (filePath.charAt(pathLength - 1) != 't') || (filePath.charAt(pathLength - 2) != 'x') || (filePath.charAt(pathLength - 3) != 't') || (filePath.charAt(pathLength - 4) != '.'))
+        if ((filePath.length() < MIN_PATH_LENGTH) || (filePath.charAt(pathLength - 1) != 't')
+                || (filePath.charAt(pathLength - 2) != 'x') || (filePath.charAt(pathLength - 3) != 't')
+                || (filePath.charAt(pathLength - 4) != '.'))
             isText = false;
 
         return isText;
     }
 
-    public static boolean checkMyFile(/*File testFile, */boolean isFileOutput) {
+    public static boolean checkMyFile(/* File testFile, */ String filePath, boolean isFileOutput) {
         boolean checkInput;
-        String filePath;
+        File testFile;
+        // String filePath;
         checkInput = false;
-        filePath = testFile.getAbsolutePath();
+        testFile = new File(filePath);
 
-        if (testFile.exists()) {
+        if (!testFile.exists()) 
             System.out.print("Error, file with path <" + filePath + "> is not exists.\n");
-        } else if (!isFileText(filePath))
+        else if (!isFileText(filePath))
             System.out.print("Error, filename is not .txt\n");
         else if (!isFileOutput && !testFile.canRead())
             System.out.print("Error, no access to read the file.\n");
-        else if (isFileOutput && !testFile.canWrite())
+        else if (!isFileOutput && !testFile.canWrite())
             System.out.print("Error, no access to write into the file.\n");
         else {
             checkInput = true;
             System.out.print("Assigning is completed successfully.\n");
         }
-
+        //System.out.print(testFile.canRead());
         return checkInput;
     }
 
@@ -127,12 +130,7 @@ public class myFiles {
 
     public static int[][] createMatrix(int size) {
         int[][] matrix;
-
         matrix = new int[size][size];
-
-        // for (int i = 0; i < size; i++)
-        // matrix[i] = new int[size];
-
         return matrix;
     }
 
@@ -150,7 +148,6 @@ public class myFiles {
         matrixSize = 0;
 
         matrixSize = readAndVerify(MIN_LENGTH, MAX_LENGTH, "Write matrix length: ", scanner);
-
         matrix = createMatrix(matrixSize);
 
         for (i = 0; i < matrixSize; i++)
@@ -164,10 +161,8 @@ public class myFiles {
 
     public static String askTheFilePath(Scanner scanner) {
         String filePath;
-
         System.out.print("Write the existing file path: ");
         filePath = scanner.nextLine();
-
         return filePath;
     }
 
@@ -296,7 +291,7 @@ public class myFiles {
         boolean isOutput;
         String filePath;
         BufferedReader bufReader;
-        //Scanner fileScanner;
+        // Scanner fileScanner;
         Scanner consoleScanner = new Scanner(System.in);
         // BufferedReader bufReader = new BufferedReader(new FileReader(filePath));
 
@@ -304,8 +299,9 @@ public class myFiles {
         isToFile = false;
         isOutput = false;
         isAllUndone = true;
+        matrix = null;
 
-        //fileScanner = null;
+        // fileScanner = null;
         bufReader = null;
 
         isFromFile = workWithConsoleOrFile(isOutput, consoleScanner);
@@ -334,12 +330,11 @@ public class myFiles {
 
                 try {
                     bufReader = new BufferedReader(new FileReader(filePath));
-                    //fileScanner = new Scanner(bufReader);
+                    // fileScanner = new Scanner(bufReader);
+                    matrix = readMatrixFromFile(MIN_NUMBER, MAX_NUMBER, filePath, bufReader);
                 } catch (FileNotFoundException e) {
-                    System.out.print("Error, file not found.");
+                    System.out.print("Error, something went wrong.\n");
                 }
-
-                matrix = readMatrixFromFile(MIN_NUMBER, MAX_NUMBER, filePath, bufReader);
 
                 if (matrix == null)
                     System.out.print("Error with reading matrix data, bad file read.\n");
@@ -363,7 +358,7 @@ public class myFiles {
         // System.out.print("Error, file not found.");
         // }
 
-        //fileScanner.close();
+        // fileScanner.close();
         consoleScanner.close();
     }
 }
