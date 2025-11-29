@@ -99,7 +99,6 @@ Var
 
 Begin
     I := 0;
-
     For I := 0 To High(MyArray) Do
         WriteLn(MyArray[I], ' ');
 End;
@@ -141,5 +140,4 @@ Begin
     WriteArray(ArrayA);
 
     ReadLn;
-
 End.

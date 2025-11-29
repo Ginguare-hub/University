@@ -44,8 +44,10 @@ public class Lab2_5 {
 
         myArray = null;
         i = 0;
+        arrLength = 0;
         number = 0;
         isIncorrect = false;
+
         arrLength = readAndVerify(MIN_LENGTH, MAX_LENGTH, "Write length of array: ", scanner);
 
         myArray = new int[arrLength];
