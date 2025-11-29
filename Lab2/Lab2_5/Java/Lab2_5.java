@@ -6,7 +6,7 @@ public class Lab2_5 {
         boolean isIncorrect;
         int number;
 
-        isIncorrect = true;
+        isIncorrect = false;
         number = 0;
 
         do {
@@ -42,6 +42,7 @@ public class Lab2_5 {
         int number;
         boolean isIncorrect;
 
+        myArray = null;
         i = 0;
         number = 0;
         isIncorrect = false;
@@ -110,6 +111,8 @@ public class Lab2_5 {
         Scanner scanner = new Scanner(System.in);
 
         arrLength = 0;
+        arrayA = null;
+
         arrayA = createArray(scanner);
         arrLength = arrayA.length;
         arrayA = changeArray(arrayA, arrLength);

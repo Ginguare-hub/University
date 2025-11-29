@@ -8,8 +8,8 @@ int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string str)
     bool isIncorrect;
     int number;
 
+    isIncorrect = false;
     number = 0;
-    isIncorrect = true;
 
     do
     {
@@ -24,8 +24,7 @@ int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string str)
             isIncorrect = true;
             cout << "Incorrect input, try again." << endl;
             cin.clear();
-            while (cin.get() != '\n')
-                ;
+            while (cin.get() != '\n');
         }
 
         if (!isIncorrect && ((number < MIN_NUMBER) || (number > MAX_NUMBER)))
@@ -50,6 +49,7 @@ int *createArray(int &arrLength)
     int i, number;
     bool isIncorrect;
 
+    myArray = nullptr;
     i = 0;
     number = 0;
     isIncorrect = false;
@@ -71,8 +71,7 @@ int *createArray(int &arrLength)
                 isIncorrect = true;
                 cout << "Incorrect input, try again." << endl;
                 cin.clear();
-                while (cin.get() != '\n')
-                    ;
+                while (cin.get() != '\n');
             }
 
             if (!isIncorrect && ((number < MIN_NUMBER) || (number > MAX_NUMBER)))
@@ -131,6 +130,8 @@ int main()
     int *arrayA;
 
     arrLength = 0;
+    arrayA = nullptr;
+    
     arrayA = createArray(arrLength);
     changeArray(arrayA, arrLength);
     writeArray(arrayA, arrLength);
