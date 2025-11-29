@@ -255,7 +255,7 @@ public class myFiles {
                 fileWriter.write("\n");
             }
             System.out.print("Matrix written to file successfully.\n");
-
+            fileWriter.close();
         } catch (IOException e) {
             System.out.print("Error with file write.\n");
             isIncorrect = true;
