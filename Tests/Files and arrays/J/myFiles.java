@@ -37,9 +37,10 @@ public class myFiles {
         final int MIN_PATH_LENGTH = 4;
 
         boolean isText;
-        int pathLength = filePath.length();
-
+        int pathLength;
+        
         isText = true;
+        pathLength = filePath.length();
 
         if ((filePath.length() < MIN_PATH_LENGTH) || (filePath.charAt(pathLength - 1) != 't')
                 || (filePath.charAt(pathLength - 2) != 'x') || (filePath.charAt(pathLength - 3) != 't')
@@ -118,9 +119,10 @@ public class myFiles {
         int i;
         int j;
 
+        matrix = null;
+        matrixSize = 0;
         i = 0;
         j = 0;
-        matrixSize = 0;
 
         matrixSize = readAndVerify(MIN_LENGTH, MAX_LENGTH, "Write matrix length: ", scanner);
         matrix = createMatrix(matrixSize);
@@ -145,6 +147,7 @@ public class myFiles {
         String filePath;
         boolean isIncorrect;
 
+        filePath = "";
         isIncorrect = false;
 
         do {
@@ -180,9 +183,11 @@ public class myFiles {
         String[] elements;
         String line;
 
+        matrix = null;
         matrixSize = 0;
         i = 0;
         j = 0;
+        line = "";
 
         try {
             matrixSize = Integer.parseInt(fileReader.readLine());
@@ -259,48 +264,25 @@ public class myFiles {
         return isIncorrect;
     }
 
-    public static void main(String[] args) {
+    public static int[][] readingStage(Scanner consoleScanner) {
         final int MIN_NUMBER = -100000;
         final int MAX_NUMBER = 100000;
 
         int[][] matrix;
         boolean isFromFile;
-        boolean isToFile;
         boolean isAllUndone;
         boolean isOutput;
         String filePath;
-        // BufferedReader bufReader;
-        // Scanner fileScanner;
-        Scanner consoleScanner = new Scanner(System.in);
-        // BufferedReader bufReader = new BufferedReader(new FileReader(filePath));
 
+        matrix = null;
         isFromFile = false;
-        isToFile = false;
         isOutput = false;
         isAllUndone = true;
         matrix = null;
-
-        // fileScanner = null;
-        // bufReader = null;
+        filePath = "";
 
         isFromFile = workWithConsoleOrFile(isOutput, consoleScanner);
         isOutput = false;
-
-        // try (BufferedReader bufReader = new BufferedReader(new FileReader(filePath)))
-        // {
-        // Scanner fileScanner = new Scanner(bufReader);
-        // //num = Integer.parseInt(fileScanner.nextLine());
-        // //fileScanner.close();
-        // } catch (NumberFormatException e) {
-        // System.out.println("˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜ ˜˜˜˜˜.");
-        // }
-
-        // try {
-        // bufReader = new BufferedReader(new FileReader(filePath));
-        // fileScanner = new Scanner(bufReader);
-        // } catch (FileNotFoundException e) {
-        // System.out.print("Error, file not found.");
-        // }
 
         if (isFromFile) {
             isAllUndone = true;
@@ -326,6 +308,19 @@ public class myFiles {
         } else
             matrix = readMatrixFromConsole(MIN_NUMBER, MAX_NUMBER, consoleScanner);
 
+        return matrix;
+    }
+
+    public static void writingStage(int[][] matrix, Scanner consoleScanner) {
+        boolean isToFile;
+        boolean isAllUndone;
+        boolean isOutput;
+        String filePath;
+
+        isToFile = false;
+        isOutput = false;
+        filePath = "";
+
         isToFile = workWithConsoleOrFile(true, consoleScanner);
         isOutput = true;
 
@@ -336,6 +331,16 @@ public class myFiles {
             } while (isAllUndone);
         } else
             writeMatrixIntoConsole(matrix);
+    }
+
+    public static void main(String[] args) {
+        int[][] matrix;
+        Scanner consoleScanner = new Scanner(System.in);
+
+        matrix = null;
+
+        matrix = readingStage(consoleScanner);
+        writingStage(matrix, consoleScanner);
 
         consoleScanner.close();
     }
