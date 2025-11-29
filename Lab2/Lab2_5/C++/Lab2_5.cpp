@@ -2,6 +2,11 @@
 
 using namespace std;
 
+void writePurpose()
+{
+    cout << "Programm modify sequence so that all zero elements appear first, followed by the negative elements, and then the positive elements." << endl;
+}
+
 int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string str)
 {
 
@@ -131,7 +136,8 @@ int main()
 
     arrLength = 0;
     arrayA = nullptr;
-    
+
+    writePurpose();
     arrayA = createArray(arrLength);
     changeArray(arrayA, arrLength);
     writeArray(arrayA, arrLength);

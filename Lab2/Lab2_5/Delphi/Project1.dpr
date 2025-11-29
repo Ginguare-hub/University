@@ -6,6 +6,12 @@ Uses
 Type
     TArrayOI = Array Of Integer;
 
+Procedure WritePurpose;
+
+Begin
+    WriteLn('Programm modify sequence so that all zero elements appear first, followed by the negative elements, and then the positive elements.');
+End;
+
 Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
 
 Var
@@ -135,6 +141,7 @@ Var
     ArrayA: TArrayOI;
 
 Begin
+    WritePurpose;
     ArrayA := CreateArray;
     ChangeArray(ArrayA);
     WriteArray(ArrayA);

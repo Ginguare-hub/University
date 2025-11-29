@@ -2,6 +2,10 @@ import java.util.Scanner;
 
 public class Lab2_5 {
 
+    public static void writePurpose() {
+        System.out.print("Programm modify sequence so that all zero elements appear first, followed by the negative elements, and then the positive elements.\n");
+    }
+
     public static int readAndVerify(final int MIN_NUMBER, final int MAX_NUMBER, String str, Scanner scanner) {
         boolean isIncorrect;
         int number;
@@ -115,6 +119,7 @@ public class Lab2_5 {
         arrLength = 0;
         arrayA = null;
 
+        writePurpose();
         arrayA = createArray(scanner);
         arrLength = arrayA.length;
         arrayA = changeArray(arrayA, arrLength);
