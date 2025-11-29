@@ -1,0 +1,19 @@
+Program Project1;
+
+Uses
+    System.SysUtils;
+
+Var
+    I, J, Number, InputNum: Integer;
+    MyStr: String;
+
+Begin
+    MyStr := '';
+
+    ReadLn(MyStr);
+    Insert(MyStr, MyStr, 4);
+
+    WriteLn(MyStr + ' affa');
+
+    ReadLn;
+End.

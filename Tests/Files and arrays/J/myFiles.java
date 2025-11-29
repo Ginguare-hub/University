@@ -1,6 +1,5 @@
 import java.util.Scanner;
 import java.io.*;
-//import java.io.File;
 
 public class myFiles {
 
@@ -37,7 +36,6 @@ public class myFiles {
     public static boolean isFileText(String filePath) {
         final int MIN_PATH_LENGTH = 4;
 
-        // String fileExt;
         boolean isText;
         int pathLength = filePath.length();
 
@@ -54,7 +52,7 @@ public class myFiles {
     public static boolean checkMyFile(/* File testFile, */ String filePath, boolean isFileOutput) {
         boolean checkInput;
         File testFile;
-        // String filePath;
+
         checkInput = false;
         testFile = new File(filePath);
 
@@ -70,7 +68,6 @@ public class myFiles {
             checkInput = true;
             System.out.print("Assigning is completed successfully.\n");
         }
-        System.out.print(testFile.canRead());
         return checkInput;
     }
 
@@ -105,29 +102,6 @@ public class myFiles {
 
         return isFromFile;
     }
-
-    // public static int[][] writeInMatrix(int arrLength, Scanner scanner) {
-    // final int MIN_NUMBER = -100000;
-    // final int MAX_NUMBER = 100000;
-
-    // int i;
-    // int j;
-    // int[][] arrayA;
-
-    // i = 0;
-    // j = 0;
-
-    // arrayA = new int[arrLength][arrLength];
-
-    // for (i = 0; i < arrLength; i++) {
-    // for (j = 0; j < arrLength; j++) {
-    // System.out.printf("Write element [%d][%d] of matrix: ", i, j);
-    // arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "Write element: ",
-    // scanner);
-    // }
-    // }
-    // return arrayA;
-    // }
 
     public static int[][] createMatrix(int size) {
         int[][] matrix;
@@ -210,23 +184,13 @@ public class myFiles {
         i = 0;
         j = 0;
 
-        // inputFile = new File(filePath);
         try {
             matrixSize = Integer.parseInt(fileReader.readLine());
         } catch (NumberFormatException e) {
-            System.out.print("Error, NumberFormatException.");
+            System.out.print("Error, NumberFormatException.\n");
         } catch (IOException e) {
-            System.out.print("Error, IOException.");
+            System.out.print("Error, IOException.\n");
         }
-        // System.out.print(matrixSize);
-
-        // if (inputFile.eof())
-        // {
-        // cout << "FILE IS EMPTY" << endl;
-        // matrix = 0;
-        // }
-        // else
-        // {
 
         if (matrixSize < MIN_LENGTH || matrixSize > MAX_LENGTH) {
             System.out.printf("Incorrect matrix length, the number must fit the range [%d,%d].\n", MIN_LENGTH,
@@ -234,11 +198,6 @@ public class myFiles {
             matrix = null;
         } else {
             matrix = createMatrix(matrixSize);
-
-            // for (i = 0; i < matrixSize; i++)
-            // for (j = 0; j < matrixSize; j++) {
-            // matrix[i][j] = Integer.parseInt(fileScanner.nextLine());
-            // }
 
             for (i = 0; i < matrixSize; i++) {
                 try {
@@ -252,14 +211,6 @@ public class myFiles {
                     System.out.print("Error, something went wrong with matrix read from file.");
                 }
             }
-
-            // if (inputFile.fail())
-            // {
-            // //cout << "Error with reading matrix data, bad file read." << endl;
-            // //delete[] matrix;
-            // deleteMatrix(matrix, matrixSize);
-            // matrix = 0;
-            // }
         }
         return matrix;
     }
@@ -281,6 +232,33 @@ public class myFiles {
         }
     }
 
+    public static boolean writeMatrixIntoFile(String filePath, int[][] matrix) {
+
+        int matrixLength;
+        boolean isIncorrect;
+
+        matrixLength = matrix.length;
+        isIncorrect = false;
+
+        try (FileWriter fileWriter = new FileWriter(filePath)) {
+
+            fileWriter.write("The result matrix is: \n");
+            for (int i = 0; i < matrixLength; i++) {
+                for (int j = 0; j < matrixLength; j++) {
+                    fileWriter.write(matrix[i][j] + " ");
+                }
+                fileWriter.write("\n");
+            }
+            System.out.print("Matrix written to file successfully.\n");
+
+        } catch (IOException e) {
+            System.out.print("Error with file write.\n");
+            isIncorrect = true;
+        }
+
+        return isIncorrect;
+    }
+
     public static void main(String[] args) {
         final int MIN_NUMBER = -100000;
         final int MAX_NUMBER = 100000;
@@ -291,7 +269,7 @@ public class myFiles {
         boolean isAllUndone;
         boolean isOutput;
         String filePath;
-        BufferedReader bufReader;
+        // BufferedReader bufReader;
         // Scanner fileScanner;
         Scanner consoleScanner = new Scanner(System.in);
         // BufferedReader bufReader = new BufferedReader(new FileReader(filePath));
@@ -303,7 +281,7 @@ public class myFiles {
         matrix = null;
 
         // fileScanner = null;
-        bufReader = null;
+        // bufReader = null;
 
         isFromFile = workWithConsoleOrFile(isOutput, consoleScanner);
         isOutput = false;
@@ -329,16 +307,18 @@ public class myFiles {
             do {
                 filePath = assignMyFile(isOutput, consoleScanner);
 
-                try {
-                    bufReader = new BufferedReader(new FileReader(filePath));
+                try (BufferedReader bufReader = new BufferedReader(new FileReader(filePath))) {
+                    // bufReader = new BufferedReader(new FileReader(filePath));
                     // fileScanner = new Scanner(bufReader);
                     matrix = readMatrixFromFile(MIN_NUMBER, MAX_NUMBER, filePath, bufReader);
-                } catch (FileNotFoundException e) {
+                    bufReader.close();
+                } catch (IOException e) {
+                    // } catch (FileNotFoundException e) {
                     System.out.print("Error, something went wrong.\n");
                 }
 
                 if (matrix == null)
-                    System.out.print("Error with reading matrix data, bad file read.\n");
+                    System.out.print("Error with reading matrix data, bad file read or file is not open for reading.\n");
                 else
                     isAllUndone = false;
 
@@ -346,20 +326,17 @@ public class myFiles {
         } else
             matrix = readMatrixFromConsole(MIN_NUMBER, MAX_NUMBER, consoleScanner);
 
-        writeMatrixIntoConsole(matrix);
+        isToFile = workWithConsoleOrFile(true, consoleScanner);
+        isOutput = true;
 
-        // filePath = assignMyFile(isOutput, scanner);
-        // try {
-        // bufReader = new BufferedReader(new FileReader(filePath));
-        // fileScanner = new Scanner(bufReader);
-        // a = readMatrixFromConsole(MIN_NUMBER, MAX_NUMBER, fileScanner);
-        // writeOutMatrix(a);
-        // fileScanner.close();
-        // } catch (FileNotFoundException e) {
-        // System.out.print("Error, file not found.");
-        // }
+        if (isToFile) {
+            do {
+            filePath = assignMyFile(isOutput, consoleScanner);
+            isAllUndone = writeMatrixIntoFile(filePath, matrix);
+            } while (isAllUndone);
+        } else
+            writeMatrixIntoConsole(matrix);
 
-        // fileScanner.close();
         consoleScanner.close();
     }
 }

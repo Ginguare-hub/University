@@ -1,0 +1,20 @@
+Program Project1;
+
+Uses
+    System.SysUtils;
+
+Var
+    I, J, Number, InputNum: Integer;
+    MyStr: String;
+
+Begin
+    MyStr := '';
+
+    ReadLn(MyStr);
+    //Insert(MyStr, MyStr, 4);
+    UpperCase(MyStr);
+
+    WriteLn(MyStr + ' affa');
+
+    ReadLn;
+End.

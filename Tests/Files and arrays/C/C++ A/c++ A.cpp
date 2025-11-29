@@ -296,7 +296,7 @@ string assignMyFile(bool isFileOutput)
 //     }
 // }
 
-void writeMatrixIntoFile(const string &filePath, int **matrix, int size)
+void writeMatrixIntoFile(string &filePath, int **matrix, int size)
 {
     ofstream outputFile(filePath);
 
