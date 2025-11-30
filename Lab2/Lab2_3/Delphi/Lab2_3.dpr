@@ -208,7 +208,6 @@ Begin
     MatrixLength := 0;
     I := 0;
     J := 0;
-
     MElement := 0;
 
     Try
@@ -460,9 +459,8 @@ Var
     IsAllDone: Boolean;
 
 Begin
-
     IsOutput := False;
-
+    IsAllDone := True;
     IsFromFile := WorkWithConsoleOrFile(IsOutput);
 
     If IsFromFile Then
@@ -489,9 +487,7 @@ Var
     IsAllDone: Boolean;
 
 Begin
-
     IsOutput := True;
-    IsToFile := False;
     IsAllDone := True;
 
     IsToFile := WorkWithConsoleOrFile(IsOutput);

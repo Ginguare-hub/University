@@ -426,14 +426,9 @@ void writingStage(int **matrix, int matrixSize)
 void sortConditional(int **&arrayA, int arrLength)
 { 
 
-    int i;
-    int j;
-    int k;
-    int limiter;
-    int boubleSortLimiter;
+    int i, j, k, limiter, boubleSortLimiter;
 
-    i = 0;
-    j = 0;
+    i, j = 0;
     k = 1;
     limiter = arrLength - 1;
     boubleSortLimiter = arrLength * (arrLength / 2);
