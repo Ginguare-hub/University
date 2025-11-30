@@ -185,6 +185,7 @@ public class myFiles {
         int j;
         String[] elements;
         String line;
+        String kad;
 
         matrix = null;
         matrixSize = 0;
@@ -193,7 +194,8 @@ public class myFiles {
         line = "";
 
         try {
-            matrixSize = Integer.parseInt(fileReader.readLine());
+            kad = fileReader.readLine();
+            matrixSize = Integer.parseInt(kad);
         } catch (NumberFormatException e) {
             System.out.print("Error, NumberFormatException.\n");
         } catch (IOException e) {
@@ -325,8 +327,8 @@ public class myFiles {
 
         if (isToFile) {
             do {
-            filePath = assignMyFile(isOutput, consoleScanner);
-            isAllUndone = writeMatrixIntoFile(filePath, matrix);
+                filePath = assignMyFile(isOutput, consoleScanner);
+                isAllUndone = writeMatrixIntoFile(filePath, matrix);
             } while (isAllUndone);
         } else
             writeMatrixIntoConsole(matrix);

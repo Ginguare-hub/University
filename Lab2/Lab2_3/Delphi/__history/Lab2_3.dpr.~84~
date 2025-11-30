@@ -460,7 +460,7 @@ Begin
 
 End;
 
-Procedure ReadingStage(Var Matrix: TMatrix);
+Procedure readingStage(Var Matrix: TMatrix);
 
 Const
     MIN_NUMBER: Integer = -100000;
@@ -494,41 +494,6 @@ Begin
 
 End;
 
-Procedure WritingStage(Matrix: TMatrix);
-
-Var
-    MyFile: TextFile;
-    IsToFile: Boolean;
-    IsOutput: Boolean;
-    IsAllDone: Boolean;
-
-Begin
-
-    IsOutput := True;
-    IsToFile := False;
-    IsAllDone := True;
-
-    IsToFile := WorkWithConsoleOrFile(IsOutput);
-
-    If IsToFile Then
-    Begin
-
-        AssignMyFile(MyFile, IsOutput);
-        WriteMatrixIntoFile(MyFile, Matrix);
-
-    End
-    Else
-    Begin
-
-        WriteMatrixIntoConsole(Matrix);
-
-    End;
-
-
-End;
-
-
-
 //Const
 //    MIN_NUMBER: Integer = -100000;
 //    MAX_NUMBER: Integer = 100000;
@@ -546,7 +511,7 @@ Begin
     Matrix := Nil;
 
     WritePurpose;
-    ReadingStage(Matrix);
+    readingStage(Matrix);
 
 
 //    Write('Write the order of the matrix: ');
@@ -585,22 +550,22 @@ Begin
 
     Matrix := SortConditional(Matrix);
 
-//    IsOutput := True;
-//    IsFromFile := WorkWithConsoleOrFile(IsOutput);
-//
-//    If IsFromFile Then
-//    Begin
-//
-//        AssignMyFile(MyFile, IsOutput);
-//        WriteMatrixIntoFile(MyFile, Matrix);
-//
-//    End
-//    Else
-//    Begin
-//
-//        WriteMatrixIntoConsole(Matrix);
-//
-//    End;
+    IsOutput := True;
+    IsFromFile := WorkWithConsoleOrFile(IsOutput);
+
+    If IsFromFile Then
+    Begin
+
+        AssignMyFile(MyFile, IsOutput);
+        WriteMatrixIntoFile(MyFile, Matrix);
+
+    End
+    Else
+    Begin
+
+        WriteMatrixIntoConsole(Matrix);
+
+    End;
 
     WriteLn('Press ENTER to close the programm.');
     ReadLn;

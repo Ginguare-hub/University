@@ -233,6 +233,8 @@ Begin
     If Not(Matrix = Nil) Then
     Begin
 
+        //SetLength(Matrix, MatrixLength, MatrixLength);
+
         For I := 0 To High(Matrix) Do
         Begin
             For J := 0 To High(Matrix[I]) Do
@@ -460,57 +462,63 @@ Begin
 
 End;
 
-Procedure ReadingStage(Var Matrix: TMatrix);
-
 Const
     MIN_NUMBER: Integer = -100000;
     MAX_NUMBER: Integer = 100000;
+//    ERROR_NUMBER: Integer = 37707;
 
 Var
     MyFile: TextFile;
+    Number: Integer;
     IsFromFile: Boolean;
+    IsToFile: Boolean;
     IsOutput: Boolean;
     IsAllDone: Boolean;
+    Matrix: TMatrix;
 
 Begin
+    WritePurpose;
+
+//    Write('Write the order of the matrix: ');
+//    ReadLn(N);
+//
+//    MyArray := SortConditional(MyArray);
+//
+//    ReadLn;
 
     IsOutput := False;
 
     IsFromFile := WorkWithConsoleOrFile(IsOutput);
 
     If IsFromFile Then
+    Begin
+
         Repeat
 
             IsAllDone := True;
+
             AssignMyFile(MyFile, IsOutput);
+
             Matrix := ReadMatrixFromFile(MIN_NUMBER, MAX_NUMBER, MyFile);
 
             If Matrix = Nil Then
                 IsAllDone := False;
 
-        Until IsAllDone
+        Until IsAllDone;
+
+    End
     Else
+    Begin
+
         Matrix := ReadMatrixFromConsole(MIN_NUMBER, MAX_NUMBER);
+    End;
 
-End;
-
-Procedure WritingStage(Matrix: TMatrix);
-
-Var
-    MyFile: TextFile;
-    IsToFile: Boolean;
-    IsOutput: Boolean;
-    IsAllDone: Boolean;
-
-Begin
+    Matrix := SortConditional(Matrix);
 
     IsOutput := True;
-    IsToFile := False;
-    IsAllDone := True;
+    IsFromFile := WorkWithConsoleOrFile(IsOutput);
 
-    IsToFile := WorkWithConsoleOrFile(IsOutput);
-
-    If IsToFile Then
+    If IsFromFile Then
     Begin
 
         AssignMyFile(MyFile, IsOutput);
@@ -523,84 +531,6 @@ Begin
         WriteMatrixIntoConsole(Matrix);
 
     End;
-
-
-End;
-
-
-
-//Const
-//    MIN_NUMBER: Integer = -100000;
-//    MAX_NUMBER: Integer = 100000;
-
-Var
-    MyFile: TextFile;
-    //Number: Integer;
-    IsFromFile: Boolean;
-    IsToFile: Boolean;
-    IsOutput: Boolean;
-    IsAllDone: Boolean;
-    Matrix: TMatrix;
-
-Begin
-    Matrix := Nil;
-
-    WritePurpose;
-    ReadingStage(Matrix);
-
-
-//    Write('Write the order of the matrix: ');
-//    ReadLn(N);
-//
-//    MyArray := SortConditional(MyArray);
-//
-//    ReadLn;
-
-//    IsOutput := False;
-//
-//    IsFromFile := WorkWithConsoleOrFile(IsOutput);
-//
-//    If IsFromFile Then
-//    Begin
-//
-//        Repeat
-//
-//            IsAllDone := True;
-//
-//            AssignMyFile(MyFile, IsOutput);
-//
-//            Matrix := ReadMatrixFromFile(MIN_NUMBER, MAX_NUMBER, MyFile);
-//
-//            If Matrix = Nil Then
-//                IsAllDone := False;
-//
-//        Until IsAllDone;
-//
-//    End
-//    Else
-//    Begin
-//
-//        Matrix := ReadMatrixFromConsole(MIN_NUMBER, MAX_NUMBER);
-//    End;
-
-    Matrix := SortConditional(Matrix);
-
-//    IsOutput := True;
-//    IsFromFile := WorkWithConsoleOrFile(IsOutput);
-//
-//    If IsFromFile Then
-//    Begin
-//
-//        AssignMyFile(MyFile, IsOutput);
-//        WriteMatrixIntoFile(MyFile, Matrix);
-//
-//    End
-//    Else
-//    Begin
-//
-//        WriteMatrixIntoConsole(Matrix);
-//
-//    End;
 
     WriteLn('Press ENTER to close the programm.');
     ReadLn;
