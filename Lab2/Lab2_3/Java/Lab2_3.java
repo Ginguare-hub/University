@@ -290,7 +290,6 @@ public class Lab2_3 {
         filePath = "";
 
         isFromFile = workWithConsoleOrFile(isOutput, consoleScanner);
-        isOutput = false;
 
         if (isFromFile) {
             isAllUndone = true;
@@ -323,12 +322,11 @@ public class Lab2_3 {
         String filePath;
 
         isToFile = false;
-        isOutput = false;
         isAllUndone = false;
+        isOutput = true;
         filePath = "";
 
-        isToFile = workWithConsoleOrFile(true, consoleScanner);
-        isOutput = true;
+        isToFile = workWithConsoleOrFile(isOutput, consoleScanner);
 
         if (isToFile) {
             do {
