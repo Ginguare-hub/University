@@ -3,6 +3,10 @@ import java.io.*;
 
 public class myFiles {
 
+    public static void writePurpose() {
+        System.out.print("A two-dimensional matrix A of order n is given. The progtam arranges the elements of the rows with even numbers of the matrix in descending order.");
+    }
+
     public static int readAndVerify(final int MIN_NUMBER, final int MAX_NUMBER, String str, Scanner scanner) {
 
         boolean isIncorrect;
@@ -339,6 +343,7 @@ public class myFiles {
 
         matrix = null;
 
+        writePurpose();
         matrix = readingStage(consoleScanner);
         writingStage(matrix, consoleScanner);
 

@@ -4,6 +4,11 @@
 
 using namespace std;
 
+void writePurpose() 
+{
+    cout << "A two-dimensional matrix A of order n is given. The program arranges the elements of the rows with even matrix numbers in descending order." << endl;
+}
+
 int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string myString)
 {
     bool isIncorrect;
@@ -320,21 +325,13 @@ void writeMatrixIntoFile(string &filePath, int **matrix, int size)
     cout << "Matrix written to file successfully." << endl;
 }
 
-int main()
+void readingStage(int **&matrix, int &matrixSize) 
 {
     const int MIN_NUMBER = -10000;
     const int MAX_NUMBER = 10000;
 
-    bool isFromFile, isToFile, isAllUndone, isOutput;
-    int **matrix;
-    int matrixSize;
+    bool isFromFile, isAllUndone, isOutput;
     string filePath;
-
-    isFromFile = false;
-    isToFile = false;
-    isOutput = false;
-    isAllUndone = true;
-    matrixSize = 0;       
 
     isFromFile = workWithConsoleOrFile(false);
     isOutput = false;
@@ -356,6 +353,12 @@ int main()
     }
     else
         matrix = readMatrixFromConsole(MIN_NUMBER, MAX_NUMBER, matrixSize);
+}
+
+void writingStage(int **matrix, int matrixSize)
+{
+    bool isAllUndone, isOutput, isToFile;
+    string filePath;
 
     isToFile = workWithConsoleOrFile(true);
     isOutput = true;
@@ -367,6 +370,59 @@ int main()
     }
     else
         writeMatrixIntoConsole(matrix, matrixSize);
+}
+
+int main()
+{
+
+    //bool isToFile;
+    int **matrix;
+    int matrixSize;
+    //string filePath;
+
+    //isFromFile = false;
+    //isToFile = false;
+    //isOutput = false;
+    //isAllUndone = true;
+    
+    matrix = nullptr;
+    matrixSize = 0;  
+    
+    writePurpose();
+    readingStage(matrix, matrixSize);
+    writingStage(matrix, matrixSize);
+
+    // isFromFile = workWithConsoleOrFile(false);
+    // isOutput = false;
+
+    // if (isFromFile)
+    // {
+    //     isAllUndone = true;
+    //     do
+    //     {
+    //         filePath = assignMyFile(isOutput);
+    //         matrix = readMatrixFromFile(MIN_NUMBER, MAX_NUMBER, filePath, matrixSize);
+
+    //         if (matrix == 0)
+    //             cout << "Error with reading matrix data, bad file read." << endl;
+    //         else
+    //             isAllUndone = false;
+
+    //     } while (isAllUndone);
+    // }
+    // else
+    //     matrix = readMatrixFromConsole(MIN_NUMBER, MAX_NUMBER, matrixSize);
+
+    // isToFile = workWithConsoleOrFile(true);
+    // isOutput = true;
+
+    // if (isToFile)
+    // {
+    //     filePath = assignMyFile(isOutput);
+    //     writeMatrixIntoFile(filePath, matrix, matrixSize);
+    // }
+    // else
+    //     writeMatrixIntoConsole(matrix, matrixSize);
 
     deleteMatrix(matrix, matrixSize);
     return 0;
