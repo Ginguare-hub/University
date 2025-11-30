@@ -29,8 +29,7 @@ int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string myString)
             isIncorrect = true;
             cout << "Incorrect input, try again." << endl;
             cin.clear();
-            while (cin.get() != '\n')
-                ;
+            while (cin.get() != '\n');
         }
 
         if (!isIncorrect && ((number < MIN_NUMBER) || (number > MAX_NUMBER)))
@@ -51,6 +50,7 @@ bool isFileText(string filePath)
     string fileExt;
     bool isText;
 
+    fileExt = "";
     isText = true;
 
     if ((filePath.length() < MIN_PATH_LENGTH) || (filePath.find(".txt") == string::npos))
@@ -65,7 +65,6 @@ bool canRead(string filePath)
     ifstream testFile;
 
     isReady = false;
-
     testFile.open(filePath);
 
     if (testFile.is_open())
@@ -74,6 +73,7 @@ bool canRead(string filePath)
         isReady = true;
     }
 
+    testFile.close();
     return isReady;
 }
 
@@ -82,12 +82,13 @@ bool canWrite(const string &filePath)
     ofstream outputFile;
     bool canWrite;
     
-    canWrite = 0;
+    canWrite = false;
     
     outputFile.open(filePath, ios::app);
     canWrite = outputFile.is_open();
     outputFile.close();
 
+    outputFile.close();
     return canWrite;
 }
 
@@ -105,18 +106,22 @@ bool checkMyFile(string filePath, bool isFileOutput)
         cout << "Error, file with path <" << filePath << "> is not exists or cannot be read." << endl;
         testFile.close();
     }
-    else if (!isFileText(filePath))
-        cout << "Error, filename is not .txt" << endl;
-    else if (!isFileOutput && !canRead(filePath))
-        cout << "Error, no access to read the file." << endl;
-    else if (isFileOutput && !canWrite(filePath))
-        cout << "Error, no access to write into the file." << endl;
-    else
-    {
-        checkInput = true;
-        cout << "Assigning is completed successfully." << endl;
-    }
-
+    else 
+        if (!isFileText(filePath))
+            cout << "Error, filename is not .txt" << endl;
+        else 
+            if (!isFileOutput && !canRead(filePath))
+                cout << "Error, no access to read the file." << endl;
+            else 
+                if (isFileOutput && !canWrite(filePath))
+                    cout << "Error, no access to write into the file." << endl;
+                else
+                {
+                    checkInput = true;
+                    cout << "Assigning is completed successfully." << endl;
+                }
+    
+    testFile.close();
     return checkInput;
 }
 
@@ -145,10 +150,11 @@ bool workWithConsoleOrFile(bool isOutput)
             cout << "The data is output to a file." << endl;
         else
             cout << "The data is entered from a file." << endl;
-    else if (isOutput)
-        cout << "The data is output to the console." << endl;
-    else
-        cout << "The data is entered from the console." << endl;
+    else 
+        if (isOutput)
+            cout << "The data is output to the console." << endl;
+        else
+            cout << "The data is entered from the console." << endl;
 
     return isFromFile;
 }
@@ -156,6 +162,8 @@ bool workWithConsoleOrFile(bool isOutput)
 int **createMatrix(int size)
 {
     int **matrix;
+
+    matrix = nullptr;
 
     matrix = new int *[size];
 
@@ -195,6 +203,7 @@ int **readMatrixFromFile(const int MIN_NUMBER, const int MAX_NUMBER, string file
     int i, j;
 
     matrixSize = 0;
+    matrix = nullptr;
     i, j = 0;
 
     inputFile.open(filePath);
@@ -203,7 +212,7 @@ int **readMatrixFromFile(const int MIN_NUMBER, const int MAX_NUMBER, string file
 
     if (inputFile.eof())
     {
-        cout << "FILE IS EMPTY" << endl;
+        cout << "Error, file is empty" << endl;
         matrix = 0;
     }
     else
@@ -220,15 +229,10 @@ int **readMatrixFromFile(const int MIN_NUMBER, const int MAX_NUMBER, string file
 
             for (i = 0; i < matrixSize; i++)
                 for (j = 0; j < matrixSize; j++)
-                {
-                    // cout << "good: " << inputFile.good() << endl; // fsadfdfaff
                     inputFile >> matrix[i][j];
-                }
 
             if (inputFile.fail())
             {
-                //cout << "Error with reading matrix data, bad file read." << endl;
-                //delete[] matrix;
                 deleteMatrix(matrix, matrixSize);
                 matrix = 0;
             }
@@ -247,9 +251,9 @@ int **readMatrixFromConsole(const int MIN_NUMBER, const int MAX_NUMBER, int &mat
     int **matrix;
     int i, j;
 
+    matrix = nullptr;
     i, j = 0;
 
-    
     matrixSize = readAndVerify(MIN_LENGTH, MAX_LENGTH, "Write matrix length: ");
 
     matrix = createMatrix(matrixSize);
@@ -267,10 +271,9 @@ int **readMatrixFromConsole(const int MIN_NUMBER, const int MAX_NUMBER, int &mat
 string askTheFilePath()
 {
     string filePath;
-
+    filePath = "";
     cout << "Write the existing file path: ";
     cin >> filePath;
-
     return filePath;
 }
 
@@ -278,8 +281,9 @@ string assignMyFile(bool isFileOutput)
 {
     string filePath;
     bool isIncorrect;
-    
-    isIncorrect = false;               //fdfafadsfdasff
+
+    filePath = "";
+    isIncorrect = false;        
 
     do
     {
@@ -289,17 +293,6 @@ string assignMyFile(bool isFileOutput)
 
     return filePath;
 }
-
-// void writeMatrixIntoConsole(int **matrix, int size)
-// {
-//     cout << "The result matrix is: " << endl;
-//     for (int i = 0; i < size; i++)
-//     {
-//         for (int j = 0; j < size; j++)
-//             cout << matrix[i][j] << " ";
-//         cout << endl;
-//     }
-// }
 
 void writeMatrixIntoFile(string &filePath, int **matrix, int size)
 {
@@ -374,55 +367,15 @@ void writingStage(int **matrix, int matrixSize)
 
 int main()
 {
-
-    //bool isToFile;
     int **matrix;
     int matrixSize;
-    //string filePath;
 
-    //isFromFile = false;
-    //isToFile = false;
-    //isOutput = false;
-    //isAllUndone = true;
-    
     matrix = nullptr;
     matrixSize = 0;  
     
     writePurpose();
     readingStage(matrix, matrixSize);
     writingStage(matrix, matrixSize);
-
-    // isFromFile = workWithConsoleOrFile(false);
-    // isOutput = false;
-
-    // if (isFromFile)
-    // {
-    //     isAllUndone = true;
-    //     do
-    //     {
-    //         filePath = assignMyFile(isOutput);
-    //         matrix = readMatrixFromFile(MIN_NUMBER, MAX_NUMBER, filePath, matrixSize);
-
-    //         if (matrix == 0)
-    //             cout << "Error with reading matrix data, bad file read." << endl;
-    //         else
-    //             isAllUndone = false;
-
-    //     } while (isAllUndone);
-    // }
-    // else
-    //     matrix = readMatrixFromConsole(MIN_NUMBER, MAX_NUMBER, matrixSize);
-
-    // isToFile = workWithConsoleOrFile(true);
-    // isOutput = true;
-
-    // if (isToFile)
-    // {
-    //     filePath = assignMyFile(isOutput);
-    //     writeMatrixIntoFile(filePath, matrix, matrixSize);
-    // }
-    // else
-    //     writeMatrixIntoConsole(matrix, matrixSize);
 
     deleteMatrix(matrix, matrixSize);
     return 0;
