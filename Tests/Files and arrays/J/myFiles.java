@@ -54,7 +54,7 @@ public class myFiles {
         return isText;
     }
 
-    public static boolean checkMyFile(/* File testFile, */ String filePath, boolean isFileOutput) {
+    public static boolean checkMyFile(String filePath, boolean isFileOutput) {
         boolean checkInput;
         File testFile;
 
@@ -175,8 +175,7 @@ public class myFiles {
         }
     }
 
-    public static int[][] readMatrixFromFile(final int MIN_NUMBER, final int MAX_NUMBER, String filePath,
-            BufferedReader fileReader) {
+    public static int[][] readMatrixFromFile(final int MIN_NUMBER, final int MAX_NUMBER, String filePath, BufferedReader fileReader) {
         final int MIN_LENGTH = 1;
         final int MAX_LENGTH = 30;
 
@@ -210,7 +209,6 @@ public class myFiles {
 
             for (i = 0; i < matrixSize; i++) {
                 try {
-                    // elements = null;
                     line = fileReader.readLine();
                     elements = line.split(" ");
                     for (j = 0; j < matrixSize; j++) {
@@ -294,12 +292,9 @@ public class myFiles {
                 filePath = assignMyFile(isOutput, consoleScanner);
 
                 try (BufferedReader bufReader = new BufferedReader(new FileReader(filePath))) {
-                    // bufReader = new BufferedReader(new FileReader(filePath));
-                    // fileScanner = new Scanner(bufReader);
                     matrix = readMatrixFromFile(MIN_NUMBER, MAX_NUMBER, filePath, bufReader);
                     bufReader.close();
                 } catch (IOException e) {
-                    // } catch (FileNotFoundException e) {
                     System.out.print("Error, something went wrong.\n");
                 }
 
