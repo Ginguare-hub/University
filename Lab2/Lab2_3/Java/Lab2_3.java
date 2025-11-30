@@ -324,6 +324,7 @@ public class Lab2_3 {
 
         isToFile = false;
         isOutput = false;
+        isAllUndone = false;
         filePath = "";
 
         isToFile = workWithConsoleOrFile(true, consoleScanner);
