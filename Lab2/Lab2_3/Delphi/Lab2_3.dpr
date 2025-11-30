@@ -196,7 +196,6 @@ End;
 Function ReadMatrixFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; Var InputFile: TextFile): TMatrix;
 
 Const
-    //ERROR_NUMBER: Integer = 37707;
     MIN_LENGTH: Integer = 1;
     MAX_LENGTH: Integer = 20;
 
@@ -248,11 +247,6 @@ Begin
         End;
 
     End;
-//    Else
-//    Begin
-//        //SetLength(Matrix, 1, 1);
-//        Matrix := Nil;
-//    End;
 
     CloseFile(InputFile);
 
@@ -270,8 +264,6 @@ Function ReadMatrixFromConsole(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Inte
 Const
     MIN_LENGTH: Integer = 1;
     MAX_LENGTH: Integer = 20;
-    //MIN_NUMBER: Integer = -10000;
-    //MAX_NUMBER: Integer = 10000;
 
 Var
     Matrix: TMatrix;
@@ -414,8 +406,6 @@ Begin
         Limiter := High(ArrayA);
 
         For I := 0 To High(ArrayA) Do
-        Begin
-
             If Odd(I) Then
             Begin
 
@@ -437,27 +427,24 @@ Begin
 
                     End
                     Else
-                    If (I + 2 < High(ArrayA)) Or (I + 2 = High(ArrayA)) Then
-                    Begin
-
-                        If ArrayA[I, J] < ArrayA[I + 2, 0] Then
+                        If (I + 2 < High(ArrayA)) Or (I + 2 = High(ArrayA)) Then
                         Begin
-                            ArrayA[I, J] := ArrayA[I, J] + ArrayA[I + 2, 0];
-                            ArrayA[I + 2, 0] := ArrayA[I, J] - ArrayA[I + 2, 0];
-                            ArrayA[I, J] := ArrayA[I, J] - ArrayA[I + 2, 0];
-                        End;
 
-                    End;
+                            If ArrayA[I, J] < ArrayA[I + 2, 0] Then
+                            Begin
+                                ArrayA[I, J] := ArrayA[I, J] + ArrayA[I + 2, 0];
+                                ArrayA[I + 2, 0] := ArrayA[I, J] - ArrayA[I + 2, 0];
+                                ArrayA[I, J] := ArrayA[I, J] - ArrayA[I + 2, 0];
+                            End;
+
+                        End;
 
                 End;
 
             End;
-
-        End;
     End;
 
     SortConditional := ArrayA;
-
 End;
 
 Procedure ReadingStage(Var Matrix: TMatrix);
@@ -491,7 +478,6 @@ Begin
         Until IsAllDone
     Else
         Matrix := ReadMatrixFromConsole(MIN_NUMBER, MAX_NUMBER);
-
 End;
 
 Procedure WritingStage(Matrix: TMatrix);
@@ -512,34 +498,14 @@ Begin
 
     If IsToFile Then
     Begin
-
         AssignMyFile(MyFile, IsOutput);
         WriteMatrixIntoFile(MyFile, Matrix);
-
     End
     Else
-    Begin
-
         WriteMatrixIntoConsole(Matrix);
-
-    End;
-
-
 End;
 
-
-
-//Const
-//    MIN_NUMBER: Integer = -100000;
-//    MAX_NUMBER: Integer = 100000;
-
 Var
-    MyFile: TextFile;
-    //Number: Integer;
-    IsFromFile: Boolean;
-    IsToFile: Boolean;
-    IsOutput: Boolean;
-    IsAllDone: Boolean;
     Matrix: TMatrix;
 
 Begin
@@ -547,62 +513,8 @@ Begin
 
     WritePurpose;
     ReadingStage(Matrix);
-
-
-//    Write('Write the order of the matrix: ');
-//    ReadLn(N);
-//
-//    MyArray := SortConditional(MyArray);
-//
-//    ReadLn;
-
-//    IsOutput := False;
-//
-//    IsFromFile := WorkWithConsoleOrFile(IsOutput);
-//
-//    If IsFromFile Then
-//    Begin
-//
-//        Repeat
-//
-//            IsAllDone := True;
-//
-//            AssignMyFile(MyFile, IsOutput);
-//
-//            Matrix := ReadMatrixFromFile(MIN_NUMBER, MAX_NUMBER, MyFile);
-//
-//            If Matrix = Nil Then
-//                IsAllDone := False;
-//
-//        Until IsAllDone;
-//
-//    End
-//    Else
-//    Begin
-//
-//        Matrix := ReadMatrixFromConsole(MIN_NUMBER, MAX_NUMBER);
-//    End;
-
     Matrix := SortConditional(Matrix);
+    WritingStage(Matrix);
 
-//    IsOutput := True;
-//    IsFromFile := WorkWithConsoleOrFile(IsOutput);
-//
-//    If IsFromFile Then
-//    Begin
-//
-//        AssignMyFile(MyFile, IsOutput);
-//        WriteMatrixIntoFile(MyFile, Matrix);
-//
-//    End
-//    Else
-//    Begin
-//
-//        WriteMatrixIntoConsole(Matrix);
-//
-//    End;
-
-    WriteLn('Press ENTER to close the programm.');
     ReadLn;
-
 End.
