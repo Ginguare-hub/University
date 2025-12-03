@@ -185,7 +185,7 @@ End;
 Procedure AssignMyFile(Var InputFile: TextFile; IsFileOutput: Boolean);
 
 Var
-    //Number: Integer;      GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+    Number: Integer;
     IsCorrect: Boolean;
     FilePath: String;
 
@@ -207,6 +207,30 @@ Begin
         IsCorrect := CheckMyFile(InputFile, FilePath);
 
     Until IsCorrect;
+
+End;
+
+Procedure WritingStage;
+
+Var
+    MyFile: TextFile;
+    IsToFile: Boolean;
+    IsOutput: Boolean;
+    IsAllDone: Boolean;
+
+Begin
+    IsOutput := True;
+    IsAllDone := True;
+    MyFile := nil;
+
+    IsToFile := WorkWithConsoleOrFile(IsOutput);
+
+    If IsToFile Then
+    Begin
+        AssignMyFile(MyFile, IsOutput);
+    End;
+
+
 End;
 
 Function SumOfProperDivisors(Number: Integer): Integer;
@@ -226,7 +250,7 @@ Begin
     SumOfProperDivisors := SumOfDivisors;
 End;
 
-Procedure FindAnbicableNumbersConsole;
+Procedure FindAnbicableNumbers;
 
 Const
     MY_LIMIT: Integer = 100_000;
@@ -250,69 +274,10 @@ Begin
     End;
 End;
 
-Procedure FindAnbicableNumbersFile(Var MyFile: TextFile);
-
-Const
-    MY_LIMIT: Integer = 100_000;
-
-Var
-    I, J, SumOfDivisors: Integer;
-
 Begin
-    I := 0;
-    J := 1;
-    SumOfDivisors := 0;
 
-    Try
-        Rewrite(MyFile);
-        Append(MyFile);
-    Except
-        WriteLn('Error, the unexpected problem was found.');
-    End;
+    FindAnbicableNumbers();
 
-    WriteLn(MyFile, 'Ambicable numbers lower than 100000: ');
-
-    For I := 1 To MY_LIMIT Do
-    Begin
-        SumOfDivisors := SumOfProperDivisors(I);
-        If ((I < SumOfDivisors) And (I = SumOfProperDivisors(SumOfDivisors))) Then
-        Begin
-            WriteLn(MyFile, J, '.  ', I, ' And ', SumOfProperDivisors(I));
-            Inc(J);
-        End;
-    End;
-
-    CloseFile(MyFile);
-End;
-
-Procedure WritingStage;
-
-Var
-    MyFile: TextFile;
-    IsToFile: Boolean;
-    IsOutput: Boolean;
-
-Begin
-    IsOutput := True;
-
-    IsToFile := WorkWithConsoleOrFile(IsOutput);
-
-    If IsToFile Then
-    Begin
-        AssignMyFile(MyFile, IsOutput);
-        WriteLn('Do not open the file before messege about algorithm is done is not arrived.');
-        FindAnbicableNumbersFile(MyFile);
-        WriteLn('Program is completed. File can be opened.');
-    End
-    Else
-    Begin
-        FindAnbicableNumbersConsole;
-        WriteLn('Program is completed.');
-    End;
-End;
-
-Begin
-    WritePurpose();
-    WritingStage();
     ReadLn;
+
 End.

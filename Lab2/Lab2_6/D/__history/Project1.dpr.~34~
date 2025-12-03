@@ -185,7 +185,7 @@ End;
 Procedure AssignMyFile(Var InputFile: TextFile; IsFileOutput: Boolean);
 
 Var
-    //Number: Integer;      GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+    Number: Integer;
     IsCorrect: Boolean;
     FilePath: String;
 
@@ -207,6 +207,7 @@ Begin
         IsCorrect := CheckMyFile(InputFile, FilePath);
 
     Until IsCorrect;
+
 End;
 
 Function SumOfProperDivisors(Number: Integer): Integer;
@@ -263,14 +264,8 @@ Begin
     J := 1;
     SumOfDivisors := 0;
 
-    Try
-        Rewrite(MyFile);
-        Append(MyFile);
-    Except
-        WriteLn('Error, the unexpected problem was found.');
-    End;
-
-    WriteLn(MyFile, 'Ambicable numbers lower than 100000: ');
+    Rewrite(MyFile);
+    Append(MyFile);
 
     For I := 1 To MY_LIMIT Do
     Begin
@@ -291,9 +286,11 @@ Var
     MyFile: TextFile;
     IsToFile: Boolean;
     IsOutput: Boolean;
+    IsAllDone: Boolean;
 
 Begin
     IsOutput := True;
+    IsAllDone := True;
 
     IsToFile := WorkWithConsoleOrFile(IsOutput);
 
@@ -305,10 +302,7 @@ Begin
         WriteLn('Program is completed. File can be opened.');
     End
     Else
-    Begin
         FindAnbicableNumbersConsole;
-        WriteLn('Program is completed.');
-    End;
 End;
 
 Begin

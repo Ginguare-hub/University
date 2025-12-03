@@ -185,7 +185,7 @@ End;
 Procedure AssignMyFile(Var InputFile: TextFile; IsFileOutput: Boolean);
 
 Var
-    //Number: Integer;      GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+    Number: Integer;
     IsCorrect: Boolean;
     FilePath: String;
 
@@ -207,6 +207,7 @@ Begin
         IsCorrect := CheckMyFile(InputFile, FilePath);
 
     Until IsCorrect;
+
 End;
 
 Function SumOfProperDivisors(Number: Integer): Integer;
