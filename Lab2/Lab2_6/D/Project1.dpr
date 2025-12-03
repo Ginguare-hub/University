@@ -132,7 +132,7 @@ Begin
     CheckMyFile := CheckInput;
 End;
 
-Function WorkWithConsoleOrFile(IsOutput: Boolean): Boolean;
+Function WorkWithConsoleOrFile(): Boolean;
 
 Var
     Number: Integer;
@@ -141,28 +141,18 @@ Var
 Begin
     Number := 0;
 
-    If IsOutput Then
-        WriteLn('If data is output to the console write 0, if from file write 1.')
-    Else
-        WriteLn('If data is entered from the console write 0, if from file write 1.');
-
+    WriteLn('If data is output to the console write 0, if from file write 1.');
     Number := ReadAndVerify(0, 1, '> ');
 
     If Number = 0 Then
     Begin
         IsFromFile := False;
-        If IsOutput Then
-            WriteLn('The data is output to the console.')
-        Else
-            WriteLn('The data is entered from the console.');
+        WriteLn('The data is output to the console.')
     End
     Else
     Begin
         IsFromFile := True;
-        If IsOutput Then
-            WriteLn('The data is output to a file.')
-        Else
-            WriteLn('The data is entered from a file.');
+        WriteLn('The data is output to a file.')
     End;
 
     WorkWithConsoleOrFile := IsFromFile;
@@ -182,10 +172,9 @@ Begin
     End;
 End;
 
-Procedure AssignMyFile(Var InputFile: TextFile; IsFileOutput: Boolean);
+Procedure AssignMyFile(Var InputFile: TextFile);
 
 Var
-    //Number: Integer;      GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
     IsCorrect: Boolean;
     FilePath: String;
 
@@ -290,16 +279,13 @@ Procedure WritingStage;
 Var
     MyFile: TextFile;
     IsToFile: Boolean;
-    IsOutput: Boolean;
 
 Begin
-    IsOutput := True;
-
-    IsToFile := WorkWithConsoleOrFile(IsOutput);
+    IsToFile := WorkWithConsoleOrFile();
 
     If IsToFile Then
     Begin
-        AssignMyFile(MyFile, IsOutput);
+        AssignMyFile(MyFile);
         WriteLn('Do not open the file before messege about algorithm is done is not arrived.');
         FindAnbicableNumbersFile(MyFile);
         WriteLn('Program is completed. File can be opened.');

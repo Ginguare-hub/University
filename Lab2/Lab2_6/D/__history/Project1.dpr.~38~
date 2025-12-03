@@ -1,0 +1,318 @@
+Program Project1;
+
+Uses
+    System.SysUtils;
+
+Procedure WritePurpose;
+
+Begin
+    WriteLn('Program finds amicable numbers lower than 100000.');
+End;
+
+Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
+
+Var
+    IsCorrect: Boolean;
+    Number: Integer;
+
+Begin
+    IsCorrect := True;
+    Number := 0;
+
+    Repeat
+
+        Write(MyString);
+        IsCorrect := True;
+
+        Try
+            ReadLn(Number);
+        Except
+            WriteLn('Incorrect input, try again.');
+            IsCorrect := False;
+        End;
+
+        If IsCorrect And ((Number < MIN_NUMBER) Or (Number > MAX_NUMBER)) Then
+        Begin
+            WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+            IsCorrect := False;
+        End;
+
+    Until IsCorrect;
+
+    ReadAndVerify := Number;
+End;
+
+Function IsFileText(FilePath: String): Boolean;
+
+Const
+    MIN_PATH_LENGTH: Integer = 3;
+
+Var
+    FileExt: String;
+    IsText: Boolean;
+    Index: Integer;
+
+Begin
+    Index := Length(FilePath);
+    IsText := False;
+
+    If Index > MIN_PATH_LENGTH Then
+        FileExt := FilePath[Index - 3] + FilePath[Index - 2] + FilePath[Index - 1] + FilePath[Index]
+    Else
+        IsText := False;
+
+    If FileExt = '.txt' Then
+        IsText := True
+    Else
+        IsText := False;
+
+    IsFileText := IsText;
+End;
+
+Function IsFileNotEmpty(Var InputFile: TextFile): Boolean;
+
+Var
+    IsNotEmpty: Boolean;
+
+Begin
+
+    Try
+        Reset(InputFile);
+        IsNotEmpty := Not EOF(InputFile);
+    Finally
+        CloseFile(InputFile);
+    End;
+
+    IsFileNotEmpty := IsNotEmpty;
+End;
+
+Function CanWrite(Var FileVar: TextFile): Boolean;
+
+Var
+    IsReady: Boolean;
+
+Begin
+
+    Try
+        Append(FileVar);
+        CloseFile(FileVar);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanWrite := IsReady;
+End;
+
+Function CheckMyFile(Var InputFile: TextFile; FilePath: String): Boolean;
+
+Var
+    CheckInput: Boolean;
+
+Begin
+    CheckInput := False;
+
+    If Not FileExists(FilePath) Then
+        Writeln('Error, file with path <', FilePath, '> is not exists.')
+    Else
+        If Not IsFileText(FilePath) Then
+            Writeln('Error, filename is not .txt')
+        Else
+            If Not CanWrite(InputFile) Then
+                Writeln('Error, no access to write into the file.')
+            Else
+                If Not IsFileNotEmpty(InputFile) Then
+                    Writeln('Error, file is empty.')
+                Else
+                Begin
+                    CheckInput := True;
+                    WriteLn('Assigning is completed successfully.');
+                End;
+
+    CheckMyFile := CheckInput;
+End;
+
+Function WorkWithConsoleOrFile(IsOutput: Boolean): Boolean;
+
+Var
+    Number: Integer;
+    IsFromFile: Boolean;
+
+Begin
+    Number := 0;
+
+    If IsOutput Then
+        WriteLn('If data is output to the console write 0, if from file write 1.')
+    Else
+        WriteLn('If data is entered from the console write 0, if from file write 1.');
+
+    Number := ReadAndVerify(0, 1, '> ');
+
+    If Number = 0 Then
+    Begin
+        IsFromFile := False;
+        If IsOutput Then
+            WriteLn('The data is output to the console.')
+        Else
+            WriteLn('The data is entered from the console.');
+    End
+    Else
+    Begin
+        IsFromFile := True;
+        If IsOutput Then
+            WriteLn('The data is output to a file.')
+        Else
+            WriteLn('The data is entered from a file.');
+    End;
+
+    WorkWithConsoleOrFile := IsFromFile;
+End;
+
+Function AskTheFilePath(): String;
+
+Var
+    FilePath: String;
+
+Begin
+    Write('Write the existing file path: ');
+    Try
+        ReadLn(FilePath);
+    Finally
+        AskTheFilePath := FilePath;
+    End;
+End;
+
+Procedure AssignMyFile(Var InputFile: TextFile; IsFileOutput: Boolean);
+
+Var
+    //Number: Integer;      GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+    IsCorrect: Boolean;
+    FilePath: String;
+
+Begin
+    IsCorrect := True;
+
+    Repeat
+
+        FilePath := AskTheFilePath();
+
+        Try
+            AssignFile(InputFile, FilePath);
+        Except
+            WriteLn('Error with assigning.');
+            FilePath := AskTheFilePath();
+            IsCorrect := False;
+        End;
+
+        IsCorrect := CheckMyFile(InputFile, FilePath);
+
+    Until IsCorrect;
+End;
+
+Function SumOfProperDivisors(Number: Integer): Integer;
+
+Var
+    I, SumOfDivisors, NumberDivTwo: Integer;
+
+Begin
+    I := 0;
+    SumOfDivisors := 0;
+    NumberDivTwo := Number Div 2;
+
+    For I := 1 To NumberDivTwo Do
+        If Number Mod I = 0 Then
+            SumOfDivisors := SumOfDivisors + I;
+
+    SumOfProperDivisors := SumOfDivisors;
+End;
+
+Procedure FindAnbicableNumbersConsole;
+
+Const
+    MY_LIMIT: Integer = 100_000;
+
+Var
+    I, J, SumOfDivisors: Integer;
+
+Begin
+    I := 0;
+    J := 1;
+    SumOfDivisors := 0;
+
+    For I := 1 To MY_LIMIT Do
+    Begin
+        SumOfDivisors := SumOfProperDivisors(I);
+        If ((I < SumOfDivisors) And (I = SumOfProperDivisors(SumOfDivisors))) Then
+        Begin
+            WriteLn(J, '.  ', I, ' And ', SumOfProperDivisors(I));
+            Inc(J);
+        End;
+    End;
+End;
+
+Procedure FindAnbicableNumbersFile(Var MyFile: TextFile);
+
+Const
+    MY_LIMIT: Integer = 100_000;
+
+Var
+    I, J, SumOfDivisors: Integer;
+
+Begin
+    I := 0;
+    J := 1;
+    SumOfDivisors := 0;
+
+    Try
+        Rewrite(MyFile);
+        Append(MyFile);
+    Except
+        WriteLn('Error, the unexpected problem was found.');
+    End;
+
+    WriteLn(MyFile, 'Ambicable numbers lower than 100000: ');
+
+    For I := 1 To MY_LIMIT Do
+    Begin
+        SumOfDivisors := SumOfProperDivisors(I);
+        If ((I < SumOfDivisors) And (I = SumOfProperDivisors(SumOfDivisors))) Then
+        Begin
+            WriteLn(MyFile, J, '.  ', I, ' And ', SumOfProperDivisors(I));
+            Inc(J);
+        End;
+    End;
+
+    CloseFile(MyFile);
+End;
+
+Procedure WritingStage;
+
+Var
+    MyFile: TextFile;
+    IsToFile: Boolean;
+    IsOutput: Boolean;
+
+Begin
+    IsOutput := True;
+
+    IsToFile := WorkWithConsoleOrFile(IsOutput);
+
+    If IsToFile Then
+    Begin
+        AssignMyFile(MyFile, IsOutput);
+        WriteLn('Do not open the file before messege about algorithm is done is not arrived.');
+        FindAnbicableNumbersFile(MyFile);
+        WriteLn('Program is completed. File can be opened.');
+    End
+    Else
+    Begin
+        FindAnbicableNumbersConsole;
+        WriteLn('Program is completed.');
+    End;
+End;
+
+Begin
+    WritePurpose();
+    WritingStage();
+    ReadLn;
+End.

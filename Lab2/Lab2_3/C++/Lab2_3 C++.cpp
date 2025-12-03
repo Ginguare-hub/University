@@ -301,21 +301,22 @@ void writeMatrixIntoFile(string &filePath, int **matrix, int size)
     if (!outputFile.is_open())
     {
         cout << "Error creating file." << endl;
-        return;
     }
-
-    outputFile << "The result matrix is: " << endl;
-    for (int i = 0; i < size; i++)
+    else 
     {
-        for (int j = 0; j < size; j++)
+        outputFile << "The result matrix is: " << endl;
+        for (int i = 0; i < size; i++)
         {
-            outputFile << matrix[i][j] << " ";
+            for (int j = 0; j < size; j++)
+            {
+                outputFile << matrix[i][j] << " ";
+            }
+            outputFile << endl;
         }
-        outputFile << endl;
-    }
 
-    outputFile.close();
-    cout << "Matrix written to file successfully." << endl;
+        outputFile.close();
+        cout << "Matrix written to file successfully." << endl;
+    }   
 }
 
 void readingStage(int **&matrix, int &matrixSize) 
@@ -350,7 +351,7 @@ void readingStage(int **&matrix, int &matrixSize)
 
 void writingStage(int **matrix, int matrixSize)
 {
-    bool isAllUndone, isOutput, isToFile;
+    bool isOutput, isToFile;
     string filePath;
 
     isToFile = workWithConsoleOrFile(true);
@@ -400,7 +401,8 @@ void sortConditional(int **&arrayA, int arrLength)
                             arrayA[i][j] = arrayA[i][j] - arrayA[i][j + 1];
                         }
                     }
-                    else if ((i + 2 < (arrLength - 1)) || (i + 2 == (arrLength - 1)))
+                    else 
+                    if ((i + 2 < (arrLength - 1)) || (i + 2 == (arrLength - 1)))
                     {
                         if (arrayA[i][j] < arrayA[i + 2][0]) 
                         {
