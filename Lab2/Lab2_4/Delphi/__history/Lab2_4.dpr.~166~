@@ -22,9 +22,6 @@ Begin
         Number := Number Div 10;
     End;
 
-    If Number < 0 Then
-        IsValid := False;
-
     CheckIsNumberValid := IsValid;
 End;
 
@@ -185,8 +182,8 @@ Begin
 
     While DNumber <> 0 Do
     Begin
-        ReverseAnswerArray[I] := DNumber Mod BASE_B;
-        DNumber := DNumber Div BASE_B;
+        ReverseAnswerArray[I] := DNumber Mod BASE;
+        DNumber := DNumber Div BASE;
         Inc(I);
     End;
 
@@ -224,7 +221,7 @@ Begin
     //WriteLn(GetNumberOfDigits());
     Number := OctalToBinary(100000);
 
-    WriteLn(CheckIsNumberValid(13657434353, 8));
+    WriteLn(CheckIsNumberValid(-13657434353, 8));
 
     ReadLn;
 

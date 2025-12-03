@@ -12,8 +12,8 @@ public class Lab2_6 {
         boolean isIncorrect;
         int number;
 
-        number = 0;
         isIncorrect = true;
+        number = 0;
 
         do {
 
@@ -223,5 +223,4 @@ public class Lab2_6 {
 
         consoleScanner.close();
     }
-
 }
