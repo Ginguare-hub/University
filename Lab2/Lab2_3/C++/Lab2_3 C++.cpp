@@ -125,64 +125,6 @@ bool checkMyFile(string filePath, bool isFileOutput)
     return checkInput;
 }
 
-// int **writeInMatrix(int n)
-// {
-//     const int MIN_NUMBER = -100000;
-//     const int MAX_NUMBER = 100000;
-
-//     int i;
-//     int j;
-//     int k;
-//     int **arrayA;
-
-//     i = 0;
-//     j = 0;
-//     k = 0;
-
-//     arrayA = new int *[n];
-//     for (k = 0; k < n; k++)
-//         arrayA[k] = new int[n];
-
-    
-//     //cout << n << endl;
-//     //cout << sizeof(arrayA) << endl;
-
-//     for (i = 0; i < n; i++)
-//     {
-//         for (j = 0; j < n; j++)
-//         {
-//             cout << "Write element [" << i << "][" << j << "] of matrix: ";
-//             arrayA[i][j] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "Write element: ");
-//         }
-//     }
-
-//     return arrayA;
-// }
-
-// void writeOutMatrix(int **arrayA, int arrayLength)
-// {
-//     int i;
-//     int j;
-//     int n;
-
-//     i = 0;
-//     j = 0;
-//     //n = sizeof(arrayA) / sizeof(arrayA[0][0]);
-
-//     //cout << sizeof(arrayA) << endl;
-//     //cout << sizeof(arrayA[0][0]) << endl;
-//     //cout << n << endl;
-
-//     for (i = 0; i < arrayLength; i++)
-//     {
-//         for (j = 0; j < arrayLength; j++)
-//         {
-//             cout << arrayA[i][j] << " ";
-//         }
-//         cout << "\n";
-//     }
-// }
-
 bool workWithConsoleOrFile(bool isOutput)
 {
     int number;

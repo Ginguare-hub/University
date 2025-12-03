@@ -1,0 +1,203 @@
+Program Lab2_4;
+
+Uses
+    System.SysUtils;
+
+Type
+    TArrayOC = Array Of Char;
+    TArrayOI = Array Of Integer;
+
+    //ÍÀÏÈÑÀÒÜ ÔÓÍÊÖÈŞ ÏĞÎÂÅĞÊÈ
+
+Function GetNumberOfDigits(Number: Int64): Int64;  //Ïîëó÷àåò ÷èñëî è âîçâğàùàåò êîë-âî "öèôğ" â ÷èñëå
+
+Var
+    Answer: Int64;
+
+Begin
+
+    Answer := 0;
+//    If Number <> 0 Then
+//    Begin
+//        While Number <> 0 Do
+//        Begin
+//            Number := Number Div 10;
+//            Answer := Answer + 1;
+//        End;
+//    End
+//    Else
+//        If Number = 0 Then
+//            Answer := 1;
+
+    If Number = 0 Then
+        Answer := 1
+    Else
+        While Number <> 0 Do
+        Begin
+            Number := Number Div 10;
+            Answer := Answer + 1;
+        End;
+
+
+    GetNumberOfDigits := Answer;
+
+End;
+
+Function PowerOfTwo(Power: Int64): Int64;
+
+Var
+    I, Answer: Int64;
+
+Begin
+    //ÏĞÎÂÅĞÊÀ ÍÅ ÌÅÍÜØÅ ËÈ ÇÀ 0 È ÍÅ ÁÎËÜØÅ ÇÀ ~30
+    Answer := 1;
+
+    For I := 1 To Power Do
+        Answer := Answer * 2;
+
+    PowerOfTwo := Answer;
+
+End;
+
+Function TetradeToHexidecimal(Tetrade: Int64): Char;
+
+Var
+    CArray: TArrayOC;
+    Answer, I: Int64;
+
+Begin
+    Answer := 0;
+    I := 0;
+
+    SetLength(CArray, 16);
+
+    CArray := ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+
+    While Tetrade <> 0 Do
+    Begin
+        Answer := Answer + (Tetrade Mod 10) * PowerOfTwo(I);
+        Tetrade := Tetrade Div 10;
+
+        Inc(I);
+    End;
+
+    TetradeToHexidecimal := CArray[Answer];
+End;
+
+
+//Function BinatyArrayLength
+
+Function BinaryToHexidecimal(BNumber: Int64): TArrayOC;
+
+Const
+    HNumber: Integer = 10000;
+
+Var
+    Counter, Tetrade, ALength, I: Int64;
+    AnswerArray: TArrayOC;
+
+Begin
+
+    //ÏĞÎÂÅĞÊÀ ÁÈÍÀĞÍÎÅ ËÈ ×ÈÑËÎ
+
+    //ĞÀÁÎÒÀ Ñ ÎÒĞÈÖÀÒÅËÜÍÛÌÈ ×ÈÑËÀÌÈ
+
+    //ÁÎËÜØÈÅ ×ÈÑËÀ
+
+    ALength := 0;
+
+    ALength := GetNumberOfDigits(BNumber) Div 4;
+
+    If (GetNumberOfDigits(BNumber) Mod 4) > 0 Then
+        ALength := ALength + 1;
+
+    Counter := 0;
+
+    SetLength(AnswerArray, ALength);
+
+    If BNumber <> 0 Then
+    Begin
+        While BNumber <> 0 Do
+        Begin
+
+            Tetrade := BNumber Mod HNumber;
+            BNumber := BNumber Div HNumber;
+            AnswerArray[Counter] := TetradeToHexidecimal(Tetrade);
+
+            Counter := Counter + 1;
+        End;
+    End
+    Else
+        If BNumber = 0 Then
+            AnswerArray[Counter] := TetradeToHexidecimal(0);
+
+    BinaryToHexidecimal := AnswerArray;
+End;
+
+Function OctalToBinary(ONumber: Int64): Int64;  //Ïğîâåğêó íå ñîäåğæèò ëè ÷èñëî öèôğû áîëüøå 7
+
+Var
+    Digit, Index: Integer;
+    TransformArray: TArrayOI;
+    Answer: Int64;
+
+
+Begin
+    Digit := 0;
+    Answer := 0;
+    Index := 0;
+
+    SetLength(TransformArray, 8);
+
+    TransformArray := [0, 1, 10, 11, 100, 101, 110, 111];
+
+    While ONumber <> 0 Do
+    Begin
+        Digit := ONumber Mod 10;
+        ONumber := ONumber Div 10;
+        Answer := Answer * 1000 + TransformArray[Digit];
+        //Inc(I);
+    End;
+
+    OctalToBinary := Answer;
+End;
+
+Procedure WriteOutArray(ArrayA: TArrayOC);
+
+Var
+    I: Int64;
+
+Begin
+
+    I := 0;
+
+    Write('The answer is: ');
+
+    For I := High(ArrayA) DownTo 0 Do
+        Write(ArrayA[I]);
+
+End;
+
+Const
+    MAX_BINARY: Int64 = 111_111_111_111_111_111;
+    MIN_BINARY: Int64 = 0;
+
+Var
+    A, B: TArrayOC;
+    BLength: Int64;
+
+Begin
+
+    //SetLength(A, 4);
+    //
+    //A := ['1'];
+    //
+    //WriteOutArray(A);
+
+    //WriteOutArray(BinaryToHexidecimal(10101010010101001010));
+    //WriteLn(GetNumberOfDigits());
+    WriteLn(OctalToBinary(7374246234));
+
+    ReadLn;
+
+End.

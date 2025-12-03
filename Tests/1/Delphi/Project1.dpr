@@ -1,1 +1,74 @@
+Program StringChange;
+
+Uses
+    System.SysUtils;
+
+Function ChangeMyStringAndCount(Var MyStr: String): Integer;
+
+Var
+    I, J, IndexI, K, HighM1, CountAnswer: Integer;
+
+Begin
+    I := 0;
+    J := 0;
+    HighM1 := High(MyStr) - 1;
+    IndexI := 0;
+    K := 0;
+    CountAnswer := 0;
+
+    For I := 1 To High(MyStr) Do
+    Begin
+        IndexI := I - 1;
+        For J := 1 To IndexI Do
+        Begin
+            If MyStr[I] = MyStr[J] Then
+            Begin
+                For K := I To HighM1 Do
+                Begin
+                    MyStr[K] := MyStr[K + 1];
+                    Inc(CountAnswer);
+                End;
+          End;
+        End;
+    End;
+
+    ChangeMyStringAndCount := CountAnswer;
+End;
+
+Procedure FillString (Var MyStr: String; CountAnswer: Integer);
+
+Var
+    I: Integer;
+
+Begin
+    I := High(MyStr);
+    CountAnswer := I - CountAnswer + 1;
+
+    If (CountAnswer = I + 1) Then
+    Begin
+        WriteLn('Повт эл НЕТ');
+    End
+    Else
+    Begin
+        For I := High(MyStr) DownTo CountAnswer Do
+        Begin
+            MyStr[I] := ' ';
+        End;
+    End;
+End;
+
+Var
+    MyStr: String;
+    CountAnswer: Integer;
+
+Begin
+
+    CountAnswer := 0;
+    ReadLn(MyStr);
+    CountAnswer := ChangeMyStringAndCount(MyStr);
+    FillString(MyStr, CountAnswer);
+    WriteLn(MyStr);
+    ReadLn;
+
+End.
 

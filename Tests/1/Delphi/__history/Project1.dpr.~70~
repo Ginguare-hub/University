@@ -1,0 +1,16 @@
+Program StringChange;
+
+Uses
+    System.SysUtils;
+
+Function ChangeMyStringAndCount(Var MyStr: String): Integer;
+
+Var
+    I, J, IndexI, K, HighM1, CountAnswer: Integer;
+
+Begin
+    I := 0;
+    J := 0;
+    HighM1 := High(MyStr) - 1;
+    IndexI, K, CountAnswer := 0;
+End;

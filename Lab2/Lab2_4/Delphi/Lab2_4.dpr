@@ -4,11 +4,12 @@ Uses
     System.SysUtils;
 
 Type
-    TArrC = Array Of Char;
+    TArrayOC = Array Of Char;
+    TArrayOI = Array Of Integer;
 
     //НАПИСАТЬ ФУНКЦИЮ ПРОВЕРКИ
 
-Function GetNumberOfDigits(Number: Int64): Int64;
+Function GetNumberOfDigits(Number: Int64): Int64;  //Получает число и возвращает кол-во "цифр" в числе
 
 Var
     Answer: Int64;
@@ -16,17 +17,27 @@ Var
 Begin
 
     Answer := 0;
-    If Number <> 0 Then
-    Begin
+//    If Number <> 0 Then
+//    Begin
+//        While Number <> 0 Do
+//        Begin
+//            Number := Number Div 10;
+//            Answer := Answer + 1;
+//        End;
+//    End
+//    Else
+//        If Number = 0 Then
+//            Answer := 1;
+
+    If Number = 0 Then
+        Answer := 1
+    Else
         While Number <> 0 Do
         Begin
             Number := Number Div 10;
             Answer := Answer + 1;
         End;
-    End
-    Else
-        If Number = 0 Then
-            Answer := 1;
+
 
     GetNumberOfDigits := Answer;
 
@@ -51,21 +62,23 @@ End;
 Function TetradeToHexidecimal(Tetrade: Int64): Char;
 
 Var
-    CArray: TArrC;
+    CArray: TArrayOC;
     Answer, I: Int64;
 
 Begin
     Answer := 0;
     I := 0;
+
+    SetLength(CArray, 16);
+
     CArray := ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
 
     While Tetrade <> 0 Do
     Begin
-
         Answer := Answer + (Tetrade Mod 10) * PowerOfTwo(I);
         Tetrade := Tetrade Div 10;
 
-        I := I + 1;
+        Inc(I);
     End;
 
     TetradeToHexidecimal := CArray[Answer];
@@ -74,14 +87,14 @@ End;
 
 //Function BinatyArrayLength
 
-Function BinaryToHexidecimal(BNumber: Int64): TArrC;
+Function BinaryToHexidecimal(BNumber: Int64): TArrayOC;
 
 Const
-    BASE: Int64 = 2;
+    HNumber: Integer = 10000;
 
 Var
     Counter, Tetrade, ALength, I: Int64;
-    AnswerArray: TArrC;
+    AnswerArray: TArrayOC;
 
 Begin
 
@@ -107,8 +120,8 @@ Begin
         While BNumber <> 0 Do
         Begin
 
-            Tetrade := BNumber Mod 10000;
-            BNumber := BNumber Div 10000;
+            Tetrade := BNumber Mod HNumber;
+            BNumber := BNumber Div HNumber;
             AnswerArray[Counter] := TetradeToHexidecimal(Tetrade);
 
             Counter := Counter + 1;
@@ -116,12 +129,40 @@ Begin
     End
     Else
         If BNumber = 0 Then
-            AnswerArray[Counter] := TetradeToHexidecimal(0);;
+            AnswerArray[Counter] := TetradeToHexidecimal(0);
 
     BinaryToHexidecimal := AnswerArray;
 End;
 
-Procedure WriteOutArray(ArrayA: TArrC);
+Function OctalToBinary(ONumber: Int64): Int64;  //Проверку не содержит ли число цифры больше 7. Проверку на не слишком ли большое число
+
+Var
+    Digit, Index: Integer;
+    TransformArray: TArrayOI;
+    Answer: Int64;
+
+
+Begin
+    Digit := 0;
+    Answer := 0;
+    Index := 0;
+
+    SetLength(TransformArray, 8);
+
+    TransformArray := [0, 1, 10, 11, 100, 101, 110, 111];
+
+    While ONumber <> 0 Do
+    Begin
+        Digit := ONumber Mod 10;
+        ONumber := ONumber Div 10;
+        Answer := Answer * 1000 + TransformArray[Digit];
+        //Inc(I);
+    End;
+
+    OctalToBinary := Answer;
+End;
+
+Procedure WriteOutArray(ArrayA: TArrayOC);
 
 Var
     I: Int64;
@@ -137,8 +178,12 @@ Begin
 
 End;
 
+Const
+    MAX_BINARY: Int64 = 111_111_111_111_111_111;
+    MIN_BINARY: Int64 = 0;
+
 Var
-    A, B: TArrC;
+    A, B: TArrayOC;
     BLength: Int64;
 
 Begin
@@ -149,7 +194,9 @@ Begin
     //
     //WriteOutArray(A);
 
-    WriteOutArray(BinaryToHexidecimal(1000101010001));
+    //WriteOutArray(BinaryToHexidecimal(10101010010101001010));
+    //WriteLn(GetNumberOfDigits());
+    WriteLn(OctalToBinary(737424));
 
     ReadLn;
 
