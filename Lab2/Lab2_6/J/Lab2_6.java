@@ -168,16 +168,6 @@ public class Lab2_6 {
         i = 0;
         j = 1;
         isIncorrect = false;
-        
-        // for (i = 1; i < MY_LIMIT; i++) {
-        //     sumOfDivisors = sumOfProperDivisors(i);
-        //     if ((i < sumOfDivisors) && (i == sumOfProperDivisors(sumOfDivisors))) {
-        //         System.out.printf("%d.  %d And %d\n", j, i, sumOfDivisors);
-        //         j++;
-        //     }
-        // }
-        
-        //----------------
     
         try (FileWriter fileWriter = new FileWriter(filePath)) {
     
