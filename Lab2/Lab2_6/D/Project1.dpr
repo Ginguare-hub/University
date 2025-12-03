@@ -3,6 +3,8 @@ Program Project1;
 Uses
     System.SysUtils;
 
+
+
 Function SumOfProperDivisors(Number: Integer): Integer;
 
 Var

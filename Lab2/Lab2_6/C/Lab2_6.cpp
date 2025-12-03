@@ -41,6 +41,5 @@ void findAnbicableNumbers()
 int main() 
 {
     findAnbicableNumbers();
-
     return 0;
 }

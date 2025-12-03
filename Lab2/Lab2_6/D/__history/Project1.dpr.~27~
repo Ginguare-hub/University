@@ -36,24 +36,17 @@ Begin
     For I := 1 To MY_LIMIT Do
     Begin
         SumOfDivisors := SumOfProperDivisors(I);
-        WriteLn(SumOfDivisors);
-        If ((I <> SumOfDivisors) And (SumOfDivisors = SumOfProperDivisors(SumOfDivisors))) Then
+        If ((I < SumOfDivisors) And (I = SumOfProperDivisors(SumOfDivisors))) Then
         Begin
-            WriteLn(j, '.  ', I, ' And ', SumOfProperDivisors(I));
+            WriteLn(J, '.  ', I, ' And ', SumOfProperDivisors(I));
             Inc(J);
         End;
-
-
     End;
-
-
-
 End;
 
 
 Begin
 
-    //WriteLn(SumOfProperDivisors(309485009));
     FindAnbicableNumbers();
 
     ReadLn;
