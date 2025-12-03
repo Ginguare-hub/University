@@ -23,7 +23,7 @@ End;
 Procedure FindAnbicableNumbers;
 
 Const
-    MY_LIMIT: Integer = 10_000_000;
+    MY_LIMIT: Integer = 100_000;
 
 Var
     I, J, SumOfDivisors: Integer;
@@ -38,15 +38,10 @@ Begin
         SumOfDivisors := SumOfProperDivisors(I);
         If ((I < SumOfDivisors) And (I = SumOfProperDivisors(SumOfDivisors))) Then
         Begin
-            WriteLn(j, '.  ', I, ' And ', SumOfProperDivisors(I));
+            WriteLn(J, '.  ', I, ' And ', SumOfProperDivisors(I));
             Inc(J);
         End;
-
-
     End;
-
-
-
 End;
 
 
