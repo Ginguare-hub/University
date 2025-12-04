@@ -9,10 +9,10 @@ void writePurpose()
     cout << "Convert a number from base (2, 8, 10) to base-16 numeral system." << endl;
 }
 
-long readAndVerify(const long MIN_NUMBER, const long MAX_NUMBER, string myString)
+long long readAndVerify(const long long MIN_NUMBER, const long long MAX_NUMBER, string myString)
 {
     bool isIncorrect;
-    long number;
+    long long number;
 
     isIncorrect = false;
     number = 0;
@@ -143,7 +143,7 @@ bool checkMyFile(string filePath, bool isFileOutput)
     return checkInput;
 }
 
-bool checkIsNumberValid(long number, const long BASE)
+bool checkIsNumberValid(long long number, const long long BASE)
 {
     bool isValid;
 
@@ -192,15 +192,15 @@ int readAndVerifyBase(string myString)
     return number;
 }
 
-long readAndVerifyForConversion(const long MIN_NUMBER, const long BASE, string myString)
+long long readAndVerifyForConversion(const long long MIN_NUMBER, const long long BASE, string myString)
 {
-    const long MAX_BINARY  = 111111111;
-    const long MAX_OCTAL   = 777777;
-    const long MAX_DECIMAL = 524286;
+    const long long MAX_BINARY  = 1111111111111111LL;
+    const long long MAX_OCTAL   = 777777LL;
+    const long long MAX_DECIMAL = 524286LL;
 
     bool isIncorrect;
-    long number;
-    long localMaxNumber;
+    long long number;
+    long long localMaxNumber;
 
     isIncorrect = false;
     localMaxNumber = 0;
@@ -291,7 +291,7 @@ string assignMyFile(bool isFileOutput)
     return filePath;
 }
 
-long getNumberOfDigits(long number)
+long long getNumberOfDigits(long long number)
 {
     int answer;
     answer = 0;
@@ -308,7 +308,7 @@ long getNumberOfDigits(long number)
     return answer;
 }
 
-long powerOfTwo(int power)
+long long powerOfTwo(int power)
 {
     int i;
     int answer;
@@ -326,7 +326,7 @@ char tetradeToHexadecimal(int tetrade)
 {
     const int ARRAY_LENGTH = 16;
     char* cArray;
-    long answer;
+    long long answer;
     int i;
 
     answer = 0;
@@ -344,14 +344,14 @@ char tetradeToHexadecimal(int tetrade)
     return cArray[answer];
 }
 
-char *binaryToHexadecimal(long bNumber, int &arrayLength)
+char *binaryToHexadecimal(long long bNumber, int &arrayLength)
 {
     const int H_NUMBER = 10000;
     const int BASE_B = 2;
 
     int counter;
-    long tetrade;
-    long aLength;
+    long long tetrade;
+    long long aLength;
     char *answerArray;
 
     counter = 0;
@@ -393,14 +393,14 @@ char *binaryToHexadecimal(long bNumber, int &arrayLength)
     return answerArray;
 }
 
-long octalToBinary(long oNumber)
+long long octalToBinary(long long oNumber)
 {
     const int BASE_O = 8;
     const int O_NUMBER = 1000;
 
-    long digit;
-    long n;
-    long answer;
+    long long digit;
+    long long n;
+    long long answer;
     int* transformArray;
 
     digit = 0;
@@ -422,15 +422,15 @@ long octalToBinary(long oNumber)
     return answer;
 }
 
-long decimalToBinary(long dNumber)
+long long decimalToBinary(long long dNumber)
 {
     const int BASE_B = 2;
     const int ARRAY_LENGTH = 64;
 
-    long reverseAnswerArray[ARRAY_LENGTH];
+    long long reverseAnswerArray[ARRAY_LENGTH];
     int i;
     int highArray;
-    long answer;
+    long long answer;
 
     i = 0;
     answer = 0;
@@ -481,9 +481,9 @@ void writeOutArray(char *arrayA, int arrayLength)
     cout << endl;
 }
 
-char *octalToHexadecimal(long number, int &arrayLength)
+char *octalToHexadecimal(long long number, int &arrayLength)
 {
-    long bNumber;
+    long long bNumber;
     char *answerArray;
 
     bNumber = 0;
@@ -495,9 +495,9 @@ char *octalToHexadecimal(long number, int &arrayLength)
     return answerArray;
 }
 
-char *decimalToHexadecimal(long number, int &arrayLength)
+char *decimalToHexadecimal(long long number, int &arrayLength)
 {
-    long bNumber;
+    long long bNumber;
     char *answerArray;
 
     bNumber = 0;
@@ -509,7 +509,7 @@ char *decimalToHexadecimal(long number, int &arrayLength)
     return answerArray;
 }
 
-char *convertNumber(long number, long base, int &arrayLength)
+char *convertNumber(long long number, long long base, int &arrayLength)
 {
     char *answerArray;
 
@@ -593,7 +593,7 @@ char *readingStage(int &arrayLength)
 {
     char *answerArray;
     bool isFromFile, isOutput, isAllUndone;
-    long base, numberBefConv;
+    long long base, numberBefConv;
     int *dataArray;
     string filePath;
     ifstream inputFile;
@@ -676,12 +676,13 @@ int main()
     int arrayLength;
 
     myArray = nullptr;
-    arrayLength = 0;
+    arrayLength = 0; 
 
     writePurpose();
     myArray = readingStage(arrayLength);
     writingStage(myArray, arrayLength);
     deleteArray(myArray);
+
 
     return 0;
 }
