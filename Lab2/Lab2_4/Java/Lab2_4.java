@@ -65,19 +65,14 @@ public class Lab2_4 {
 
     public static boolean checkIsNumberValid(long number, final long BASE) {
         boolean isValid;
-        long tempNumber;
 
         isValid = true;
-        tempNumber = number;
 
-        while ((tempNumber != 0) && isValid) {
-            if ((tempNumber % 10 > BASE) || (tempNumber % 10 == BASE))
+        while ((number > 0) && isValid) {
+            if ((number % 10 > BASE) || (number % 10 == BASE))
                 isValid = false;
-            tempNumber = tempNumber / 10;
+            number = number / 10;
         }
-
-        if (number < 0)
-            isValid = false;
 
         return isValid;
     }
@@ -225,7 +220,7 @@ public class Lab2_4 {
     }
 
     public static long getNumberOfDigits(long number) {
-        long answer;
+        int answer;
         answer = 0;
         if (number == 0)
             answer = 1;
@@ -326,7 +321,7 @@ public class Lab2_4 {
         answer = 0;
         n = 1;
 
-        transformArray = new long[] { 0, 1, 10, 11, 100, 101, 110, 111 };
+        transformArray = new long[] {0, 1, 10, 11, 100, 101, 110, 111};
 
         if (checkIsNumberValid(oNumber, BASE_O)) {
 
