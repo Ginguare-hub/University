@@ -206,10 +206,10 @@ long readAndVerifyForConversion(const long MIN_NUMBER, const long BASE, string m
     localMaxNumber = 0;
     number = 0;
 
-    if (BASE == 2L)
+    if (BASE == 2)
         localMaxNumber = MAX_BINARY;
     else 
-        if (BASE == 8L)
+        if (BASE == 8)
             localMaxNumber = MAX_OCTAL;
         else
             localMaxNumber = MAX_DECIMAL;
@@ -517,10 +517,11 @@ char *convertNumber(long number, long base, int &arrayLength)
 
     if (base == 2)
         answerArray = binaryToHexadecimal(number, arrayLength);
-    else if (base == 8)
-        answerArray = octalToHexadecimal(number, arrayLength);
-    else
-        answerArray = decimalToHexadecimal(number, arrayLength);
+    else 
+        if (base == 8)
+            answerArray = octalToHexadecimal(number, arrayLength);
+        else
+            answerArray = decimalToHexadecimal(number, arrayLength);
 
     return answerArray;
 }
@@ -551,7 +552,7 @@ int *readBaseAndNumberFromFile(string filePath, ifstream &inputFile)
         delete[] shortArray;
         shortArray = nullptr;
     }
-    if ((shortArray != nullptr) && (!checkIsNumberValid(shortArray[1], (int)shortArray[0])))
+    if ((shortArray != nullptr) && (!checkIsNumberValid(shortArray[1], shortArray[0])))
     {
         cout << "Error, incorrect matrix data." << endl;
         delete[] shortArray;
