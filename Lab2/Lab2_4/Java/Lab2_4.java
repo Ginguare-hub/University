@@ -567,8 +567,9 @@ public class Lab2_4 {
 
         isToFile = workWithConsoleOrFile(isOutput, consoleScanner);
 
-        if (answerArray != null) {
-
+        if (answerArray == null) 
+            System.out.println("Error, something went wrong when reading numeric data.");
+        else
             if (isToFile) {
                 do {
                     filePath = assignMyFile(isOutput, consoleScanner);
@@ -578,9 +579,6 @@ public class Lab2_4 {
                 reverseArray(answerArray);
                 writeOutArray(answerArray);
             }
-            
-        } else
-            System.out.println("Error, something went wrong when reading numeric data.");
     }
 
     public static void main(String[] args) {
