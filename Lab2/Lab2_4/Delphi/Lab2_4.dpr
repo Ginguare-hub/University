@@ -236,11 +236,9 @@ Begin
             LocalMaxNumber := MAX_DECIMAL;
 
     Repeat
-
-        Write(MyString);
         IsCorrect := True;
 
-        Number := ReadAndVerify(0, LocalMaxNumber, '');
+        Number := ReadAndVerify(0, LocalMaxNumber, MyString);
 
         If Not CheckIsNumberValid(Number, BASE) Then
         Begin
@@ -402,14 +400,13 @@ Const
     BASE_B: Integer = 2;
 
 Var
-    Counter, Tetrade, ALength, I: Int64;
+    Counter, Tetrade, ALength: Int64;
     AnswerArray: TArrayOC;
 
 Begin
     Counter := 0;
     Tetrade := 0;
     ALength := 0;
-    I := 0;
 
     ALength := 0;
 
@@ -451,13 +448,12 @@ Const
     O_NUMBER: Integer = 1000;
 
 Var
-    Digit, Index, N, Answer: Int64;
+    Digit, N, Answer: Int64;
     TransformArray: TArrayOI;
 
 Begin
     Digit := 0;
     Answer := 0;
-    Index := 0;
     N := 1;
 
     SetLength(TransformArray, 8);
@@ -487,10 +483,9 @@ Const
 
 Var
     ReverseAnswerArray: TArrayOI;
-    NumberOfDigits, I, Answer: Int64;
+    I, Answer: Int64;
 
 Begin
-    NumberOfDigits := 0;
     I := 0;
     Answer := 0;
 
