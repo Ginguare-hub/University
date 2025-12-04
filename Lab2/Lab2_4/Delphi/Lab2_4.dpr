@@ -138,9 +138,6 @@ Begin
         Number := Number Div 10;
     End;
 
-    If Number < 0 Then
-        IsValid := False;
-
     CheckIsNumberValid := IsValid;
 End;
 
@@ -480,6 +477,7 @@ Function DecimalToBinary(DNumber: Int64): Int64;
 
 Const
     BASE_B: Integer = 2;
+    ARRAY_LENGTH: Integer = 64;
 
 Var
     ReverseAnswerArray: TArrayOI;
@@ -489,9 +487,9 @@ Begin
     I := 0;
     Answer := 0;
 
-    SetLength(ReverseAnswerArray, 64);
+    SetLength(ReverseAnswerArray, ARRAY_LENGTH);
 
-    While DNumber <> 0 Do
+    While DNumber > 0 Do
     Begin
         ReverseAnswerArray[I] := DNumber Mod BASE_B;
         DNumber := DNumber Div BASE_B;
