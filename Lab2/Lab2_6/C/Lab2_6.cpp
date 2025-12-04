@@ -6,7 +6,7 @@ using namespace std;
 
 void writePurpose() 
 {
-    cout << "A two-dimensional matrix A of order n is given. The program arranges the elements of the rows with even matrix numbers in descending order." << endl;
+    cout << "Program finds amicable numbers lower than 100000." << endl;
 }
 
 int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string myString)

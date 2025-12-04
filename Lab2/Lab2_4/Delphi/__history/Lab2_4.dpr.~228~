@@ -1,0 +1,725 @@
+Program Lab2_4;
+
+Uses
+    System.SysUtils;
+
+Type
+    TArrayOC = Array Of Char;
+    TArrayOI = Array Of Integer;
+
+Procedure WritePurpose;
+
+Begin
+    WriteLn('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+End;
+
+Function IsFileText(FilePath: String): Boolean;
+
+Const
+    MIN_PATH_LENGTH: Integer = 3;
+
+Var
+    FileExt: String;
+    IsText: Boolean;
+    Index: Integer;
+
+Begin
+    Index := Length(FilePath);
+    IsText := False;
+
+    If Index > MIN_PATH_LENGTH Then
+        FileExt := FilePath[Index - 3] + FilePath[Index - 2] + FilePath[Index - 1] + FilePath[Index]
+
+    Else
+        IsText := False;
+
+    If FileExt = '.txt' Then
+        IsText := True
+    Else
+        IsText := False;
+
+    IsFileText := IsText;
+End;
+
+Function IsFileNotEmpty(Var InputFile: TextFile): Boolean;
+
+Var
+    IsNotEmpty: Boolean;
+
+Begin
+
+    Try
+        Reset(InputFile);
+        IsNotEmpty := Not EOF(InputFile);
+    Finally
+        CloseFile(InputFile);
+    End;
+
+    IsFileNotEmpty := IsNotEmpty;
+End;
+
+Function CanRead(Var InputFile: TextFile): Boolean;
+
+Var
+    IsReady: Boolean;
+
+Begin
+
+    Try
+        Reset(InputFile);
+        CloseFile(InputFile);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanRead := IsReady;
+End;
+
+Function CanWrite(Var FileVar: TextFile): Boolean;
+
+Var
+    IsReady: Boolean;
+
+Begin
+
+    Try
+        Append(FileVar);
+        CloseFile(FileVar);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanWrite := IsReady;
+End;
+
+Function CheckMyFile(Var InputFile: TextFile; FilePath: String; IsFileOutput: Boolean): Boolean;
+
+Var
+    CheckInput: Boolean;
+
+Begin
+    CheckInput := False;
+
+    If Not FileExists(FilePath) Then
+        Writeln('Error, file with path <', FilePath, '> is not exists.')
+    Else
+        If Not IsFileText(FilePath) Then
+            Writeln('Error, filename is not .txt')
+        Else
+            If (Not IsFileOutput) And (Not CanRead(InputFile)) Then
+                Writeln('Error, no access to read the file.')
+            Else
+                If IsFileOutput And (Not CanWrite(InputFile)) Then
+                    Writeln('Error, no access to write into the file.')
+                Else
+                    If Not IsFileNotEmpty(InputFile) Then
+                        Writeln('Error, file is empty.')
+                    Else
+                    Begin
+                        CheckInput := True;
+                        WriteLn('Assigning is completed successfully.');
+                    End;
+
+    CheckMyFile := CheckInput;
+End;
+
+Function CheckIsNumberValid(Number: Int64; Const BASE: Integer): Boolean;
+
+Var
+    IsValid: Boolean;
+
+Begin
+    IsValid := True;
+
+    While (Number <> 0) And IsValid Do
+    Begin
+        If ((Number Mod 10 > BASE) Or (Number Mod 10 = BASE)) Then
+            IsValid := False;
+        Number := Number Div 10;
+    End;
+
+    If Number < 0 Then
+        IsValid := False;
+
+    CheckIsNumberValid := IsValid;
+End;
+
+Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Int64; MyString: String): Int64;
+
+Var
+    IsCorrect: Boolean;
+    Number: Int64;
+
+Begin
+
+    IsCorrect := True;
+    Number := 0;
+
+    Repeat
+
+        Write(MyString);
+        IsCorrect := True;
+
+        Try
+            ReadLn(Number);
+        Except
+            WriteLn('Incorrect input, try again.');
+            IsCorrect := False;
+        End;
+
+        If IsCorrect And ((Number < MIN_NUMBER) Or (Number > MAX_NUMBER)) Then
+        Begin
+            WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+            IsCorrect := False;
+        End;
+
+    Until IsCorrect;
+
+    ReadAndVerify := Number;
+End;
+
+Function ReadAndVerifyBase(MyString: String): Integer;
+
+Var
+    IsCorrect: Boolean;
+    Number: Integer;
+
+Begin
+    IsCorrect := True;
+    Number := 0;
+
+    Repeat
+
+        Write(MyString);
+        IsCorrect := True;
+
+        Try
+            ReadLn(Number);
+        Except
+            WriteLn('Incorrect input, try again.');
+            IsCorrect := False;
+        End;
+
+        If IsCorrect And ((Number <> 2) And (Number <> 8) And (Number <> 10)) Then
+        Begin
+            WriteLn('The number must be equals to 2, 8 or 10.');
+            IsCorrect := False;
+        End;
+
+    Until IsCorrect;
+
+    ReadAndVerifyBase := Number;
+End;
+
+Function ReadAndVerifyForConversion(Const MIN_NUMBER: Int64; Const BASE: Integer; MyString: String): Int64;
+
+Const
+    MAX_BINARY: Int64 = 111_1111_1111_1111_1111;
+    MAX_OCTAL: Int64 = 1_777_777;
+    MAX_DECIMAL: Int64 = 524_287;
+
+Var
+    IsCorrect: Boolean;
+    Number, LocalMaxNumber: Int64;
+
+Begin
+    IsCorrect := True;
+    Number := 0;
+    LocalMaxNumber := 0;
+
+    If BASE = 2 Then
+        LocalMaxNumber := MAX_BINARY
+    Else
+        If BASE = 8 Then
+            LocalMaxNumber := MAX_OCTAL
+        Else
+            LocalMaxNumber := MAX_DECIMAL;
+
+    Repeat
+
+        Write(MyString);
+        IsCorrect := True;
+
+//        Try
+//            ReadLn(Number);
+//        Except
+//            WriteLn('Incorrect input, try again.');
+//            IsCorrect := False;
+//        End;
+//
+//        If IsCorrect And ((Number < MIN_NUMBER) Or (Number > LocalMaxNumber)) Then
+//        Begin
+//            WriteLn('The number must fit the range [', MIN_NUMBER, ',', LocalMaxNumber, '].');
+//            IsCorrect := False;
+//        End;
+
+        Number := ReadAndVerify(0, LocalMaxNumber, '');
+
+        If Not CheckIsNumberValid(Number, BASE) Then
+        Begin
+            WriteLn('Every digit must not be equal or higher than ', BASE, '.');
+            IsCorrect := False;
+        End;
+
+    Until IsCorrect;
+
+    ReadAndVerifyForConversion := Number;
+End;
+
+Function WorkWithConsoleOrFile(IsOutput: Boolean): Boolean;
+
+Var
+    Number: Integer;
+    IsFromFile: Boolean;
+
+Begin
+    Number := 0;
+
+    If IsOutput Then
+        WriteLn('If data is output to the console write 0, if from file write 1.')
+    Else
+        WriteLn('If data is entered from the console write 0, if from file write 1.');
+
+    Number := ReadAndVerify(0, 1, '> ');
+
+    If Number = 0 Then
+    Begin
+        IsFromFile := False;
+        If IsOutput Then
+            WriteLn('The data is output to the console.')
+        Else
+            WriteLn('The data is entered from the console.');
+    End
+    Else
+    Begin
+        IsFromFile := True;
+        If IsOutput Then
+            WriteLn('The data is output to a file.')
+        Else
+            WriteLn('The data is entered from a file.');
+    End;
+
+    WorkWithConsoleOrFile := IsFromFile;
+End;
+
+Function AskTheFilePath(): String;
+
+Var
+    FilePath: String;
+
+Begin
+
+    Write('Write the existing file path: ');
+
+    Try
+        ReadLn(FilePath);
+    Finally
+        AskTheFilePath := FilePath;
+    End;
+
+End;
+
+Procedure AssignMyFile(Var InputFile: TextFile; IsFileOutput: Boolean);
+
+Var
+    Number: Integer;
+    IsCorrect: Boolean;
+    FilePath: String;
+
+Begin
+
+    IsCorrect := True;
+
+    Repeat
+
+        FilePath := AskTheFilePath();
+
+        Try
+            AssignFile(InputFile, FilePath);
+        Except
+            WriteLn('Error with assigning.');
+            FilePath := AskTheFilePath();
+            IsCorrect := False;
+        End;
+
+        IsCorrect := CheckMyFile(InputFile, FilePath, IsFileOutput);
+
+    Until IsCorrect;
+
+End;
+
+Function GetNumberOfDigits(Number: Int64): Int64;
+
+Var
+    Answer: Int64;
+
+Begin
+
+    Answer := 0;
+
+    If Number = 0 Then
+        Answer := 1
+    Else
+        While Number <> 0 Do
+        Begin
+            Number := Number Div 10;
+            Answer := Answer + 1;
+        End;
+
+    GetNumberOfDigits := Answer;
+End;
+
+Function PowerOfTwo(Power: Int64): Int64;
+
+Var
+    I, Answer: Int64;
+
+Begin
+    Answer := 1;
+
+    For I := 1 To Power Do
+        Answer := Answer * 2;
+
+    PowerOfTwo := Answer;
+End;
+
+Function TetradeToHexidecimal(Tetrade: Int64): Char;
+
+Var
+    CArray: TArrayOC;
+    Answer, I: Int64;
+
+Begin
+    Answer := 0;
+    I := 0;
+
+    SetLength(CArray, 16);
+
+    CArray := ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+
+    While Tetrade <> 0 Do
+    Begin
+        Answer := Answer + (Tetrade Mod 10) * PowerOfTwo(I);
+        Tetrade := Tetrade Div 10;
+
+        Inc(I);
+    End;
+
+    TetradeToHexidecimal := CArray[Answer];
+End;
+
+Function BinaryToHexadecimal(BNumber: Int64): TArrayOC;
+
+Const
+    H_NUMBER: Integer = 10000;
+    BASE_B: Integer = 2;
+    MAX_NUMBER: Int64 = 111_1111_1111_1111_1111;
+
+Var
+    Counter, Tetrade, ALength, I: Int64;
+    AnswerArray: TArrayOC;
+
+Begin
+    Counter := 0;
+    Tetrade := 0;
+    ALength := 0;
+    I := 0;
+
+    ALength := 0;
+
+    If CheckIsNumberValid(BNumber, BASE_B) And (BNumber < MAX_NUMBER) Then
+    Begin
+
+        ALength := GetNumberOfDigits(BNumber) Div 4;
+
+        If (GetNumberOfDigits(BNumber) Mod 4) > 0 Then
+            ALength := ALength + 1;
+
+        Counter := 0;
+
+        SetLength(AnswerArray, ALength);
+
+        If BNumber <> 0 Then
+            While BNumber <> 0 Do
+            Begin
+                Tetrade := BNumber Mod H_NUMBER;
+                BNumber := BNumber Div H_NUMBER;
+                AnswerArray[Counter] := TetradeToHexidecimal(Tetrade);
+
+                Counter := Counter + 1;
+            End
+        Else
+            If BNumber = 0 Then
+                AnswerArray[Counter] := TetradeToHexidecimal(0);
+    End
+    Else
+        AnswerArray := Nil;
+
+    BinaryToHexadecimal := AnswerArray;
+End;
+
+Function OctalToBinary(ONumber: Int64): Int64;
+
+Const
+    BASE_O: Integer = 8;
+    MAX_NUMBER: Integer = 1_777_777;
+
+Var
+    Digit, Index, N, Answer: Int64;
+    TransformArray: TArrayOI;
+
+Begin
+    Digit := 0;
+    Answer := 0;
+    Index := 0;
+    N := 1;
+
+    SetLength(TransformArray, 8);
+
+    TransformArray := [0, 1, 10, 11, 100, 101, 110, 111];
+
+    If (CheckIsNumberValid(ONumber, BASE_O) And (ONumber < MAX_NUMBER)) Then
+    Begin
+
+        While ONumber <> 0 Do
+        Begin
+            Digit := ONumber Mod 10;
+            ONumber := ONumber Div 10;
+            Answer := Answer + N * TransformArray[Digit];
+            N := N * 1000;
+        End;
+
+    End;
+
+    OctalToBinary := Answer;
+End;
+
+Function DecimalToBinary(DNumber: Int64): Int64;
+
+Const
+    BASE_B: Integer = 2;
+    MAX_NUMBER: Integer = 524287;
+
+Var
+    ReverseAnswerArray: TArrayOI;
+    NumberOfDigits, I, Answer: Int64;
+
+Begin
+    NumberOfDigits := 0;
+    I := 0;
+    Answer := 0;
+
+    SetLength(ReverseAnswerArray, 64);
+
+    If (DNumber < MAX_NUMBER) Then
+    Begin
+
+        While DNumber <> 0 Do
+        Begin
+            ReverseAnswerArray[I] := DNumber Mod BASE_B;
+            DNumber := DNumber Div BASE_B;
+            Inc(I);
+        End;
+
+        For I := High(ReverseAnswerArray) DownTo Low(ReverseAnswerArray) Do
+            Answer := Answer * 10 + ReverseAnswerArray[I];
+    End;
+
+    DecimalToBinary := Answer;
+End;
+
+Function ReverseArray(ArrayA: TArrayOC): TArrayOC;
+
+Var
+    I, HalfHigh: Integer;
+    Temp: Char;
+
+Begin
+    I := 0;
+    HalfHigh := High(ArrayA) Div 2;
+
+    For I := Low(ArrayA) To HalfHigh Do
+    Begin
+        Temp := ArrayA[I];
+        ArrayA[I] := ArrayA[High(ArrayA) - I];
+        ArrayA[High(ArrayA) - I] := Temp;
+    End;
+
+    ReverseArray := ArrayA;
+End;
+
+Procedure WriteOutArray(ArrayA: TArrayOC);
+
+Var
+    I: Integer;
+
+Begin
+    I := 0;
+
+    Write('The answer is: ');
+
+    For I := Low(ArrayA) To High(ArrayA) Do
+        Write(ArrayA[I]);
+End;
+
+Function OctalToHexadecimal(Number: Int64): TArrayOC;
+
+//Const
+//    MAX_NUMBER: Integer = 1_777_777;
+
+Var
+    BNumber: Int64;
+    AnswerArray: TArrayOC;
+
+Begin
+//    If (Number < MAX_NUMBER) Then
+//    Begin
+        BNumber := OctalToBinary(Number);
+        AnswerArray := BinaryToHexadecimal(BNumber);
+//    End
+//    Else
+//    Begin
+//        //WriteLn('Program is not working with that parametr.');
+//        AnswerArray := Nil;
+//    End;
+
+    OctalToHexadecimal := AnswerArray;
+End;
+
+Function DecimalToHexadecimal(Number: Int64): TArrayOC;
+
+Const
+    MAX_NUMBER: Integer = 524287;
+
+Var
+    BNumber: Int64;
+    AnswerArray: TArrayOC;
+
+Begin
+    If (Number < MAX_NUMBER) Then
+    Begin
+        BNumber := DecimalToBinary(Number);
+        AnswerArray := BinaryToHexadecimal(BNumber);
+    End
+    Else
+    Begin
+        //WriteLn('Program is not working with that parametr.');
+        AnswerArray := Nil;
+    End;
+
+    DecimalToHexadecimal := AnswerArray;
+End;
+
+Function ConvertNumber(Number: Int64; Base: Integer): TArrayOC;
+
+Var
+    AnswerArray: TArrayOC;
+
+Begin
+
+    If Base = 2 Then
+        AnswerArray := BinaryToHexadecimal(Number)
+    Else
+        If Base = 8 Then
+            AnswerArray := OctalToHexadecimal(Number)
+        Else
+            AnswerArray := DecimalToHexadecimal(Number);
+
+    ConvertNumber := AnswerArray;
+End;
+
+Function ReadingStage(): TArrayOC;
+
+//Const
+    //MIN_NUMBER: Integer = -100000;
+    //MAX_NUMBER: Integer = 100000;
+
+Var
+    MyFile: TextFile;
+    IsFromFile: Boolean;
+    IsOutput: Boolean;
+    IsAllDone: Boolean;
+    Base: Integer;
+    NumberBefConv: Int64;
+    AnswerArray: TArrayOC;
+
+Begin
+    IsOutput := False;
+    IsAllDone := True;
+    IsFromFile := WorkWithConsoleOrFile(IsOutput);
+    Base := 0;
+
+    If IsFromFile Then
+        Repeat
+
+            IsAllDone := True;
+            AssignMyFile(MyFile, IsOutput);
+            //Matrix := ReadMatrixFromFile(MIN_NUMBER, MAX_NUMBER, MyFile);
+
+            //If Matrix = Nil Then
+                //IsAllDone := False;
+
+        Until IsAllDone
+    Else
+    Begin
+        Base := ReadAndVerifyBase('Write the base of number: ');
+        NumberBefConv := ReadAndVerifyForConversion(0, Base, 'Write number that will be converted: ');
+        AnswerArray := ConvertNumber(NumberBefConv, Base);
+    End;
+
+    ReadingStage := AnswerArray;
+End;
+
+Procedure WritingStage();
+
+Var
+    MyFile: TextFile;
+    IsToFile: Boolean;
+    IsOutput: Boolean;
+    IsAllDone: Boolean;
+
+Begin
+    IsOutput := True;
+    IsAllDone := True;
+
+    IsToFile := WorkWithConsoleOrFile(IsOutput);
+
+    If IsToFile Then
+    Begin
+        AssignMyFile(MyFile, IsOutput);
+        //WriteMatrixIntoFile(MyFile, Matrix);
+    End
+    Else
+        //WriteMatrixIntoConsole(Matrix);
+End;
+
+
+//Function CheckIs
+
+Var
+    Number: Int64;
+    MyArray: TArrayOC;
+
+Begin
+    //MyArray := DecimalToHexadecimal(500000);
+    //MyArray := OctalToHexadecimal(500000);
+    //MyArray := BinaryToHexadecimal(1111_1111_1111_1111_111);
+
+    WritePurpose;
+    WriteOutArray(ReverseArray(OctalToHexadecimal()));
+    MyArray := ReadingStage();
+
+    If MyArray <> Nil Then
+    Begin
+        MyArray := ReverseArray(MyArray);
+        WriteOutArray(MyArray);
+    End
+    Else
+        WriteLn('Error.');
+    //MyArray
+
+    ReadLn;
+
+End.

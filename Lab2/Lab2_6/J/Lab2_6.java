@@ -4,7 +4,7 @@ import java.io.*;
 public class Lab2_6 {
 
     public static void writePurpose() {
-        System.out.print("A two-dimensional matrix A of order n is given. The progtam arranges the elements of the rows with even numbers of the matrix in descending order.\n");
+        System.out.print("Program finds amicable numbers lower than 100000.\n");
     }
 
     public static int readAndVerify(final int MIN_NUMBER, final int MAX_NUMBER, String str, Scanner scanner) {
