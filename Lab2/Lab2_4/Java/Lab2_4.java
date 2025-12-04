@@ -344,24 +344,28 @@ public class Lab2_4 {
 
     public static long decimalToBinary(long dNumber) {
         final int BASE_B = 2;
+        final int ARRAY_LENGTH = 64;
 
         long[] reverseAnswerArray;
-        long i;
+        int i;
+        int highArray;
         long answer;
 
         i = 0;
         answer = 0;
 
-        reverseAnswerArray = new long[64];
+        reverseAnswerArray = new long[ARRAY_LENGTH];
 
-        while (dNumber != 0) {
-            reverseAnswerArray[(int) i] = dNumber % BASE_B;
+        while (dNumber > 0) {
+            reverseAnswerArray[i] = dNumber % BASE_B;
             dNumber = dNumber / BASE_B;
             i++;
         }
 
-        for (i = 63; i >= 0; i--)
-            answer = answer * 10 + reverseAnswerArray[(int) i];
+        highArray = ARRAY_LENGTH - 1;
+
+        for (i = highArray; i >= 0; i--)
+            answer = answer * 10 + reverseAnswerArray[i];
 
         return answer;
     }
@@ -439,6 +443,7 @@ public class Lab2_4 {
         final int ARRAY_LENGTH = 2;
         int[] shortArray;
         String line;
+        String[] elements;
 
         shortArray = null;
         line = "";
@@ -447,7 +452,8 @@ public class Lab2_4 {
 
         try {
             line = fileReader.readLine();
-            String[] elements = line.split(" ");
+            elements = line.split(" ");
+
             shortArray[0] = Integer.parseInt(elements[0]);
             shortArray[1] = Integer.parseInt(elements[1]);
         } catch (NumberFormatException e) {
@@ -514,6 +520,7 @@ public class Lab2_4 {
                     System.out.println("Something went wrong, try again.");
                     isAllDone = false;
                 }
+
             } while (!isAllDone);
 
         } else {
@@ -521,14 +528,12 @@ public class Lab2_4 {
             base = readAndVerifyBase("Write the base of number: ", consoleScanner);
             numberBefConv = readAndVerifyForConversion(0, base, "Write number that will be converted: ", consoleScanner);
             answerArray = convertNumber(numberBefConv, base);
-
         }
 
         return answerArray;
     }
 
-    public static boolean writeNumberIntoFile(String filePath, char[] answerArray) {
-        
+    public static boolean writeNumberIntoFile(String filePath, char[] answerArray) {   
         int i;
         boolean isIncorrect;
 
