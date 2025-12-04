@@ -10,7 +10,7 @@ Type
 Procedure WritePurpose;
 
 Begin
-    WriteLn('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+    WriteLn('Convert a number from base (2, 8, 10) to base-16 numeral system.');
 End;
 
 Function IsFileText(FilePath: String): Boolean;
@@ -64,7 +64,6 @@ Var
     IsReady: Boolean;
 
 Begin
-
     Try
         Reset(InputFile);
         CloseFile(InputFile);
@@ -82,7 +81,6 @@ Var
     IsReady: Boolean;
 
 Begin
-
     Try
         Append(FileVar);
         CloseFile(FileVar);
@@ -241,19 +239,6 @@ Begin
 
         Write(MyString);
         IsCorrect := True;
-
-//        Try
-//            ReadLn(Number);
-//        Except
-//            WriteLn('Incorrect input, try again.');
-//            IsCorrect := False;
-//        End;
-//
-//        If IsCorrect And ((Number < MIN_NUMBER) Or (Number > LocalMaxNumber)) Then
-//        Begin
-//            WriteLn('The number must fit the range [', MIN_NUMBER, ',', LocalMaxNumber, '].');
-//            IsCorrect := False;
-//        End;
 
         Number := ReadAndVerify(0, LocalMaxNumber, '');
 
@@ -415,7 +400,6 @@ Function BinaryToHexadecimal(BNumber: Int64): TArrayOC;
 Const
     H_NUMBER: Integer = 10000;
     BASE_B: Integer = 2;
-    //MAX_NUMBER: Int64 = 111_1111_1111_1111_1111;
 
 Var
     Counter, Tetrade, ALength, I: Int64;
@@ -429,7 +413,7 @@ Begin
 
     ALength := 0;
 
-    If CheckIsNumberValid(BNumber, BASE_B) {And (BNumber < MAX_NUMBER)} Then
+    If CheckIsNumberValid(BNumber, BASE_B) Then
     Begin
 
         ALength := GetNumberOfDigits(BNumber) Div 4;
@@ -464,7 +448,7 @@ Function OctalToBinary(ONumber: Int64): Int64;
 
 Const
     BASE_O: Integer = 8;
-    //MAX_NUMBER: Int64 = 1_777_777;
+    O_NUMBER: Integer = 1000;
 
 Var
     Digit, Index, N, Answer: Int64;
@@ -480,7 +464,7 @@ Begin
 
     TransformArray := [0, 1, 10, 11, 100, 101, 110, 111];
 
-    If CheckIsNumberValid(ONumber, BASE_O) { And (ONumber < MAX_NUMBER)) } Then
+    If CheckIsNumberValid(ONumber, BASE_O) Then
     Begin
 
         While ONumber <> 0 Do
@@ -488,7 +472,7 @@ Begin
             Digit := ONumber Mod 10;
             ONumber := ONumber Div 10;
             Answer := Answer + N * TransformArray[Digit];
-            N := N * 1000;
+            N := N * O_NUMBER;
         End;
 
     End;
@@ -500,7 +484,6 @@ Function DecimalToBinary(DNumber: Int64): Int64;
 
 Const
     BASE_B: Integer = 2;
-    MAX_NUMBER: Integer = 524287;
 
 Var
     ReverseAnswerArray: TArrayOI;
@@ -513,24 +496,20 @@ Begin
 
     SetLength(ReverseAnswerArray, 64);
 
-    If (DNumber < MAX_NUMBER) Then
+    While DNumber <> 0 Do
     Begin
-
-        While DNumber <> 0 Do
-        Begin
-            ReverseAnswerArray[I] := DNumber Mod BASE_B;
-            DNumber := DNumber Div BASE_B;
-            Inc(I);
-        End;
-
-        For I := High(ReverseAnswerArray) DownTo Low(ReverseAnswerArray) Do
-            Answer := Answer * 10 + ReverseAnswerArray[I];
+        ReverseAnswerArray[I] := DNumber Mod BASE_B;
+        DNumber := DNumber Div BASE_B;
+        Inc(I);
     End;
+
+    For I := High(ReverseAnswerArray) DownTo Low(ReverseAnswerArray) Do
+        Answer := Answer * 10 + ReverseAnswerArray[I];
 
     DecimalToBinary := Answer;
 End;
 
-Function ReverseArray(ArrayA: TArrayOC): TArrayOC;
+Procedure ReverseArray(Var ArrayA: TArrayOC);
 
 Var
     I, HalfHigh: Integer;
@@ -546,8 +525,6 @@ Begin
         ArrayA[I] := ArrayA[High(ArrayA) - I];
         ArrayA[High(ArrayA) - I] := Temp;
     End;
-
-    ReverseArray := ArrayA;
 End;
 
 Procedure WriteOutArray(ArrayA: TArrayOC);
@@ -566,49 +543,25 @@ End;
 
 Function OctalToHexadecimal(Number: Int64): TArrayOC;
 
-//Const
-//    MAX_NUMBER: Integer = 1_777_777;
-
 Var
     BNumber: Int64;
     AnswerArray: TArrayOC;
 
 Begin
-//    If (Number < MAX_NUMBER) Then
-//    Begin
-        BNumber := OctalToBinary(Number);
-        AnswerArray := BinaryToHexadecimal(BNumber);
-//    End
-//    Else
-//    Begin
-//        //WriteLn('Program is not working with that parametr.');
-//        AnswerArray := Nil;
-//    End;
-
+    BNumber := OctalToBinary(Number);
+    AnswerArray := BinaryToHexadecimal(BNumber);
     OctalToHexadecimal := AnswerArray;
 End;
 
 Function DecimalToHexadecimal(Number: Int64): TArrayOC;
 
-//Const
-//    MAX_NUMBER: Integer = 524287;
-
 Var
     BNumber: Int64;
     AnswerArray: TArrayOC;
 
 Begin
-//    If (Number < MAX_NUMBER) Then
-//    Begin
-        BNumber := DecimalToBinary(Number);
-        AnswerArray := BinaryToHexadecimal(BNumber);
-//    End
-//    Else
-//    Begin
-//        //WriteLn('Program is not working with that parametr.');
-//        AnswerArray := Nil;
-//    End;
-
+    BNumber := DecimalToBinary(Number);
+    AnswerArray := BinaryToHexadecimal(BNumber);
     DecimalToHexadecimal := AnswerArray;
 End;
 
@@ -618,7 +571,6 @@ Var
     AnswerArray: TArrayOC;
 
 Begin
-
     If Base = 2 Then
         AnswerArray := BinaryToHexadecimal(Number)
     Else
@@ -630,11 +582,47 @@ Begin
     ConvertNumber := AnswerArray;
 End;
 
-Function ReadingStage(): TArrayOC;
+Function ReadBaseAndNumberFromFile(Var InputFile: TextFile): TArrayOI;
 
-//Const
-    //MIN_NUMBER: Integer = -100000;
-    //MAX_NUMBER: Integer = 100000;
+Const
+    ARRAY_LENGTH: Integer = 2;
+
+Var
+    I, Element: Integer;
+    ShortArray: TArrayOI;
+
+Begin
+    I := 0;
+    Element := 0;
+
+    SetLength(ShortArray, ARRAY_LENGTH);
+
+    Try
+        Reset(InputFile);
+        Read(InputFile, ShortArray[0]);
+        Read(InputFile, ShortArray[1]);
+    Except
+        WriteLn('Incorrect numeric data: matrix element.');
+        ShortArray := Nil;
+    End;
+
+    If ((ShortArray[0] <> 2) And (ShortArray[0] <> 8) And (ShortArray[0] <> 10)) Then
+    Begin
+        WriteLn('The base must be equals to 2, 8 or 10.');
+        ShortArray := Nil;
+    End;
+
+    CloseFile(InputFile);
+
+    If (ShortArray = Nil) Or (Not CheckIsNumberValid(ShortArray[0], ShortArray[1])) Then
+    Begin
+        WriteLn('Error, incorrect matrix data.');
+    End;
+
+    ReadBaseAndNumberFromFile := ShortArray;
+End;
+
+Function ReadingStage(): TArrayOC;
 
 Var
     MyFile: TextFile;
@@ -643,6 +631,7 @@ Var
     IsAllDone: Boolean;
     Base: Integer;
     NumberBefConv: Int64;
+    DataArray: TArrayOI;
     AnswerArray: TArrayOC;
 
 Begin
@@ -653,14 +642,22 @@ Begin
 
     If IsFromFile Then
         Repeat
-
             IsAllDone := True;
             AssignMyFile(MyFile, IsOutput);
-            //Matrix := ReadMatrixFromFile(MIN_NUMBER, MAX_NUMBER, MyFile);
+            DataArray := ReadBaseAndNumberFromFile(MyFile);
 
-            //If Matrix = Nil Then
-                //IsAllDone := False;
+            If DataArray <> Nil Then
+            Begin
+                Base := DataArray[0];
+                NumberBefConv := DataArray[1];
+                AnswerArray := ConvertNumber(NumberBefConv, Base);
+            End;
 
+            If DataArray = Nil Then
+            Begin
+                WriteLn('Something went wrong, try again.');
+                IsAllDone := False;
+            End;
         Until IsAllDone
     Else
     Begin
@@ -672,54 +669,69 @@ Begin
     ReadingStage := AnswerArray;
 End;
 
-Procedure WritingStage();
+Procedure WriteNumberIntoFile(Var OutputFile: TextFile; AnswerArray: TArrayOC);
+
+Var
+    I: Integer;
+    IsReady: Boolean;
+
+Begin
+    I := 0;
+    IsReady := True;
+
+    Try
+        Rewrite(OutputFile);
+    Except
+        IsReady := False;
+    End;
+
+    If IsReady Then
+    Begin
+        Write(OutputFile, 'The answer is: ');
+        ReverseArray(AnswerArray);
+        For I := Low(AnswerArray) To High(AnswerArray) Do
+            Write(OutputFile, AnswerArray[I]);
+    End
+    Else
+        WriteLn('The unexpected error is found.');
+
+    CloseFile(OutputFile);
+End;
+
+Procedure WritingStage(AnswerArray: TArrayOC);
 
 Var
     MyFile: TextFile;
     IsToFile: Boolean;
     IsOutput: Boolean;
-    IsAllDone: Boolean;
 
 Begin
     IsOutput := True;
-    IsAllDone := True;
 
     IsToFile := WorkWithConsoleOrFile(IsOutput);
-
-    If IsToFile Then
+    If AnswerArray <> Nil Then
     Begin
-        AssignMyFile(MyFile, IsOutput);
-        //WriteMatrixIntoFile(MyFile, Matrix);
+        If IsToFile Then
+        Begin
+            AssignMyFile(MyFile, IsOutput);
+            WriteNumberIntoFile(MyFile, AnswerArray);
+        End
+        Else
+        Begin
+            ReverseArray(AnswerArray);
+            WriteOutArray(AnswerArray);
+        End;
     End
     Else
-        //WriteMatrixIntoConsole(Matrix);
+        WriteLn('Error, something went wrong when reading numeric data.');
 End;
 
-
-//Function CheckIs
-
 Var
-    Number: Int64;
     MyArray: TArrayOC;
 
 Begin
-    //MyArray := DecimalToHexadecimal(500000);
-    //MyArray := OctalToHexadecimal(500000);
-    //MyArray := BinaryToHexadecimal(1111_1111_1111_1111_111);
-
     WritePurpose;
-    //WriteOutArray(ReverseArray(OctalToHexadecimal(1000000)));
     MyArray := ReadingStage();
-
-    If MyArray <> Nil Then
-    Begin
-        MyArray := ReverseArray(MyArray);
-        WriteOutArray(MyArray);
-    End
-    Else
-        WriteLn('Error.');
-    //MyArray
-
+    WritingStage(MyArray);
     ReadLn;
-
 End.
