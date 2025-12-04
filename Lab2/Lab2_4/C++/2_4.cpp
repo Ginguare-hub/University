@@ -683,6 +683,5 @@ int main()
     writingStage(myArray, arrayLength);
     deleteArray(myArray);
 
-
     return 0;
 }
