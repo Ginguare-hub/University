@@ -194,8 +194,8 @@ int readAndVerifyBase(string myString)
 
 long readAndVerifyForConversion(const long MIN_NUMBER, const long BASE, string myString)
 {
-    const long MAX_BINARY = 1111111111111111111L;
-    const long MAX_OCTAL = 777777;
+    const long MAX_BINARY  = 111111111;
+    const long MAX_OCTAL   = 777777;
     const long MAX_DECIMAL = 524286;
 
     bool isIncorrect;
