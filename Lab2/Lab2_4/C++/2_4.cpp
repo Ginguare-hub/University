@@ -16,7 +16,6 @@ long readAndVerify(const long MIN_NUMBER, const long MAX_NUMBER, string myString
 
     isIncorrect = false;
     number = 0;
-
     do
     {
         cout << myString;
@@ -195,7 +194,7 @@ int readAndVerifyBase(string myString)
 
 long readAndVerifyForConversion(const long MIN_NUMBER, const long BASE, string myString)
 {
-    const long MAX_BINARY = 1111111111111111111;
+    const long MAX_BINARY = 1111111111111111111L;
     const long MAX_OCTAL = 777777;
     const long MAX_DECIMAL = 524286;
 
@@ -207,10 +206,10 @@ long readAndVerifyForConversion(const long MIN_NUMBER, const long BASE, string m
     localMaxNumber = 0;
     number = 0;
 
-    if (BASE == 2)
+    if (BASE == 2L)
         localMaxNumber = MAX_BINARY;
     else 
-        if (BASE == 8)
+        if (BASE == 8L)
             localMaxNumber = MAX_OCTAL;
         else
             localMaxNumber = MAX_DECIMAL;
@@ -562,17 +561,44 @@ int *readBaseAndNumberFromFile(string filePath, ifstream &inputFile)
     return shortArray;
 }
 
+
+void writeNumberIntoFile(string &filePath, char *answerArray, int arrayLength)
+{
+    ofstream outputFile;
+    int i;
+    
+    i = 0;
+    
+    outputFile.open(filePath);
+    
+    if (!outputFile.is_open())
+    {
+        cout << "The unexpected error is found." << endl;
+    }
+    else
+    {
+        outputFile << "The answer is: ";
+        reverseArray(answerArray, arrayLength);
+        
+        for (i = 0; i < arrayLength; i++)
+        outputFile << answerArray[i];
+        
+        outputFile.close();
+        cout << "Number written to file successfully." << endl;
+    }
+}
+
 char *readingStage(int &arrayLength)
 {
     char *answerArray;
-    bool isFromFile, isOutput, isAllDone;
+    bool isFromFile, isOutput, isAllUndone;
     long base, numberBefConv;
     int *dataArray;
     string filePath;
     ifstream inputFile;
 
     isOutput = false;
-    isAllDone = true;
+    isAllUndone = true;
     base = 0;
     numberBefConv = 0;
     dataArray = nullptr;
@@ -583,29 +609,26 @@ char *readingStage(int &arrayLength)
 
     if (isFromFile)
     {
-
+        isAllUndone = true;
         do
         {
-            isAllDone = true;
             filePath = assignMyFile(isOutput);
-
             dataArray = readBaseAndNumberFromFile(filePath, inputFile);
-
-            if (dataArray != nullptr)
-            {
-                base = dataArray[0];
-                numberBefConv = dataArray[1];
-                answerArray = convertNumber(numberBefConv, base, arrayLength);
-                delete[] dataArray;
-            }
 
             if (dataArray == nullptr)
             {
                 cout << "Something went wrong, try again." << endl;
-                isAllDone = false;
+            }
+            else
+            {
+                base = dataArray[0];
+                numberBefConv = dataArray[1];
+                answerArray = convertNumber(numberBefConv, base, arrayLength);
+                isAllUndone = false;
+                delete[] dataArray;
             }
 
-        } while (!isAllDone);
+        } while (isAllUndone);
     }
     else
     {
@@ -615,32 +638,6 @@ char *readingStage(int &arrayLength)
     }
 
     return answerArray;
-}
-
-void writeNumberIntoFile(string &filePath, char *answerArray, int arrayLength)
-{
-    int i;
-    ofstream outputFile;
-
-    i = 0;
-
-    outputFile.open(filePath);
-
-    if (!outputFile.is_open())
-    {
-        cout << "The unexpected error is found." << endl;
-    }
-    else
-    {
-        outputFile << "The answer is: ";
-        reverseArray(answerArray, arrayLength);
-
-        for (i = 0; i < arrayLength; i++)
-            outputFile << answerArray[i];
-
-        outputFile.close();
-        cout << "Number written to file successfully." << endl;
-    }
 }
 
 void writingStage(char *answerArray, int arrayLength)
@@ -654,9 +651,7 @@ void writingStage(char *answerArray, int arrayLength)
 
     isToFile = workWithConsoleOrFile(isOutput);
 
-    if (answerArray == nullptr)
-        cout << "Error, something went wrong when reading numeric data." << endl;
-    else if (isToFile)
+    if (isToFile)
     {
         filePath = assignMyFile(isOutput);
         writeNumberIntoFile(filePath, answerArray, arrayLength);
@@ -666,6 +661,12 @@ void writingStage(char *answerArray, int arrayLength)
         reverseArray(answerArray, arrayLength);
         writeOutArray(answerArray, arrayLength);
     }
+}
+
+void deleteArray(char* myArray)
+{
+    if (myArray != nullptr)
+        delete[] myArray;
 }
 
 int main()
@@ -679,9 +680,7 @@ int main()
     writePurpose();
     myArray = readingStage(arrayLength);
     writingStage(myArray, arrayLength);
-
-    if (myArray != nullptr)
-        delete[] myArray;
+    deleteArray(myArray);
 
     return 0;
 }
