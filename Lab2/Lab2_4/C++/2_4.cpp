@@ -407,7 +407,7 @@ long octalToBinary(long oNumber)
     answer = 0;
     n = 1;
 
-    transformArray = new int[8] {0, 1, 10, 11, 100, 101, 110, 111};
+    transformArray = new int[BASE_O] {0, 1, 10, 11, 100, 101, 110, 111};
 
     if (checkIsNumberValid(oNumber, BASE_O))
     {
