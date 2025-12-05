@@ -64,7 +64,6 @@ Var
     IsReady: Boolean;
 
 Begin
-
     Try
         Reset(InputFile);
         CloseFile(InputFile);
@@ -82,7 +81,6 @@ Var
     IsReady: Boolean;
 
 Begin
-
     Try
         Append(FileVar);
         CloseFile(FileVar);
@@ -139,9 +137,6 @@ Begin
             IsValid := False;
         Number := Number Div 10;
     End;
-
-    If Number < 0 Then
-        IsValid := False;
 
     CheckIsNumberValid := IsValid;
 End;
@@ -238,11 +233,9 @@ Begin
             LocalMaxNumber := MAX_DECIMAL;
 
     Repeat
-
-        Write(MyString);
         IsCorrect := True;
 
-        Number := ReadAndVerify(0, LocalMaxNumber, '');
+        Number := ReadAndVerify(0, LocalMaxNumber, MyString);
 
         If Not CheckIsNumberValid(Number, BASE) Then
         Begin
@@ -404,14 +397,13 @@ Const
     BASE_B: Integer = 2;
 
 Var
-    Counter, Tetrade, ALength, I: Int64;
+    Counter, Tetrade, ALength: Int64;
     AnswerArray: TArrayOC;
 
 Begin
     Counter := 0;
     Tetrade := 0;
     ALength := 0;
-    I := 0;
 
     ALength := 0;
 
@@ -450,15 +442,15 @@ Function OctalToBinary(ONumber: Int64): Int64;
 
 Const
     BASE_O: Integer = 8;
+    O_NUMBER: Integer = 1000;
 
 Var
-    Digit, Index, N, Answer: Int64;
+    Digit, N, Answer: Int64;
     TransformArray: TArrayOI;
 
 Begin
     Digit := 0;
     Answer := 0;
-    Index := 0;
     N := 1;
 
     SetLength(TransformArray, 8);
@@ -473,7 +465,7 @@ Begin
             Digit := ONumber Mod 10;
             ONumber := ONumber Div 10;
             Answer := Answer + N * TransformArray[Digit];
-            N := N * 1000;
+            N := N * O_NUMBER;
         End;
 
     End;
@@ -485,19 +477,19 @@ Function DecimalToBinary(DNumber: Int64): Int64;
 
 Const
     BASE_B: Integer = 2;
+    ARRAY_LENGTH: Integer = 64;
 
 Var
     ReverseAnswerArray: TArrayOI;
-    NumberOfDigits, I, Answer: Int64;
+    I, Answer: Int64;
 
 Begin
-    NumberOfDigits := 0;
     I := 0;
     Answer := 0;
 
-    SetLength(ReverseAnswerArray, 64);
+    SetLength(ReverseAnswerArray, ARRAY_LENGTH);
 
-    While DNumber <> 0 Do
+    While DNumber > 0 Do
     Begin
         ReverseAnswerArray[I] := DNumber Mod BASE_B;
         DNumber := DNumber Div BASE_B;
@@ -510,7 +502,7 @@ Begin
     DecimalToBinary := Answer;
 End;
 
-Function ReverseArray(ArrayA: TArrayOC): TArrayOC;
+Procedure ReverseArray(Var ArrayA: TArrayOC);
 
 Var
     I, HalfHigh: Integer;
@@ -526,8 +518,6 @@ Begin
         ArrayA[I] := ArrayA[High(ArrayA) - I];
         ArrayA[High(ArrayA) - I] := Temp;
     End;
-
-    ReverseArray := ArrayA;
 End;
 
 Procedure WriteOutArray(ArrayA: TArrayOC);
@@ -672,50 +662,69 @@ Begin
     ReadingStage := AnswerArray;
 End;
 
-Procedure WritingStage();
+Procedure WriteNumberIntoFile(Var OutputFile: TextFile; AnswerArray: TArrayOC);
+
+Var
+    I: Integer;
+    IsReady: Boolean;
+
+Begin
+    I := 0;
+    IsReady := True;
+
+    Try
+        Rewrite(OutputFile);
+    Except
+        IsReady := False;
+    End;
+
+    If IsReady Then
+    Begin
+        Write(OutputFile, 'The answer is: ');
+        ReverseArray(AnswerArray);
+        For I := Low(AnswerArray) To High(AnswerArray) Do
+            Write(OutputFile, AnswerArray[I]);
+    End
+    Else
+        WriteLn('The unexpected error is found.');
+
+    CloseFile(OutputFile);
+End;
+
+Procedure WritingStage(AnswerArray: TArrayOC);
 
 Var
     MyFile: TextFile;
     IsToFile: Boolean;
     IsOutput: Boolean;
-    IsAllDone: Boolean;
 
 Begin
     IsOutput := True;
-    IsAllDone := True;
 
     IsToFile := WorkWithConsoleOrFile(IsOutput);
-
-    If IsToFile Then
+    If AnswerArray <> Nil Then
     Begin
-        AssignMyFile(MyFile, IsOutput);
-        //WriteMatrixIntoFile(MyFile, Matrix);
-    End
-    Else
-        //WriteMatrixIntoConsole(Matrix);
-End;
-
-Var
-    Number: Int64;
-    MyArray: TArrayOC;
-
-Begin
-    //MyArray := DecimalToHexadecimal(500000);
-    //MyArray := OctalToHexadecimal(500000);
-    //MyArray := BinaryToHexadecimal(1111_1111_1111_1111_111);
-
-    WritePurpose;
-    MyArray := ReadingStage();
-
-    If MyArray <> Nil Then
-    Begin
-        MyArray := ReverseArray(MyArray);
-        WriteOutArray(MyArray);
+        If IsToFile Then
+        Begin
+            AssignMyFile(MyFile, IsOutput);
+            WriteNumberIntoFile(MyFile, AnswerArray);
+        End
+        Else
+        Begin
+            ReverseArray(AnswerArray);
+            WriteOutArray(AnswerArray);
+        End;
     End
     Else
         WriteLn('Error, something went wrong when reading numeric data.');
-    //MyArray
+End;
 
+Var
+    MyArray: TArrayOC;
+
+Begin
+    WritePurpose;
+    MyArray := ReadingStage();
+    WritingStage(MyArray);
     ReadLn;
-
 End.

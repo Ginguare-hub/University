@@ -405,8 +405,6 @@ Begin
     Tetrade := 0;
     ALength := 0;
 
-    ALength := 0;
-
     If CheckIsNumberValid(BNumber, BASE_B) Then
     Begin
 
