@@ -4,7 +4,7 @@ import java.io.*;
 public class Lab3_1 {
 
     public static void writePurpose() {
-        System.out.print("REWRITE_REWRITE_REWRITE \n");
+        System.out.print("Extract substring representing an integer from a string containing letters, digits, dots, \"+\" and \"-\".\n");
     }
 
     public static int readAndVerify(final int MIN_NUMBER, final int MAX_NUMBER, String str, Scanner scanner) {
@@ -163,7 +163,7 @@ public class Lab3_1 {
         isIncorrect = false;
 
         try (FileWriter fileWriter = new FileWriter(filePath)) {
-            fileWriter.write("The result is: \n" + str);
+            fileWriter.write("Extracted integer: " + str);
             System.out.print("Answer written to file successfully.\n");
             fileWriter.close();
         } catch (IOException e) {

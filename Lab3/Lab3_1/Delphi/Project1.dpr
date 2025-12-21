@@ -226,7 +226,7 @@ Begin
     Until IsCorrect;
 End;
 
-Function IsDigit(C: Char): Boolean;
+Function IsDigit(MyChar: Char): Boolean;
 
 Var
     Answer: Boolean;
@@ -234,7 +234,7 @@ Var
 Begin
     Answer := False;
 
-    If (C >= '0') And (C <= '9') Then
+    If (MyChar >= '0') And (MyChar <= '9') Then
         Answer := True;
 
     IsDigit := Answer;
