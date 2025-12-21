@@ -234,7 +234,7 @@ Var
 Begin
     Answer := False;
 
-    If (MyChar >= '0') And (MyChar <= '9') Then
+    If ((MyChar > '0') Or (MyChar = '0')) And ((MyChar < '9') Or (MyChar = '9')) Then
         Answer := True;
 
     IsDigit := Answer;
