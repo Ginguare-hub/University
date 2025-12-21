@@ -246,7 +246,7 @@ bool isDigit(char myChar)
     bool answer; 
     answer = false;
     
-    if ((myChar >= '0') && (myChar <= '9'))
+    if (((myChar > '0') || (myChar == '0')) && ((myChar < '9') || (myChar == '9')))
         answer = true;
     
     return answer;
