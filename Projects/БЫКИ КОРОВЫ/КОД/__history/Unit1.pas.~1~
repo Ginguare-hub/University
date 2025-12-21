@@ -1,0 +1,508 @@
+unit Unit1;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes,
+  System.Character,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.StdCtrls, Vcl.Grids, Vcl.ComCtrls;
+
+type
+  TGamePhase = (gpSetupP1, gpSetupP2, gpPlay, gpFinished);
+
+  TForm1 = class(TForm)
+    PageControl1: TPageControl;
+    TabGame: TTabSheet;
+    TabRules: TTabSheet;
+    MemoRules: TMemo;
+
+    LabelTitle: TLabel;
+    LabelInfo: TLabel;
+    LabelP1: TLabel;
+    LabelP2: TLabel;
+    EditSecretP1: TEdit;
+    EditSecretP2: TEdit;
+    BtnSetP1: TButton;
+    BtnSetP2: TButton;
+
+    LabelTurn: TLabel;
+    EditGuess: TEdit;
+    BtnGuess: TButton;
+
+    BtnSurrenderP1: TButton;
+    BtnSurrenderP2: TButton;
+    BtnReset: TButton;
+
+    StringGrid1: TStringGrid;
+
+    procedure FormCreate(Sender: TObject);
+    procedure BtnSetP1Click(Sender: TObject);
+    procedure BtnSetP2Click(Sender: TObject);
+    procedure BtnGuessClick(Sender: TObject);
+    procedure BtnResetClick(Sender: TObject);
+    procedure BtnSurrenderP1Click(Sender: TObject);
+    procedure BtnSurrenderP2Click(Sender: TObject);
+  private
+    Phase: TGamePhase;
+
+    SecretP1: string;
+    SecretP2: string;
+
+    TurnPlayer: Integer; // 1 or 2
+    TurnNo: Integer;
+
+    MovesP1: Integer;
+    MovesP2: Integer;
+
+    FinishedP1: Boolean;
+    FinishedP2: Boolean;
+
+    SurrenderedBy: Integer; // 0 none, 1 P1, 2 P2
+
+    procedure InitGrid;
+    procedure ResetGame;
+    procedure UpdateUI;
+
+    function NormalizeWord(const S: string): string;
+    function OnlyLetters(const S: string): Boolean;
+
+    function CurrentPlayerName: string;
+    function CurrentTargetSecret: string;
+
+    procedure AddRow(const PlayerName, Guess: string; Bulls, Cows: Integer; const Note: string);
+    procedure CalcBullsCows(const Secret, Guess: string; out Bulls, Cows: Integer);
+
+    procedure MarkWinForCurrentPlayer;
+    procedure SwitchTurnSkippingFinished;
+    procedure TryFinishByBothGuessed;
+    procedure Surrender(Player: Integer);
+  public
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  InitGrid;
+
+  MemoRules.Clear;
+  MemoRules.Lines.Add('Bulls and Cows (Two Players) - Rules');
+  MemoRules.Lines.Add('');
+  MemoRules.Lines.Add('1) Player 1 enters a secret word and clicks "Set P1 Secret".');
+  MemoRules.Lines.Add('2) Player 2 enters a secret word (same length) and clicks "Set P2 Secret".');
+  MemoRules.Lines.Add('3) Players take turns guessing the opponent''s word.');
+  MemoRules.Lines.Add('4) Bulls = letters in the correct position.');
+  MemoRules.Lines.Add('5) Cows = total matching letters INCLUDING bulls (as in your example).');
+  MemoRules.Lines.Add('6) You can surrender with the corresponding button.');
+  MemoRules.Lines.Add('7) Game ends when both guessed, or when someone surrenders.');
+  MemoRules.ReadOnly := True;
+
+  ResetGame;
+end;
+
+procedure TForm1.InitGrid;
+begin
+  StringGrid1.ColCount := 6;
+  StringGrid1.FixedRows := 1;
+  StringGrid1.FixedCols := 0;
+  StringGrid1.RowCount := 2;
+
+  StringGrid1.Cells[0,0] := 'Turn';
+  StringGrid1.Cells[1,0] := 'Player';
+  StringGrid1.Cells[2,0] := 'Guess';
+  StringGrid1.Cells[3,0] := 'Bulls';
+  StringGrid1.Cells[4,0] := 'Cows';
+  StringGrid1.Cells[5,0] := 'Note';
+
+  StringGrid1.ColWidths[0] := 55;
+  StringGrid1.ColWidths[1] := 70;
+  StringGrid1.ColWidths[2] := 160;
+  StringGrid1.ColWidths[3] := 55;
+  StringGrid1.ColWidths[4] := 55;
+  StringGrid1.ColWidths[5] := 170;
+end;
+
+procedure TForm1.ResetGame;
+begin
+  Phase := gpSetupP1;
+
+  SecretP1 := '';
+  SecretP2 := '';
+
+  TurnPlayer := 1;
+  TurnNo := 0;
+
+  MovesP1 := 0;
+  MovesP2 := 0;
+
+  FinishedP1 := False;
+  FinishedP2 := False;
+
+  SurrenderedBy := 0;
+
+  StringGrid1.RowCount := 2;
+
+  EditSecretP1.Text := '';
+  EditSecretP2.Text := '';
+  EditGuess.Text := '';
+
+  EditSecretP1.PasswordChar := '*';
+  EditSecretP2.PasswordChar := '*';
+
+  PageControl1.ActivePage := TabGame;
+
+  UpdateUI;
+end;
+
+function TForm1.NormalizeWord(const S: string): string;
+begin
+  Result := LowerCase(Trim(S));
+end;
+
+function TForm1.
+OnlyLetters(const S: string): Boolean;
+var
+  i: Integer;
+  ch: Char;
+begin
+  Result := (S <> '');
+  if not Result then Exit;
+
+  for i := 1 to Length(S) do
+  begin
+    ch := S[i];
+    // Unicode-safe: русские/английские/Ё/и т.д.
+    if not TCharacter.IsLetter(ch) then
+      Exit(False);
+  end;
+end;
+
+function TForm1.CurrentPlayerName: string;
+begin
+  if TurnPlayer = 1 then Result := 'Player 1' else Result := 'Player 2';
+end;
+
+function TForm1.CurrentTargetSecret: string;
+begin
+  if TurnPlayer = 1 then Result := SecretP2 else Result := SecretP1;
+end;
+
+procedure TForm1.UpdateUI;
+begin
+  BtnSurrenderP1.Enabled := (Phase = gpPlay) and (not FinishedP1) and (SurrenderedBy = 0);
+  BtnSurrenderP2.Enabled := (Phase = gpPlay) and (not FinishedP2) and (SurrenderedBy = 0);
+
+  case Phase of
+    gpSetupP1:
+      begin
+        LabelInfo.Caption := 'Player 1: enter a secret word (EN/RU) and click "Set P1 Secret".';
+        LabelTurn.Caption := 'Current turn: -';
+
+        EditSecretP1.Enabled := True;
+        BtnSetP1.Enabled := True;
+
+        EditSecretP2.Enabled := False;
+        BtnSetP2.Enabled := False;
+
+        EditGuess.Enabled := False;
+        BtnGuess.Enabled := False;
+      end;
+
+    gpSetupP2:
+      begin
+        LabelInfo.Caption := 'Player 2: enter a secret word (same length) and click "Set P2 Secret".';
+        LabelTurn.Caption := 'Current turn: -';
+
+        EditSecretP1.Enabled := False;
+        BtnSetP1.Enabled := False;
+
+        EditSecretP2.Enabled := True;
+        BtnSetP2.Enabled := True;
+
+        EditGuess.Enabled := False;
+        BtnGuess.Enabled := False;
+      end;
+
+    gpPlay:
+      begin
+        LabelTurn.Caption := 'Current turn: ' + CurrentPlayerName;
+        LabelInfo.Caption := Format('%s: guess opponent''s word (length %d).',
+          [CurrentPlayerName, Length(CurrentTargetSecret)]);
+
+        EditSecretP1.Enabled := False;
+        BtnSetP1.Enabled := False;
+        EditSecretP2.Enabled := False;
+        BtnSetP2.Enabled := False;
+
+        EditGuess.Enabled := True;
+        BtnGuess.Enabled := True;
+        EditGuess.SetFocus;
+      end;
+
+    gpFinished:
+      begin
+        EditGuess.Enabled := False;
+        BtnGuess.Enabled := False;
+
+        EditSecretP1.PasswordChar := #0;
+        EditSecretP2.PasswordChar := #0;
+
+        if SurrenderedBy = 1 then
+          LabelInfo.Caption := Format('Game over. Player 1 surrendered. Player 2 wins! (P1 moves: %d, P2 moves: %d)',
+            [MovesP1, MovesP2])
+        else if SurrenderedBy = 2 then
+          LabelInfo.Caption := Format('Game over. Player 2 surrendered. Player 1 wins! (P1 moves: %d, P2 moves: %d)',
+            [MovesP1, MovesP2])
+        else
+        begin
+          // Both guessed => compare moves
+          if MovesP1 < MovesP2 then
+            LabelInfo.Caption := Format('Game over. Player 1 wins! (P1 moves: %d, P2 moves: %d)', [MovesP1, MovesP2])
+          else if MovesP2 < MovesP1 then
+            LabelInfo.Caption := Format('Game over. Player 2 wins! (P1 moves: %d, P2 moves: %d)', [MovesP1, MovesP2])
+          else
+            LabelInfo.Caption := Format('Game over. Draw! (P1 moves: %d, P2 moves: %d)', [MovesP1, MovesP2]);
+        end;
+
+        LabelTurn.Caption := 'Current turn: -';
+      end;
+  end;
+end;
+
+procedure TForm1.AddRow(const PlayerName, Guess: string; Bulls, Cows: Integer; const Note: string);
+var
+  r: Integer;
+begin
+  r := StringGrid1.RowCount;
+  StringGrid1.RowCount := r + 1;
+
+  StringGrid1.Cells[0, r-1] := IntToStr(TurnNo);
+  StringGrid1.Cells[1, r-1] := PlayerName;
+  StringGrid1.Cells[2, r-1] := Guess;
+  StringGrid1.Cells[3, r-1] := IntToStr(Bulls);
+  StringGrid1.Cells[4, r-1] := IntToStr(Cows);
+  StringGrid1.Cells[5, r-1] := Note;
+end;
+
+procedure TForm1.CalcBullsCows(const Secret, Guess: string; out Bulls, Cows: Integer);
+var
+  i, j: Integer;
+  usedS, usedG: array of Boolean;
+begin
+  Bulls := 0;
+  Cows := 0;
+
+  if Length(Secret) <> Length(Guess) then Exit;
+
+  SetLength(usedS, Length(Secret) + 1);
+  SetLength(usedG, Length(Guess) + 1);
+
+  // Bulls
+  for i := 1 to Length(Secret) do
+    if Secret[i] = Guess[i] then
+    begin
+Inc(Bulls);
+      usedS[i] := True;
+      usedG[i] := True;
+    end;
+
+  // Cows (excluding bulls first)
+  for i := 1 to Length(Guess) do
+  begin
+    if usedG[i] then Continue;
+
+    for j := 1 to Length(Secret) do
+    begin
+      if usedS[j] then Continue;
+
+      if Guess[i] = Secret[j] then
+      begin
+        usedS[j] := True;
+        usedG[i] := True;
+        Inc(Cows);
+        Break;
+      end;
+    end;
+  end;
+
+  // Cows include bulls (as in example)
+  Cows := Cows + Bulls;
+end;
+
+procedure TForm1.MarkWinForCurrentPlayer;
+begin
+  if TurnPlayer = 1 then FinishedP1 := True else FinishedP2 := True;
+end;
+
+procedure TForm1.SwitchTurnSkippingFinished;
+begin
+  // switch once
+  if TurnPlayer = 1 then TurnPlayer := 2 else TurnPlayer := 1;
+
+  // if next player already finished, switch again (max 1 extra switch)
+  if (TurnPlayer = 1) and FinishedP1 then TurnPlayer := 2
+  else if (TurnPlayer = 2) and FinishedP2 then TurnPlayer := 1;
+end;
+
+procedure TForm1.TryFinishByBothGuessed;
+begin
+  if FinishedP1 and FinishedP2 then
+  begin
+    Phase := gpFinished;
+    UpdateUI;
+  end;
+end;
+
+procedure TForm1.Surrender(Player: Integer);
+begin
+  if Phase <> gpPlay then Exit;
+
+  Inc(TurnNo);
+  SurrenderedBy := Player;
+
+  if Player = 1 then
+    AddRow('Player 1', '-', 0, 0, 'Surrender')
+  else
+    AddRow('Player 2', '-', 0, 0, 'Surrender');
+
+  Phase := gpFinished;
+  UpdateUI;
+end;
+
+procedure TForm1.BtnSetP1Click(Sender: TObject);
+var
+  s: string;
+begin
+  if Phase <> gpSetupP1 then Exit;
+
+  s := NormalizeWord(EditSecretP1.Text);
+  if not OnlyLetters(s) then
+  begin
+    ShowMessage('Player 1 secret must contain letters only (EN/RU).');
+    Exit;
+  end;
+
+  SecretP1 := s;
+  Phase := gpSetupP2;
+  UpdateUI;
+end;
+
+procedure TForm1.BtnSetP2Click(Sender: TObject);
+var
+  s: string;
+begin
+  if Phase <> gpSetupP2 then Exit;
+
+  s := NormalizeWord(EditSecretP2.Text);
+  if not OnlyLetters(s) then
+  begin
+    ShowMessage('Player 2 secret must contain letters only (EN/RU).');
+    Exit;
+  end;
+
+  if Length(SecretP1) <> Length(s) then
+  begin
+    ShowMessage(Format('Both secrets must have the same length. Player 1 length = %d.', [Length(SecretP1)]));
+    Exit;
+  end;
+
+  SecretP2 := s;
+
+  Phase := gpPlay;
+  TurnPlayer := 1;
+  TurnNo := 0;
+
+  UpdateUI;
+end;
+
+procedure TForm1.BtnGuessClick(Sender: TObject);
+var
+  g, target: string;
+  bulls, cows: Integer;
+  note: string;
+begin
+  if Phase <> gpPlay then Exit;
+
+  // prevent guessing if current player already finished
+  if (TurnPlayer = 1) and FinishedP1 then
+  begin
+    SwitchTurnSkippingFinished;
+    UpdateUI;
+    Exit;
+  end;
+
+  if (TurnPlayer = 2) and FinishedP2 then
+  begin
+    SwitchTurnSkippingFinished;
+    UpdateUI;
+    Exit;
+  end;
+
+  g := NormalizeWord(EditGuess.Text);
+  if not OnlyLetters(g) then
+  begin
+    ShowMessage('Guess must contain letters only (EN/RU).');
+    Exit;
+  end;
+
+  target := CurrentTargetSecret;
+  if Length(g) <> Length(target) then
+  begin
+    ShowMessage(Format('Guess length must be %d.', [Length(target)]));
+    Exit;
+  end;
+
+  Inc(TurnNo);
+  CalcBullsCows(target, g, bulls, cows);
+
+  note := '';
+  if bulls = Length(target) then
+  begin
+    note := 'Guessed!';
+    MarkWinForCurrentPlayer;
+  end;
+
+  if TurnPlayer = 1 then Inc(MovesP1) else Inc(MovesP2);
+
+  AddRow(CurrentPlayerName, g, bulls, cows, note);
+
+  // If both guessed -> end
+  if FinishedP1 and FinishedP2 then
+  begin
+    Phase := gpFinished;
+    UpdateUI;
+    Exit;
+  end;
+
+  // Next turn
+  SwitchTurnSkippingFinished;
+  EditGuess.SelectAll;
+  UpdateUI;
+
+  TryFinishByBothGuessed;
+end;
+
+procedure TForm1.BtnSurrenderP1Click(Sender: TObject);
+begin
+  Surrender(1);
+end;
+
+procedure TForm1.BtnSurrenderP2Click(Sender: TObject);
+begin
+  Surrender(2);
+end;
+
+procedure TForm1.BtnResetClick(Sender: TObject);
+begin
+  ResetGame;
+end;
+
+end.
+

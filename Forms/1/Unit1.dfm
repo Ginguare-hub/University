@@ -1,0 +1,137 @@
+object MainForm: TMainForm
+  Left = 0
+  Top = 0
+  Cursor = crArrow
+  Margins.Left = 6
+  Margins.Top = 6
+  Margins.Right = 6
+  Margins.Bottom = 6
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = '551004 '#1055#1077#1076#1100#1082#1086' '#1042#1083#1072#1076#1080#1089#1083#1072#1074' Lab1_2'
+  ClientHeight = 767
+  ClientWidth = 1091
+  Color = clWhite
+  Constraints.MaxHeight = 877
+  Constraints.MaxWidth = 1117
+  Constraints.MinHeight = 400
+  Constraints.MinWidth = 400
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -24
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  Menu = MainMenu
+  Position = poDesktopCenter
+  ShowHint = False
+  PixelsPerInch = 192
+  TextHeight = 32
+  object TaskLabel: TLabel
+    Left = 64
+    Top = 48
+    Width = 201
+    Height = 32
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    Caption = #1059#1089#1083#1086#1074#1080#1077' '#1079#1072#1076#1072#1085#1080#1103
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -24
+    Font.Name = 'Segoe UI'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object NumberNEdit: TEdit
+    Left = 64
+    Top = 208
+    Width = 242
+    Height = 40
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    MaxLength = 10
+    ParentShowHint = False
+    ShowHint = False
+    TabOrder = 0
+    TextHint = 'NumberOne'
+    OnChange = NumberNEditChange
+  end
+  object ResultButton: TButton
+    Left = 64
+    Top = 304
+    Width = 150
+    Height = 50
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    Caption = #1056#1077#1079#1091#1083#1100#1090#1072#1090
+    Enabled = False
+    TabOrder = 1
+    OnClick = ResultButtonClick
+  end
+  object AnswerEdit: TEdit
+    Left = 64
+    Top = 400
+    Width = 242
+    Height = 40
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    TabOrder = 2
+    Text = 'Answer'
+  end
+  object MainMenu: TMainMenu
+    Left = 752
+    Top = 640
+    object FileTub: TMenuItem
+      Caption = #1060#1072#1081#1083
+      object OpenTubButton: TMenuItem
+        Caption = #1054#1090#1082#1088#1099#1090#1100
+        ShortCut = 16463
+      end
+      object SaveTubButton: TMenuItem
+        Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
+        ShortCut = 16467
+      end
+      object Separator3: TMenuItem
+        Caption = '-'
+      end
+      object CloseTubButton: TMenuItem
+        Caption = #1042#1099#1093#1086#1076
+      end
+    end
+    object Separator1: TMenuItem
+      Caption = '-'
+    end
+    object InstructonTub: TMenuItem
+      Caption = #1048#1085#1089#1090#1088#1091#1082#1094#1080#1103
+    end
+    object Separator2: TMenuItem
+      Caption = '-'
+    end
+    object AboutDeveloperTub: TMenuItem
+      Caption = #1054' '#1088#1072#1079#1088#1072#1073#1086#1090#1095#1080#1082#1077
+    end
+  end
+  object OpenTextFileDialog: TOpenTextFileDialog
+    Left = 944
+    Top = 544
+  end
+  object SaveTextFileDialog: TSaveTextFileDialog
+    Left = 944
+    Top = 640
+  end
+  object SaveDialog: TSaveDialog
+    Left = 944
+    Top = 352
+  end
+  object OpenDialog: TOpenDialog
+    Left = 944
+    Top = 448
+  end
+end

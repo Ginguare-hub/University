@@ -1,0 +1,518 @@
+Program StringLab;
+
+//uses
+//  System.SysUtils;
+//
+//Type
+//    ArrayOfChars = Array Of Char;
+//
+//Function FindIsCharInList(MyChar: Char): Boolean;
+//
+//Var
+//    AnsBool: Boolean;
+//    GoodChars: ArrayOfChars;
+//    I: Integer;
+//
+//Begin
+//    AnsBool := False;
+//    SetLength(GoodChars, 12);
+//    GoodChars := ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-'];
+//
+//    For I := Low(GoodChars) To High(GoodChars) Do
+//        If GoodChars[I] = MyChar Then
+//            AnsBool := True;
+//
+//    FindIsCharInList := AnsBool;
+//End;
+//
+//Var
+//    Str, AnswerStr: String;
+//    I, J, K: Integer;
+//    IsNumberInList: Boolean;
+//
+//Begin
+//    I := 0;
+//    J := 0;
+//    IsNumberInList := False;
+//
+//    ReadLn(Str);
+//
+//    For I := Low(Str) To High(Str) Do
+//        If (Str[I] = '+') Or (Str[I] = '-') Then
+//        Begin
+//            For J := I To High(Str) Do
+//            Begin
+//                IsNumberInList := False;
+//
+//                IsNumberInList := FindIsCharInList(Str[j]);
+//
+//                If IsNumberInList Then
+//                    AnswerStr := AnswerStr + Str[J];
+//            End;
+//        End;
+//
+//    WriteLn(AnswerStr);
+//    ReadLn;
+//End.
+
+//Program Lab2_ExtractInteger;
+
+Uses
+    System.SysUtils;
+
+Procedure WritePurpose;
+
+Begin
+    WriteLn('Extract substring representing an integer from a string containing letters, digits, dots, "+" and "-".');
+End;
+
+Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
+
+Var
+    IsCorrect: Boolean;
+    Number: Integer;
+
+Begin
+    IsCorrect := True;
+    Number := 0;
+
+    Repeat
+        Write(MyString);
+        IsCorrect := True;
+
+        Try
+            ReadLn(Number);
+        Except
+            WriteLn('Incorrect input, try again.');
+            IsCorrect := False;
+        End;
+
+        If IsCorrect And ((Number < MIN_NUMBER) Or (Number > MAX_NUMBER)) Then
+        Begin
+            WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+            IsCorrect := False;
+        End;
+
+    Until IsCorrect;
+
+    ReadAndVerify := Number;
+End;
+
+Function IsFileText(FilePath: String): Boolean;
+
+Const
+    MIN_PATH_LENGTH: Integer = 3;
+
+Var
+    FileExt: String;
+    IsText: Boolean;
+    Index: Integer;
+
+Begin
+    Index := Length(FilePath);
+    IsText := False;
+
+    If Index > MIN_PATH_LENGTH Then
+        FileExt := FilePath[Index - 3] + FilePath[Index - 2] + FilePath[Index - 1] + FilePath[Index]
+    Else
+        IsText := False;
+
+    IsText := FileExt = '.txt';
+
+    IsFileText := IsText;
+End;
+
+Function IsFileNotEmpty(Var InputFile: TextFile): Boolean;
+
+Var
+    IsNotEmpty: Boolean;
+
+Begin
+    Try
+        Reset(InputFile);
+        IsNotEmpty := Not EOF(InputFile);
+    Finally
+        CloseFile(InputFile);
+    End;
+
+    IsFileNotEmpty := IsNotEmpty;
+End;
+
+Function CanRead(Var InputFile: TextFile): Boolean;
+
+Var
+    IsReady: Boolean;
+
+Begin
+    Try
+        Reset(InputFile);
+        CloseFile(InputFile);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanRead := IsReady;
+End;
+
+Function CanWrite(Var FileVar: TextFile): Boolean;
+
+Var
+    IsReady: Boolean;
+
+Begin
+    Try
+        Append(FileVar);
+        CloseFile(FileVar);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanWrite := IsReady;
+End;
+
+Function CheckMyFile(Var InputFile: TextFile; FilePath: String; IsFileOutput: Boolean): Boolean;
+
+Var
+    CheckInput: Boolean;
+
+Begin
+    CheckInput := False;
+
+    If Not FileExists(FilePath) Then
+        Writeln('Error, file with path <', FilePath, '> is not exists.')
+    Else
+        If Not IsFileText(FilePath) Then
+            Writeln('Error, filename is not .txt')
+        Else
+            If (Not IsFileOutput) And (Not CanRead(InputFile)) Then
+                Writeln('Error, no access to read the file.')
+            Else
+                If IsFileOutput And (Not CanWrite(InputFile)) Then
+                    Writeln('Error, no access to write into the file.')
+                Else
+                    If Not IsFileNotEmpty(InputFile) Then
+                        Writeln('Error, file is empty.')
+                    Else
+                    Begin
+                        CheckInput := True;
+                        WriteLn('Assigning is completed successfully.');
+                    End;
+
+    CheckMyFile := CheckInput;
+End;
+
+Function WorkWithConsoleOrFile(IsOutput: Boolean): Boolean;
+
+Var
+    Number: Integer;
+    IsFromFile: Boolean;
+
+Begin
+    Number := 0;
+
+    If IsOutput Then
+        WriteLn('If data is output to the console write 0, if from file write 1.')
+    Else
+        WriteLn('If data is entered from the console write 0, if from file write 1.');
+
+    Number := ReadAndVerify(0, 1, '> ');
+
+    If Number = 0 Then
+    Begin
+        IsFromFile := False;
+        If IsOutput Then
+            WriteLn('The data is output to the console.')
+        Else
+            WriteLn('The data is entered from the console.');
+    End
+    Else
+    Begin
+        IsFromFile := True;
+        If IsOutput Then
+            WriteLn('The data is output to a file.')
+        Else
+            WriteLn('The data is entered from a file.');
+    End;
+
+    WorkWithConsoleOrFile := IsFromFile;
+End;
+
+Function AskTheFilePath(): String;
+
+Var
+    FilePath: String;
+
+Begin
+    FilePath := '';
+    Write('Write the existing file path: ');
+
+    Try
+        ReadLn(FilePath);
+    Finally
+        AskTheFilePath := FilePath;
+    End;
+End;
+
+Procedure AssignMyFile(Var InputFile: TextFile; IsFileOutput: Boolean);
+
+Var
+    Number: Integer;
+    IsCorrect: Boolean;
+    FilePath: String;
+
+Begin
+    Number := 0;
+    IsCorrect := True;
+    FilePath := '';
+
+    Repeat
+        FilePath := AskTheFilePath();
+
+        Try
+            AssignFile(InputFile, FilePath);
+        Except
+            WriteLn('Error with assigning.');
+            FilePath := AskTheFilePath();
+            IsCorrect := False;
+        End;
+
+        IsCorrect := CheckMyFile(InputFile, FilePath, IsFileOutput);
+
+    Until IsCorrect;
+End;
+
+Function IsDigit(C: Char): Boolean;
+
+Var
+    Answer: Boolean;
+
+Begin
+    Answer := False;
+
+    If (C >= '0') And (C <= '9') Then
+        Answer := True;
+
+    IsDigit := Answer;
+End;
+
+//Function IsLetter(C: Char): Boolean;
+//
+//Var
+//    Answer: Boolean;
+//
+//Begin
+//    Answer := False;
+//
+//    If ((C >= 'A') And (C <= 'Z')) Or ((C >= 'a') And (C <= 'z')) Then
+//        Answer := True;
+//
+//    IsLetter := Answer;
+//End;
+
+Function ExtractInteger(InputStr: String): String;
+
+Var
+    I, J: Integer;
+    Answer: String;
+    IsNotFound: Boolean;
+
+Begin
+    I := Low(InputStr);
+    J := 0;
+    Answer := '';
+    IsNotFound := True;
+
+    While (I < Length(InputStr)) And (IsNotFound) Do
+    Begin
+        //HasSign := False;
+        //HasDigit := False;
+        //StartPos := 0;
+        //EndPos := 0;
+
+        If ((InputStr[I] = '+') Or (InputStr[I] = '-')) And (IsDigit(InputStr[I + 1])) Then
+        Begin
+            //HasSign := True;
+            //StartPos := I;
+            Answer := Answer + InputStr[I];
+            J := I + 1;
+
+            While (J <= Length(InputStr)) And (IsNotFound) Do
+            Begin
+                //CurrentChar := InputStr[I];
+
+                If IsDigit(InputStr[J]) Then
+                    Answer := Answer + InputStr[J];
+
+                If IsDigit(InputStr[J + 1]) Then
+                Begin
+                    If (J + 1 = Length(InputStr)) Then
+                    Begin
+                        Answer := Answer + InputStr[J + 1];
+                        IsNotFound := false;
+                    End;
+                End
+                Else
+                    IsNotFound := False;
+
+
+                Inc(J);
+            End;
+
+        End;
+
+        Inc(I);
+    End;
+
+//    If Found Then
+//    Begin
+//        For J := StartPos To EndPos Do
+//            Answer := Answer + InputStr[J];
+//    End;
+
+    ExtractInteger := Answer;
+End;
+
+Function ReadStringFromFile(Var InputFile: TextFile): String;
+
+Var
+    InputStr: String;
+    CanReadData: Boolean;
+
+Begin
+    InputStr := '';
+    CanReadData := True;
+
+    Try
+        Reset(InputFile);
+
+        If Not EOF(InputFile) Then
+            ReadLn(InputFile, InputStr)
+        Else
+        Begin
+            WriteLn('Error, file is empty.');
+            InputStr := '';
+            CanReadData := False;
+        End;
+    Except
+        WriteLn('Error reading from file.');
+        InputStr := '';
+        CanReadData := False;
+    End;
+
+    CloseFile(InputFile);
+
+    ReadStringFromFile := InputStr;
+End;
+
+Function ReadStringFromConsole(): String;
+
+Var
+    InputStr: String;
+
+Begin
+    InputStr := '';
+    Write('Enter string: ');
+    ReadLn(InputStr);
+    ReadStringFromConsole := InputStr;
+End;
+
+Procedure WriteResultIntoFile(Var OutputFile: TextFile; Answer: String);
+
+Var
+    IsReady: Boolean;
+
+Begin
+    IsReady := True;
+
+    Try
+        Rewrite(OutputFile);
+    Except
+        IsReady := False;
+    End;
+
+    If IsReady Then
+    Begin
+        If Answer <> '' Then
+            WriteLn(OutputFile, 'Extracted integer: ', Answer)
+        Else
+            WriteLn(OutputFile, 'No valid integer found.');
+    End
+    Else
+        WriteLn('The unexpected error is found.');
+
+    CloseFile(OutputFile);
+End;
+
+Procedure WriteResultIntoConsole(Answer: String);
+
+Begin
+    If Answer <> '' Then
+        WriteLn('Extracted integer: ', Answer)
+    Else
+        WriteLn('No valid integer found.');
+End;
+
+Procedure ReadingStage(Var InputStr: String);
+
+Var
+    MyFile: TextFile;
+    IsFromFile: Boolean;
+    IsOutput: Boolean;
+    IsAllDone: Boolean;
+
+Begin
+    IsOutput := False;
+    IsAllDone := True;
+    IsFromFile := False;
+    IsFromFile := WorkWithConsoleOrFile(IsOutput);
+
+    If IsFromFile Then
+        Repeat
+            IsAllDone := True;
+            AssignMyFile(MyFile, IsOutput);
+            InputStr := ReadStringFromFile(MyFile);
+
+            If InputStr = '' Then
+            Begin
+                WriteLn('Something went wrong, try again.');
+                IsAllDone := False;
+            End;
+        Until IsAllDone
+    Else
+        InputStr := ReadStringFromConsole();
+End;
+
+Procedure WritingStage(Answer: String);
+
+Var
+    MyFile: TextFile;
+    IsToFile: Boolean;
+    IsOutput: Boolean;
+
+Begin
+    IsOutput := True;
+    IsToFile := False;
+
+    IsToFile := WorkWithConsoleOrFile(IsOutput);
+
+    If IsToFile Then
+    Begin
+        AssignMyFile(MyFile, IsOutput);
+        WriteResultIntoFile(MyFile, Answer);
+    End
+    Else
+        WriteResultIntoConsole(Answer);
+End;
+
+Var
+    InputStr, Answer: String;
+
+Begin
+    WritePurpose;
+    ReadingStage(InputStr);
+    Answer := ExtractInteger(InputStr);
+    WritingStage(Answer);
+    ReadLn;
+End.

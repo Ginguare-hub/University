@@ -1,0 +1,52 @@
+Unit Unit1;
+
+Interface
+
+Uses
+    Winapi.Windows,
+    Winapi.Messages,
+    System.SysUtils,
+    System.Variants,
+    System.Classes,
+    Vcl.Graphics,
+    Vcl.Controls,
+    Vcl.Forms,
+    Vcl.Dialogs,
+    Vcl.Menus,
+    Vcl.StdCtrls,
+    Vcl.Grids,
+    Vcl.ExtDlgs,
+    Unit2;
+
+Type
+    TMainForm = Class(TForm)
+    MainMenu: TMainMenu;
+        FileTub: TMenuItem;
+    InstructonTub: TMenuItem;
+    AboutDeveloperTub: TMenuItem;
+    OpenTubButton: TMenuItem;
+    SaveTubButton: TMenuItem;
+    CloseTubButton: TMenuItem;
+    Separator3: TMenuItem;
+        TaskLabel: TLabel;
+        NumberNEdit: TEdit;
+        ResultButton: TButton;
+        OpenTextFileDialog: TOpenTextFileDialog;
+        SaveTextFileDialog: TSaveTextFileDialog;
+    Separator2: TMenuItem;
+    Separator1: TMenuItem;
+    Edit1: TEdit;
+    Private
+        { Private declarations }
+    Public
+        { Public declarations }
+    End;
+
+Var
+    MainForm: TMainForm;
+
+Implementation
+
+{$R *.dfm}
+
+End.
