@@ -295,7 +295,6 @@ string extractInteger(string inputStr)
         }
         i++;
     }
-    
     return answer;
 }
 
@@ -346,11 +345,11 @@ void writingStage(string &str)
 int main()
 {
     string str;
-
     str = "";
     
     writePurpose();
     readingStage(str);
+    str = extractInteger(str);
     writingStage(str);
 
     return 0;
