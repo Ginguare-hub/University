@@ -352,5 +352,5 @@ int main()
     str = extractInteger(str);
     writingStage(str);
 
-    return 0;
+    return 0; //дописать что делать если строка пустая
 }
