@@ -1,62 +1,5 @@
 Program StringLab;
 
-//uses
-//  System.SysUtils;
-//
-//Type
-//    ArrayOfChars = Array Of Char;
-//
-//Function FindIsCharInList(MyChar: Char): Boolean;
-//
-//Var
-//    AnsBool: Boolean;
-//    GoodChars: ArrayOfChars;
-//    I: Integer;
-//
-//Begin
-//    AnsBool := False;
-//    SetLength(GoodChars, 12);
-//    GoodChars := ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-'];
-//
-//    For I := Low(GoodChars) To High(GoodChars) Do
-//        If GoodChars[I] = MyChar Then
-//            AnsBool := True;
-//
-//    FindIsCharInList := AnsBool;
-//End;
-//
-//Var
-//    Str, AnswerStr: String;
-//    I, J, K: Integer;
-//    IsNumberInList: Boolean;
-//
-//Begin
-//    I := 0;
-//    J := 0;
-//    IsNumberInList := False;
-//
-//    ReadLn(Str);
-//
-//    For I := Low(Str) To High(Str) Do
-//        If (Str[I] = '+') Or (Str[I] = '-') Then
-//        Begin
-//            For J := I To High(Str) Do
-//            Begin
-//                IsNumberInList := False;
-//
-//                IsNumberInList := FindIsCharInList(Str[j]);
-//
-//                If IsNumberInList Then
-//                    AnswerStr := AnswerStr + Str[J];
-//            End;
-//        End;
-//
-//    WriteLn(AnswerStr);
-//    ReadLn;
-//End.
-
-//Program Lab2_ExtractInteger;
-
 Uses
     System.SysUtils;
 
@@ -297,85 +240,65 @@ Begin
     IsDigit := Answer;
 End;
 
-Function IsLetter(C: Char): Boolean;
-
-Var
-    Answer: Boolean;
-
-Begin
-    Answer := False;
-
-    If ((C >= 'A') And (C <= 'Z')) Or ((C >= 'a') And (C <= 'z')) Then
-        Answer := True;
-
-    IsLetter := Answer;
-End;
+//Function IsLetter(C: Char): Boolean;
+//
+//Var
+//    Answer: Boolean;
+//
+//Begin
+//    Answer := False;
+//
+//    If ((C >= 'A') And (C <= 'Z')) Or ((C >= 'a') And (C <= 'z')) Then
+//        Answer := True;
+//
+//    IsLetter := Answer;
+//End;
 
 Function ExtractInteger(InputStr: String): String;
 
 Var
-    I, J, StartPos, EndPos: Integer;
+    I, J: Integer;
     Answer: String;
-    CurrentChar: Char;
-    HasSign, HasDigit, Found: Boolean;
+    IsNotFound: Boolean;
 
 Begin
-    I := 1;
+    I := Low(InputStr);
     J := 0;
-    StartPos := 0;
-    EndPos := 0;
     Answer := '';
-    CurrentChar := '';
-    HasSign := False;
-    HasDigit := False;
-    Found := False;
+    IsNotFound := True;
 
-    While (I <= Length(InputStr)) And (Not Found) Do
+    While (I < Length(InputStr)) And (IsNotFound) Do
     Begin
-        HasSign := False;
-        HasDigit := False;
-        StartPos := 0;
-        EndPos := 0;
 
-        If (InputStr[I] = '+') Or (InputStr[I] = '-') Then
+        If ((InputStr[I] = '+') Or (InputStr[I] = '-')) And (IsDigit(InputStr[I + 1])) Then
         Begin
-            HasSign := True;
-            StartPos := I;
-            I := I + 1;
+            Answer := Answer + InputStr[I];
+            J := I + 1;
 
-            While (I <= Length(InputStr)) And (Not Found) Do
+            While (J <= Length(InputStr)) And (IsNotFound) Do
             Begin
-                CurrentChar := InputStr[I];
 
-                If IsDigit(CurrentChar) Then
-                Begin
-                    HasDigit := True;
-                    EndPos := I;
-                    I := I + 1;
-                End
-                Else
-                Begin
-                    If IsLetter(CurrentChar) Or (CurrentChar = '.') Then
+                If IsDigit(InputStr[J]) Then
+                    Answer := Answer + InputStr[J];
+
+                If J = Length(InputStr) Then
+                    IsNotFound := false;
+
+                If IsNotFound And IsDigit(InputStr[J + 1]) Then
+                    If (J + 1 = Length(InputStr)) Then
                     Begin
-                        HasSign := False;
-                        HasDigit := False;
-                    End;
+                        Answer := Answer + InputStr[J + 1];
+                        IsNotFound := false;
+                    End
+                Else
+                    IsNotFound := False;
 
-                    I := Length(InputStr) + 1;
-                End;
+                Inc(J);
             End;
 
-            If HasSign And HasDigit Then
-                Found := True;
-        End
-        Else
-            I := I + 1;
-    End;
+        End;
 
-    If Found Then
-    Begin
-        For J := StartPos To EndPos Do
-            Answer := Answer + InputStr[J];
+        Inc(I);
     End;
 
     ExtractInteger := Answer;

@@ -240,20 +240,6 @@ Begin
     IsDigit := Answer;
 End;
 
-//Function IsLetter(C: Char): Boolean;
-//
-//Var
-//    Answer: Boolean;
-//
-//Begin
-//    Answer := False;
-//
-//    If ((C >= 'A') And (C <= 'Z')) Or ((C >= 'a') And (C <= 'z')) Then
-//        Answer := True;
-//
-//    IsLetter := Answer;
-//End;
-
 Function ExtractInteger(InputStr: String): String;
 
 Var
@@ -401,6 +387,7 @@ Begin
     If IsFromFile Then
         Repeat
             IsAllDone := True;
+
             AssignMyFile(MyFile, IsOutput);
             InputStr := ReadStringFromFile(MyFile);
 
