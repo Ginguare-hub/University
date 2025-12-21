@@ -225,7 +225,7 @@ void writeIntegerIntoFile(string &filePath, int number)
     outputFile << "The result is: " << number << endl;
 
     outputFile.close();
-    cout << "Matrix written to file successfully." << endl;
+    cout << "Answer written to file successfully." << endl;
 }
 
 string askTheFilePath()

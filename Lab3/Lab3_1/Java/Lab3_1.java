@@ -112,6 +112,7 @@ public class Lab3_1 {
     public static String readStringFromConsole(Scanner scanner) {
         String answer;
         answer = "";
+        System.out.print("Enter string: ");
         answer = scanner.nextLine();
         return answer;
     }
