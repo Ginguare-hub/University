@@ -4,16 +4,15 @@ import java.io.*;
 public class myFiles {
 
     public static void writePurpose() {
-        System.out.print("REWRITE_REWRITE_REWRITE");
+        System.out.print("REWRITE_REWRITE_REWRITE \n");
     }
 
     public static int readAndVerify(final int MIN_NUMBER, final int MAX_NUMBER, String str, Scanner scanner) {
-
         boolean isIncorrect;
         int number;
 
-        number = 0;
         isIncorrect = true;
+        number = 0;
 
         do {
 

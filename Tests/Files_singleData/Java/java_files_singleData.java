@@ -4,16 +4,15 @@ import java.io.*;
 public class java_files_singleData {
 
     public static void writePurpose() {
-        System.out.print("REWRITE_REWRITE_REWRITE");
+        System.out.print("REWRITE_REWRITE_REWRITE \n");
     }
 
     public static int readAndVerify(final int MIN_NUMBER, final int MAX_NUMBER, String str, Scanner scanner) {
-
         boolean isIncorrect;
         int number;
 
-        number = 0;
         isIncorrect = true;
+        number = 0;
 
         do {
 
@@ -46,9 +45,11 @@ public class java_files_singleData {
         isText = true;
         pathLength = filePath.length();
 
-        if ((filePath.length() < MIN_PATH_LENGTH) || (filePath.charAt(pathLength - 1) != 't')
-                || (filePath.charAt(pathLength - 2) != 'x') || (filePath.charAt(pathLength - 3) != 't')
-                || (filePath.charAt(pathLength - 4) != '.'))
+        if ((filePath.length() < MIN_PATH_LENGTH) 
+            || (filePath.charAt(pathLength - 1) != 't')
+            || (filePath.charAt(pathLength - 2) != 'x') 
+            || (filePath.charAt(pathLength - 3) != 't')
+            || (filePath.charAt(pathLength - 4) != '.'))
             isText = false;
 
         return isText;
@@ -126,6 +127,9 @@ public class java_files_singleData {
         int intAnswer;
         String strAnswer;
 
+        intAnswer = 0;
+        strAnswer = "";
+
         try {
             strAnswer = fileReader.readLine();
             intAnswer = Integer.parseInt(strAnswer);
@@ -166,11 +170,10 @@ public class java_files_singleData {
     }
 
     public static void writeIntegerIntoConsole(int number) {
-        System.out.printf("The result is: ", number);
+        System.out.printf("The result is: " + number);
     }
 
     public static boolean writeMatrixIntoFile(String filePath, int number) {
-
         boolean isIncorrect;
         isIncorrect = false;
 
@@ -236,6 +239,7 @@ public class java_files_singleData {
         String filePath;
 
         isToFile = false;
+        isAllUndone = false;
         isOutput = false;
         filePath = "";
 
