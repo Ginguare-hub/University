@@ -173,13 +173,13 @@ public class java_files_singleData {
         System.out.printf("The result is: " + number);
     }
 
-    public static boolean writeMatrixIntoFile(String filePath, int number) {
+    public static boolean writeIntegerIntoFile(String filePath, int number) {
         boolean isIncorrect;
         isIncorrect = false;
 
         try (FileWriter fileWriter = new FileWriter(filePath)) {
             fileWriter.write("The result is: \n" + number);
-            System.out.print("Number written to file successfully.\n");
+            System.out.print("Answer written to file successfully.\n");
             fileWriter.close();
         } catch (IOException e) {
             System.out.print("Error with file write.\n");
@@ -221,7 +221,7 @@ public class java_files_singleData {
                 }
 
                 if (number == 0)
-                    System.out.print("There is might be error with reading number, bad file read or file is not open for reading.\n");
+                    System.out.print("There is might be error with reading, bad file read or file is not open for reading.\n");
                 else
                     isAllUndone = false;
 
@@ -249,7 +249,7 @@ public class java_files_singleData {
         if (isToFile) {
             do {
                 filePath = assignMyFile(isOutput, consoleScanner);
-                isAllUndone = writeMatrixIntoFile(filePath, number);
+                isAllUndone = writeIntegerIntoFile(filePath, number);
             } while (isAllUndone);
         } else
             writeIntegerIntoConsole(number);

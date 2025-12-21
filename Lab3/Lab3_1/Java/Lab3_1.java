@@ -109,42 +109,27 @@ public class Lab3_1 {
         return isFromFile;
     }
 
-    public static int readIntegerFromConsole(final int MIN_NUMBER, final int MAX_NUMBER, Scanner scanner) {
-        final int MIN_LENGTH = 0;
-        final int MAX_LENGTH = 1000000;
-
-        int answer;
-        answer = 0;
-        answer = readAndVerify(MIN_LENGTH, MAX_LENGTH, "Write number: ", scanner);
-
+    public static String readStringFromConsole(Scanner scanner) {
+        String answer;
+        answer = "";
+        answer = scanner.nextLine();
         return answer;
     }
 
-    public static int readIntegerFromFile(final int MIN_NUMBER, final int MAX_NUMBER, String filePath, BufferedReader fileReader) {
-        final int MIN_LENGTH = 0;
-        final int MAX_LENGTH = 1000000;
-
-        int intAnswer;
+    public static String readStringFromFile(String filePath, BufferedReader fileReader) {
         String strAnswer;
 
-        intAnswer = 0;
         strAnswer = "";
 
         try {
             strAnswer = fileReader.readLine();
-            intAnswer = Integer.parseInt(strAnswer);
         } catch (NumberFormatException e) {
             System.out.print("Error, NumberFormatException.\n");
         } catch (IOException e) {
             System.out.print("Error, IOException.\n");
         }
 
-        if (intAnswer < MIN_LENGTH || intAnswer > MAX_LENGTH) {
-            System.out.printf("Incorrect number, the number must fit the range [%d,%d].\n", MIN_LENGTH, MAX_LENGTH);
-            intAnswer = 0;
-        }
-
-        return intAnswer;
+        return strAnswer;
     }
 
     public static String askTheFilePath(Scanner scanner) {
@@ -169,17 +154,17 @@ public class Lab3_1 {
         return filePath;
     }
 
-    public static void writeIntegerIntoConsole(int number) {
-        System.out.printf("The result is: " + number);
+    public static void writeStringIntoConsole(String str) {
+        System.out.printf("The result is: " + str);
     }
 
-    public static boolean writeMatrixIntoFile(String filePath, int number) {
+    public static boolean writeStringIntoFile(String filePath, String str) {
         boolean isIncorrect;
         isIncorrect = false;
 
         try (FileWriter fileWriter = new FileWriter(filePath)) {
-            fileWriter.write("The result is: \n" + number);
-            System.out.print("Number written to file successfully.\n");
+            fileWriter.write("The result is: \n" + str);
+            System.out.print("Answer written to file successfully.\n");
             fileWriter.close();
         } catch (IOException e) {
             System.out.print("Error with file write.\n");
@@ -189,21 +174,70 @@ public class Lab3_1 {
         return isIncorrect;
     }
 
-    public static int readingStage(Scanner consoleScanner) {
-        final int MIN_NUMBER = -100000;
-        final int MAX_NUMBER = 100000;
+    public static boolean isDigit(char myChar) {
+        boolean answer;
+    
+        answer = false;
+    
+        if ((myChar >= '0') && (myChar <= '9'))
+            answer = true;
+    
+        return answer;
+    }
 
-        int number;
+    public static String extractInteger(String inputStr) {
+        int i, j;
+        String answer;
+        boolean isNotFound;
+    
+        i = 0;
+        j = 0;
+        answer = "";
+        isNotFound = true;
+    
+        while ((i < inputStr.length()) && isNotFound) {
+            if (((inputStr.charAt(i) == '+') || (inputStr.charAt(i) == '-')) 
+                && (i + 1 < inputStr.length()) && isDigit(inputStr.charAt(i + 1))) {
+            
+                answer = answer + inputStr.charAt(i);
+                j = i + 1;
+            
+                while ((j < inputStr.length()) && isNotFound) {
+                    if (isDigit(inputStr.charAt(j)))
+                        answer = answer + inputStr.charAt(j);
+                
+                    if (j == inputStr.length() - 1)
+                        isNotFound = false;
+                
+                    if (isNotFound && (j + 1 < inputStr.length()) && isDigit(inputStr.charAt(j + 1))) {
+                        if (j + 1 == inputStr.length() - 1) {
+                            answer = answer + inputStr.charAt(j + 1);
+                            isNotFound = false;
+                        }
+                    } else
+                        isNotFound = false;
+
+                    j++;
+                }
+            }
+            i++;
+        }
+    
+        return answer;
+    }
+
+    public static String readingStage(Scanner consoleScanner) {
         boolean isFromFile;
         boolean isAllUndone;
         boolean isOutput;
         String filePath;
+        String answer;
 
-        number = 0;
         isFromFile = false;
         isOutput = false;
         isAllUndone = true;
         filePath = "";
+        answer = "";
 
         isFromFile = workWithConsoleOrFile(isOutput, consoleScanner);
         isOutput = false;
@@ -214,25 +248,25 @@ public class Lab3_1 {
                 filePath = assignMyFile(isOutput, consoleScanner);
 
                 try (BufferedReader bufReader = new BufferedReader(new FileReader(filePath))) {
-                    number = readIntegerFromFile(MIN_NUMBER, MAX_NUMBER, filePath, bufReader);
+                    answer = readStringFromFile(filePath, bufReader);
                     bufReader.close();
                 } catch (IOException e) {
                     System.out.print("Error, something went wrong.\n");
                 }
 
-                if (number == 0)
-                    System.out.print("There is might be error with reading number, bad file read or file is not open for reading.\n");
+                if (answer == "")
+                    System.out.print("There is might be error with reading, bad file read or file is not open for reading.\n");
                 else
                     isAllUndone = false;
 
             } while (isAllUndone);
         } else
-            number = readIntegerFromConsole(MIN_NUMBER, MAX_NUMBER, consoleScanner);
+            answer = readStringFromConsole(consoleScanner);
 
-        return number;
+        return answer;
     }
 
-    public static void writingStage(int number, Scanner consoleScanner) {
+    public static void writingStage(String answer, Scanner consoleScanner) {
         boolean isToFile;
         boolean isAllUndone;
         boolean isOutput;
@@ -249,21 +283,22 @@ public class Lab3_1 {
         if (isToFile) {
             do {
                 filePath = assignMyFile(isOutput, consoleScanner);
-                isAllUndone = writeMatrixIntoFile(filePath, number);
+                isAllUndone = writeStringIntoFile(filePath, answer);
             } while (isAllUndone);
         } else
-            writeIntegerIntoConsole(number);
+            writeStringIntoConsole(answer);
     }
 
     public static void main(String[] args) {
-        int number;
+        String str;
         Scanner consoleScanner = new Scanner(System.in);
 
-        number = 0;
+        str = "";
 
         writePurpose();
-        number = readingStage(consoleScanner);
-        writingStage(number, consoleScanner);
+        str = readingStage(consoleScanner);
+        str = extractInteger(str);
+        writingStage(str, consoleScanner);
 
         consoleScanner.close();
     }
