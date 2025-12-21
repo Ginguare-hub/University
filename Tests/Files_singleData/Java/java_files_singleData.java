@@ -147,6 +147,26 @@ public class java_files_singleData {
         return intAnswer;
     }
 
+    public static void writeIntegerIntoConsole(int number) {
+        System.out.printf("The result is: " + number);
+    }
+
+    public static boolean writeIntegerIntoFile(String filePath, int number) {
+        boolean isIncorrect;
+        isIncorrect = false;
+
+        try (FileWriter fileWriter = new FileWriter(filePath)) {
+            fileWriter.write("The result is: \n" + number);
+            System.out.print("Answer written to file successfully.\n");
+            fileWriter.close();
+        } catch (IOException e) {
+            System.out.print("Error with file write.\n");
+            isIncorrect = true;
+        }
+
+        return isIncorrect;
+    }
+
     public static String askTheFilePath(Scanner scanner) {
         String filePath;
         System.out.print("Write the existing file path: ");
@@ -167,26 +187,6 @@ public class java_files_singleData {
         } while (isIncorrect);
 
         return filePath;
-    }
-
-    public static void writeIntegerIntoConsole(int number) {
-        System.out.printf("The result is: " + number);
-    }
-
-    public static boolean writeIntegerIntoFile(String filePath, int number) {
-        boolean isIncorrect;
-        isIncorrect = false;
-
-        try (FileWriter fileWriter = new FileWriter(filePath)) {
-            fileWriter.write("The result is: \n" + number);
-            System.out.print("Answer written to file successfully.\n");
-            fileWriter.close();
-        } catch (IOException e) {
-            System.out.print("Error with file write.\n");
-            isIncorrect = true;
-        }
-
-        return isIncorrect;
     }
 
     public static int readingStage(Scanner consoleScanner) {
