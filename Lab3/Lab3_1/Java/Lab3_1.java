@@ -196,8 +196,7 @@ public class Lab3_1 {
         isNotFound = true;
     
         while ((i < inputStr.length()) && isNotFound) {
-            if (((inputStr.charAt(i) == '+') || (inputStr.charAt(i) == '-')) 
-                && (i + 1 < inputStr.length()) && isDigit(inputStr.charAt(i + 1))) {
+            if (((inputStr.charAt(i) == '+') || (inputStr.charAt(i) == '-')) && (i + 1 < inputStr.length()) && isDigit(inputStr.charAt(i + 1))) {
             
                 answer = answer + inputStr.charAt(i);
                 j = i + 1;
@@ -216,13 +215,11 @@ public class Lab3_1 {
                         }
                     } else
                         isNotFound = false;
-
                     j++;
                 }
             }
             i++;
         }
-    
         return answer;
     }
 
