@@ -271,11 +271,13 @@ Begin
                     IsNotFound := false;
 
                 If IsNotFound And IsDigit(InputStr[J + 1]) Then
+                Begin
                     If (J + 1 = Length(InputStr)) Then
                     Begin
                         Answer := Answer + InputStr[J + 1];
-                        IsNotFound := false;
-                    End
+                        IsNotFound := False;
+                    End;
+                End
                 Else
                     IsNotFound := False;
 

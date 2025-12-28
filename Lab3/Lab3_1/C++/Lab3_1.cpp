@@ -199,7 +199,7 @@ void writeStringIntoConsole(string str)
     cout << "Extracted integer: " << str << endl;
 }
 
-void writeStringIntoFile(string &filePath, string str)
+void writeResultIntoFile(string &filePath, string str)
 {
     ofstream outputFile(filePath);
 
@@ -209,7 +209,11 @@ void writeStringIntoFile(string &filePath, string str)
         return;
     }
 
-    outputFile << "Extracted integer: " << str << endl;
+    if (str == "") {
+        outputFile << "No valid integer found." << endl;    
+    }
+    else
+        outputFile << "Extracted integer: " << str << endl;
 
     outputFile.close();
     cout << "Answer written to file successfully." << endl;
@@ -336,7 +340,7 @@ void writingStage(string &str)
     if (isToFile)
     {
         filePath = assignMyFile(isOutput);
-        writeStringIntoFile(filePath, str);
+        writeResultIntoFile(filePath, str);
     }
     else
         writeStringIntoConsole(str);
