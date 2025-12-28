@@ -155,16 +155,24 @@ public class Lab3_1 {
         return filePath;
     }
 
-    public static void writeStringIntoConsole(String str) {
-        System.out.printf("The result is: " + str);
+    public static void writeResultIntoConsole(String str) {
+        if (str == "") {
+            System.out.print("No valid integer found.\n");
+        } else {
+            System.out.printf("Extracted integer: " + str + "\n");
+        }
     }
 
-    public static boolean writeStringIntoFile(String filePath, String str) {
+    public static boolean writeResultIntoFile(String filePath, String str) {
         boolean isIncorrect;
         isIncorrect = false;
 
         try (FileWriter fileWriter = new FileWriter(filePath)) {
-            fileWriter.write("Extracted integer: " + str);
+            if (str == "") {
+                fileWriter.write("No valid integer found.\n");
+            } else {
+                fileWriter.write("Extracted integer: " + str + "\n");
+            }
             System.out.print("Answer written to file successfully.\n");
             fileWriter.close();
         } catch (IOException e) {
@@ -281,10 +289,10 @@ public class Lab3_1 {
         if (isToFile) {
             do {
                 filePath = assignMyFile(isOutput, consoleScanner);
-                isAllUndone = writeStringIntoFile(filePath, answer);
+                isAllUndone = writeResultIntoFile(filePath, answer);
             } while (isAllUndone);
         } else
-            writeStringIntoConsole(answer);
+            writeResultIntoConsole(answer);
     }
 
     public static void main(String[] args) {

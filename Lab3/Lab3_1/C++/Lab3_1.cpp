@@ -194,9 +194,14 @@ string readStringFromConsole()
     return str;
 }
 
-void writeStringIntoConsole(string str)
+void writeResultIntoConsole(string str)
 {
-    cout << "Extracted integer: " << str << endl;
+    if (str == "") 
+    {
+        cout << "No valid integer found." << endl;    
+    }
+    else
+        cout << "Extracted integer: " << str << endl;
 }
 
 void writeResultIntoFile(string &filePath, string str)
@@ -209,7 +214,8 @@ void writeResultIntoFile(string &filePath, string str)
         return;
     }
 
-    if (str == "") {
+    if (str == "") 
+    {
         outputFile << "No valid integer found." << endl;    
     }
     else
@@ -343,7 +349,7 @@ void writingStage(string &str)
         writeResultIntoFile(filePath, str);
     }
     else
-        writeStringIntoConsole(str);
+        writeResultIntoConsole(str);
 }
 
 int main()
@@ -356,5 +362,5 @@ int main()
     str = extractInteger(str);
     writingStage(str);
 
-    return 0; //дописать что делать если строка пустая
+    return 0; 
 }
