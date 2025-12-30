@@ -280,10 +280,8 @@ string assignMyFile(bool isFileOutput)
 void writeSetIntoFile(string &filePath, set<int> setOfPrime, set<int> setOfNonPrime)
 {
     ofstream outputFile;
-    int i;
     bool isReady;
 
-    i = 0;
     isReady = true;
     
     outputFile.open(filePath);
@@ -322,9 +320,6 @@ void writeSetIntoFile(string &filePath, set<int> setOfPrime, set<int> setOfNonPr
 
 void writeSetIntoConsole(set<int> setOfPrime, set<int> setOfNonPrime)
 {
-    int i;
-    i = 0;
-
     if (setOfPrime.empty())
         cout << "There is no prime numbers in given set." << endl;
     else
