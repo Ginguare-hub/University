@@ -303,27 +303,33 @@ Begin
 
     If IsReady Then
     Begin
+
         If SetOfPrime = [] Then
             WriteLn(OutputFile, 'There is no prime numbers in given set.')
         Else
+        Begin
             WriteLn(OutputFile, 'The result elements of set with prime numbers is: ');
             For I := 0 To 255 Do
             Begin
                 If I In SetOfPrime Then
                     Write(OutputFile, I, ' ');
             End;
+        End;
 
         WriteLn(OutputFile, '');
 
         If SetOfNonPrime = [] Then
             WriteLn(OutputFile, 'There is no non-prime numbers in given set.')
         Else
+        Begin
             WriteLn(OutputFile, 'The result elements of set with non-prime numbers is: ');
             For I := 0 To 255 Do
             Begin
                 If I In SetOfNonPrime Then
                     Write(OutputFile, I, ' ');
             End;
+        End;
+
     End
     Else
         WriteLn('The unexpected error is found.');
@@ -340,26 +346,31 @@ Begin
     I := 0;
 
     If SetOfPrime = [] Then
-            WriteLn('There is no prime numbers in given set.')
-        Else
-            WriteLn('The result elements of set with prime numbers is: ');
-            For I := 0 To 255 Do
-            Begin
-                If I In SetOfPrime Then
-                    Write(I, ' ');
-            End;
+        WriteLn('There is no prime numbers in given set.')
+    Else
+    Begin
+        WriteLn('The result elements of set with prime numbers is: ');
+        For I := 0 To 255 Do
+        Begin
+            If I In SetOfPrime Then
+                Write(I, ' ');
+        End;
+    End;
 
         WriteLn('');
 
-        If SetOfNonPrime = [] Then
-            WriteLn('There is no non-prime numbers in given set.')
-        Else
-            WriteLn('The result elements of set with non-prime numbers is: ');
-            For I := 0 To 255 Do
-            Begin
-                If I In SetOfNonPrime Then
-                    Write(I, ' ');
-            End;
+    If SetOfNonPrime = [] Then
+        WriteLn('There is no non-prime numbers in given set.')
+    Else
+    Begin
+        WriteLn('The result elements of set with non-prime numbers is: ');
+        For I := 0 To 255 Do
+        Begin
+            If I In SetOfNonPrime Then
+                Write(I, ' ');
+        End;
+    End;
+
 End;
 
 Function AskTheFilePath(): String;
