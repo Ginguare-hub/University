@@ -1,0 +1,522 @@
+Program SetLab;
+
+uses
+  System.SysUtils;
+
+Type
+    TSet = Set of 0..255;
+
+Procedure WritePurpose;
+
+Begin
+    WriteLn('The program generates two sets, the first of which contains all prime numbers from the given set, and the second of which contains all composite numbers.');
+End;
+
+Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
+
+Var
+    IsCorrect: Boolean;
+    Number: Integer;
+
+Begin
+    IsCorrect := True;
+    Number := 0;
+
+    Repeat
+
+        Write(MyString);
+        IsCorrect := True;
+
+        Try
+            ReadLn(Number);
+        Except
+            WriteLn('Incorrect input, try again.');
+            IsCorrect := False;
+        End;
+
+        If IsCorrect And ((Number < MIN_NUMBER) Or (Number > MAX_NUMBER)) Then
+        Begin
+            WriteLn('The number must fit the range [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+            IsCorrect := False;
+        End;
+
+    Until IsCorrect;
+
+    ReadAndVerify := Number;
+End;
+
+Function IsFileText(FilePath: String): Boolean;
+
+Const
+    MIN_PATH_LENGTH: Integer = 3;
+
+Var
+    FileExt: String;
+    IsText: Boolean;
+    Index: Integer;
+
+Begin
+    Index := Length(FilePath);
+    IsText := False;
+
+    If Index > MIN_PATH_LENGTH Then
+        FileExt := FilePath[Index - 3] + FilePath[Index - 2] + FilePath[Index - 1] + FilePath[Index]
+    Else
+        IsText := False;
+
+    IsText := FileExt = '.txt';
+
+    IsFileText := IsText;
+End;
+
+Function IsFileNotEmpty(Var InputFile: TextFile): Boolean;
+
+Var
+    IsNotEmpty: Boolean;
+
+Begin
+
+    Try
+        Reset(InputFile);
+        IsNotEmpty := Not EOF(InputFile);
+    Finally
+        CloseFile(InputFile);
+    End;
+
+    IsFileNotEmpty := IsNotEmpty;
+End;
+
+Function CanRead(Var InputFile: TextFile): Boolean;
+
+Var
+    IsReady: Boolean;
+
+Begin
+
+    Try
+        Reset(InputFile);
+        CloseFile(InputFile);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanRead := IsReady;
+End;
+
+Function CanWrite(Var FileVar: TextFile): Boolean;
+
+Var
+    IsReady: Boolean;
+
+Begin
+
+    Try
+        Append(FileVar);
+        CloseFile(FileVar);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanWrite := IsReady;
+End;
+
+Function CheckMyFile(Var InputFile: TextFile; FilePath: String; IsFileOutput: Boolean): Boolean;
+
+Var
+    CheckInput: Boolean;
+
+Begin
+    CheckInput := False;
+
+    If Not FileExists(FilePath) Then
+        Writeln('Error, file with path <', FilePath, '> is not exists.')
+    Else
+        If Not IsFileText(FilePath) Then
+            Writeln('Error, filename is not .txt')
+        Else
+            If (Not IsFileOutput) And (Not CanRead(InputFile)) Then
+                Writeln('Error, no access to read the file.')
+            Else
+                If IsFileOutput And (Not CanWrite(InputFile)) Then
+                    Writeln('Error, no access to write into the file.')
+                Else
+                    If Not IsFileNotEmpty(InputFile) Then
+                        Writeln('Error, file is empty.')
+                    Else
+                    Begin
+                        CheckInput := True;
+                        WriteLn('Assigning is completed successfully.');
+                    End;
+
+    CheckMyFile := CheckInput;
+End;
+
+Function WorkWithConsoleOrFile(IsOutput: Boolean): Boolean;
+
+Var
+    Number: Integer;
+    IsFromFile: Boolean;
+
+Begin
+    Number := 0;
+
+    If IsOutput Then
+        WriteLn('If data is output to the console write 0, if from file write 1.')
+    Else
+        WriteLn('If data is entered from the console write 0, if from file write 1.');
+
+    Number := ReadAndVerify(0, 1, '> ');
+
+    If Number = 0 Then
+    Begin
+        IsFromFile := False;
+        If IsOutput Then
+            WriteLn('The data is output to the console.')
+        Else
+            WriteLn('The data is entered from the console.');
+    End
+    Else
+    Begin
+        IsFromFile := True;
+        If IsOutput Then
+            WriteLn('The data is output to a file.')
+        Else
+            WriteLn('The data is entered from a file.');
+    End;
+
+    WorkWithConsoleOrFile := IsFromFile;
+End;
+
+Function ReadSetFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; Var InputFile: TextFile): TSet;
+
+Const
+    MIN_LENGTH: Integer = 1;
+    MAX_LENGTH: Integer = 255;
+
+Var
+    I, MySetLength, SetElement: Integer;
+    MySet: TSet;
+    IsFine: Boolean;
+
+Begin
+    MySetLength := 0;
+    I := 0;
+    SetElement := 0;
+    MySet := [];
+    IsFine := True;
+
+    Try
+        Reset(InputFile);
+        ReadLn(InputFile, MySetLength);
+    Except
+        IsFine := False;
+    End;
+
+    If MySetLength > 0 Then
+    Begin
+        If (MySetLength < MIN_NUMBER) Or (MySetLength > MAX_NUMBER) Then
+        Begin
+            WriteLn('Incorrect matrix length, the number must fit the range [', MIN_LENGTH, ',', MAX_LENGTH, '].');
+            IsFine := False;
+        End;
+    End
+    Else
+        IsFine := False;
+
+    If IsFine Then
+    Begin
+        For I := 1 To MySetLength Do
+        Begin
+
+            Try
+                Read(InputFile, SetElement);
+            Except
+                MySet := [];
+                IsFine := False;
+                WriteLn('Incorrect numeric data: matrix element.');
+            End;
+
+            If IsFine Then
+                Include(MySet, SetElement);
+        End;
+    End
+    Else
+        MySet := [];
+
+    CloseFile(InputFile);
+
+    If MySet = [] Then
+        WriteLn('Error, incorrect matrix data.');
+
+    ReadSetFromFile := MySet;
+End;
+
+Function ReadSetFromConsole(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer): TSet;
+
+Const
+    MIN_LENGTH: Integer = 1;
+    MAX_LENGTH: Integer = 20;
+
+Var
+    Set1: TSet;
+    I, J, SetLength, SetElement: Integer;
+
+Begin
+    Set1 := [];
+    I := 0;
+    J := 0;
+    SetLength := 0;
+    SetElement := 0;
+
+    SetLength := ReadAndVerify(MIN_LENGTH, MAX_LENGTH, 'Write set length: ');
+
+    For I := 1 To SetLength Do
+    Begin
+        Write('Write element of set: ');
+        SetElement := ReadAndVerify(MIN_NUMBER, MAX_NUMBER, '');
+        Include(Set1, SetElement);
+    End;
+
+    ReadSetFromConsole := Set1;
+End;
+
+Procedure WriteSetIntoFile(Var OutputFile: TextFile; SetOfPrime, SetOfNonPrime: TSet);
+
+Const
+    MAX_SET_LENGTH: Integer = 255;
+
+Var
+    I: Integer;
+    IsReady: Boolean;
+
+Begin
+    I := 0;
+    IsReady := True;
+
+    Try
+        Rewrite(OutputFile);
+    Except
+        IsReady := False;
+    End;
+
+    If IsReady Then
+    Begin
+        If SetOfPrime = [] Then
+            WriteLn(OutputFile, 'There is no prime numbers in given set.')
+        Else
+            WriteLn(OutputFile, 'The result elements of set with prime numbers is: ');
+            For I := 0 To 255 Do
+            Begin
+                If I In SetOfPrime Then
+                    Write(OutputFile, I, ' ');
+            End;
+
+        WriteLn(OutputFile, '');
+
+        If SetOfNonPrime = [] Then
+            WriteLn(OutputFile, 'There is no non-prime numbers in given set.')
+        Else
+            WriteLn(OutputFile, 'The result elements of set with non-prime numbers is: ');
+            For I := 0 To 255 Do
+            Begin
+                If I In SetOfNonPrime Then
+                    Write(OutputFile, I, ' ');
+            End;
+    End
+    Else
+        WriteLn('The unexpected error is found.');
+
+    CloseFile(OutputFile);
+End;
+
+Procedure WriteSetIntoConsole(SetOfPrime, SetOfNonPrime: TSet);
+
+Var
+    I: Integer;
+
+Begin
+    I := 0;
+
+    If SetOfPrime = [] Then
+            WriteLn('There is no prime numbers in given set.')
+        Else
+            WriteLn('The result elements of set with prime numbers is: ');
+            For I := 0 To 255 Do
+            Begin
+                If I In SetOfPrime Then
+                    Write(I, ' ');
+            End;
+
+        WriteLn('');
+
+        If SetOfNonPrime = [] Then
+            WriteLn('There is no non-prime numbers in given set.')
+        Else
+            WriteLn('The result elements of set with non-prime numbers is: ');
+            For I := 0 To 255 Do
+            Begin
+                If I In SetOfNonPrime Then
+                    Write(I, ' ');
+            End;
+End;
+
+Function AskTheFilePath(): String;
+
+Var
+    FilePath: String;
+
+Begin
+    Write('Write the existing file path: ');
+
+    Try
+        ReadLn(FilePath);
+    Finally
+        AskTheFilePath := FilePath;
+    End;
+End;
+
+Procedure AssignMyFile(Var InputFile: TextFile; IsFileOutput: Boolean);
+
+Var
+    IsCorrect: Boolean;
+    FilePath: String;
+
+Begin
+    IsCorrect := True;
+    FilePath := '';
+
+    Repeat
+        FilePath := AskTheFilePath();
+
+        Try
+            AssignFile(InputFile, FilePath);
+        Except
+            WriteLn('Error with assigning.');
+            FilePath := AskTheFilePath();
+            IsCorrect := False;
+        End;
+
+        IsCorrect := CheckMyFile(InputFile, FilePath, IsFileOutput);
+
+    Until IsCorrect;
+End;
+
+Function DiscoverIsNumberPrime(Number: Integer): Boolean;
+
+Var
+    I, NumberP1: Integer;
+    IsShouldNotStop: Boolean;
+
+Begin
+
+    I := 2;
+    numberP1 := Number - 1;
+    IsShouldNotStop := True;
+    DiscoverIsNumberPrime := False;
+
+    For I := 2 To NumberP1 Do
+    Begin
+        If (Number Mod I = 0) And (IsShouldNotStop) Then
+        Begin
+            DiscoverIsNumberPrime := False;
+            IsShouldNotStop := False;
+        End
+        Else
+            If IsShouldNotStop Then
+                DiscoverIsNumberPrime := True;
+    End;
+
+    If Number = 2 Then
+        DiscoverIsNumberPrime := True;
+
+End;
+
+Procedure DivideSet(Var GivenSet, SetOfPrime, SetOfNonPrime: TSet);
+
+Const
+    MAX_SET_LENGTH: Integer = 255;
+
+Var
+    SetElement: Integer;
+
+Begin
+    SetElement := 0;
+
+    For SetElement := 0 To MAX_SET_LENGTH Do
+        If SetElement In GivenSet Then
+            If DiscoverIsNumberPrime(SetElement) Then
+                Include(SetOfPrime, SetElement)
+            Else
+                Include(SetOfNonPrime, SetElement);
+End;
+
+Procedure ReadingStage(Var Set1: TSet);
+
+Const
+    MIN_NUMBER: Integer = 0;
+    MAX_NUMBER: Integer = 255;
+
+Var
+    MyFile: TextFile;
+    IsFromFile: Boolean;
+    IsOutput: Boolean;
+    IsAllDone: Boolean;
+
+Begin
+    IsOutput := False;
+    IsAllDone := True;
+    IsFromFile := WorkWithConsoleOrFile(IsOutput);
+
+    If IsFromFile Then
+        Repeat
+
+            IsAllDone := True;
+            AssignMyFile(MyFile, IsOutput);
+            Set1 := ReadSetFromFile(MIN_NUMBER, MAX_NUMBER, MyFile);
+
+            If Set1 = [] Then
+                IsAllDone := False;
+
+        Until IsAllDone
+    Else
+        Set1 := ReadSetFromConsole(MIN_NUMBER, MAX_NUMBER);
+End;
+
+Procedure WritingStage(SetOfPrime, SetOfNonPrime: TSet);
+
+Var
+    MyFile: TextFile;
+    IsToFile: Boolean;
+    IsOutput: Boolean;
+
+Begin
+    IsOutput := True;
+
+    IsToFile := WorkWithConsoleOrFile(IsOutput);
+
+    If IsToFile Then
+    Begin
+        AssignMyFile(MyFile, IsOutput);
+        WriteSetIntoFile(MyFile, SetOfPrime, SetOfNonPrime);
+    End
+    Else
+        WriteSetIntoConsole(SetOfPrime, SetOfNonPrime);
+End;
+
+Var
+    GivenSet, SetOfPrime, SetOfNonPrime: TSet;
+
+Begin
+    GivenSet := [];
+    SetOfPrime := [];
+    SetOfNonPrime := [];
+
+    WritePurpose;
+    ReadingStage(GivenSet);
+    DivideSet(GivenSet, SetOfPrime, SetOfNonPrime);
+    WritingStage(SetOfPrime, SetOfNonPrime);
+
+    ReadLn;
+End.
