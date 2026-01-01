@@ -449,10 +449,6 @@ int main()
 {
     set<int> givenSet, setOfPrime, setOfNonPrime;
 
-    givenSet.clear();
-    setOfPrime.clear();
-    setOfNonPrime.clear();
-
     writePurpose();
     readingStage(givenSet);
     divideSet(givenSet, setOfPrime, setOfNonPrime);

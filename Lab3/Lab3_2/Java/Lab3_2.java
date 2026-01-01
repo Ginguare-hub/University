@@ -276,7 +276,8 @@ public class Lab3_2 {
     }
 
     public static boolean discoverIsNumberPrime(int number) {
-        int i, numberP1;
+        int i;
+        int numberP1;
         boolean isShouldNotStop;
         boolean isPrime;
 
