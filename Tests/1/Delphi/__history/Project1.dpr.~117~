@@ -164,6 +164,8 @@ Begin
             If (Odd(High(ArrayOfLabelIndices)) And (I = 0)) Then
                 Array3 := Copy(GivenArray, ArrayOfLabelIndices[High(ArrayOfLabelIndices) Div 2] + 1, ArrayOfLabelIndices[(High(ArrayOfLabelIndices) Div 2) + 1] - ArrayOfLabelIndices[High(ArrayOfLabelIndices) Div 2]);
 
+            WriteArrayIntoConsole(Array2);
+
             SetLength(MergedArray, Length(Array1) + Length(Array2));
 
             MergedArray := Merge(Array1, Array2);
@@ -174,7 +176,7 @@ Begin
                 Inc(K);
             End;
 
-            If (I = AmountOfMergesM1) And (Odd(High(ArrayOfLabelIndices))) Then
+            If I = AmountOfMergesM1 Then
             Begin
 
                 For L := 0 To High(Array3) Do

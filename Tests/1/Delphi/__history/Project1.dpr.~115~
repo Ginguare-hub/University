@@ -79,7 +79,7 @@ End;
 Function SortArray(GivenArray: TArray): TArray;
 
 Var
-    I, J, K, L, ArrayLength, AmountOfMerges, AmountOfMergesM1: Integer;
+    I, J, K, ArrayLength, AmountOfMerges, AmountOfMergesM1: Integer;
     Array1, Array2, Array3, ArrayOfLabelIndices, NewArray, MergedArray: TArray;
 
 Begin
@@ -93,7 +93,6 @@ Begin
         I := Low(GivenArray);
         J := 0;
         K := 0;
-        L := 0;
         ArrayLength := 0;
 
         While I < High(GivenArray) Do
@@ -164,26 +163,30 @@ Begin
             If (Odd(High(ArrayOfLabelIndices)) And (I = 0)) Then
                 Array3 := Copy(GivenArray, ArrayOfLabelIndices[High(ArrayOfLabelIndices) Div 2] + 1, ArrayOfLabelIndices[(High(ArrayOfLabelIndices) Div 2) + 1] - ArrayOfLabelIndices[High(ArrayOfLabelIndices) Div 2]);
 
+            WriteArrayIntoConsole(Array2);
+
             SetLength(MergedArray, Length(Array1) + Length(Array2));
 
             MergedArray := Merge(Array1, Array2);
 
-            For L := 0 To High(MergedArray) Do
+            For J := 0 To High(MergedArray) Do
             Begin
-                NewArray[K] := MergedArray[L];
+                NewArray[K] := MergedArray[J];
                 Inc(K);
             End;
 
-            If (I = AmountOfMergesM1) And (Odd(High(ArrayOfLabelIndices))) Then
+            If I = AmountOfMergesM1 Then
             Begin
 
-                For L := 0 To High(Array3) Do
+                For J := 0 To High(Array3) Do
                 Begin
-                    NewArray[K] := Array3[L];
+                    NewArray[K] := Array3[J];
                     Inc(K);
                 End;
 
             End;
+
+            WriteArrayIntoConsole(NewArray);
 
         End;
 

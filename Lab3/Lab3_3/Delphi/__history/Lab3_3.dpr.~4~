@@ -520,7 +520,7 @@ Begin
 
     WritePurpose;
     ReadingStage(Array1);
-    //NaturalMerge(Array1);
+    NaturalMerge(Array1);
     WritingStage(Array1);
 
     ReadLn;

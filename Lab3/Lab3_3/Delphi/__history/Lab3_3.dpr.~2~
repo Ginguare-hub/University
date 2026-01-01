@@ -369,95 +369,93 @@ Begin
     WriteLn;
 End;
 
-//Procedure Merge(Var Arr: TArray; Left, Mid, Right: Integer);
-//Var
-//    Temp: TArray;
-//    i, j, k: Integer;
-//Begin
-//    SetLength(Temp, Right - Left + 1);
-//    i := Left;
-//    j := Mid + 1;
-//    k := 0;
-//
-//    // Сливаем два участка
-//    While (i <= Mid) And (j <= Right) Do
-//    Begin
-//        If Arr[i] <= Arr[j] Then
-//        Begin
-//            Temp[k] := Arr[i];
-//            Inc(i);
-//        End
-//        Else
-//        Begin
-//            Temp[k] := Arr[j];
-//            Inc(j);
-//        End;
-//        Inc(k);
-//    End;
-//
-//    // Копируем оставшиеся элементы
-//    While i <= Mid Do
-//    Begin
-//        Temp[k] := Arr[i];
-//        Inc(i);
-//        Inc(k);
-//    End;
-//
-//    While j <= Right Do
-//    Begin
-//        Temp[k] := Arr[j];
-//        Inc(j);
-//        Inc(k);
-//    End;
-//
-//    // Копируем обратно в исходный массив
-//    For k := 0 To High(Temp) Do
-//        Arr[Left + k] := Temp[k];
-//End;
-//
-//// Основная функция естественного слияния
-//Procedure NaturalMerge(Var Arr: TArray);
-//Var
-//    i, j: Integer;
-//    Sorted: Boolean;
-//    SeriesEnd: Integer;
-//Begin
-//    If Length(Arr) <= 1 Then
-//        Exit;
-//
-//    Repeat
-//        Sorted := True;
-//        i := 0;
-//
-//        While i < High(Arr) Do
-//        Begin
-//            // Находим конец первой серии
-//            j := i;
-//            While (j < High(Arr)) And (Arr[j] <= Arr[j + 1]) Do
-//                Inc(j);
-//
-//            SeriesEnd := j;
-//
-//            // Если достигли конца массива, выходим
-//            If SeriesEnd >= High(Arr) Then
-//                Break;
-//
-//            // Находим конец второй серии
-//            j := SeriesEnd + 1;
-//            While (j < High(Arr)) And (Arr[j] <= Arr[j + 1]) Do
-//                Inc(j);
-//
-//            // Сливаем две серии
-//            Merge(Arr, i, SeriesEnd, j);
-//
-//            Sorted := False;
-//            i := j + 1;
-//        End;
-//
-//    Until Sorted;
-//End;
+Procedure Merge(Var Arr: TArray; Left, Mid, Right: Integer);
+Var
+    Temp: TArray;
+    i, j, k: Integer;
+Begin
+    SetLength(Temp, Right - Left + 1);
+    i := Left;
+    j := Mid + 1;
+    k := 0;
 
+    // Сливаем два участка
+    While (i <= Mid) And (j <= Right) Do
+    Begin
+        If Arr[i] <= Arr[j] Then
+        Begin
+            Temp[k] := Arr[i];
+            Inc(i);
+        End
+        Else
+        Begin
+            Temp[k] := Arr[j];
+            Inc(j);
+        End;
+        Inc(k);
+    End;
 
+    // Копируем оставшиеся элементы
+    While i <= Mid Do
+    Begin
+        Temp[k] := Arr[i];
+        Inc(i);
+        Inc(k);
+    End;
+
+    While j <= Right Do
+    Begin
+        Temp[k] := Arr[j];
+        Inc(j);
+        Inc(k);
+    End;
+
+    // Копируем обратно в исходный массив
+    For k := 0 To High(Temp) Do
+        Arr[Left + k] := Temp[k];
+End;
+
+// Основная функция естественного слияния
+Procedure NaturalMerge(Var Arr: TArray);
+Var
+    i, j: Integer;
+    Sorted: Boolean;
+    SeriesEnd: Integer;
+Begin
+    If Length(Arr) <= 1 Then
+        Exit;
+
+    Repeat
+        Sorted := True;
+        i := 0;
+
+        While i < High(Arr) Do
+        Begin
+            // Находим конец первой серии
+            j := i;
+            While (j < High(Arr)) And (Arr[j] <= Arr[j + 1]) Do
+                Inc(j);
+
+            SeriesEnd := j;
+
+            // Если достигли конца массива, выходим
+            If SeriesEnd >= High(Arr) Then
+                Break;
+
+            // Находим конец второй серии
+            j := SeriesEnd + 1;
+            While (j < High(Arr)) And (Arr[j] <= Arr[j + 1]) Do
+                Inc(j);
+
+            // Сливаем две серии
+            Merge(Arr, i, SeriesEnd, j);
+
+            Sorted := False;
+            i := j + 1;
+        End;
+
+    Until Sorted;
+End;
 
 Procedure ReadingStage(Var Array1: TArray);
 
@@ -520,7 +518,7 @@ Begin
 
     WritePurpose;
     ReadingStage(Array1);
-    //NaturalMerge(Array1);
+    NaturalMerge(Array1);
     WritingStage(Array1);
 
     ReadLn;
