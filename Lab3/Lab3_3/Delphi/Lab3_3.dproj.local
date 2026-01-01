@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>2026.01.01 17:53:38.592,C:\GitHub\University\Tests\FilesArray\Delphi\FilesArray.dproj=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
-    <Transaction>2026.01.01 19:23:26.025,C:\GitHub\University\Lab3\Lab3_3\Delphi\Lab3_3.dproj=C:\GitHub\University\Tests\FilesArray\Delphi\FilesArray.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.025,C:\GitHub\University\Tests\FilesArray\Delphi\FilesArray.dproj=C:\GitHub\University\Lab3\Lab3_3\Delphi\Lab3_3.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.592,C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\GitHub\University\Tests\FilesArray\Delphi\FilesArray.dproj</Transaction>
   </Transactions>
 </BorlandProject>

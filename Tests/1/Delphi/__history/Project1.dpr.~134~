@@ -76,10 +76,10 @@ Begin
     Merge := AnswerArray;
 End;
 
-Function SortArray(GivenArray: TArray): TArray;
+Procedure SortArray(Var GivenArray: TArray);
 
 Var
-    I, J, K, ArrayLength, AmountOfMerges, AmountOfMergesM1: Integer;
+    I, J, K, L, ArrayLength, AmountOfMerges, AmountOfMergesM1: Integer;
     Array1, Array2, Array3, ArrayOfLabelIndices, NewArray, MergedArray: TArray;
 
 Begin
@@ -89,10 +89,11 @@ Begin
     ArrayLength := 0;
     NewArray := Copy(GivenArray);
 
-    //Repeat
+    Repeat
         I := Low(GivenArray);
         J := 0;
         K := 0;
+        L := 0;
         ArrayLength := 0;
 
         While I < High(GivenArray) Do
@@ -121,8 +122,6 @@ Begin
             Inc(I);
         End;
 
-        //WriteArrayIntoConsole(ArrayOfLabelIndices);
-
         AmountOfMerges := (ArrayLength + 1) Div 2;
         AmountOfMergesM1 := AmountOfMerges - 1;
 
@@ -130,71 +129,46 @@ Begin
         Begin
 
             If I = 0 Then
-            Begin
-                //WriteLn('FSDKFSKDJ    ', ArrayOfLabelIndices[I] + 1);
-                //SetLength(Array1, ArrayOfLabelIndices[I] + 1);
-                //Array1 := Copy(GivenArray, 0, ArrayOfLabelIndices[I])
                 Array1 := Copy(GivenArray, 0, ArrayOfLabelIndices[I] + 1)
-            End
             Else
-            Begin
-                //SetLength(Array1, ArrayOfLabelIndices[I] - ArrayOfLabelIndices[I - 1]);
-                //Array1 := Copy(GivenArray, ArrayOfLabelIndices[I - 1], ArrayOfLabelIndices[I])
-                Array1 := Copy(GivenArray, ArrayOfLabelIndices[I - 1] + 1, ArrayOfLabelIndices[I] - ArrayOfLabelIndices[I - 1])
-            End;
-
-            WriteArrayIntoConsole(Array1);
+                Array1 := Copy(GivenArray, ArrayOfLabelIndices[I - 1] + 1, ArrayOfLabelIndices[I] - ArrayOfLabelIndices[I - 1]);
 
             If I = 0 Then
-            Begin
-                //SetLength(Array2, High(GivenArray) - ArrayOfLabelIndices[High(ArrayOfLabelIndices)]);
-                //Array2 := Copy(GivenArray, ArrayOfLabelIndices[High(ArrayOfLabelIndices)], High(GivenArray));
-                Array2 := Copy(GivenArray, ArrayOfLabelIndices[High(ArrayOfLabelIndices)] + 1,
-                    High(GivenArray) - ArrayOfLabelIndices[High(ArrayOfLabelIndices)]);
-            End
+                Array2 := Copy(GivenArray, ArrayOfLabelIndices[High(ArrayOfLabelIndices)] + 1, High(GivenArray) - ArrayOfLabelIndices[High(ArrayOfLabelIndices)])
             Else
-            Begin
-                //SetLength(Array2, ArrayOfLabelIndices[ArrayLength - I] - ArrayOfLabelIndices[ArrayLength - I - 1]);
-                //Array2 := Copy(GivenArray, ArrayOfLabelIndices[ArrayLength - I - 1] + 1, ArrayOfLabelIndices[ArrayLength - I])
-                Array2 := Copy(GivenArray, ArrayOfLabelIndices[ArrayLength - I - 1] + 1, ArrayOfLabelIndices[ArrayLength - I] -
-                    ArrayOfLabelIndices[ArrayLength - I - 1])
-            End;
+                Array2 := Copy(GivenArray, ArrayOfLabelIndices[ArrayLength - I - 1] + 1, ArrayOfLabelIndices[ArrayLength - I] - ArrayOfLabelIndices[ArrayLength - I - 1]);
 
             If (Odd(High(ArrayOfLabelIndices)) And (I = 0)) Then
                 Array3 := Copy(GivenArray, ArrayOfLabelIndices[High(ArrayOfLabelIndices) Div 2] + 1, ArrayOfLabelIndices[(High(ArrayOfLabelIndices) Div 2) + 1] - ArrayOfLabelIndices[High(ArrayOfLabelIndices) Div 2]);
-
-            WriteArrayIntoConsole(Array2);
 
             SetLength(MergedArray, Length(Array1) + Length(Array2));
 
             MergedArray := Merge(Array1, Array2);
 
-            For J := 0 To High(MergedArray) Do
+            For L := 0 To High(MergedArray) Do
             Begin
-                NewArray[K] := MergedArray[J];
+                NewArray[K] := MergedArray[L];
                 Inc(K);
             End;
 
-            If I = AmountOfMergesM1 Then
+            If (I = AmountOfMergesM1) And (Odd(High(ArrayOfLabelIndices))) Then
             Begin
 
-                For J := 0 To High(Array3) Do
+                For L := 0 To High(Array3) Do
                 Begin
-                    NewArray[K] := MergedArray[J];
+                    NewArray[K] := Array3[L];
                     Inc(K);
                 End;
 
             End;
 
-            WriteArrayIntoConsole(NewArray);
+            WriteArrayIntoConsole(GivenArray);
 
         End;
 
-        WriteArrayIntoConsole(NewArray);
+        GivenArray := NewArray;
 
-    //Until Length(ArrayOfLabelIndices) = 0;
-
-    SortArray := NewArray;
+    Until ArrayLength = 0;
 End;
 
 Var
@@ -209,14 +183,13 @@ Begin
     SetLength(Array1, 4);
     SetLength(Array2, 6);
 
-    Array1 := [1, 2, 5, 6];
+    Array1 := [];
     Array2 := [4, 5, 7, 11, 99, 100];
-    Array3 := [37, 99, 22, 28, 50, 76, 8, 12, 4, 13, 81, 45];
+    Array3 := [37, 99, 22, 28, 50, 76, 4, 13, 81, 45];
 
-    AnswerArray := Merge(Array1, Array2);
+    WriteArrayIntoConsole(Array3);
+
     SortArray(Array3);
-
-    WriteArrayIntoConsole(AnswerArray);
 
     ReadLn;
 

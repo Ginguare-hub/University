@@ -600,6 +600,8 @@ Begin
 
         GivenArray := NewArray;
 
+        WriteArrayIntoConsole(GivenArray);
+
     Until ArrayLength = 0;
 End;
 
@@ -666,7 +668,7 @@ Begin
 
     WritePurpose;
     ReadingStage(Array1);
-    SortArray(Array1);
+    //NaturalMerge(Array1);
     WritingStage(Array1);
 
     ReadLn;
