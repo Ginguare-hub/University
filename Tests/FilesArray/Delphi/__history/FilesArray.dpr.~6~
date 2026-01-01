@@ -289,6 +289,12 @@ Begin
 
     CloseFile(InputFile);
 
+    If Array1 = Nil Then
+    Begin
+        WriteLn('Error, incorrect array data.');
+        Array1 := Nil;
+    End;
+
     ReadArrayFromFile := Array1;
 End;
 

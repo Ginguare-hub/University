@@ -1,7 +1,7 @@
-Program FilesArray;
+Program Lab3_3;
 
-Uses
-    System.SysUtils;
+uses
+  System.SysUtils;
 
 Type
     TArray = Array Of Integer;

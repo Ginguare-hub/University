@@ -153,49 +153,6 @@ Begin
     CheckMyFile := CheckInput;
 End;
 
-Function AskTheFilePath(): String;
-
-Var
-    FilePath: String;
-
-Begin
-    Write('Write the existing file path: ');
-
-    Try
-        ReadLn(FilePath);
-    Finally
-        AskTheFilePath := FilePath;
-    End;
-
-End;
-
-Procedure AssignMyFile(Var InputFile: TextFile; IsFileOutput: Boolean);
-
-Var
-    IsCorrect: Boolean;
-    FilePath: String;
-
-Begin
-    IsCorrect := True;
-    FilePath := '';
-
-    Repeat
-
-        FilePath := AskTheFilePath();
-
-        Try
-            AssignFile(InputFile, FilePath);
-        Except
-            WriteLn('Error with assigning.');
-            FilePath := AskTheFilePath();
-            IsCorrect := False;
-        End;
-
-        IsCorrect := CheckMyFile(InputFile, FilePath, IsFileOutput);
-
-    Until IsCorrect;
-End;
-
 Function WorkWithConsoleOrFile(IsOutput: Boolean): Boolean;
 
 Var
@@ -241,13 +198,11 @@ Const
 Var
     I, ArrayLength, ArrayElement: Integer;
     Array1: TArray;
-    IsErrorNotFound: Boolean;
 
 Begin
     ArrayLength := 0;
     I := 0;
     ArrayElement := 0;
-    IsErrorNotFound := True;
 
     Try
         Reset(InputFile);
@@ -267,27 +222,22 @@ Begin
 
     If Not(Array1 = Nil) Then
         For I := 0 To High(Array1) Do
-            If IsErrorNotFound Then
-            Begin
-
-                If EOF(InputFile) Then
-                Begin
-                    WriteLn('Error, not enough data in file.');
-                    Array1 := Nil;
-                    IsErrorNotFound := False;
-                End;
-
-                Try
-                    Read(InputFile, Array1[I]);
-                Except
-                    WriteLn('Incorrect numeric data: array element.');
-                    Array1 := Nil;
-                    IsErrorNotFound := False;
-                End;
-
+        Begin
+            Try
+                Read(InputFile, Array1[I]);
+            Except
+                Array1 := Nil;
+                WriteLn('Incorrect numeric data: array element.');
             End;
+        End;
 
     CloseFile(InputFile);
+
+    If Array1 = Nil Then
+    Begin
+        WriteLn('Error, incorrect array data.');
+        Array1 := Nil;
+    End;
 
     ReadArrayFromFile := Array1;
 End;
@@ -367,6 +317,49 @@ Begin
     End;
 
     WriteLn;
+End;
+
+Function AskTheFilePath(): String;
+
+Var
+    FilePath: String;
+
+Begin
+    Write('Write the existing file path: ');
+
+    Try
+        ReadLn(FilePath);
+    Finally
+        AskTheFilePath := FilePath;
+    End;
+
+End;
+
+Procedure AssignMyFile(Var InputFile: TextFile; IsFileOutput: Boolean);
+
+Var
+    IsCorrect: Boolean;
+    FilePath: String;
+
+Begin
+    IsCorrect := True;
+    FilePath := '';
+
+    Repeat
+
+        FilePath := AskTheFilePath();
+
+        Try
+            AssignFile(InputFile, FilePath);
+        Except
+            WriteLn('Error with assigning.');
+            FilePath := AskTheFilePath();
+            IsCorrect := False;
+        End;
+
+        IsCorrect := CheckMyFile(InputFile, FilePath, IsFileOutput);
+
+    Until IsCorrect;
 End;
 
 Procedure ReadingStage(Var Array1: TArray);

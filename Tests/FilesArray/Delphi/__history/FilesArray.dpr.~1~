@@ -1,7 +1,7 @@
 Program FilesArray;
 
-Uses
-    System.SysUtils;
+uses
+  System.SysUtils;
 
 Type
     TArray = Array Of Integer;
@@ -153,49 +153,6 @@ Begin
     CheckMyFile := CheckInput;
 End;
 
-Function AskTheFilePath(): String;
-
-Var
-    FilePath: String;
-
-Begin
-    Write('Write the existing file path: ');
-
-    Try
-        ReadLn(FilePath);
-    Finally
-        AskTheFilePath := FilePath;
-    End;
-
-End;
-
-Procedure AssignMyFile(Var InputFile: TextFile; IsFileOutput: Boolean);
-
-Var
-    IsCorrect: Boolean;
-    FilePath: String;
-
-Begin
-    IsCorrect := True;
-    FilePath := '';
-
-    Repeat
-
-        FilePath := AskTheFilePath();
-
-        Try
-            AssignFile(InputFile, FilePath);
-        Except
-            WriteLn('Error with assigning.');
-            FilePath := AskTheFilePath();
-            IsCorrect := False;
-        End;
-
-        IsCorrect := CheckMyFile(InputFile, FilePath, IsFileOutput);
-
-    Until IsCorrect;
-End;
-
 Function WorkWithConsoleOrFile(IsOutput: Boolean): Boolean;
 
 Var
@@ -241,13 +198,11 @@ Const
 Var
     I, ArrayLength, ArrayElement: Integer;
     Array1: TArray;
-    IsErrorNotFound: Boolean;
 
 Begin
     ArrayLength := 0;
     I := 0;
     ArrayElement := 0;
-    IsErrorNotFound := True;
 
     Try
         Reset(InputFile);
@@ -267,67 +222,65 @@ Begin
 
     If Not(Array1 = Nil) Then
         For I := 0 To High(Array1) Do
-            If IsErrorNotFound Then
-            Begin
-
-                If EOF(InputFile) Then
-                Begin
-                    WriteLn('Error, not enough data in file.');
-                    Array1 := Nil;
-                    IsErrorNotFound := False;
-                End;
-
-                Try
-                    Read(InputFile, Array1[I]);
-                Except
-                    WriteLn('Incorrect numeric data: array element.');
-                    Array1 := Nil;
-                    IsErrorNotFound := False;
-                End;
-
+        Begin
+            Try
+                Read(InputFile, Array1[I]);
+            Except
+                Array1 := Nil;
+                WriteLn('Incorrect numeric data: array element.');
             End;
+        End;
 
     CloseFile(InputFile);
 
-    ReadArrayFromFile := Array1;
+    If Array1 = Nil Then
+    Begin
+        WriteLn('Error, incorrect array data.');
+        Array1 := Nil;
+    End;
+
+    ReadMatrixFromFile := Matrix;
 End;
 
-Function ReadArrayFromConsole(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer): TArray;
+Function ReadMatrixFromConsole(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer): TMatrix;
 
 Const
     MIN_LENGTH: Integer = 1;
-    MAX_LENGTH: Integer = 100;
+    MAX_LENGTH: Integer = 20;
 
 Var
-    Array1: TArray;
-    I, ArrayLength, ArrayElement: Integer;
+    Matrix: TMatrix;
+    I, J, MatrixLength, Element: Integer;
 
 Begin
     I := 0;
-    ArrayLength := 0;
-    ArrayElement := 0;
+    J := 0;
+    MatrixLength := 0;
+    Element := 0;
 
-    ArrayLength := ReadAndVerify(MIN_LENGTH, MAX_LENGTH, 'Write array length: ');
-    SetLength(Array1, ArrayLength);
+    MatrixLength := ReadAndVerify(MIN_LENGTH, MAX_LENGTH, 'Write matrix length: ');
+    SetLength(Matrix, MatrixLength, MatrixLength);
 
-    For I := 0 To High(Array1) Do
-    Begin
-        Write('Write element [', I, '] of array: ');
-        ArrayElement := ReadAndVerify(MIN_NUMBER, MAX_NUMBER, '');
-        Array1[I] := ArrayElement;
-    End;
+    For I := 0 To High(Matrix) Do
+        For J := 0 To High(Matrix[I]) Do
+        Begin
+            Write('Write element [', I, ',', J, '] of matrix: ');
+            Element := ReadAndVerify(MIN_NUMBER, MAX_NUMBER, '');
+            Matrix[I, J] := Element;
+        End;
 
-    ReadArrayFromConsole := Array1;
+    ReadMatrixFromConsole := Matrix;
 End;
 
-Procedure WriteArrayIntoFile(Var OutputFile: TextFile; Array1: TArray);
+Procedure WriteMatrixIntoFile(Var OutputFile: TextFile; Matrix: TMatrix);
 
 Var
-    I: Integer;
+    I, J: Integer;
     IsReady: Boolean;
 
 Begin
     I := 0;
+    J := 0;
     IsReady := True;
 
     Try
@@ -338,12 +291,13 @@ Begin
 
     If IsReady Then
     Begin
-        WriteLn(OutputFile, 'The result array is: ');
-
-        For I := 0 To High(Array1) Do
-            Write(OutputFile, Array1[I], ' ');
-
-        WriteLn(OutputFile);
+        WriteLn(OutputFile, 'The result matrix is: ');
+        For I := 0 To High(Matrix) Do
+        Begin
+            For J := 0 To High(Matrix[I]) Do
+                Write(OutputFile, Matrix[I, J], ' ');
+            WriteLn(OutputFile);
+        End;
     End
     Else
         WriteLn('The unexpected error is found.');
@@ -351,25 +305,65 @@ Begin
     CloseFile(OutputFile);
 End;
 
-Procedure WriteArrayIntoConsole(Array1: TArray);
+Procedure WriteMatrixIntoConsole(Matrix: TMatrix);
 
 Var
-    I: Integer;
+    I, J: Integer;
 
 Begin
     I := 0;
+    J := 0;
 
-    WriteLn('The result array is: ');
-
-    For I := 0 To High(Array1) Do
+    For I := 0 To High(Matrix) Do
     Begin
-        Write(Array1[I], ' ');
+        For J := 0 To High(Matrix[I]) Do
+            Write(Matrix[I, J], ' ');
+        WriteLn;
     End;
-
-    WriteLn;
 End;
 
-Procedure ReadingStage(Var Array1: TArray);
+Function AskTheFilePath(): String;
+
+Var
+    FilePath: String;
+
+Begin
+    Write('Write the existing file path: ');
+
+    Try
+        ReadLn(FilePath);
+    Finally
+        AskTheFilePath := FilePath;
+    End;
+End;
+
+Procedure AssignMyFile(Var InputFile: TextFile; IsFileOutput: Boolean);
+
+Var
+    IsCorrect: Boolean;
+    FilePath: String;
+
+Begin
+    IsCorrect := True;
+    FilePath := '';
+
+    Repeat
+        FilePath := AskTheFilePath();
+
+        Try
+            AssignFile(InputFile, FilePath);
+        Except
+            WriteLn('Error with assigning.');
+            FilePath := AskTheFilePath();
+            IsCorrect := False;
+        End;
+
+        IsCorrect := CheckMyFile(InputFile, FilePath, IsFileOutput);
+
+    Until IsCorrect;
+End;
+
+Procedure ReadingStage(Var Matrix: TMatrix);
 
 Const
     MIN_NUMBER: Integer = -100000;
@@ -391,17 +385,17 @@ Begin
 
             IsAllDone := True;
             AssignMyFile(MyFile, IsOutput);
-            Array1 := ReadArrayFromFile(MIN_NUMBER, MAX_NUMBER, MyFile);
+            Matrix := ReadMatrixFromFile(MIN_NUMBER, MAX_NUMBER, MyFile);
 
-            If Array1 = Nil Then
+            If Matrix = Nil Then
                 IsAllDone := False;
 
         Until IsAllDone
     Else
-        Array1 := ReadArrayFromConsole(MIN_NUMBER, MAX_NUMBER);
+        Matrix := ReadMatrixFromConsole(MIN_NUMBER, MAX_NUMBER);
 End;
 
-Procedure WritingStage(Array1: TArray);
+Procedure WritingStage(Matrix: TMatrix);
 
 Var
     MyFile: TextFile;
@@ -416,21 +410,21 @@ Begin
     If IsToFile Then
     Begin
         AssignMyFile(MyFile, IsOutput);
-        WriteArrayIntoFile(MyFile, Array1);
+        WriteMatrixIntoFile(MyFile, Matrix);
     End
     Else
-        WriteArrayIntoConsole(Array1);
+        WriteMatrixIntoConsole(Matrix);
 End;
 
 Var
-    Array1: TArray;
+    Matrix: TMatrix;
 
 Begin
-    Array1 := Nil;
+    Matrix := Nil;
 
     WritePurpose;
-    ReadingStage(Array1);
-    WritingStage(Array1);
+    ReadingStage(Matrix);
+    WritingStage(Matrix);
 
     ReadLn;
 
