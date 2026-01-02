@@ -306,6 +306,187 @@ void writeArrayIntoConsole(int *array, int size)
     cout << endl;
 }
 
+int *merge(int *array1, int size1, int *array2, int size2, int &resultSize) {
+    int i = 0;
+    int j = 0;
+    int index = 0;
+    int newIndex = 0;
+    int *answerArray = nullptr;
+    
+    resultSize = size1 + size2;
+    answerArray = new int[resultSize];
+    
+    while ((index < resultSize) && (i < size1) && (j < size2 - 1)) 
+    {
+        
+        if ((j < size2) && (i < size1) && (array1[i] > array2[j])) 
+        {
+            answerArray[index] = array2[j];
+            j++;
+        } 
+        else 
+            if ((i < size1 - 1) && (j < size2 - 1)) 
+            {
+                answerArray[index] = array1[i];
+                i++;
+            }
+            
+        index++;
+    }
+    
+    if ((i == size1) && (j < size2)) 
+    {                                
+        for (newIndex = index; newIndex < resultSize; newIndex++) 
+        {
+            answerArray[newIndex] = array2[j];
+            j++;
+        }
+    } else 
+        if ((i < size1) && (j == size2)) 
+        {
+            for (newIndex = index; newIndex < resultSize; newIndex++) 
+            {
+                answerArray[newIndex] = array1[i];
+                i++;
+            }
+        }
+    
+    return answerArray;
+}
+
+void sortArray(int*& givenArray, int& givenArraySize) {
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    int l = 0;
+    int arrayLength = 0;
+    int amountOfMerges = 0;
+    int amountOfMergesM1 = 0;
+    
+    int* newArray = new int[givenArraySize];
+    for (int idx = 0; idx < givenArraySize; ++idx) {
+        newArray[idx] = givenArray[idx];
+    }
+    
+    int* array1 = nullptr;
+    int* array2 = nullptr;
+    int* array3 = nullptr;
+    int* arrayOfLabelIndices = nullptr;
+    int* mergedArray = nullptr;
+    int mergedArraySize = 0;
+    
+    do {
+        i = 0;
+        j = 0;
+        k = 0;
+        l = 0;
+        arrayLength = 0;
+        
+        delete[] array1;
+        delete[] array2;
+        delete[] array3;
+        delete[] arrayOfLabelIndices;
+        delete[] mergedArray;
+        array1 = array2 = array3 = arrayOfLabelIndices = mergedArray = nullptr;
+        
+        while (i < givenArraySize - 1) {
+            if (givenArray[i] > givenArray[i + 1]) {
+                ++arrayLength;
+            }
+            ++i;
+        }
+        
+        if (arrayLength > 0) {
+            arrayOfLabelIndices = new int[arrayLength];
+            i = 0;
+            j = 0;
+            
+            while (i < givenArraySize - 1) {
+                if (givenArray[i] > givenArray[i + 1]) {
+                    arrayOfLabelIndices[j] = i;
+                    ++j;
+                }
+                ++i;
+            }
+        }
+        
+        amountOfMerges = (arrayLength + 1) / 2;
+        amountOfMergesM1 = amountOfMerges - 1;
+        
+        for (i = 0; i <= amountOfMergesM1; ++i) {
+            int size1 = 0;
+            int size2 = 0;
+            int size3 = 0;
+            
+            if (i == 0) {
+                size1 = arrayOfLabelIndices[i] + 1;
+                array1 = new int[size1];
+                for (int idx = 0; idx < size1; ++idx) {
+                    array1[idx] = givenArray[idx];
+                }
+            } else {
+                size1 = arrayOfLabelIndices[i] - arrayOfLabelIndices[i - 1];
+                array1 = new int[size1];
+                for (int idx = 0; idx < size1; ++idx) {
+                    array1[idx] = givenArray[arrayOfLabelIndices[i - 1] + 1 + idx];
+                }
+            }
+            
+            if (i == 0) {
+                size2 = givenArraySize - 1 - arrayOfLabelIndices[arrayLength - 1];
+                array2 = new int[size2];
+                for (int idx = 0; idx < size2; ++idx) {
+                    array2[idx] = givenArray[arrayOfLabelIndices[arrayLength - 1] + 1 + idx];
+                }
+            } else {
+                size2 = arrayOfLabelIndices[arrayLength - i] - arrayOfLabelIndices[arrayLength - i - 1];
+                array2 = new int[size2];
+                for (int idx = 0; idx < size2; ++idx) {
+                    array2[idx] = givenArray[arrayOfLabelIndices[arrayLength - i - 1] + 1 + idx];
+                }
+            }
+            
+            if ((arrayLength % 2 == 1) && (i == 0)) {
+                size3 = arrayOfLabelIndices[arrayLength / 2 + 1] - arrayOfLabelIndices[arrayLength / 2];
+                array3 = new int[size3];
+                for (int idx = 0; idx < size3; ++idx) {
+                    array3[idx] = givenArray[arrayOfLabelIndices[arrayLength / 2] + 1 + idx];
+                }
+            }
+            
+            mergedArray = merge(array1, size1, array2, size2, mergedArraySize);
+            
+            for (l = 0; l < mergedArraySize; ++l) {
+                newArray[k] = mergedArray[l];
+                ++k;
+            }
+            
+            if ((i == amountOfMergesM1) && (arrayLength % 2 == 1) && (size3 > 0)) {
+                for (l = 0; l < size3; ++l) {
+                    newArray[k] = array3[l];
+                    ++k;
+                }
+            }
+            
+            delete[] array1;
+            delete[] array2;
+            delete[] mergedArray;
+            array1 = array2 = mergedArray = nullptr;
+        }
+        
+        for (int idx = 0; idx < givenArraySize; ++idx) {
+            givenArray[idx] = newArray[idx];
+        }
+        
+        delete[] array3;
+        array3 = nullptr;
+        
+    } while (arrayLength != 0);
+    
+    delete[] newArray;
+    delete[] arrayOfLabelIndices;
+}
+
 void readingStage(int *&array1, int &arraySize) 
 {
     const int MIN_NUMBER = -10000;
@@ -356,15 +537,25 @@ void writingStage(int *array1, int arraySize)
 int main()
 {
     int *array1;
+    int *array2;
+    int *array3;
     int arraySize;
+
+
+    array1 = new int[4]{22, 28, 50, 76};
+    array2 = new int[3]{4, 29, 81};
+
 
     array1 = nullptr;
     arraySize = 0;  
     
     writePurpose();
-    readingStage(array1, arraySize);
-    writingStage(array1, arraySize);
+    //readingStage(array1, arraySize);
+    arraySize = 7;
+    writeArrayIntoConsole(merge(array1, 4, array2, 3, arraySize), arraySize);
+    //sortArray(array1, arraySize);
+    //writingStage(array1, arraySize);
 
-    delete array1;
+    //delete array1;
     return 0;
 }

@@ -379,21 +379,19 @@ Begin
     I := 0;
     J := 0;
     Index := 0;
-    NewIndex := 0;
-    AnswerArray := [];
 
     SetLength(AnswerArray, Length(Array1) + Length(Array2));
 
-    While ((Index < High(AnswerArray)) Or (Index = High(AnswerArray))) And ((I < High(Array1)) Or (I = High(Array1))) And ((J <= High(Array2)) Or (J <= High(Array2))) Do
+    While (Index <= High(AnswerArray)) And (I <= High(Array1)) And (J <= High(Array2)) Do
     Begin
 
-        If (((J < High(Array2)) Or (J = High(Array2))) And ((I < High(Array1)) Or (I = High(Array1))) And (Array1[I] > Array2[J])) Then
+        If ((J <= High(Array2)) And (I <= High(Array1)) And (Array1[I] > Array2[J])) Then
         Begin
             AnswerArray[Index] := Array2[J];
             Inc(J);
         End
         Else
-            If (((I < High(Array1)) Or (I = High(Array1))) And ((J < High(Array2)) Or (J = High(Array2)))) Then
+            If ((I <= High(Array1)) And (J <= High(Array2))) Then
             Begin
                 AnswerArray[Index] := Array1[I];
                 Inc(I);
@@ -402,7 +400,7 @@ Begin
         Inc(Index);
     End;
 
-    If (I = (High(Array1) + 1)) And ((J < High(Array2)) Or (J = High(Array2))) Then
+    If (I = (High(Array1) + 1)) And (J <= High(Array2)) Then
     Begin
         For NewIndex := Index To High(AnswerArray) Do
         Begin
@@ -411,7 +409,7 @@ Begin
         End;
     End
     Else
-        If ((I < High(Array1)) Or (I = High(Array1))) And (J = (High(Array2) + 1)) Then
+        If (I <= High(Array1)) And (J = (High(Array2) + 1)) Then
         Begin
             For NewIndex := Index To High(AnswerArray) Do
             Begin
@@ -434,15 +432,6 @@ Begin
     J := 0;
     K := 0;
     ArrayLength := 0;
-    AmountOfMerges := 0;
-    AmountOfMergesM1 := 0;
-    Array1 := [];
-    Array2 := [];
-    Array3 := [];
-    ArrayOfLabelIndices := [];
-    NewArray := [];
-    MergedArray := [];
-
     NewArray := Copy(GivenArray);
 
     Repeat
@@ -498,6 +487,7 @@ Begin
                 Array3 := Copy(GivenArray, ArrayOfLabelIndices[High(ArrayOfLabelIndices) Div 2] + 1, ArrayOfLabelIndices[(High(ArrayOfLabelIndices) Div 2) + 1] - ArrayOfLabelIndices[High(ArrayOfLabelIndices) Div 2]);
 
             SetLength(MergedArray, Length(Array1) + Length(Array2));
+
             MergedArray := Merge(Array1, Array2);
 
             For L := 0 To High(MergedArray) Do
@@ -523,6 +513,8 @@ Begin
 
     Until ArrayLength = 0;
 End;
+
+
 
 Procedure ReadingStage(Var Array1: TArray);
 

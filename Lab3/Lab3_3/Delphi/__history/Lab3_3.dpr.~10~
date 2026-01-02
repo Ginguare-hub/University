@@ -498,6 +498,7 @@ Begin
                 Array3 := Copy(GivenArray, ArrayOfLabelIndices[High(ArrayOfLabelIndices) Div 2] + 1, ArrayOfLabelIndices[(High(ArrayOfLabelIndices) Div 2) + 1] - ArrayOfLabelIndices[High(ArrayOfLabelIndices) Div 2]);
 
             SetLength(MergedArray, Length(Array1) + Length(Array2));
+
             MergedArray := Merge(Array1, Array2);
 
             For L := 0 To High(MergedArray) Do
