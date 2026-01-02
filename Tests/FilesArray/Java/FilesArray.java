@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import java.io.*;
+import java.lang.reflect.Array;
 
 public class FilesArray {
 
@@ -41,13 +42,13 @@ public class FilesArray {
 
         boolean isText;
         int pathLength;
-        
+
         isText = true;
         pathLength = filePath.length();
 
-        if ((filePath.length() < MIN_PATH_LENGTH) 
+        if ((filePath.length() < MIN_PATH_LENGTH)
                 || (filePath.charAt(pathLength - 1) != 't')
-                || (filePath.charAt(pathLength - 2) != 'x') 
+                || (filePath.charAt(pathLength - 2) != 'x')
                 || (filePath.charAt(pathLength - 3) != 't')
                 || (filePath.charAt(pathLength - 4) != '.'))
             isText = false;
@@ -137,7 +138,8 @@ public class FilesArray {
         return array1;
     }
 
-    public static int[] readArrayFromFile(final int MIN_NUMBER, final int MAX_NUMBER, String filePath, BufferedReader fileReader) {
+    public static int[] readArrayFromFile(final int MIN_NUMBER, final int MAX_NUMBER, String filePath,
+            BufferedReader fileReader) {
         final int MIN_LENGTH = 1;
         final int MAX_LENGTH = 100;
 
@@ -164,7 +166,8 @@ public class FilesArray {
         }
 
         if (arraySize < MIN_LENGTH || arraySize > MAX_LENGTH) {
-            System.out.printf("Incorrect array length, the number must fit the range [%d,%d].\n", MIN_LENGTH, MAX_LENGTH);
+            System.out.printf("Incorrect array length, the number must fit the range [%d,%d].\n", MIN_LENGTH,
+                    MAX_LENGTH);
             array1 = null;
         } else {
             array1 = createArray(arraySize);
@@ -218,8 +221,8 @@ public class FilesArray {
 
             fileWriter.write("The result array is: \n");
 
-            for (int i = 0; i < arraySize; i++) {     
-                fileWriter.write(array1[i] + " ");      
+            for (int i = 0; i < arraySize; i++) {
+                fileWriter.write(array1[i] + " ");
             }
 
             fileWriter.write("\n");
@@ -245,6 +248,204 @@ public class FilesArray {
         System.out.print("\n");
     }
 
+    int[] merge(int array1[], int array2[]) {
+        int i, j, index, size1, size2, answerSize;
+        int[] answerArray;
+
+        i = 0;
+        j = 0;
+        index = 0;
+
+        size1 = array1.length;
+        size2 = array2.length;
+
+        answerSize = size1 + size2;
+        answerArray = createArray(answerSize);
+
+        while (i < size1 && j < size2) {
+            if (array1[i] <= array2[j]) {
+                answerArray[index] = array1[i];
+                i++;
+            } else {
+                answerArray[index] = array2[j];
+                j++;
+            }
+            index++;
+        }
+
+        while (i < size1) {
+            answerArray[index] = array1[i];
+            i++;
+            index++;
+        }
+
+        while (j < size2) {
+            answerArray[index] = array2[j];
+            j++;
+            index++;
+        }
+    }
+
+void copyArray(int source[], int *&dest, int size)
+{
+    int i;
+    i = 0;
+
+    dest = createArray(size);
+
+    for (i = 0; i < size; i++)
+    {
+        dest[i] = source[i];
+    }
+}
+
+void copyArrayPart(int source[], int startIndex, int count, int *&dest)
+{
+    int i;
+
+    i = 0;
+
+    dest = createArray(count);
+
+    for (i = 0; i < count; i++)
+    {
+        dest[i] = source[startIndex + i];
+    }
+}
+
+void sortArray(int *&givenArray, int arraySize)
+{
+    int i, j, k, l, arrayLength, amountOfMerges, size1, size2, size3, mergedSize;
+    int *array1, *array2, *array3, *arrayOfLabelIndices, *newArray, *mergedArray;
+
+    i = 0;
+    j = 0;
+    k = 0;
+    arrayLength = 0;
+    amountOfMerges = 0;
+    size1 = 0;
+    size2 = 0;
+    size3 = 0;
+    mergedSize = 0;
+    array1 = nullptr;
+    array2 = nullptr;
+    array3 = nullptr;
+    arrayOfLabelIndices = nullptr;
+    newArray = nullptr;
+    mergedArray = nullptr;
+
+    copyArray(givenArray, newArray, arraySize);
+
+    arrayLength = 1;
+
+    while (arrayLength != 0)
+    {
+        i = 0;
+        j = 0;
+        k = 0;
+        l = 0;
+        arrayLength = 0;
+
+        while (i < arraySize - 1)
+        {
+            if (givenArray[i] > givenArray[i + 1])
+            {
+                arrayLength++;
+            }
+            i++;
+        }
+
+        if (arrayLength > 0)
+        {
+            arrayOfLabelIndices = createArray(arrayLength);
+            i = 0;
+
+            while (i < arraySize - 1)
+            {
+                if (givenArray[i] > givenArray[i + 1])
+                {
+                    arrayOfLabelIndices[j] = i;
+                    j++;
+                }
+                i++;
+            }
+
+            amountOfMerges = (arrayLength + 1) / 2;
+
+            for (i = 0; i < amountOfMerges; i++)
+            {
+                if (i == 0)
+                {
+                    size1 = arrayOfLabelIndices[i] + 1;
+                    copyArrayPart(givenArray, 0, size1, array1);
+                }
+                else
+                {
+                    size1 = arrayOfLabelIndices[i] - arrayOfLabelIndices[i - 1];
+                    copyArrayPart(givenArray, arrayOfLabelIndices[i - 1] + 1, size1, array1);
+                }
+
+                if (i == 0)
+                {
+                    size2 = arraySize - arrayOfLabelIndices[arrayLength - 1] - 1;
+                    copyArrayPart(givenArray, arrayOfLabelIndices[arrayLength - 1] + 1, size2, array2);
+                }
+                else
+                {
+                    size2 = arrayOfLabelIndices[arrayLength - i] - arrayOfLabelIndices[arrayLength - i - 1];
+                    copyArrayPart(givenArray, arrayOfLabelIndices[arrayLength - i - 1] + 1, size2, array2);
+                }
+
+                if ((arrayLength % 2 == 0) && (i == 0))
+                {
+                    size3 = arrayOfLabelIndices[arrayLength / 2] - arrayOfLabelIndices[arrayLength / 2 - 1];
+                    copyArrayPart(givenArray, arrayOfLabelIndices[arrayLength / 2 - 1] + 1, size3, array3);
+                }
+
+                merge(array1, size1, array2, size2, mergedArray, mergedSize);
+
+                for (l = 0; l < mergedSize; l++)
+                {
+                    newArray[k] = mergedArray[l];
+                    k++;
+                }
+
+                if ((i == (amountOfMerges - 1)) && (arrayLength % 2 == 0))
+                {
+                    for (l = 0; l < size3; l++)
+                    {
+                        newArray[k] = array3[l];
+                        k++;
+                    }
+                }
+
+                delete[] array1;
+                delete[] array2;
+                delete[] mergedArray;
+                array1 = nullptr;
+                array2 = nullptr;
+                mergedArray = nullptr;
+            }
+
+            if (arrayLength % 2 == 0)
+            {
+                delete[] array3;
+                array3 = nullptr;
+            }
+
+            delete[] arrayOfLabelIndices;
+            arrayOfLabelIndices = nullptr;
+
+            delete[] givenArray;
+            givenArray = newArray;
+            newArray = nullptr;
+            copyArray(givenArray, newArray, arraySize);
+        }
+    }
+
+    delete[] newArray;
+}
+
     public static int[] readingStage(Scanner consoleScanner) {
         final int MIN_NUMBER = -100000;
         final int MAX_NUMBER = 100000;
@@ -259,7 +460,7 @@ public class FilesArray {
         isFromFile = false;
         isAllUndone = true;
         filePath = "";
-        
+
         isOutput = false;
         isFromFile = workWithConsoleOrFile(isOutput, consoleScanner);
 
