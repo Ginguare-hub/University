@@ -485,14 +485,15 @@ Begin
         Begin
 
             If I = 0 Then
-                Array1 := Copy(GivenArray, 0, ArrayOfLabelIndices[I] + 1)
+            Begin
+                Array1 := Copy(GivenArray, 0, ArrayOfLabelIndices[I] + 1);
+                Array2 := Copy(GivenArray, ArrayOfLabelIndices[High(ArrayOfLabelIndices)] + 1, High(GivenArray) - ArrayOfLabelIndices[High(ArrayOfLabelIndices)]);
+            End
             Else
+            Begin
                 Array1 := Copy(GivenArray, ArrayOfLabelIndices[I - 1] + 1, ArrayOfLabelIndices[I] - ArrayOfLabelIndices[I - 1]);
-
-            If I = 0 Then
-                Array2 := Copy(GivenArray, ArrayOfLabelIndices[High(ArrayOfLabelIndices)] + 1, High(GivenArray) - ArrayOfLabelIndices[High(ArrayOfLabelIndices)])
-            Else
                 Array2 := Copy(GivenArray, ArrayOfLabelIndices[ArrayLength - I - 1] + 1, ArrayOfLabelIndices[ArrayLength - I] - ArrayOfLabelIndices[ArrayLength - I - 1]);
+            End;
 
             If (Odd(High(ArrayOfLabelIndices)) And (I = 0)) Then
                 Array3 := Copy(GivenArray, ArrayOfLabelIndices[High(ArrayOfLabelIndices) Div 2] + 1, ArrayOfLabelIndices[(High(ArrayOfLabelIndices) Div 2) + 1] - ArrayOfLabelIndices[High(ArrayOfLabelIndices) Div 2]);
