@@ -388,8 +388,6 @@ public class Lab3_3 {
 
                     mergedArray = merge(array1, array2);
 
-                    // ОШИБКА 1: использовалась переменная mergedSize, которая всегда равна 0
-                    // Нужно использовать mergedArray.length
                     for (l = 0; l < mergedArray.length; l++) {
                         newArray[k] = mergedArray[l];
                         k++;
@@ -419,7 +417,7 @@ public class Lab3_3 {
             }
         }
 
-        return givenArray;  // ОШИБКА 2: возвращался newArray вместо givenArray
+        return givenArray; 
     }
 
     public static int[] readingStage(Scanner consoleScanner) {
@@ -497,5 +495,5 @@ public class Lab3_3 {
         writingStage(array1, consoleScanner);
 
         consoleScanner.close();
-    }
+    } // ПРОВЕРИТЬ НА ВЫЧИСЛИМЫЕ ЗНАЧЕНИЯ В ЦИКЛАХ
 }
