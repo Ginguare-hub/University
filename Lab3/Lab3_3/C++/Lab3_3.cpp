@@ -310,9 +310,7 @@ void merge(int array1[], int size1, int array2[], int size2, int *&answerArray, 
 {
     int i, j, index;
 
-    i = 0;
-    j = 0;
-    index = 0;
+    i = j = index = 0;
 
     answerSize = size1 + size2;
     answerArray = createArray(answerSize);
@@ -363,7 +361,6 @@ void copyArray(int source[], int *&dest, int size)
 void copyArrayPart(int source[], int startIndex, int count, int *&dest)
 {
     int i;
-
     i = 0;
 
     dest = createArray(count);
@@ -376,38 +373,22 @@ void copyArrayPart(int source[], int startIndex, int count, int *&dest)
 
 void sortArray(int *&givenArray, int arraySize)
 {
-    int i, j, k, l, arrayLength, amountOfMerges, size1, size2, size3, mergedSize;
+    int i, j, k, l, arrayLength, amountOfMerges, size1, size2, size3, mergedSize, arraySizeM1;
     int *array1, *array2, *array3, *arrayOfLabelIndices, *newArray, *mergedArray;
 
-    i = 0;
-    j = 0;
-    k = 0;
-    arrayLength = 0;
-    amountOfMerges = 0;
-    size1 = 0;
-    size2 = 0;
-    size3 = 0;
-    mergedSize = 0;
-    array1 = nullptr;
-    array2 = nullptr;
-    array3 = nullptr;
-    arrayOfLabelIndices = nullptr;
-    newArray = nullptr;
-    mergedArray = nullptr;
+    i = j = k = arrayLength = amountOfMerges = size1 = size2 = size3 = mergedSize = 0;
+    array1 = array2 = array3 = arrayOfLabelIndices = newArray = mergedArray = nullptr;
+    arraySizeM1 = arraySize - 1;
 
     copyArray(givenArray, newArray, arraySize);
 
     arrayLength = 1;
 
-    while (arrayLength != 0)
+    while (arrayLength > 0)
     {
-        i = 0;
-        j = 0;
-        k = 0;
-        l = 0;
-        arrayLength = 0;
+        i = j = k = l = arrayLength = 0;
 
-        while (i < arraySize - 1)
+        while (i < arraySizeM1)
         {
             if (givenArray[i] > givenArray[i + 1])
             {
@@ -421,7 +402,7 @@ void sortArray(int *&givenArray, int arraySize)
             arrayOfLabelIndices = createArray(arrayLength);
             i = 0;
 
-            while (i < arraySize - 1)
+            while (i < arraySizeM1)
             {
                 if (givenArray[i] > givenArray[i + 1])
                 {
@@ -439,20 +420,13 @@ void sortArray(int *&givenArray, int arraySize)
                 {
                     size1 = arrayOfLabelIndices[i] + 1;
                     copyArrayPart(givenArray, 0, size1, array1);
-                }
-                else
-                {
-                    size1 = arrayOfLabelIndices[i] - arrayOfLabelIndices[i - 1];
-                    copyArrayPart(givenArray, arrayOfLabelIndices[i - 1] + 1, size1, array1);
-                }
-
-                if (i == 0)
-                {
                     size2 = arraySize - arrayOfLabelIndices[arrayLength - 1] - 1;
                     copyArrayPart(givenArray, arrayOfLabelIndices[arrayLength - 1] + 1, size2, array2);
                 }
                 else
                 {
+                    size1 = arrayOfLabelIndices[i] - arrayOfLabelIndices[i - 1];
+                    copyArrayPart(givenArray, arrayOfLabelIndices[i - 1] + 1, size1, array1);
                     size2 = arrayOfLabelIndices[arrayLength - i] - arrayOfLabelIndices[arrayLength - i - 1];
                     copyArrayPart(givenArray, arrayOfLabelIndices[arrayLength - i - 1] + 1, size2, array2);
                 }
@@ -480,12 +454,8 @@ void sortArray(int *&givenArray, int arraySize)
                     }
                 }
 
-                delete[] array1;
-                delete[] array2;
-                delete[] mergedArray;
-                array1 = nullptr;
-                array2 = nullptr;
-                mergedArray = nullptr;
+                delete[] array1, array2, mergedArray;
+                array1 = array2 = mergedArray = nullptr;
             }
 
             if (arrayLength % 2 == 0)
@@ -516,6 +486,7 @@ void readingStage(int *&array1, int &arraySize)
     string filePath;
 
     isOutput = false;
+    isAllUndone = true;
     isFromFile = workWithConsoleOrFile(isOutput);
 
     if (isFromFile)

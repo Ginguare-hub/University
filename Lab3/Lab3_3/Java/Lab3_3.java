@@ -209,7 +209,6 @@ public class Lab3_3 {
     }
 
     public static boolean writeArrayIntoFile(String filePath, int[] array1) {
-
         int arraySize;
         boolean isIncorrect;
 
@@ -248,12 +247,20 @@ public class Lab3_3 {
     }
 
     public static int[] merge(int array1[], int array2[]) {
-        int i, j, index, size1, size2, answerSize;
+        int i;
+        int j; 
+        int index;
+        int size1;
+        int size2;
+        int answerSize;
         int[] answerArray;
 
         i = 0;
         j = 0;
         index = 0;
+        size1 = 0;
+        size2 = 0;
+        answerSize =0;
 
         size1 = array1.length;
         size2 = array2.length;
@@ -313,8 +320,23 @@ public class Lab3_3 {
     }
 
     public static int[] sortArray(int[] givenArray) {
-        int i, j, k, l, arrayLength, amountOfMerges, size1, size2, size3, arraySize;
-        int[] array1, array2, array3, arrayOfLabelIndices, newArray, mergedArray;
+        int i;
+        int j;
+        int k;
+        int l;
+        int arrayLength;
+        int amountOfMerges;
+        int size1;
+        int size2;
+        int size3;
+        int arraySize;
+        int arraySizeM1;
+        int[] array1;
+        int[] array2;
+        int[] array3;
+        int[] arrayOfLabelIndices;
+        int[] newArray;
+        int[] mergedArray;
 
         i = 0;
         j = 0;
@@ -325,6 +347,7 @@ public class Lab3_3 {
         size2 = 0;
         size3 = 0;
         arraySize = givenArray.length;
+        arraySizeM1 = arraySize - 1;
         array1 = null;
         array2 = null;
         array3 = null;
@@ -336,14 +359,14 @@ public class Lab3_3 {
 
         arrayLength = 1;
 
-        while (arrayLength != 0) {
+        while (arrayLength > 0) {
             i = 0;
             j = 0;
             k = 0;
             l = 0;
             arrayLength = 0;
 
-            while (i < arraySize - 1) {
+            while (i < arraySizeM1) {
                 if (givenArray[i] > givenArray[i + 1]) {
                     arrayLength++;
                 }
@@ -354,7 +377,7 @@ public class Lab3_3 {
                 arrayOfLabelIndices = createArray(arrayLength);
                 i = 0;
 
-                while (i < arraySize - 1) {
+                while (i < arraySizeM1) {
                     if (givenArray[i] > givenArray[i + 1]) {
                         arrayOfLabelIndices[j] = i;
                         j++;
@@ -365,18 +388,15 @@ public class Lab3_3 {
                 amountOfMerges = (arrayLength + 1) / 2;
 
                 for (i = 0; i < amountOfMerges; i++) {
+
                     if (i == 0) {
                         size1 = arrayOfLabelIndices[i] + 1;
                         array1 = copyArrayPart(givenArray, 0, size1, array1);
-                    } else {
-                        size1 = arrayOfLabelIndices[i] - arrayOfLabelIndices[i - 1];
-                        array1 = copyArrayPart(givenArray, arrayOfLabelIndices[i - 1] + 1, size1, array1);
-                    }
-
-                    if (i == 0) {
                         size2 = arraySize - arrayOfLabelIndices[arrayLength - 1] - 1;
                         array2 = copyArrayPart(givenArray, arrayOfLabelIndices[arrayLength - 1] + 1, size2, array2);
                     } else {
+                        size1 = arrayOfLabelIndices[i] - arrayOfLabelIndices[i - 1];
+                        array1 = copyArrayPart(givenArray, arrayOfLabelIndices[i - 1] + 1, size1, array1);
                         size2 = arrayOfLabelIndices[arrayLength - i] - arrayOfLabelIndices[arrayLength - i - 1];
                         array2 = copyArrayPart(givenArray, arrayOfLabelIndices[arrayLength - i - 1] + 1, size2, array2);
                     }
