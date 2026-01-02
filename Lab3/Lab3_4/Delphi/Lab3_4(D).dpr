@@ -6,7 +6,7 @@ uses
 Procedure WritePurpose;
 
 Begin
-    WriteLn('Extract substring representing an integer from a string containing letters, digits, dots, "+" and "-".');
+    WriteLn('The program checks the input value for the "balance" of brackets.');
 End;
 
 Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
@@ -240,58 +240,6 @@ Begin
     IsDigit := Answer;
 End;
 
-Function ExtractInteger(InputStr: String): String;
-
-Var
-    I, J: Integer;
-    Answer: String;
-    IsNotFound: Boolean;
-
-Begin
-    I := Low(InputStr);
-    J := 0;
-    Answer := '';
-    IsNotFound := True;
-
-    While (I < Length(InputStr)) And (IsNotFound) Do
-    Begin
-
-        If ((InputStr[I] = '+') Or (InputStr[I] = '-')) And (IsDigit(InputStr[I + 1])) Then
-        Begin
-            Answer := Answer + InputStr[I];
-            J := I + 1;
-
-            While (J <= Length(InputStr)) And (IsNotFound) Do
-            Begin
-
-                If IsDigit(InputStr[J]) Then
-                    Answer := Answer + InputStr[J];
-
-                If J = Length(InputStr) Then
-                    IsNotFound := false;
-
-                If IsNotFound And IsDigit(InputStr[J + 1]) Then
-                Begin
-                    If (J + 1 = Length(InputStr)) Then
-                    Begin
-                        Answer := Answer + InputStr[J + 1];
-                        IsNotFound := False;
-                    End;
-                End
-                Else
-                    IsNotFound := False;
-
-                Inc(J);
-            End;
-
-        End;
-
-        Inc(I);
-    End;
-
-    ExtractInteger := Answer;
-End;
-
 Function ReadStringFromFile(Var InputFile: TextFile): String;
 
 Var
@@ -352,10 +300,7 @@ Begin
 
     If IsReady Then
     Begin
-        If Answer <> '' Then
-            WriteLn(OutputFile, 'Extracted integer: ', Answer)
-        Else
-            WriteLn(OutputFile, 'No valid integer found.');
+        WriteLn(OutputFile, Answer)
     End
     Else
         WriteLn('The unexpected error is found.');
@@ -366,11 +311,54 @@ End;
 Procedure WriteResultIntoConsole(Answer: String);
 
 Begin
-    If Answer <> '' Then
-        WriteLn('Extracted integer: ', Answer)
-    Else
-        WriteLn('No valid integer found.');
+    WriteLn(Answer);
 End;
+
+Function BracketsBalance(GivenString: String): String;
+
+Var
+    Answer, IsThereNoBracketsAtAll: Boolean;
+    I, Counter: Integer;
+    StrAnswer: String;
+
+Begin
+    I := 1;
+    Counter := 0;
+    Answer := True;
+    IsThereNoBracketsAtAll := True;
+
+    For I := 1 To Length(GivenString) Do
+    Begin
+
+        If GivenString[I] = '(' Then
+        Begin
+            Inc(Counter);
+            IsThereNoBracketsAtAll := False;
+        End;
+
+        If GivenString[I] = ')' Then
+        Begin
+            Dec(Counter);
+            IsThereNoBracketsAtAll := False;
+        End;
+
+        If Counter < 0 Then
+            Answer := False;
+
+    End;
+
+    If Answer Then
+        StrAnswer := 'The brackets in the term are balanced.'
+    Else
+        StrAnswer := 'The brackets in the term are NOT balanced.';
+
+    If IsThereNoBracketsAtAll Then
+        StrAnswer := 'The input string does not contain brackets.';
+
+
+    BracketsBalance := StrAnswer;
+End;
+
 
 Procedure ReadingStage(Var InputStr: String);
 
@@ -431,7 +419,7 @@ Var
 Begin
     WritePurpose;
     ReadingStage(InputStr);
-    Answer := ExtractInteger(InputStr);
+    Answer := BracketsBalance(InputStr);
     WritingStage(Answer);
     ReadLn;
 End.
