@@ -4,7 +4,7 @@ import java.io.*;
 public class FilesArray {
 
     public static void writePurpose() {
-        System.out.print("REWRITE_REWRITE_REWRITE \n");
+        System.out.print("Sorts an array using natural merge sorting.\n");
     }
 
     public static int readAndVerify(final int MIN_NUMBER, final int MAX_NUMBER, String str, Scanner scanner) {
@@ -209,7 +209,6 @@ public class FilesArray {
     }
 
     public static boolean writeArrayIntoFile(String filePath, int[] array1) {
-
         int arraySize;
         boolean isIncorrect;
 
@@ -318,8 +317,9 @@ public class FilesArray {
 
         writePurpose();
         array1 = readingStage(consoleScanner);
+
         writingStage(array1, consoleScanner);
 
         consoleScanner.close();
-    }
+    } 
 }

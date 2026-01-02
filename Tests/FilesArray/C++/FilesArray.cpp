@@ -4,9 +4,9 @@
 
 using namespace std;
 
-void writePurpose() 
+void writePurpose()
 {
-    cout << "WritePurpose" << endl;
+    cout << "Sorts an array using natural merge sorting." << endl;
 }
 
 int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string myString)
@@ -81,9 +81,9 @@ bool canWrite(const string &filePath)
 {
     ofstream outputFile;
     bool canWrite;
-    
+
     canWrite = false;
-    
+
     outputFile.open(filePath, ios::app);
     canWrite = outputFile.is_open();
     outputFile.close();
@@ -96,7 +96,7 @@ bool checkMyFile(string filePath, bool isFileOutput)
 {
     ifstream testFile;
     bool checkInput;
-    
+
     checkInput = false;
 
     testFile.open(filePath);
@@ -107,20 +107,20 @@ bool checkMyFile(string filePath, bool isFileOutput)
         testFile.close();
     }
     else 
-        if (!isFileText(filePath))
-            cout << "Error, filename is not .txt" << endl;
-        else 
-            if (!isFileOutput && !canRead(filePath))
-                cout << "Error, no access to read the file." << endl;
-            else 
-                if (isFileOutput && !canWrite(filePath))
-                    cout << "Error, no access to write into the file." << endl;
-                else
-                {
-                    checkInput = true;
-                    cout << "Assigning is completed successfully." << endl;
-                }
-    
+		if (!isFileText(filePath))
+        	cout << "Error, filename is not .txt" << endl;
+    	else 
+			if (!isFileOutput && !canRead(filePath))
+        		cout << "Error, no access to read the file." << endl;
+    		else 
+				if (isFileOutput && !canWrite(filePath))
+        			cout << "Error, no access to write into the file." << endl;
+    			else
+    			{
+        			checkInput = true;
+        			cout << "Assigning is completed successfully." << endl;
+    			}
+
     testFile.close();
     return checkInput;
 }
@@ -140,7 +140,7 @@ string assignMyFile(bool isFileOutput)
     bool isIncorrect;
 
     filePath = "";
-    isIncorrect = false;        
+    isIncorrect = false;
 
     do
     {
@@ -177,10 +177,10 @@ bool workWithConsoleOrFile(bool isOutput)
         else
             cout << "The data is entered from a file." << endl;
     else 
-        if (isOutput)
-            cout << "The data is output to the console." << endl;
-        else
-            cout << "The data is entered from the console." << endl;
+		if (isOutput)
+        	cout << "The data is output to the console." << endl;
+    	else
+        	cout << "The data is entered from the console." << endl;
 
     return isFromFile;
 }
@@ -190,7 +190,7 @@ int *createArray(int size)
     int *array1;
 
     array1 = nullptr;
-    array1 = new int [size];
+    array1 = new int[size];
 
     return array1;
 }
@@ -233,7 +233,7 @@ int *readArrayFromFile(const int MIN_NUMBER, const int MAX_NUMBER, string filePa
 
             if (inputFile.fail())
             {
-                delete array1;
+                delete[] array1;
                 array1 = 0;
             }
         }
@@ -281,7 +281,7 @@ void writeArrayIntoFile(string &filePath, int *array1, int size)
     }
 
     if (isReady)
-    {      
+    {
         outputFile << "The result array is: " << endl;
         for (i = 0; i < size; i++)
         {
@@ -289,7 +289,7 @@ void writeArrayIntoFile(string &filePath, int *array1, int size)
         }
         outputFile << endl;
     }
-    
+
     outputFile.close();
     cout << "Array written to file successfully." << endl;
 }
@@ -306,7 +306,7 @@ void writeArrayIntoConsole(int *array, int size)
     cout << endl;
 }
 
-void readingStage(int *&array1, int &arraySize) 
+void readingStage(int *&array1, int &arraySize)
 {
     const int MIN_NUMBER = -10000;
     const int MAX_NUMBER = 10000;
@@ -315,11 +315,13 @@ void readingStage(int *&array1, int &arraySize)
     string filePath;
 
     isOutput = false;
+    isAllUndone = true;
     isFromFile = workWithConsoleOrFile(isOutput);
 
     if (isFromFile)
     {
         isAllUndone = true;
+
         do
         {
             filePath = assignMyFile(isOutput);
@@ -359,12 +361,13 @@ int main()
     int arraySize;
 
     array1 = nullptr;
-    arraySize = 0;  
-    
+    arraySize = 0;
+
     writePurpose();
     readingStage(array1, arraySize);
+    
     writingStage(array1, arraySize);
 
-    delete array1;
+    delete[] array1;
     return 0;
 }

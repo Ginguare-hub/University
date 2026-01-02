@@ -515,5 +515,5 @@ public class Lab3_3 {
         writingStage(array1, consoleScanner);
 
         consoleScanner.close();
-    } // опнбепхрэ мю бшвхякхлше гмювемхъ б жхйкюу
+    } 
 }
