@@ -1,320 +1,573 @@
-
 #include <iostream>
 #include <fstream>
+#include <string>
 
-const int MIN_ORDER = 1;
-const int MAX_ORDER = 10;
-const int MIN_NUM = 1;
-const int MAX_NUM = 100;
+using namespace std;
 
-bool checkNumBounds(const int MIN_VALUE, const int MAX_VALUE, int num)
+void writePurpose()
 {
-	    bool isIncorrect;
-	    if (num < MIN_VALUE || num > MAX_VALUE)
-	    {
-	        std::cout << "Число вышло за допустимые пределы. Введите число от " << MIN_VALUE << " до " << MAX_VALUE << "." << std::endl;
-	        isIncorrect = true;
-	    }
-	    else
-	        isIncorrect = false;
-	    return isIncorrect;
+    cout << "Sorts an array using natural merge sorting." << endl;
 }
 
-std::string readPathFile()
-{
-	    const int MIN_PATH_LENGTH = 5;
-	    bool isIncorrect;
-	    int pathLength;
-    std::string path;
-    do
-    {
-	        isIncorrect = false;
-	        std::cout << std::endl << "Введите путь к файлу расширения.txt: ";
-	        std::cin >> path;
-	        pathLength = path.length();
-        if ((pathLength < MIN_PATH_LENGTH) ||
-	            (path[pathLength - 1] != 't') ||
-	            (path[pathLength - 2] != 'x') ||
-	            (path[pathLength - 3] != 't') ||
-	            (path[pathLength - 4] != '.'))
-	        {
-            isIncorrect = true;
-	            std::cout << "Некорректный ввод, укажите путь к файлу расширения.txt." << std::endl;
-	        }
-	    }
-    while (isIncorrect);
-	    return path;
-}
-
-std::string checkValidFilePath()
+int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string myString)
 {
     bool isIncorrect;
-	    std::string filePath;
-	    std::ifstream fileName;
-	    do
-	    {
-	        isIncorrect = false;
-	        filePath = readPathFile();
-	        fileName.open(filePath);
-	        if (fileName.fail())
-	        {
-	            isIncorrect = true;
-	            std::cout << "Файл не найден. Укажите путь к корректному файлу." << std::endl;
-            std::cin.clear();
-	        }
-	        fileName.close();
-	    }
-    while (isIncorrect);
+    int number;
+
+    isIncorrect = false;
+    number = 0;
+
+    do
+    {
+        cout << myString;
+        isIncorrect = false;
+
+        cin >> number;
+
+        if (cin.fail() || cin.get() != '\n')
+        {
+            isIncorrect = true;
+            cout << "Incorrect input, try again." << endl;
+            cin.clear();
+            while (cin.get() != '\n');
+        }
+
+        if (!isIncorrect && ((number < MIN_NUMBER) || (number > MAX_NUMBER)))
+        {
+            isIncorrect = true;
+            cout << "The number must fit the range [" << MIN_NUMBER << "," << MAX_NUMBER << "]." << endl;
+        }
+
+    } while (isIncorrect);
+
+    return number;
+}
+
+bool isFileText(string filePath)
+{
+    const int MIN_PATH_LENGTH = 4;
+
+    string fileExt;
+    bool isText;
+
+    fileExt = "";
+    isText = true;
+
+    if ((filePath.length() < MIN_PATH_LENGTH) || (filePath.find(".txt") == string::npos))
+        isText = false;
+
+    return isText;
+}
+
+bool canRead(string filePath)
+{
+    bool isReady;
+    ifstream testFile;
+
+    isReady = false;
+    testFile.open(filePath);
+
+    if (testFile.is_open())
+    {
+        testFile.close();
+        isReady = true;
+    }
+
+    testFile.close();
+    return isReady;
+}
+
+bool canWrite(const string &filePath)
+{
+    ofstream outputFile;
+    bool canWrite;
+
+    canWrite = false;
+
+    outputFile.open(filePath, ios::app);
+    canWrite = outputFile.is_open();
+    outputFile.close();
+
+    outputFile.close();
+    return canWrite;
+}
+
+bool checkMyFile(string filePath, bool isFileOutput)
+{
+    ifstream testFile;
+    bool checkInput;
+
+    checkInput = false;
+
+    testFile.open(filePath);
+
+    if (testFile.fail())
+    {
+        cout << "Error, file with path <" << filePath << "> is not exists or cannot be read." << endl;
+        testFile.close();
+    }
+    else 
+		if (!isFileText(filePath))
+        	cout << "Error, filename is not .txt" << endl;
+    	else 
+			if (!isFileOutput && !canRead(filePath))
+        		cout << "Error, no access to read the file." << endl;
+    		else 
+				if (isFileOutput && !canWrite(filePath))
+        			cout << "Error, no access to write into the file." << endl;
+    			else
+    			{
+        			checkInput = true;
+        			cout << "Assigning is completed successfully." << endl;
+    			}
+
+    testFile.close();
+    return checkInput;
+}
+
+string askTheFilePath()
+{
+    string filePath;
+    filePath = "";
+    cout << "Write the existing file path: ";
+    cin >> filePath;
     return filePath;
 }
 
-
-
-
-
-
-void checkAppendToFile(bool& isIncorrect, std::ofstream& fileName)
+string assignMyFile(bool isFileOutput)
 {
-    if (fileName.fail())
-	    {
-	        isIncorrect = true;
-	        std::cout << "Файл доступен только для чтения или произошла ошибка доступа.Укажите путь к корректному файлу." << std::endl;
-	        fileName.close();
-	    }
-}
+    string filePath;
+    bool isIncorrect;
 
+    filePath = "";
+    isIncorrect = false;
 
-int readIntFromFile(const int MIN_VALUE, const int MAX_VALUE,
-	                    std::ifstream& fileName, bool& isIncorrect)
-{
-	    int num;
-	    num = 0;
-	    if (fileName.eof())
-	        isIncorrect = true;
-    else
-	        if (!isIncorrect)
-	        {
-	            fileName >> num;
-	            if (fileName.fail())
-	            {
-	                isIncorrect = true;
-	                fileName.clear();
-	            }
-	            else
-	                isIncorrect = checkNumBounds(MIN_VALUE, MAX_VALUE, num);
-	        }
-	    return num;
-}
-
-int readIntFromConsole(const int MIN_VALUE, const int MAX_VALUE)
-{
-	    bool isIncorrect;
-	    int num;
     do
     {
-	        isIncorrect = false;
-	        std::cin >> num;
-	        if (std::cin.fail())
-	        {
-	            isIncorrect = true;
-	            std::cout << "Введите число от " << MIN_VALUE << " до "
-	                      << MAX_VALUE << "!" << std::endl;
-	            std::cin.clear();
-	            while (std::cin.get() != '\n');
-	        }
-	        else
-	            if (!isIncorrect && std::cin.get() != '\n')
-	            {
-	                std::cout << "Ошибка ввода! Введите только целое число без пробелов и других символов." << std::endl;
-	                isIncorrect = true;
-	                std::cin.clear();
-	                while (std::cin.get() != '\n');
-	            }
+        filePath = askTheFilePath();
+        isIncorrect = !checkMyFile(filePath, isFileOutput);
+    } while (isIncorrect);
 
-
-	            else
-	                isIncorrect = checkNumBounds(MIN_VALUE, MAX_VALUE, num);
-	    }
-    while (isIncorrect);
-	    return num;
+    return filePath;
 }
 
-int** loadMatrixFromConsole(int& order)
+bool workWithConsoleOrFile(bool isOutput)
 {
-	    int** matrix;
-    std::cout << std::endl << "Введите порядок матрицы: ";
-	    order = readIntFromConsole(MIN_ORDER, MAX_ORDER);
-	    std::cout << "Введите матрицу: " << std::endl;
-	    matrix = new int* [order];
-	    for (int i = 0; i < order; i++)
-	        matrix[i] = new int[order];
-	    for (int i = 0; i < order; i++)
-	        for (int j = 0; j < order; j++)
-	        {
-	            std::cout << "Элемент матрицы[" << i + 1 << "]["
-	                      << j + 1 << "]: ";
-	            matrix[i][j] = readIntFromConsole(MIN_NUM, MAX_NUM);
-	        }
-	    return matrix;
-}
+    int number;
+    bool isFromFile;
 
-int** loadMatrixFromFile(const int order, std::ifstream& fileName,
-                         bool& isIncorrect)
-{
-	    int** matrix;
-	    matrix = new int* [order];
-    for (int i = 0; i < order; i++)
-	        matrix[i] = new int[order];
-	    for (int i = 0; i < order; i++)
-	        for (int j = 0; j < order; j++)
-	            matrix[i][j] = readIntFromFile(MIN_NUM, MAX_NUM, fileName,
-	                                           isIncorrect);
-	    if (isIncorrect)
-	        std::cout << "В файле обнаружены некорректные значения." << std::endl << "Все элементы матрицы должны быть целыми числами от " << MIN_NUM << " до " << MAX_NUM << ".Укажите путь к корректному файлу." << std::endl;
-	    else
-	        if (!fileName.eof())
-	        {
-	            isIncorrect = true;
-	            std::cout << "Обнаружены лишние значения в файле. Укажите путь к корректному файлу." << std::endl;
-	        }
-	        else
-	            std::cout << "Данные успешно прочитаны." << std::endl;
-    return matrix;
-}
+    number = 0;
+    isFromFile = false;
 
-int* findDuplicateElements(int**& matrix, const int order, int& tempK)
-{
-    int* duplicates;
-	    int duplicatesLength;
-	    bool keepChecking;
-	    tempK = 0;
-	    duplicatesLength = (order * order) / 2;
-	    duplicates = new int[duplicatesLength];
-	    for (int k = 0; k < duplicatesLength; k++)
-	        duplicates[k] = 0;
-	    for (int i = 0; i < order; i++)
-	        for (int j = 0; j < order; j++)
-	            if (matrix[i][j])
-	            {
-	                keepChecking = true;
-	                for (int i1 = 0; i1 < order; i1++)
-	                    for (int j1 = 0; j1 < order; j1++)
-	                        if ((matrix[i][j] == matrix[i1][j1]) && 
-                            ((i != i1) || (j != j1)))
-	                        {
-	                            if (keepChecking)
-	                            {
-                                duplicates[tempK] = matrix[i][j];
-	                                tempK++;
-	                                keepChecking = false;
-	                            }
-	                            matrix[i1][j1] = 0;
-	                        }
-	            }
-    return duplicates;
-}
-
-int choosingFileOrConsole()
-{
-	    int inputOutputMode;
-	    std::cout << std::endl << "Выберите режим ввода данных: " << std::endl << "1) Введите 1 для использования консоли." << std::endl << "2) Введите 2 для использования текстового файла." << std::endl << std::endl << "Номер выбранного варианта: ";
-	    inputOutputMode = readIntFromConsole(1, 2);
-	    return inputOutputMode;
-}
-
-int** obtainValues(int& order, int**& matrix)
-{
-	    int inputMode;
-	    bool isIncorrect;
-	    std::string filePath;
-	    std::ifstream fileName;
-	    inputMode = choosingFileOrConsole();
-	    if (inputMode == 1)
-	        matrix = loadMatrixFromConsole(order);
+    if (isOutput)
+        cout << "If data is output to the console write 0, if from file write 1." << endl;
     else
-	        do
-	        {
-	            isIncorrect = false;
-	            filePath = checkValidFilePath();
-	            fileName.open(filePath);
-	            order = readIntFromFile(MIN_ORDER, MAX_ORDER, fileName, isIncorrect);
-	            if (!isIncorrect)
-	                matrix = loadMatrixFromFile(order, fileName, isIncorrect);
-	            else
-	                std::cout << "Порядок матрицы должен быть целым числом от " << MIN_ORDER << " до " << MAX_ORDER << ".Укажите путь к корректному файлу." << std::endl;
+        cout << "If data is entered from the console write 0, if from file write 1." << endl;
 
-	                fileName.close();
-	        }
-        while (isIncorrect);
-	    return matrix;
+    number = readAndVerify(0, 1, "> ");
+
+    if (number == 1)
+        isFromFile = true;
+    else
+        isFromFile = false;
+
+    if (isFromFile)
+        if (isOutput)
+            cout << "The data is output to a file." << endl;
+        else
+            cout << "The data is entered from a file." << endl;
+    else 
+		if (isOutput)
+        	cout << "The data is output to the console." << endl;
+    	else
+        	cout << "The data is entered from the console." << endl;
+
+    return isFromFile;
 }
 
-void writeTask()
+int *createArray(int size)
 {
-	    std::cout << "Дана матрица  А, состоящая из nхn-натуральных чисел." << std::endl << "Выбрать элементы, встречающиеся более  одного раза." << std::endl << std::endl;
+    int *array1;
+
+    array1 = nullptr;
+    array1 = new int[size];
+
+    return array1;
 }
 
-void writeToFile(const int* answer, const int order)
+int *readArrayFromFile(const int MIN_NUMBER, const int MAX_NUMBER, string filePath, int &arraySize)
 {
-    std::ofstream fileName;
-	    std::string filePath;
-	    bool isIncorrect;
-	    do
-	    {
-	        isIncorrect = false;
-	        filePath = checkValidFilePath();
-	        fileName.open(filePath);
-	        checkAppendToFile(isIncorrect, fileName);
-	    } 
-	    while (isIncorrect);
-	    if (order == 0)
-	        fileName << "В матрице отсутствуют элементы, встречающиеся более одного раза.";
+    const int MIN_LENGTH = 1;
+    const int MAX_LENGTH = 100;
+
+    ifstream inputFile;
+    int *array1;
+    int i;
+
+    arraySize = 0;
+    array1 = nullptr;
+    i = 0;
+
+    inputFile.open(filePath);
+    inputFile >> arraySize;
+
+    if (inputFile.eof())
+    {
+        cout << "Error, file is empty" << endl;
+        array1 = 0;
+    }
     else
     {
-	        fileName << "Элементы матрицы, встречающиеся более одного раза: ";
-	        for (int i = 0; i < order; i++)
-	            fileName << answer[i] << " ";
-    }
-    fileName.close();
-	    std::cout << "Ответ выведен в текстовый файл.";
-}
 
-void writeAnswer(const int* answer, const int order)
-{
-	    int outputMode;
-    outputMode = choosingFileOrConsole();
-	    if (outputMode == 1)
-        if (order == 0)
-	            std::cout << "В матрице отсутствуют элементы, встречающиеся более одного раза.";
+        if (arraySize < MIN_LENGTH || arraySize > MAX_LENGTH)
+        {
+            cout << "Incorrect array length, the number must fit the range [" << MIN_LENGTH << "," << MAX_LENGTH << "]." << endl;
+            array1 = 0;
+        }
         else
-	        {
-	            std::cout << std::endl << "Элементы матрицы, встречающиеся более одного раза: ";
-	            for (int i = 0; i < order; i++)
-	                std::cout << answer[i] << "  ";
-	        }
-    else
-	        writeToFile(answer, order);
+        {
+            array1 = createArray(arraySize);
+
+            for (i = 0; i < arraySize; i++)
+                inputFile >> array1[i];
+
+            if (inputFile.fail())
+            {
+                delete[] array1;
+                array1 = 0;
+            }
+        }
+    }
+
+    inputFile.close();
+    return array1;
 }
 
-void deleteMatrix(int**& matrix, const int order)
+int *readArrayFromConsole(const int MIN_NUMBER, const int MAX_NUMBER, int &arraySize)
 {
-    for (int i = 0; i < order; i++)
-	        delete[] matrix[i];
-	    delete[] matrix;
+    const int MIN_LENGTH = 1;
+    const int MAX_LENGTH = 100;
+
+    int *array1;
+    int i;
+
+    array1 = nullptr;
+    i = 0;
+
+    arraySize = readAndVerify(MIN_LENGTH, MAX_LENGTH, "Write array length: ");
+    array1 = createArray(arraySize);
+
+    for (i = 0; i < arraySize; i++)
+    {
+        cout << "Write element [" << i << "] of array: ";
+        array1[i] = readAndVerify(MIN_NUMBER, MAX_NUMBER, "");
+    }
+
+    return array1;
+}
+
+void writeArrayIntoFile(string &filePath, int *array1, int size)
+{
+    ofstream outputFile(filePath);
+    int i;
+    bool isReady;
+
+    isReady = true;
+
+    if (!outputFile.is_open())
+    {
+        cout << "Error creating file." << endl;
+        isReady = false;
+    }
+
+    if (isReady)
+    {
+        outputFile << "The result array is: " << endl;
+        for (i = 0; i < size; i++)
+        {
+            outputFile << array1[i] << " ";
+        }
+        outputFile << endl;
+    }
+
+    outputFile.close();
+    cout << "Array written to file successfully." << endl;
+}
+
+void writeArrayIntoConsole(int *array, int size)
+{
+    int i;
+
+    cout << "The result array is: " << endl;
+    for (i = 0; i < size; i++)
+    {
+        cout << array[i] << " ";
+    }
+    cout << endl;
+}
+
+void merge(int array1[], int size1, int array2[], int size2, int *&answerArray, int &answerSize)
+{
+    int i, j, index;
+
+    i = 0;
+    j = 0;
+    index = 0;
+
+    answerSize = size1 + size2;
+    answerArray = createArray(answerSize);
+
+    while (i < size1 && j < size2)
+    {
+        if (array1[i] <= array2[j])
+        {
+            answerArray[index] = array1[i];
+            i++;
+        }
+        else
+        {
+            answerArray[index] = array2[j];
+            j++;
+        }
+        index++;
+    }
+
+    while (i < size1)
+    {
+        answerArray[index] = array1[i];
+        i++;
+        index++;
+    }
+
+    while (j < size2)
+    {
+        answerArray[index] = array2[j];
+        j++;
+        index++;
+    }
+}
+
+void copyArray(int source[], int *&dest, int size)
+{
+    int i;
+    i = 0;
+
+    dest = createArray(size);
+
+    for (i = 0; i < size; i++)
+    {
+        dest[i] = source[i];
+    }
+}
+
+void copyArrayPart(int source[], int startIndex, int count, int *&dest)
+{
+    int i;
+
+    i = 0;
+
+    dest = createArray(count);
+
+    for (i = 0; i < count; i++)
+    {
+        dest[i] = source[startIndex + i];
+    }
+}
+
+void sortArray(int *&givenArray, int arraySize)
+{
+    int i, j, k, l, arrayLength, amountOfMerges, size1, size2, size3, mergedSize;
+    int *array1, *array2, *array3, *arrayOfLabelIndices, *newArray, *mergedArray;
+
+    i = 0;
+    j = 0;
+    k = 0;
+    arrayLength = 0;
+    amountOfMerges = 0;
+    size1 = 0;
+    size2 = 0;
+    size3 = 0;
+    mergedSize = 0;
+    array1 = nullptr;
+    array2 = nullptr;
+    array3 = nullptr;
+    arrayOfLabelIndices = nullptr;
+    newArray = nullptr;
+    mergedArray = nullptr;
+
+    copyArray(givenArray, newArray, arraySize);
+
+    arrayLength = 1;
+
+    while (arrayLength != 0)
+    {
+        i = 0;
+        j = 0;
+        k = 0;
+        l = 0;
+        arrayLength = 0;
+
+        while (i < arraySize - 1)
+        {
+            if (givenArray[i] > givenArray[i + 1])
+            {
+                arrayLength++;
+            }
+            i++;
+        }
+
+        if (arrayLength > 0)
+        {
+            arrayOfLabelIndices = createArray(arrayLength);
+            i = 0;
+
+            while (i < arraySize - 1)
+            {
+                if (givenArray[i] > givenArray[i + 1])
+                {
+                    arrayOfLabelIndices[j] = i;
+                    j++;
+                }
+                i++;
+            }
+
+            amountOfMerges = (arrayLength + 1) / 2;
+
+            for (i = 0; i < amountOfMerges; i++)
+            {
+                if (i == 0)
+                {
+                    size1 = arrayOfLabelIndices[i] + 1;
+                    copyArrayPart(givenArray, 0, size1, array1);
+                }
+                else
+                {
+                    size1 = arrayOfLabelIndices[i] - arrayOfLabelIndices[i - 1];
+                    copyArrayPart(givenArray, arrayOfLabelIndices[i - 1] + 1, size1, array1);
+                }
+
+                if (i == 0)
+                {
+                    size2 = arraySize - arrayOfLabelIndices[arrayLength - 1] - 1;
+                    copyArrayPart(givenArray, arrayOfLabelIndices[arrayLength - 1] + 1, size2, array2);
+                }
+                else
+                {
+                    size2 = arrayOfLabelIndices[arrayLength - i] - arrayOfLabelIndices[arrayLength - i - 1];
+                    copyArrayPart(givenArray, arrayOfLabelIndices[arrayLength - i - 1] + 1, size2, array2);
+                }
+
+                if ((arrayLength % 2 == 0) && (i == 0))
+                {
+                    size3 = arrayOfLabelIndices[arrayLength / 2] - arrayOfLabelIndices[arrayLength / 2 - 1];
+                    copyArrayPart(givenArray, arrayOfLabelIndices[arrayLength / 2 - 1] + 1, size3, array3);
+                }
+
+                merge(array1, size1, array2, size2, mergedArray, mergedSize);
+
+                for (l = 0; l < mergedSize; l++)
+                {
+                    newArray[k] = mergedArray[l];
+                    k++;
+                }
+
+                if ((i == (amountOfMerges - 1)) && (arrayLength % 2 == 0))
+                {
+                    for (l = 0; l < size3; l++)
+                    {
+                        newArray[k] = array3[l];
+                        k++;
+                    }
+                }
+
+                delete[] array1;
+                delete[] array2;
+                delete[] mergedArray;
+                array1 = nullptr;
+                array2 = nullptr;
+                mergedArray = nullptr;
+            }
+
+            if (arrayLength % 2 == 0)
+            {
+                delete[] array3;
+                array3 = nullptr;
+            }
+
+            delete[] arrayOfLabelIndices;
+            arrayOfLabelIndices = nullptr;
+
+            delete[] givenArray;
+            givenArray = newArray;
+            newArray = nullptr;
+            copyArray(givenArray, newArray, arraySize);
+        }
+    }
+
+    delete[] newArray;
+}
+
+void readingStage(int *&array1, int &arraySize)
+{
+    const int MIN_NUMBER = -10000;
+    const int MAX_NUMBER = 10000;
+
+    bool isFromFile, isAllUndone, isOutput;
+    string filePath;
+
+    isOutput = false;
+    isFromFile = workWithConsoleOrFile(isOutput);
+
+    if (isFromFile)
+    {
+        isAllUndone = true;
+
+        do
+        {
+            filePath = assignMyFile(isOutput);
+            array1 = readArrayFromFile(MIN_NUMBER, MAX_NUMBER, filePath, arraySize);
+
+            if (array1 == 0)
+                cout << "Error with reading data, bad file read." << endl;
+            else
+                isAllUndone = false;
+
+        } while (isAllUndone);
+    }
+    else
+        array1 = readArrayFromConsole(MIN_NUMBER, MAX_NUMBER, arraySize);
+}
+
+void writingStage(int *array1, int arraySize)
+{
+    bool isAllUndone, isOutput, isToFile;
+    string filePath;
+
+    isOutput = true;
+    isToFile = workWithConsoleOrFile(isOutput);
+
+    if (isToFile)
+    {
+        filePath = assignMyFile(isOutput);
+        writeArrayIntoFile(filePath, array1, arraySize);
+    }
+    else
+        writeArrayIntoConsole(array1, arraySize);
 }
 
 int main()
 {
-    setlocale(LC_ALL, "Russian");
+    int *array1;
+    int arraySize;
 
-	    int** matrix;
-	    int* answer;
-	    int order, tempK;
-	    writeTask();
-	    matrix = obtainValues(order, matrix);
-	    answer = findDuplicateElements(matrix, order, tempK);
-	    writeAnswer(answer, tempK);
-	    deleteMatrix(matrix, order);
-	    delete[] answer;
+    array1 = nullptr;
+    arraySize = 0;
+
+    writePurpose();
+    readingStage(array1, arraySize);
+    sortArray(array1, arraySize);
+    writingStage(array1, arraySize);
+
+    delete[] array1;
     return 0;
 }
