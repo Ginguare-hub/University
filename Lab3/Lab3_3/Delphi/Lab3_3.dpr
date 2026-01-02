@@ -387,13 +387,13 @@ Begin
     While ((Index < High(AnswerArray)) Or (Index = High(AnswerArray))) And ((I < High(Array1)) Or (I = High(Array1))) And ((J <= High(Array2)) Or (J <= High(Array2))) Do
     Begin
 
-        If (((J < High(Array2)) Or (J = High(Array2))) And ((I < High(Array1)) Or (I = High(Array1))) And (Array1[I] > Array2[J])) Then
+        If ((J < Length(Array2)) And (I < Length(Array1)) And (Array1[I] > Array2[J])) Then
         Begin
             AnswerArray[Index] := Array2[J];
             Inc(J);
         End
         Else
-            If (((I < High(Array1)) Or (I = High(Array1))) And ((J < High(Array2)) Or (J = High(Array2)))) Then
+            If ((I < Length(Array1)) And (J < Length(Array2))) Then
             Begin
                 AnswerArray[Index] := Array1[I];
                 Inc(I);
@@ -402,7 +402,7 @@ Begin
         Inc(Index);
     End;
 
-    If (I = (High(Array1) + 1)) And ((J < High(Array2)) Or (J = High(Array2))) Then
+    If (I = Length(Array1)) And (J < Length(Array2)) Then
     Begin
         For NewIndex := Index To High(AnswerArray) Do
         Begin
@@ -411,7 +411,7 @@ Begin
         End;
     End
     Else
-        If ((I < High(Array1)) Or (I = High(Array1))) And (J = (High(Array2) + 1)) Then
+        If ((I < Length(Array1)) And (J = Length(Array2))) Then
         Begin
             For NewIndex := Index To High(AnswerArray) Do
             Begin

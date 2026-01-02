@@ -341,7 +341,8 @@ int *merge(int *array1, int size1, int *array2, int size2, int &resultSize) {
             answerArray[newIndex] = array2[j];
             j++;
         }
-    } else 
+    } 
+    else 
         if ((i < size1) && (j == size2)) 
         {
             for (newIndex = index; newIndex < resultSize; newIndex++) 
@@ -542,17 +543,19 @@ int main()
     int arraySize;
 
 
+    arraySize = 7;
     array1 = new int[4]{22, 28, 50, 76};
     array2 = new int[3]{4, 29, 81};
+    array3 = new int[7];
+    array3 = merge(array1, 4, array2, 3, arraySize);
 
 
-    array1 = nullptr;
-    arraySize = 0;  
+    //array1 = nullptr;
+    //arraySize = 0;  
     
     writePurpose();
     //readingStage(array1, arraySize);
-    arraySize = 7;
-    writeArrayIntoConsole(merge(array1, 4, array2, 3, arraySize), arraySize);
+    writeArrayIntoConsole(array3, arraySize);
     //sortArray(array1, arraySize);
     //writingStage(array1, arraySize);
 
