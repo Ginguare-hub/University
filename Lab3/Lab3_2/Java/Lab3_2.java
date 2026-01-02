@@ -295,7 +295,7 @@ public class Lab3_2 {
                 if ((number % i == 0) && (isShouldNotStop)) {
                     isPrime = false;
                     isShouldNotStop = false;
-                } else
+                } else 
                     if (isShouldNotStop)
                         isPrime = true;
             }
