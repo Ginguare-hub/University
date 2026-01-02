@@ -1,6 +1,5 @@
 import java.util.Scanner;
 import java.io.*;
-import java.lang.reflect.Array;
 
 public class FilesArray {
 
@@ -248,7 +247,7 @@ public class FilesArray {
         System.out.print("\n");
     }
 
-    int[] merge(int array1[], int array2[]) {
+    public static int[] merge(int array1[], int array2[]) {
         int i, j, index, size1, size2, answerSize;
         int[] answerArray;
 
@@ -284,167 +283,143 @@ public class FilesArray {
             j++;
             index++;
         }
+
+        return answerArray;
     }
 
-void copyArray(int source[], int *&dest, int size)
-{
-    int i;
-    i = 0;
+    public static int[] copyArray(int[] source, int[] dest, int size) {
+        int i;
+        i = 0;
 
-    dest = createArray(size);
+        dest = createArray(size);
 
-    for (i = 0; i < size; i++)
-    {
-        dest[i] = source[i];
+        for (i = 0; i < size; i++) {
+            dest[i] = source[i];
+        }
+        return dest;
     }
-}
 
-void copyArrayPart(int source[], int startIndex, int count, int *&dest)
-{
-    int i;
+    public static int[] copyArrayPart(int source[], int startIndex, int count, int[] dest) {
+        int i;
 
-    i = 0;
+        i = 0;
 
-    dest = createArray(count);
+        dest = createArray(count);
 
-    for (i = 0; i < count; i++)
-    {
-        dest[i] = source[startIndex + i];
+        for (i = 0; i < count; i++) {
+            dest[i] = source[startIndex + i];
+        }
+        return dest;
     }
-}
 
-void sortArray(int *&givenArray, int arraySize)
-{
-    int i, j, k, l, arrayLength, amountOfMerges, size1, size2, size3, mergedSize;
-    int *array1, *array2, *array3, *arrayOfLabelIndices, *newArray, *mergedArray;
+    public static int[] sortArray(int[] givenArray) {
+        int i, j, k, l, arrayLength, amountOfMerges, size1, size2, size3, mergedSize, arraySize;
+        int[] array1, array2, array3, arrayOfLabelIndices, newArray, mergedArray;
 
-    i = 0;
-    j = 0;
-    k = 0;
-    arrayLength = 0;
-    amountOfMerges = 0;
-    size1 = 0;
-    size2 = 0;
-    size3 = 0;
-    mergedSize = 0;
-    array1 = nullptr;
-    array2 = nullptr;
-    array3 = nullptr;
-    arrayOfLabelIndices = nullptr;
-    newArray = nullptr;
-    mergedArray = nullptr;
-
-    copyArray(givenArray, newArray, arraySize);
-
-    arrayLength = 1;
-
-    while (arrayLength != 0)
-    {
         i = 0;
         j = 0;
         k = 0;
-        l = 0;
         arrayLength = 0;
+        amountOfMerges = 0;
+        size1 = 0;
+        size2 = 0;
+        size3 = 0;
+        mergedSize = 0;
+        arraySize = givenArray.length;
+        array1 = null;
+        array2 = null;
+        array3 = null;
+        arrayOfLabelIndices = null;
+        newArray = null;
+        mergedArray = null;
 
-        while (i < arraySize - 1)
-        {
-            if (givenArray[i] > givenArray[i + 1])
-            {
-                arrayLength++;
-            }
-            i++;
-        }
+        newArray = copyArray(givenArray, newArray, arraySize);
 
-        if (arrayLength > 0)
-        {
-            arrayOfLabelIndices = createArray(arrayLength);
+        arrayLength = 1;
+
+        while (arrayLength != 0) {
             i = 0;
+            j = 0;
+            k = 0;
+            l = 0;
+            arrayLength = 0;
 
-            while (i < arraySize - 1)
-            {
-                if (givenArray[i] > givenArray[i + 1])
-                {
-                    arrayOfLabelIndices[j] = i;
-                    j++;
+            while (i < arraySize - 1) {
+                if (givenArray[i] > givenArray[i + 1]) {
+                    arrayLength++;
                 }
                 i++;
             }
 
-            amountOfMerges = (arrayLength + 1) / 2;
+            if (arrayLength > 0) {
+                arrayOfLabelIndices = createArray(arrayLength);
+                i = 0;
 
-            for (i = 0; i < amountOfMerges; i++)
-            {
-                if (i == 0)
-                {
-                    size1 = arrayOfLabelIndices[i] + 1;
-                    copyArrayPart(givenArray, 0, size1, array1);
-                }
-                else
-                {
-                    size1 = arrayOfLabelIndices[i] - arrayOfLabelIndices[i - 1];
-                    copyArrayPart(givenArray, arrayOfLabelIndices[i - 1] + 1, size1, array1);
+                while (i < arraySize - 1) {
+                    if (givenArray[i] > givenArray[i + 1]) {
+                        arrayOfLabelIndices[j] = i;
+                        j++;
+                    }
+                    i++;
                 }
 
-                if (i == 0)
-                {
-                    size2 = arraySize - arrayOfLabelIndices[arrayLength - 1] - 1;
-                    copyArrayPart(givenArray, arrayOfLabelIndices[arrayLength - 1] + 1, size2, array2);
-                }
-                else
-                {
-                    size2 = arrayOfLabelIndices[arrayLength - i] - arrayOfLabelIndices[arrayLength - i - 1];
-                    copyArrayPart(givenArray, arrayOfLabelIndices[arrayLength - i - 1] + 1, size2, array2);
-                }
+                amountOfMerges = (arrayLength + 1) / 2;
 
-                if ((arrayLength % 2 == 0) && (i == 0))
-                {
-                    size3 = arrayOfLabelIndices[arrayLength / 2] - arrayOfLabelIndices[arrayLength / 2 - 1];
-                    copyArrayPart(givenArray, arrayOfLabelIndices[arrayLength / 2 - 1] + 1, size3, array3);
-                }
+                for (i = 0; i < amountOfMerges; i++) {
+                    if (i == 0) {
+                        size1 = arrayOfLabelIndices[i] + 1;
+                        array1 = copyArrayPart(givenArray, 0, size1, array1);
+                    } else {
+                        size1 = arrayOfLabelIndices[i] - arrayOfLabelIndices[i - 1];
+                        array1 = copyArrayPart(givenArray, arrayOfLabelIndices[i - 1] + 1, size1, array1);
+                    }
 
-                merge(array1, size1, array2, size2, mergedArray, mergedSize);
+                    if (i == 0) {
+                        size2 = arraySize - arrayOfLabelIndices[arrayLength - 1] - 1;
+                        array2 = copyArrayPart(givenArray, arrayOfLabelIndices[arrayLength - 1] + 1, size2, array2);
+                    } else {
+                        size2 = arrayOfLabelIndices[arrayLength - i] - arrayOfLabelIndices[arrayLength - i - 1];
+                        array2 = copyArrayPart(givenArray, arrayOfLabelIndices[arrayLength - i - 1] + 1, size2, array2);
+                    }
 
-                for (l = 0; l < mergedSize; l++)
-                {
-                    newArray[k] = mergedArray[l];
-                    k++;
-                }
+                    if ((arrayLength % 2 == 0) && (i == 0)) {
+                        size3 = arrayOfLabelIndices[arrayLength / 2] - arrayOfLabelIndices[arrayLength / 2 - 1];
+                        array3 = copyArrayPart(givenArray, arrayOfLabelIndices[arrayLength / 2 - 1] + 1, size3, array3);
+                    }
 
-                if ((i == (amountOfMerges - 1)) && (arrayLength % 2 == 0))
-                {
-                    for (l = 0; l < size3; l++)
-                    {
-                        newArray[k] = array3[l];
+                    mergedArray = merge(array1, array2);
+
+                    for (l = 0; l < mergedSize; l++) {
+                        newArray[k] = mergedArray[l];
                         k++;
                     }
+
+                    if ((i == (amountOfMerges - 1)) && (arrayLength % 2 == 0)) {
+                        for (l = 0; l < size3; l++) {
+                            newArray[k] = array3[l];
+                            k++;
+                        }
+                    }
+
+                    array1 = null;
+                    array2 = null;
+                    mergedArray = null;
                 }
 
-                delete[] array1;
-                delete[] array2;
-                delete[] mergedArray;
-                array1 = nullptr;
-                array2 = nullptr;
-                mergedArray = nullptr;
+                if (arrayLength % 2 == 0) {
+                    array3 = null;
+                }
+
+                arrayOfLabelIndices = null;
+
+                givenArray = newArray;
+                newArray = null;
+                newArray = copyArray(givenArray, newArray, arraySize);
             }
-
-            if (arrayLength % 2 == 0)
-            {
-                delete[] array3;
-                array3 = nullptr;
-            }
-
-            delete[] arrayOfLabelIndices;
-            arrayOfLabelIndices = nullptr;
-
-            delete[] givenArray;
-            givenArray = newArray;
-            newArray = nullptr;
-            copyArray(givenArray, newArray, arraySize);
         }
-    }
 
-    delete[] newArray;
-}
+        return newArray;
+    }
 
     public static int[] readingStage(Scanner consoleScanner) {
         final int MIN_NUMBER = -100000;
@@ -510,14 +485,15 @@ void sortArray(int *&givenArray, int arraySize)
     }
 
     public static void main(String[] args) {
-        int[] matrix;
+        int[] array1;
         Scanner consoleScanner = new Scanner(System.in);
 
-        matrix = null;
+        array1 = null;
 
         writePurpose();
-        matrix = readingStage(consoleScanner);
-        writingStage(matrix, consoleScanner);
+        array1 = readingStage(consoleScanner);
+        array1 = sortArray(array1);
+        writingStage(array1, consoleScanner);
 
         consoleScanner.close();
     }
