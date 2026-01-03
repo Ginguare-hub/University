@@ -1,7 +1,7 @@
 Program Lab3_4(D);
 
-Uses
-    System.SysUtils;
+uses
+  System.SysUtils;
 
 Procedure WritePurpose;
 
@@ -355,8 +355,10 @@ Begin
     If IsThereNoBracketsAtAll Then
         StrAnswer := 'The input string does not contain brackets.';
 
+
     BracketsBalance := StrAnswer;
 End;
+
 
 Procedure ReadingStage(Var InputStr: String);
 
@@ -420,5 +422,4 @@ Begin
     Answer := BracketsBalance(InputStr);
     WritingStage(Answer);
     ReadLn;
-
 End.
