@@ -434,10 +434,10 @@ Begin
         End;
     End;
 
-    If Not IsValid Then
-    Begin
-        WriteLn('The string contains invalid characters or their position is incorrect.');
-    End;
+//    If Not IsValid Then
+//    Begin
+//        WriteLn('The string contains invalid characters or their position is incorrect.');
+//    End;
 
     CheckIsStringValid := IsValid;
 End;
@@ -500,7 +500,7 @@ Begin
     End;
 
     If Not IsFine Then
-        AnswerString := ''
+        AnswerString := 'The string contains invalid characters or their position is incorrect.'
     Else
         AnswerString := GivenString + '=' + FloatToStr(SumOfNumbers);
 

@@ -1,8 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <sstream>
-#include <cstdlib>
 
 using namespace std;
 
@@ -49,13 +47,13 @@ bool isFileText(string filePath)
 {
     const int MIN_PATH_LENGTH = 4;
 
-    string fileExt;
     bool isText;
+    int index;
 
-    fileExt = "";
     isText = true;
+    index = filePath.length();
 
-    if ((filePath.length() < MIN_PATH_LENGTH) || (filePath.find(".txt") == string::npos))
+    if (index < MIN_PATH_LENGTH || filePath.find(".txt") == string::npos)
         isText = false;
 
     return isText;
@@ -130,9 +128,11 @@ bool checkMyFile(string filePath, bool isFileOutput)
 string askTheFilePath()
 {
     string filePath;
+
     filePath = "";
     cout << "Write the existing file path: ";
     cin >> filePath;
+
     return filePath;
 }
 
@@ -208,34 +208,53 @@ void deleteStringArray(string*& array1)
 
 string* splitString(const string& str, int& count)
 {
-    stringstream ss(str);
-    string word;
-    string tempStr;
+    int startPos, pos, i;
     string* answerArray;
-    int i;
 
-    answerArray = nullptr;
     count = 0;
+    pos = 0;
+    startPos = 0;
     i = 0;
+    answerArray = nullptr;
 
-    tempStr = str;
-    stringstream ssCount(tempStr);
+    pos = 0;
+    while (pos < str.length())
+    {
+        while (pos < str.length() && str[pos] == ' ')
+            pos++;
 
-    while (ssCount >> word)
-        count++;
+        if (pos < str.length())
+        {
+            count++;
+            while (pos < str.length() && str[pos] != ' ')
+                pos++;
+        }
+    }
 
     if (count == 0)
-        return nullptr;
-
-    answerArray = createStringArray(count);
-
-    stringstream ssCopy(str);
-    i = 0;
-    while (ssCopy >> word)
+        answerArray = nullptr;
+    else 
     {
-        answerArray[i] = word;
-        i++;
-    }
+        answerArray = createStringArray(count);
+
+        i = 0;
+        pos = 0;
+        while (pos < str.length())
+        {
+            while (pos < str.length() && str[pos] == ' ')
+                pos++;
+
+            if (pos < str.length())
+            {
+                startPos = pos;
+                while (pos < str.length() && str[pos] != ' ')
+                    pos++;
+
+                answerArray[i] = str.substr(startPos, pos - startPos);
+                i++;
+            }
+        }
+    }      
 
     return answerArray;
 }
@@ -249,10 +268,9 @@ bool checkIsStringValid(const string& givenString)
     isValid = true;
 
     if (givenString.empty())
-    {
         isValid = false;
-    }
-    else
+
+    if (isValid)
     {
         if (!isdigit(givenString[0]) && givenString[0] != '+' && givenString[0] != '-')
             isValid = false;
@@ -265,13 +283,10 @@ bool checkIsStringValid(const string& givenString)
             i = 0;
             while (i < givenString.length() - 1 && isValid)
             {
-                char c = givenString[i];
-                char nextC = givenString[i + 1];
-
-                if (c == '+' && nextC == '+')
+                if ((i + 1 < givenString.length()) && (givenString[i] == '+' && givenString[i + 1] == '+'))
                     isValid = false;
 
-                if (!isdigit(c) && c != '+' && c != '-' && c != '.' && c != ',')
+                if (!isdigit(givenString[i]) && givenString[i] != '+' && givenString[i] != '-' && givenString[i] != '.' && givenString[i] != ',')
                     isValid = false;
 
                 i++;
@@ -279,122 +294,139 @@ bool checkIsStringValid(const string& givenString)
         }
     }
 
-    if (!isValid)
-        cout << "The string contains invalid characters or their position is incorrect." << endl;
-
     return isValid;
 }
 
 string findSumFromString(const string& givenString)
 {
-    stringstream ss(givenString);
-    string token;
-    string answerString;
-    double sum;
-    double number;
-    bool isFine;
-    bool hasNumbers;
-    char* endPtr;
-    int i;
+    string answerString, stringPart;
+    double sumOfNumbers, number;
+    int i, j, partLength, partIndex;
+    bool isFine, isThereNumbers, isNumberFull;
 
-    sum = 0.0;
+    sumOfNumbers = 0.0;
     number = 0.0;
+    i = j = partLength = partIndex = 0;
+    stringPart = "";
     isFine = true;
-    hasNumbers = false;
-    endPtr = nullptr;
+    isThereNumbers = false;
+    isNumberFull = false;
     answerString = "";
 
     isFine = checkIsStringValid(givenString);
 
     if (isFine)
     {
-        string modifiedString = givenString;
-        stringstream ssCopy(modifiedString);
-        string tempToken;
-
-        while (getline(ssCopy, tempToken, '+'))
+        i = 0;
+        partIndex = 0;
+        while (i < givenString.length())
         {
-            if (!tempToken.empty())
+            if (givenString[i] == '+' || i == givenString.length() - 1)
             {
-                for (i = 0; i < tempToken.length(); i++)
+                if (i == givenString.length() - 1)
+                    partLength = i - partIndex + 1;
+                else
+                    partLength = i - partIndex;
+
+                stringPart = givenString.substr(partIndex, partLength);
+
+                for (j = 0; j < stringPart.length(); j++)
                 {
-                    if (tempToken[i] == ',')
-                        tempToken[i] = '.';
+                    if (stringPart[j] == ',')
+                        stringPart[j] = '.';
                 }
 
-                number = strtod(tempToken.c_str(), &endPtr);
-
-                if (endPtr == tempToken.c_str() || *endPtr != '\0')
+                try
+                {
+                    number = stod(stringPart);
+                    sumOfNumbers = sumOfNumbers + number;
+                    isThereNumbers = true;
+                }
+                catch (...)
                 {
                     cout << "Error with number conversion." << endl;
                     isFine = false;
                 }
-                else
-                {
-                    sum += number;
-                    hasNumbers = true;
-                }
+
+                partIndex = i + 1;
             }
+            i++;
         }
     }
 
     if (!isFine)
-        answerString = "";
-    else if (!hasNumbers)
-        answerString = "There are no correct numbers in the line.";
-    else
-        answerString = givenString + "=" + to_string(sum);
+        answerString = "The string contains invalid characters or their position is incorrect.";
+    else 
+        if (!isThereNumbers)
+            answerString = "There are no correct numbers in the line.";
+        else
+            answerString = givenString + "=" + to_string(sumOfNumbers);
 
     return answerString;
 }
 
 string findAnswerString(string* arrayOfSeparators, int arrayLength, string givenString)
 {
-    string answerString;
-    int i;
-    size_t pos;
+    string separator, substring, sumFromString;
+    int i, j, lengthOfSeparator, specialLength;
 
     i = 0;
-    pos = 0;
-    answerString = "";
+    j = 0;
+    lengthOfSeparator = 0;
+    specialLength = 0;
+    separator = "";
+    substring = "";
+    sumFromString = "";
 
-    if (arrayOfSeparators != nullptr && arrayLength > 0)
+    i = 0;
+    while (i < arrayLength)
     {
-        i = 0;
-        while (i < arrayLength)
+        separator = arrayOfSeparators[i];
+        lengthOfSeparator = separator.length();
+        specialLength = givenString.length() - lengthOfSeparator + 1;
+
+        j = 0;
+        while (j < specialLength)
         {
-            string separator = arrayOfSeparators[i];
-            pos = 0;
+            substring = givenString.substr(j, lengthOfSeparator);
 
-            while ((pos = givenString.find(separator, pos)) != string::npos)
+            if (substring == separator)
             {
-                givenString.replace(pos, separator.length(), "+");
-                pos += 1;
+                givenString.erase(j, lengthOfSeparator - 1);
+                givenString[j] = '+';
+                specialLength = givenString.length() - lengthOfSeparator + 1;
             }
-
-            i++;
+            else
+                j++;
         }
+
+        i++;
     }
 
-    answerString = findSumFromString(givenString);
+    sumFromString = findSumFromString(givenString);
 
-    return answerString;
+    return sumFromString;
 }
 
 string* readSeparatorsFromFile(string filePath, int& arrayLength, string& givenString)
 {
-    ifstream inputFile(filePath);
-    string line;
-    string* arrayOfSeparators;
-    bool isFine;
-    int expectedLength;
-    int readLength;
+    const int MIN_LENGTH = 1;
+    const int MAX_LENGTH = 100;
 
-    arrayOfSeparators = nullptr;
+    ifstream inputFile;
+    string line;
+    string* array1;
+    int expectedLength, i;
+    bool isFine;
+
+    array1 = nullptr;
     arrayLength = 0;
-    isFine = true;
     expectedLength = 0;
-    readLength = 0;
+    i = 0;
+    isFine = true;
+    line = "";
+
+    inputFile.open(filePath);
 
     if (!getline(inputFile, line))
     {
@@ -403,13 +435,22 @@ string* readSeparatorsFromFile(string filePath, int& arrayLength, string& givenS
     }
 
     if (isFine)
-    {
-        stringstream ss(line);
-        if (!(ss >> expectedLength) || expectedLength < 1 || expectedLength > 100)
+    {  
+        inputFile >> expectedLength;
+
+        if (inputFile.fail())
         {
-            cout << "Incorrect length, the number must fit the range [1,100]." << endl;
+            delete[] array1;
+            array1 = 0;
             isFine = false;
         }
+
+        if (isFine && (expectedLength < MIN_LENGTH || expectedLength > MAX_LENGTH))
+        {
+            cout << "Incorrect length, the number must fit the range [" << MIN_LENGTH << "," << MAX_LENGTH << "]." << endl;
+            isFine = false;
+        }
+
     }
 
     if (isFine)
@@ -423,17 +464,13 @@ string* readSeparatorsFromFile(string filePath, int& arrayLength, string& givenS
 
     if (isFine)
     {
-        arrayOfSeparators = splitString(line, readLength);
-        if (arrayOfSeparators == nullptr || readLength != expectedLength)
+        array1 = splitString(line, arrayLength);
+        if (array1 == nullptr || arrayLength != expectedLength)
         {
             cout << "Incorrect separators data." << endl;
-            deleteStringArray(arrayOfSeparators);
-            arrayOfSeparators = nullptr;
+            deleteStringArray(array1);
+            array1 = nullptr;
             isFine = false;
-        }
-        else
-        {
-            arrayLength = readLength;
         }
     }
 
@@ -448,46 +485,55 @@ string* readSeparatorsFromFile(string filePath, int& arrayLength, string& givenS
 
     inputFile.close();
 
-    return arrayOfSeparators;
+    if (!isFine && array1 != nullptr)
+    {
+        deleteStringArray(array1);
+    }
+
+    return array1;
 }
 
 string* readSeparatorsFromConsole(int& arrayLength, string& givenString)
 {
-    string* arrayOfSeparators;
+    const int MIN_LENGTH = 1;
+    const int MAX_LENGTH = 100;
+
+    string* array1;
     int i;
 
-    arrayOfSeparators = nullptr;
+    array1 = nullptr;
     i = 0;
     arrayLength = 0;
 
     cout << "The length of the separators should decrease with increasing order." << endl;
-    arrayLength = readAndVerify(1, 100, "Write amount of separators: ");
+    arrayLength = readAndVerify(MIN_LENGTH, MAX_LENGTH, "Write amount of separators: ");
 
-    arrayOfSeparators = createStringArray(arrayLength);
+    array1 = createStringArray(arrayLength);
 
     i = 0;
     while (i < arrayLength)
     {
         cout << "Write separator with index [" << i << "] : ";
-        cin >> arrayOfSeparators[i];
-        i++;
+        cin >> array1[i];
+        i = i + 1;
     }
 
     cout << "Write the string of numbers between separators." << endl;
-    cin.ignore();
-    getline(cin, givenString);
+    cin.ignore();                   
+    getline(cin, givenString);   
 
-    return arrayOfSeparators;
+    return array1;
 }
 
 void readingStage(string*& arrayOfSeparators, int& arrayLength, string& givenString)
 {
     bool isFromFile;
     string filePath;
-    bool isAllUndone;
+    bool isAllDone;
 
     isFromFile = false;
-    isAllUndone = true;
+    isAllDone = true;
+    filePath = "";
 
     isFromFile = workWithConsoleOrFile(false);
 
@@ -497,19 +543,19 @@ void readingStage(string*& arrayOfSeparators, int& arrayLength, string& givenStr
 
     if (isFromFile)
     {
-        isAllUndone = true;
-
-        while (isAllUndone)
+        do
         {
+            isAllDone = true;
             filePath = assignMyFile(false);
-            deleteStringArray(arrayOfSeparators);
             arrayOfSeparators = readSeparatorsFromFile(filePath, arrayLength, givenString);
 
             if (arrayOfSeparators == nullptr)
+            {
                 cout << "Error with reading data, bad file read." << endl;
-            else
-                isAllUndone = false;
-        }
+                isAllDone = false;
+            }
+
+        } while (!isAllDone);
     }
     else
     {
@@ -542,7 +588,7 @@ void writingStage(const string& answerString)
     }
     else
     {
-        cout << answerString << endl << endl;
+        cout << answerString << endl;
     }
 }
 
@@ -550,8 +596,7 @@ int main()
 {
     string* arrayOfSeparators;
     int arrayLength;
-    string givenString;
-    string answerString;
+    string givenString, answerString;
 
     arrayOfSeparators = nullptr;
     arrayLength = 0;
