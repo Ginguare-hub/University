@@ -232,7 +232,54 @@ Begin
     WorkWithConsoleOrFile := IsFromFile;
 End;
 
-Function ReadArrayFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; Var InputFile: TextFile): TArray;
+Function SplitString(Const Str: String): TArray;
+
+Var
+    StartPos, Pos, Count: Integer;
+    AnswerArray: TArray;
+
+Begin
+    Count := 0;
+    Pos := 1;
+
+    While (Pos < Length(Str)) Or (Pos = Length(Str)) Do
+    Begin
+
+        While (Pos <= Length(Str)) And (Str[Pos] = ' ') Do
+            Inc(Pos);
+
+        If Pos <= Length(Str) Then
+        Begin
+            Inc(Count);
+            While (Pos <= Length(Str)) And (Str[Pos] <> ' ') Do
+                Inc(Pos);
+        End;
+
+    End;
+
+    SetLength(AnswerArray, Count);
+
+    Count := 0;
+    Pos := 1;
+
+    While Pos <= Length(Str) Do
+    Begin
+        While (Pos <= Length(Str)) And (Str[Pos] = ' ') Do
+            Inc(Pos);
+        If Pos <= Length(Str) Then
+        Begin
+            StartPos := Pos;
+            While (Pos <= Length(Str)) And (Str[Pos] <> ' ') Do
+                Inc(Pos);
+            AnswerArray[Count] := Copy(Str, StartPos, Pos - StartPos);
+            Inc(Count);
+        End;
+    End;
+
+    SplitString := AnswerArray;
+End;
+
+Function ReadArrayFromFile(Const MIN_NUMBER, MAX_NUMBER: Integer; Var InputFile: TextFile; Var GivenString: String): TArray;
 
 Const
     MIN_LENGTH: Integer = 1;
@@ -242,6 +289,7 @@ Var
     I, ArrayLength, ArrayElement: Integer;
     Array1: TArray;
     IsErrorNotFound: Boolean;
+    SeparatorString: String;
 
 Begin
     ArrayLength := 0;
@@ -266,26 +314,30 @@ Begin
         End;
 
     If Not(Array1 = Nil) Then
-        For I := 0 To High(Array1) Do
-            If IsErrorNotFound Then
-            Begin
+    Begin
 
-                If EOF(InputFile) Then
-                Begin
-                    WriteLn('Error, not enough data in file.');
-                    Array1 := Nil;
-                    IsErrorNotFound := False;
-                End;
+        Try
+            ReadLn(InputFile, SeparatorString);
+        Except
+            WriteLn('Incorrect numeric data: array element.');
+            Array1 := Nil;
+            IsErrorNotFound := False;
+        End;
 
-                Try
-                    Read(InputFile, Array1[I]);
-                Except
-                    WriteLn('Incorrect numeric data: array element.');
-                    Array1 := Nil;
-                    IsErrorNotFound := False;
-                End;
+        Array1 := SplitString(SeparatorString);
 
+        If IsErrorNotFound Then
+        Begin
+            Try
+                Read(InputFile, GivenString);
+            Except
+                WriteLn('Incorrect data: string.');
+                GivenString := '';
+                IsErrorNotFound := False;
             End;
+        End;
+
+    End;
 
     CloseFile(InputFile);
 
@@ -364,7 +416,8 @@ Begin
     I := 1;
     IsValid := True;
 
-    If Not (((GivenString[1] >= '0') And (GivenString[1] <= '9')) And ((GivenString[Length(GivenString)] >= '0') And (GivenString[Length(GivenString)] <= '9'))) Then
+    If Not(((GivenString[1] >= '0') And (GivenString[1] <= '9')) And ((GivenString[Length(GivenString)] >= '0') And
+        (GivenString[Length(GivenString)] <= '9'))) Then
         IsValid := False;
 
     If IsValid Then
@@ -452,7 +505,7 @@ Begin
         AnswerString := GivenString + '=' + FloatToStr(SumOfNumbers);
 
     If Not IsThereNumbers Then
-        AnswerString := 'There are no numbers in the line.';
+        AnswerString := 'There are no correct numbers in the line.';
 
     FindSumFromString := AnswerString;
 End;
@@ -462,6 +515,7 @@ Function FindAnswerString(ArrayOfSeparators: TArray; GivenString: String): Strin
 Var
     Separator, Substring, AnswerString: String;
     I, J, K, SpecialLength, LengthOfSeparator: Integer;
+    //IsFine: Boolean;
 
 Begin
     Separator := '';
@@ -472,7 +526,14 @@ Begin
     K := 0;
     SpecialLength := 0;
     LengthOfSeparator := 0;
+    //IsFine := True;
+    //
+    //If Not(((GivenString[1] >= '0') And (GivenString[1] <= '9')) And ((GivenString[Length(GivenString)] >= '0') And
+    //(GivenString[Length(GivenString)] <= '9'))) Then
+    //IsFine := False;
 
+    //If IsFine Then
+    //Begin
     For I := 0 To High(ArrayOfSeparators) Do
     Begin
 
@@ -497,6 +558,9 @@ Begin
         End;
 
     End;
+    //End
+    //Else
+    //AnswerString := 'The string contains invalid characters or their position is incorrect.';
 
     AnswerString := FindSumFromString(GivenString);
 
@@ -525,7 +589,7 @@ Begin
 
             IsAllDone := True;
             AssignMyFile(MyFile, IsOutput);
-            Array1 := ReadArrayFromFile(MIN_NUMBER, MAX_NUMBER, MyFile);
+            Array1 := ReadArrayFromFile(MIN_NUMBER, MAX_NUMBER, MyFile, GivenString);
 
             If Array1 = Nil Then
                 IsAllDone := False;
@@ -562,7 +626,7 @@ End;
 
 Var
     ArrayOfSeparators: TArray;
-    GivenString: String;
+    GivenString, AnswerString: String;
 
 Begin
     ArrayOfSeparators := Nil;
@@ -570,9 +634,8 @@ Begin
 
     WritePurpose;
     ReadingStage(ArrayOfSeparators, GivenString);
-    WriteLn(FindAnswerString(ArrayOfSeparators,GivenString));
-
-    //WritingStage(ArrayOfSeparators);
+    AnswerString := FindAnswerString(ArrayOfSeparators, GivenString);
+    WritingStage(AnswerString);
 
     ReadLn;
 
