@@ -9,7 +9,7 @@ Type
 Procedure WritePurpose;
 
 Begin
-    WriteLn('ProgramPurpose');
+    WriteLn('The program replaces separators with "+" and calculates the sum of numbers in the string.');
 End;
 
 Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
