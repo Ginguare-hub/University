@@ -270,6 +270,9 @@ string bracketsBalance(string givenString)
             answer = false; 
     }
 
+    if (answer && counter != 0)
+            answer = false;
+
     if (answer) 
         strAnswer = "The brackets in the term are balanced.";
     else

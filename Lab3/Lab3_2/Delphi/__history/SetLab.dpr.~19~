@@ -257,7 +257,7 @@ Function ReadSetFromConsole(Const MIN_NUMBER: Integer; Const MAX_NUMBER: Integer
 
 Const
     MIN_LENGTH: Integer = 1;
-    MAX_LENGTH: Integer = 100;
+    MAX_LENGTH: Integer = 20;
 
 Var
     Set1: TSet;
@@ -339,9 +339,6 @@ End;
 
 Procedure WriteSetIntoConsole(SetOfPrime, SetOfNonPrime: TSet);
 
-Const
-    MAX_SET_LENGTH: Integer = 255;
-
 Var
     I: Integer;
 
@@ -353,21 +350,21 @@ Begin
     Else
     Begin
         WriteLn('The result elements of set with prime numbers is: ');
-        For I := 0 To MAX_SET_LENGTH Do
+        For I := 0 To 255 Do
         Begin
             If I In SetOfPrime Then
                 Write(I, ' ');
         End;
     End;
 
-    WriteLn('');
+        WriteLn('');
 
     If SetOfNonPrime = [] Then
         WriteLn('There is no non-prime numbers in given set.')
     Else
     Begin
         WriteLn('The result elements of set with non-prime numbers is: ');
-        For I := 0 To MAX_SET_LENGTH Do
+        For I := 0 To 255 Do
         Begin
             If I In SetOfNonPrime Then
                 Write(I, ' ');
@@ -389,7 +386,6 @@ Begin
     Finally
         AskTheFilePath := FilePath;
     End;
-
 End;
 
 Procedure AssignMyFile(Var InputFile: TextFile; IsFileOutput: Boolean);
@@ -416,7 +412,6 @@ Begin
         IsCorrect := CheckMyFile(InputFile, FilePath, IsFileOutput);
 
     Until IsCorrect;
-
 End;
 
 Function DiscoverIsNumberPrime(Number: Integer): Boolean;

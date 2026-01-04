@@ -347,6 +347,9 @@ Begin
 
     End;
 
+    If ((Answer) And (Counter <> 0)) Then
+        Answer := False;
+
     If Answer Then
         StrAnswer := 'The brackets in the term are balanced.'
     Else

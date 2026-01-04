@@ -110,61 +110,59 @@ public class Lab3_2 {
         return isFromFile;
     }
 
+    public static int[] createArray(int size) {
+        int[] array1;
+        array1 = new int[size];
+        return array1;
+    }
+
     public static HashSet<Integer> readSetFromFile(final int MIN_NUMBER, final int MAX_NUMBER, String filePath, BufferedReader fileReader) {
         final int MIN_LENGTH = 1;
-        final int MAX_LENGTH = 10000;
+        final int MAX_LENGTH = 100;
 
-        HashSet<Integer> mySet;
+        int arraySize;
         int i;
-        int mySetLength;
-        int setElement;
-        boolean isFine;
+        int numbElement;
+        String[] elementsArray;
+        String element;
+        String line;
+        HashSet<Integer> mySet;
 
-        mySet = new HashSet<Integer>();
+        mySet = new HashSet<>();
+        elementsArray = null;
+        arraySize = 0;
         i = 0;
-        mySetLength = 0;
-        setElement = 0;
-        isFine = true;
+        numbElement = 0;
+        line = "";
 
         try {
-            mySetLength = Integer.parseInt(fileReader.readLine());
+            element = fileReader.readLine();
+            arraySize = Integer.parseInt(element);
         } catch (NumberFormatException e) {
             System.out.print("Error, NumberFormatException.\n");
-            isFine = false;
         } catch (IOException e) {
             System.out.print("Error, IOException.\n");
-            isFine = false;
         }
 
-        if (isFine) {
-            if ((mySetLength < MIN_LENGTH) || (mySetLength > MAX_LENGTH)) {
-                System.out.printf("Incorrect set length, the number must fit the range [%d,%d].\n", MIN_LENGTH, MAX_LENGTH);
-                mySet.clear();
-                isFine = false;
+        if (arraySize < MIN_LENGTH || arraySize > MAX_LENGTH) {
+            System.out.printf("Incorrect length, the number must fit the range [%d,%d].\n", MIN_LENGTH,
+                    MAX_LENGTH);
+            mySet = null;
+        } else {
+
+            try {
+                line = fileReader.readLine();
+                elementsArray = line.split(" ");
+            } catch (IOException e) {
+                System.out.print("Error, something went wrong with read from file.");
             }
-        }
 
-        if (isFine) {
-            for (i = 0; i < mySetLength; i++) {
-                try {
-                    setElement = Integer.parseInt(fileReader.readLine());
-                } catch (NumberFormatException e) {
-                    mySet.clear();
-                    isFine = false;
-                    System.out.print("Incorrect numeric data: set element.\n");
-                } catch (IOException e) {
-                    mySet.clear();
-                    isFine = false;
-                    System.out.print("Error, IOException.\n");
-                }
-
-                if (isFine)
-                    mySet.add(setElement);
+            for (i = 0; i < arraySize; i++) {
+                numbElement = Integer.parseInt(elementsArray[i]);
+                mySet.add(numbElement);
             }
+            
         }
-
-        if (mySet.isEmpty())
-            System.out.print("Error, incorrect set data.\n");
 
         return mySet;
     }

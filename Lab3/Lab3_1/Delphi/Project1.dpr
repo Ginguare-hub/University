@@ -430,8 +430,10 @@ Var
 
 Begin
     WritePurpose;
+
     ReadingStage(InputStr);
     Answer := ExtractInteger(InputStr);
     WritingStage(Answer);
+
     ReadLn;
 End.

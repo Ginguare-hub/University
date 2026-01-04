@@ -234,10 +234,11 @@ Begin
                 Read(InputFile, SetElement);
             Except
                 MySet := [];
+                IsFine := False;
                 WriteLn('Incorrect numeric data: matrix element.');
             End;
 
-            If MySet <> [] Then
+            If IsFine Then
                 Include(MySet, SetElement);
         End;
     End
@@ -281,7 +282,7 @@ Begin
     ReadSetFromConsole := Set1;
 End;
 
-Procedure WriteSetIntoFile(Var OutputFile: TextFile; Set1: TSet);
+Procedure WriteSetIntoFile(Var OutputFile: TextFile; SetOfPrime, SetOfNonPrime: TSet);
 
 Const
     MAX_SET_LENGTH: Integer = 255;
@@ -302,12 +303,33 @@ Begin
 
     If IsReady Then
     Begin
-        WriteLn(OutputFile, 'The result elements of set is: ');
-        For I := 0 To 255 Do
+
+        If SetOfPrime = [] Then
+            WriteLn(OutputFile, 'There is no prime numbers in given set.')
+        Else
         Begin
-            If I In Set1 Then
-                Write(OutputFile, I, ' ');
+            WriteLn(OutputFile, 'The result elements of set with prime numbers is: ');
+            For I := 0 To 255 Do
+            Begin
+                If I In SetOfPrime Then
+                    Write(OutputFile, I, ' ');
+            End;
         End;
+
+        WriteLn(OutputFile, '');
+
+        If SetOfNonPrime = [] Then
+            WriteLn(OutputFile, 'There is no non-prime numbers in given set.')
+        Else
+        Begin
+            WriteLn(OutputFile, 'The result elements of set with non-prime numbers is: ');
+            For I := 0 To 255 Do
+            Begin
+                If I In SetOfNonPrime Then
+                    Write(OutputFile, I, ' ');
+            End;
+        End;
+
     End
     Else
         WriteLn('The unexpected error is found.');
@@ -315,7 +337,7 @@ Begin
     CloseFile(OutputFile);
 End;
 
-Procedure WriteSetIntoConsole(Set1: TSet);
+Procedure WriteSetIntoConsole(SetOfPrime, SetOfNonPrime: TSet);
 
 Var
     I: Integer;
@@ -323,11 +345,32 @@ Var
 Begin
     I := 0;
 
-    For I := 0 To 255 Do
+    If SetOfPrime = [] Then
+        WriteLn('There is no prime numbers in given set.')
+    Else
     Begin
-        If I In Set1 Then
-            Write(I, ' ');
+        WriteLn('The result elements of set with prime numbers is: ');
+        For I := 0 To 255 Do
+        Begin
+            If I In SetOfPrime Then
+                Write(I, ' ');
+        End;
     End;
+
+        WriteLn('');
+
+    If SetOfNonPrime = [] Then
+        WriteLn('There is no non-prime numbers in given set.')
+    Else
+    Begin
+        WriteLn('The result elements of set with non-prime numbers is: ');
+        For I := 0 To 255 Do
+        Begin
+            If I In SetOfNonPrime Then
+                Write(I, ' ');
+        End;
+    End;
+
 End;
 
 Function AskTheFilePath(): String;
@@ -371,6 +414,55 @@ Begin
     Until IsCorrect;
 End;
 
+Function DiscoverIsNumberPrime(Number: Integer): Boolean;
+
+Var
+    I, NumberP1: Integer;
+    IsShouldNotStop: Boolean;
+
+Begin
+
+    I := 2;
+    numberP1 := Number - 1;
+    IsShouldNotStop := True;
+    DiscoverIsNumberPrime := False;
+
+    For I := 2 To NumberP1 Do
+    Begin
+        If (Number Mod I = 0) And (IsShouldNotStop) Then
+        Begin
+            DiscoverIsNumberPrime := False;
+            IsShouldNotStop := False;
+        End
+        Else
+            If IsShouldNotStop Then
+                DiscoverIsNumberPrime := True;
+    End;
+
+    If Number = 2 Then
+        DiscoverIsNumberPrime := True;
+
+End;
+
+Procedure DivideSet(Var GivenSet, SetOfPrime, SetOfNonPrime: TSet);
+
+Const
+    MAX_SET_LENGTH: Integer = 255;
+
+Var
+    SetElement: Integer;
+
+Begin
+    SetElement := 0;
+
+    For SetElement := 0 To MAX_SET_LENGTH Do
+        If SetElement In GivenSet Then
+            If DiscoverIsNumberPrime(SetElement) Then
+                Include(SetOfPrime, SetElement)
+            Else
+                Include(SetOfNonPrime, SetElement);
+End;
+
 Procedure ReadingStage(Var Set1: TSet);
 
 Const
@@ -403,7 +495,7 @@ Begin
         Set1 := ReadSetFromConsole(MIN_NUMBER, MAX_NUMBER);
 End;
 
-Procedure WritingStage(Set1: TSet);
+Procedure WritingStage(SetOfPrime, SetOfNonPrime: TSet);
 
 Var
     MyFile: TextFile;
@@ -418,21 +510,24 @@ Begin
     If IsToFile Then
     Begin
         AssignMyFile(MyFile, IsOutput);
-        WriteSetIntoFile(MyFile, Set1);
+        WriteSetIntoFile(MyFile, SetOfPrime, SetOfNonPrime);
     End
     Else
-        WriteSetIntoConsole(Set1);
+        WriteSetIntoConsole(SetOfPrime, SetOfNonPrime);
 End;
 
 Var
-    Set1: TSet;
+    GivenSet, SetOfPrime, SetOfNonPrime: TSet;
 
 Begin
-    Set1 := [];
+    GivenSet := [];
+    SetOfPrime := [];
+    SetOfNonPrime := [];
 
     WritePurpose;
-    ReadingStage(Set1);
-    WritingStage(Set1);
+    ReadingStage(GivenSet);
+    DivideSet(GivenSet, SetOfPrime, SetOfNonPrime);
+    WritingStage(SetOfPrime, SetOfNonPrime);
 
     ReadLn;
 End.

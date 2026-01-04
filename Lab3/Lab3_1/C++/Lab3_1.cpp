@@ -6,7 +6,7 @@ using namespace std;
 
 void writePurpose() 
 {
-    cout << "REWRITE_REWRITE_REWRITE" << endl;
+    cout << "Extract substring representing an integer from a string containing letters, digits, dots, \"+\" and \"-\"." << endl;
 }
 
 int readAndVerify(const int MIN_NUMBER, const int MAX_NUMBER, string myString)
