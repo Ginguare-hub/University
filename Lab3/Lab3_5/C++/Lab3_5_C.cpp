@@ -226,6 +226,7 @@ string* splitString(const string& str, int& count)
         if (pos < str.length())
         {
             count++;
+            
             while (pos < str.length() && str[pos] != ' ')
                 pos++;
         }
