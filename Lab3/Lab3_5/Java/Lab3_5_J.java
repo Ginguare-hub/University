@@ -294,9 +294,9 @@ public class Lab3_5_J {
             isValid = false;
 
         if (isValid) {
-            if (!(((givenString.charAt(0) >= '0') && (givenString.charAt(0) <= '9'))
-                    && ((givenString.charAt(givenString.length() - 1) >= '0')
-                            && (givenString.charAt(givenString.length() - 1) <= '9'))))
+            if (!((((givenString.charAt(0) > '0') || (givenString.charAt(0) == '0')) && ((givenString.charAt(0) < '9') || (givenString.charAt(0) == '9')))
+                    && (((givenString.charAt(givenString.length() - 1) > '0') || (givenString.charAt(givenString.length() - 1) == '0'))
+                            && ((givenString.charAt(givenString.length() - 1) < '9') || (givenString.charAt(givenString.length() - 1) == '9')))))
                 isValid = false;
         }
 
