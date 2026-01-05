@@ -268,7 +268,7 @@ Begin
                     Answer := Answer + InputStr[J];
 
                 If J = Length(InputStr) Then
-                    IsNotFound := false;
+                    IsNotFound := False;
 
                 If IsNotFound And IsDigit(InputStr[J + 1]) Then
                 Begin

@@ -197,7 +197,7 @@ string* createStringArray(int size)
     return array1;
 }
 
-void deleteStringArray(string*& array1)
+void deleteStringArray(string *&array1)
 {
     if (array1 != nullptr)
     {
@@ -206,7 +206,7 @@ void deleteStringArray(string*& array1)
     }
 }
 
-string* splitString(const string& str, int& count)
+string* splitString(const string &str, int &count)
 {
     int startPos, pos, i;
     string* answerArray;
@@ -260,7 +260,7 @@ string* splitString(const string& str, int& count)
     return answerArray;
 }
 
-bool checkIsStringValid(const string& givenString)
+bool checkIsStringValid(const string &givenString)
 {
     int i;
     bool isValid;
@@ -298,7 +298,7 @@ bool checkIsStringValid(const string& givenString)
     return isValid;
 }
 
-string findSumFromString(const string& givenString)
+string findSumFromString(const string &givenString)
 {
     string answerString, stringPart;
     double sumOfNumbers, number;
@@ -366,7 +366,7 @@ string findSumFromString(const string& givenString)
     return answerString;
 }
 
-string findAnswerString(string* arrayOfSeparators, int arrayLength, string givenString)
+string findAnswerString(string *arrayOfSeparators, int arrayLength, string givenString)
 {
     string separator, substring, sumFromString;
     int i, j, lengthOfSeparator, specialLength;
@@ -409,13 +409,13 @@ string findAnswerString(string* arrayOfSeparators, int arrayLength, string given
     return sumFromString;
 }
 
-string* readSeparatorsFromFile(string filePath, int& arrayLength, string& givenString)
+string* readSeparatorsFromFile(string filePath, int &arrayLength, string &givenString)
 {
     const int MIN_LENGTH = 1;
     const int MAX_LENGTH = 100;
 
     ifstream inputFile;
-    string line;
+    string myChar;
     string* array1;
     int expectedLength, i;
     bool isFine;
@@ -425,15 +425,9 @@ string* readSeparatorsFromFile(string filePath, int& arrayLength, string& givenS
     expectedLength = 0;
     i = 0;
     isFine = true;
-    line = "";
+    myChar = "";
 
     inputFile.open(filePath);
-
-    if (!getline(inputFile, line))
-    {
-        cout << "Error, file is empty" << endl;
-        isFine = false;
-    }
 
     if (isFine)
     {  
@@ -446,45 +440,39 @@ string* readSeparatorsFromFile(string filePath, int& arrayLength, string& givenS
             isFine = false;
         }
 
-        if (isFine && (expectedLength < MIN_LENGTH || expectedLength > MAX_LENGTH))
-        {
-            cout << "Incorrect length, the number must fit the range [" << MIN_LENGTH << "," << MAX_LENGTH << "]." << endl;
-            isFine = false;
-        }
-
     }
 
     if (isFine)
     {
-        if (!getline(inputFile, line))
-        {
-            cout << "Incorrect numeric data: array element." << endl;
-            isFine = false;
-        }
-    }
 
-    if (isFine)
-    {
-        array1 = splitString(line, arrayLength);
-        if (array1 == nullptr || arrayLength != expectedLength)
+        if (expectedLength < MIN_LENGTH || expectedLength > MAX_LENGTH)
         {
-            cout << "Incorrect separators data." << endl;
-            deleteStringArray(array1);
+            cout << "Incorrect array length, the number must fit the range [" << MIN_LENGTH << "," << MAX_LENGTH << "]." << endl;
             array1 = nullptr;
-            isFine = false;
+        }
+        else
+        {
+            array1 = new string[expectedLength];
+
+            for (i = 0; i < expectedLength; i++) 
+            {    
+                inputFile >> myChar;
+                array1[i] = myChar;
+            }
+
+            if (inputFile.fail())
+            {
+                delete[] array1;
+                array1 = 0;
+            }
         }
     }
 
-    if (isFine)
-    {
-        if (!getline(inputFile, givenString))
-        {
-            cout << "Incorrect data: string." << endl;
-            givenString = "";
-        }
-    }
+    inputFile >> givenString;
 
     inputFile.close();
+
+    arrayLength = expectedLength;
 
     if (!isFine && array1 != nullptr)
     {
@@ -530,10 +518,10 @@ void readingStage(string*& arrayOfSeparators, int& arrayLength, string& givenStr
 {
     bool isFromFile;
     string filePath;
-    bool isAllDone;
+    bool isAllNotDone;
 
     isFromFile = false;
-    isAllDone = true;
+    isAllNotDone = false;
     filePath = "";
 
     isFromFile = workWithConsoleOrFile(false);
@@ -546,17 +534,17 @@ void readingStage(string*& arrayOfSeparators, int& arrayLength, string& givenStr
     {
         do
         {
-            isAllDone = true;
+            isAllNotDone = false;
             filePath = assignMyFile(false);
             arrayOfSeparators = readSeparatorsFromFile(filePath, arrayLength, givenString);
 
             if (arrayOfSeparators == nullptr)
             {
                 cout << "Error with reading data, bad file read." << endl;
-                isAllDone = false;
+                isAllNotDone = true;
             }
 
-        } while (!isAllDone);
+        } while (isAllNotDone);
     }
     else
     {

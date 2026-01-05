@@ -434,11 +434,6 @@ Begin
         End;
     End;
 
-//    If Not IsValid Then
-//    Begin
-//        WriteLn('The string contains invalid characters or their position is incorrect.');
-//    End;
-
     CheckIsStringValid := IsValid;
 End;
 

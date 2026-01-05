@@ -1,62 +1,5 @@
 Program StringLab;
 
-//uses
-//  System.SysUtils;
-//
-//Type
-//    ArrayOfChars = Array Of Char;
-//
-//Function FindIsCharInList(MyChar: Char): Boolean;
-//
-//Var
-//    AnsBool: Boolean;
-//    GoodChars: ArrayOfChars;
-//    I: Integer;
-//
-//Begin
-//    AnsBool := False;
-//    SetLength(GoodChars, 12);
-//    GoodChars := ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-'];
-//
-//    For I := Low(GoodChars) To High(GoodChars) Do
-//        If GoodChars[I] = MyChar Then
-//            AnsBool := True;
-//
-//    FindIsCharInList := AnsBool;
-//End;
-//
-//Var
-//    Str, AnswerStr: String;
-//    I, J, K: Integer;
-//    IsNumberInList: Boolean;
-//
-//Begin
-//    I := 0;
-//    J := 0;
-//    IsNumberInList := False;
-//
-//    ReadLn(Str);
-//
-//    For I := Low(Str) To High(Str) Do
-//        If (Str[I] = '+') Or (Str[I] = '-') Then
-//        Begin
-//            For J := I To High(Str) Do
-//            Begin
-//                IsNumberInList := False;
-//
-//                IsNumberInList := FindIsCharInList(Str[j]);
-//
-//                If IsNumberInList Then
-//                    AnswerStr := AnswerStr + Str[J];
-//            End;
-//        End;
-//
-//    WriteLn(AnswerStr);
-//    ReadLn;
-//End.
-
-//Program Lab2_ExtractInteger;
-
 Uses
     System.SysUtils;
 
@@ -283,7 +226,7 @@ Begin
     Until IsCorrect;
 End;
 
-Function IsDigit(C: Char): Boolean;
+Function IsDigit(MyChar: Char): Boolean;
 
 Var
     Answer: Boolean;
@@ -291,25 +234,11 @@ Var
 Begin
     Answer := False;
 
-    If (C >= '0') And (C <= '9') Then
+    If ((MyChar > '0') Or (MyChar = '0')) And ((MyChar < '9') Or (MyChar = '9')) Then
         Answer := True;
 
     IsDigit := Answer;
 End;
-
-//Function IsLetter(C: Char): Boolean;
-//
-//Var
-//    Answer: Boolean;
-//
-//Begin
-//    Answer := False;
-//
-//    If ((C >= 'A') And (C <= 'Z')) Or ((C >= 'a') And (C <= 'z')) Then
-//        Answer := True;
-//
-//    IsLetter := Answer;
-//End;
 
 Function ExtractInteger(InputStr: String): String;
 
@@ -326,30 +255,31 @@ Begin
 
     While (I < Length(InputStr)) And (IsNotFound) Do
     Begin
-        //HasSign := False;
-        //HasDigit := False;
-        //StartPos := 0;
-        //EndPos := 0;
 
         If ((InputStr[I] = '+') Or (InputStr[I] = '-')) And (IsDigit(InputStr[I + 1])) Then
         Begin
-            //HasSign := True;
-            //StartPos := I;
             Answer := Answer + InputStr[I];
             J := I + 1;
 
-            While (J < Length(InputStr)) And (IsNotFound) Do
+            While (J <= Length(InputStr)) And (IsNotFound) Do
             Begin
-                //CurrentChar := InputStr[I];
 
                 If IsDigit(InputStr[J]) Then
                     Answer := Answer + InputStr[J];
 
-                If (J + 1 = Length(InputStr)) And IsDigit(InputStr[J + 1]) Then
-                        Answer := Answer + InputStr[J];
-
-                If Not IsDigit(InputStr[J + 1]) Then
+                If J = Length(InputStr) Then
                     IsNotFound := false;
+
+                If IsNotFound And IsDigit(InputStr[J + 1]) Then
+                Begin
+                    If (J + 1 = Length(InputStr)) Then
+                    Begin
+                        Answer := Answer + InputStr[J + 1];
+                        IsNotFound := False;
+                    End;
+                End
+                Else
+                    IsNotFound := False;
 
                 Inc(J);
             End;
@@ -358,12 +288,6 @@ Begin
 
         Inc(I);
     End;
-
-//    If Found Then
-//    Begin
-//        For J := StartPos To EndPos Do
-//            Answer := Answer + InputStr[J];
-//    End;
 
     ExtractInteger := Answer;
 End;
@@ -465,6 +389,7 @@ Begin
     If IsFromFile Then
         Repeat
             IsAllDone := True;
+
             AssignMyFile(MyFile, IsOutput);
             InputStr := ReadStringFromFile(MyFile);
 
@@ -505,8 +430,10 @@ Var
 
 Begin
     WritePurpose;
+
     ReadingStage(InputStr);
     Answer := ExtractInteger(InputStr);
     WritingStage(Answer);
+
     ReadLn;
 End.
