@@ -4,22 +4,22 @@ Uses
     System.SysUtils;
 
 Var
-    A, B, ArithmMean, GeomMean: Double;
+    A, B, ArithmMean, GeomMean: Real;
     IsIncorrect, IsCycleAllowed: Boolean;
     Checker: Integer;
 
 Const
     MIN: Integer = 0;
-    MAX: Integer = 999;
+    MAX: Integer = 1000;
 
 Begin
     WriteLn('Программа считает среднее арифметическое и среднее геометрическое для чисел A и B, и показывает, что среднее арифметическое этих чисел не меньше их среднего геометрического.');
 
     Checker := 0;
-    A := 1.0;
-    B := 1.0;
-    ArithmMean := 1.0;
-    GeomMean := 1.0;
+    A := 0.0;
+    B := 0.0;
+    ArithmMean := 0.0;
+    GeomMean := 0;
     IsIncorrect := True;
     IsCycleAllowed := True;
 
@@ -39,7 +39,7 @@ Begin
                     IsIncorrect := True;
                 End;
             Except
-                WriteLn('Ошибка в записи числа А, повториет попытку.');
+                WriteLn('Ошибка в записи числа А, повторите попытку.');
             End;
         End;
 
@@ -58,7 +58,7 @@ Begin
                     IsIncorrect := True;
                 End;
             Except
-                WriteLn('Ошибка в записи числа B, повториет попытку.');
+                WriteLn('Ошибка в записи числа B, повторите попытку.');
             End;
         End;
 
@@ -75,11 +75,11 @@ Begin
         WriteLn('Если хотите продолжить, введите число 1, если нет, то число 2.');
 
         Try
-            ReadLn(Checker);
+            Read(Checker);
             If Checker = 1 Then
             Begin
                 WriteLn('');
-                WriteLn('Давайте заново');
+                WriteLn('Давайте заново.');
             End
             Else
                 IsCycleAllowed := False;

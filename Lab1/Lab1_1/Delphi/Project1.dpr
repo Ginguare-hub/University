@@ -3,14 +3,14 @@
 Uses
     System.SysUtils;
 
+Const
+    MIN: Integer = 0;
+    MAX: Integer = 1000;
+
 Var
     A, B, ArithmMean, GeomMean: Real;
     IsIncorrect, IsCycleAllowed: Boolean;
     Checker: Integer;
-
-Const
-    MIN: Integer = 0;
-    MAX: Integer = 1000;
 
 Begin
     WriteLn('Программа считает среднее арифметическое и среднее геометрическое для чисел A и B, и показывает, что среднее арифметическое этих чисел не меньше их среднего геометрического.');

@@ -1,0 +1,39 @@
+Unit Unit2;
+
+Interface
+
+Uses
+    Winapi.Windows,
+    Winapi.Messages,
+    System.SysUtils,
+    System.Variants,
+    System.Classes,
+    Vcl.Graphics,
+    Vcl.Controls,
+    Vcl.Forms,
+    Vcl.Dialogs, Vcl.StdCtrls;
+
+Type
+    TAboutDeveloperForm = Class(TForm)
+    AboutDeveloperLabel: TLabel;
+    CloseButton: TButton;
+    procedure FormCreate(Sender: TObject);
+    Private
+        { Private declarations }
+    Public
+        { Public declarations }
+    End;
+
+Var
+    AboutDeveloperForm: TAboutDeveloperForm;
+
+Implementation
+
+{$R *.dfm}
+
+procedure TAboutDeveloperForm.FormCreate(Sender: TObject);
+begin
+    AboutDeveloperLabel.Caption := 'Разработчик: Педько Владислав Юрьевич'#13#10'Группа: 551004'#13#10'Telegram: @ginguare';
+end;
+
+End.

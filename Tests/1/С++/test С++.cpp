@@ -4,7 +4,8 @@
 
 using namespace std;
 
-bool isFileText(string filePath) {
+bool isFileText(string filePath) 
+{
     const int MIN_PATH_LENGTH = 4;
 
     string fileExt;
@@ -13,13 +14,19 @@ bool isFileText(string filePath) {
     fileExt = "";
     isText = true;
 
-    if ((filePath.length() < MIN_PATH_LENGTH) || (filePath.find(".txt") == string::npos))
+    if ((filePath.length() < MIN_PATH_LENGTH) ||
+        (filePath[filePath.length() - 1] != 't') ||
+        (filePath[filePath.length() - 2] != 'x') ||
+        (filePath[filePath.length() - 3] != 't') ||
+        (filePath[filePath.length() - 4] != '.'))
+    {
         isText = false;
-
+    }
     return isText;
 }
 
-bool canRead(string filePath) {
+bool canRead(string filePath) 
+{
     bool isReady;
     ifstream testFile;
 
@@ -30,12 +37,11 @@ bool canRead(string filePath) {
         testFile.close();
         isReady = true;
     }
-
-    testFile.close();
     return isReady;
 }
 
-bool canWrite(const string& filePath) {
+bool canWrite(const string& filePath) 
+{
     ofstream outputFile;
     bool canWrite;
 
@@ -44,12 +50,11 @@ bool canWrite(const string& filePath) {
     outputFile.open(filePath, ios::app);
     canWrite = outputFile.is_open();
     outputFile.close();
-
-    outputFile.close();
     return canWrite;
 }
 
-bool checkMyFile(string filePath, bool isFileOutput) {
+bool checkMyFile(string filePath, bool isFileOutput) 
+{
     ifstream testFile;
     bool checkInput;
 
@@ -58,31 +63,30 @@ bool checkMyFile(string filePath, bool isFileOutput) {
 
     if (testFile.fail()) {
         cout << "Error, file with path <" << filePath << "> is not exists or cannot be read." << endl;
-        testFile.close();
     }
-    else if (!isFileText(filePath)) {
+    else 
+        if (!isFileText(filePath)) {
         cout << "Error, filename is not .txt" << endl;
     }
-    else if (!isFileOutput && !canRead(filePath)) {
+    else 
+        if (!isFileOutput && !canRead(filePath)) {
         cout << "Error, no access to read the file." << endl;
     }
-    else if (isFileOutput && !canWrite(filePath)) {
+    else 
+        if (isFileOutput && !canWrite(filePath)) {
         cout << "Error, no access to write into the file." << endl;
     }
     else {
         checkInput = true;
         cout << "Assigning is completed successfully." << endl;
     }
-
     testFile.close();
     return checkInput;
 }
 
-int sumHourglassPositive(int** arr, int n) {
-    int s;
-    int l;
-    int r;
-    int a;
+int sumHourglassPositive(int** arr, int n) 
+{
+    int s, l, r, a;
     s = 0;
     for (int i = 0; i < n; i++) {
         if (i < (n - 1 - i)) {
@@ -93,8 +97,8 @@ int sumHourglassPositive(int** arr, int n) {
             l = n - 1 - i;
             r = i;
         }
-        a = l++;
-        for (int j = a; j < r ; j++) {
+        
+        for (int j = l + 1; j < r; j++) {
             if (arr[i][j] > 0) {
                 s = s + arr[i][j];
             }
@@ -103,23 +107,25 @@ int sumHourglassPositive(int** arr, int n) {
     return s;
 }
 
-int inputOutputConsole() {
+int inputOutputConsole() 
+{
     int n;
     bool isInputCorrect;
     int resultValue;
     int** arr;
+
     do {
         isInputCorrect = false;
         cout << "Enter the array size: " << endl;
         if (!(cin >> n)) {
-            isInputCorrect = true;
             cout << "Enter a valid integer." << endl;
             cin.clear();
             cin.ignore(10000, '\n');
-        }
-        if (n < 1) {
             isInputCorrect = true;
-            cout << "Enter a number greater than 0." << endl;
+        }
+        else if (n < 1 || n > 1000) {
+            cout << "Enter a number between 1 and 1000." << endl;
+            isInputCorrect = true;
         }
     } while (isInputCorrect);
 
@@ -131,17 +137,18 @@ int inputOutputConsole() {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             do {
-                cout << "Number " << i++ << "-" << j++ << endl;
+                cout << "Number " << i + 1 << "-" << j + 1 << ": ";
                 isInputCorrect = false;
                 if (!(cin >> arr[i][j])) {
-                    isInputCorrect = true;
                     cout << "Enter a valid integer." << endl;
                     cin.clear();
                     cin.ignore(10000, '\n');
+                    isInputCorrect = true;
                 }
             } while (isInputCorrect);
         }
     }
+
     resultValue = sumHourglassPositive(arr, n);
 
     for (int i = 0; i < n; i++) {
@@ -152,13 +159,22 @@ int inputOutputConsole() {
     return resultValue;
 }
 
-int inputOutputData(const string& Path) {
+
+int inputOutputData(const string& Path, bool& taskSuccess)
+{
     ifstream f(Path);
     int n;
     int** arr;
     int resultValue;
 
-    f >> n;
+    taskSuccess = false;
+
+    if (!(f >> n)) {
+        cout << "Error: failed to read matrix size." << endl;
+        f.close();
+        return 0;
+    }
+
     arr = new int* [n];
     for (int i = 0; i < n; i++) {
         arr[i] = new int[n];
@@ -166,7 +182,13 @@ int inputOutputData(const string& Path) {
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            f >> arr[i][j];
+            if (!(f >> arr[i][j])) {
+                cout << "Error: failed to read element " << i + 1 << "-" << j + 1 << endl;
+                for (int k = 0; k <= i; ++k) delete[] arr[k];
+                delete[] arr;
+                f.close();
+                return 0;
+            }
         }
     }
     f.close();
@@ -186,10 +208,12 @@ int inputOutputData(const string& Path) {
     }
     delete[] arr;
 
+    taskSuccess = true;
     return resultValue;
 }
 
-string pathInput() {
+string pathInput() 
+{
     string p;
     bool performance;
     cout << "Enter the path to the input file: ";
@@ -201,7 +225,8 @@ string pathInput() {
     return p;
 }
 
-string pathOutput() {
+string pathOutput() 
+{
     string p;
     bool performance;
     cout << "Enter the path to the output file: ";
@@ -214,104 +239,108 @@ string pathOutput() {
 }
 
 
-void outputData(int resultValue, const string& outPath) {
+void outputData(int resultValue, const string& outPath) 
+{
     ofstream f(outPath);
     f << resultValue << endl;
     f.close();
 }
 
-void inputSelection() {
+int inputSelection() 
+{
     int resultValue;
     int input;
     bool isInputIncorrect;
+    bool taskSuccess;
+    bool hasError;
+    do {
+        isInputIncorrect = true;
+        cout << "How do you want to enter the data?" << endl;
+        cout << "0.Console                 1.Files" << endl;
+
+        cin >> input;
+
+        if (cin.fail()) {
+            isInputIncorrect = true;
+            cout << "Error: enter an integer" << endl;
+            cin.clear();
+            while (cin.get() != '\n');
+        }
+        if (cin.get() != '\n') {
+            isInputIncorrect = true;
+            cout << "Error: Input contains extra characters." << endl;
+            while (cin.get() != '\n');
+        }
+        if (input < 0 || input > 1) {
+            isInputIncorrect = true;
+            cout << "Enter the number 0 or 1" << endl;
+        }
+        else {
+            if (input == 0)
+                resultValue = inputOutputConsole();
+            else {
+                hasError = true;  
+                do {
+                    string path = pathInput();
+                    resultValue = inputOutputData(path, taskSuccess);
+                    hasError = !taskSuccess; 
+                } while (hasError);
+            }
+
+            isInputIncorrect = false;
+        }
+
+    } while (isInputIncorrect);
+
+    return resultValue;
+}
+
+
+void outputSelection(int resultValue) 
+{
+    int output;
+    bool isInputIncorrect;
+    string outPath;
 
     do {
         isInputIncorrect = true;
         cout << "How will you display the answer ?" << endl;
         cout << "0.Console                 1.Files" << endl;
 
-        cin >> input;
-
-        if (cin.fail())
-        {
-            isInputIncorrect = true;
-            cout << "Error: enter an integer" << endl;
-            cin.clear();
-            while (cin.get() != '\n');
-        }
-        if (cin.get() != '\n')
-        {
-            isInputIncorrect = true;
-            cout << "Error: Input contains extra characters." << endl;
-            while (cin.get() != '\n');
-        }
-        if (input < 0 || input > 1)
-        {
-            isInputIncorrect = true;
-            cout << "Enter the number 0 or 1" << endl;
-        }
-
-        else
-        {
-            if (input == 0)
-                resultValue = inputOutputConsole();
-            else
-            {
-                resultValue = inputOutputData(pathInput());
-            }
-        }
-    } while (isInputIncorrect);
-}
-
-void outputSelection(int resultValue) {
-
-    int output;
-    bool isInputIncorrect;
-    string outPath;
- 
-    do{
-        isInputIncorrect = true;
-        cout << "How will you display the answer ?" << endl;
-        cout << "0.Console                 1.Files" << endl;
-        
         cin >> output;
 
-        if (cin.fail())
-        {
+        if (cin.fail()) {
             isInputIncorrect = true;
             cout << "Error: enter an integer" << endl;
             cin.clear();
             while (cin.get() != '\n');
         }
-        if (cin.get() != '\n')
-        {
+        if (cin.get() != '\n') {
             isInputIncorrect = true;
             cout << "Error: Input contains extra characters." << endl;
             while (cin.get() != '\n');
         }
-        if (output < 0 || output > 1)
-        {
+        if (output < 0 || output > 1) {
             isInputIncorrect = true;
             cout << "Enter the number 0 or 1" << endl;
         }
-
-        else
-        {
+        else {
             if (output == 0)
                 cout << resultValue << endl;
-            else
-            {
+            else {
                 outPath = pathOutput();
                 outputData(resultValue, outPath);
                 cout << "Result written to: " + outPath << endl;
             }
+            isInputIncorrect = false;
         }
-    }while (isInputIncorrect);
+    } while (isInputIncorrect);
 }
 
-int main() {
-    int finalResult;
-    inputSelection();
-    outputSelection;
-    return 0;
+
+int main() 
+{
+    int resultValue = inputSelection();
+    outputSelection(resultValue); 
+    return 0; 
 }

@@ -241,7 +241,6 @@ public class myFiles {
     }
 
     public static boolean writeMatrixIntoFile(String filePath, int[][] matrix) {
-
         int matrixLength;
         boolean isIncorrect;
 
@@ -257,8 +256,10 @@ public class myFiles {
                 }
                 fileWriter.write("\n");
             }
+            
             System.out.print("Matrix written to file successfully.\n");
             fileWriter.close();
+
         } catch (IOException e) {
             System.out.print("Error with file write.\n");
             isIncorrect = true;
@@ -285,7 +286,6 @@ public class myFiles {
         filePath = "";
 
         isFromFile = workWithConsoleOrFile(isOutput, consoleScanner);
-        isOutput = false;
 
         if (isFromFile) {
             isAllUndone = true;
@@ -321,8 +321,7 @@ public class myFiles {
         isOutput = false;
         filePath = "";
 
-        isToFile = workWithConsoleOrFile(true, consoleScanner);
-        isOutput = true;
+        isToFile = workWithConsoleOrFile(isOutput, consoleScanner);
 
         if (isToFile) {
             do {
@@ -341,6 +340,7 @@ public class myFiles {
 
         writePurpose();
         matrix = readingStage(consoleScanner);
+
         writingStage(matrix, consoleScanner);
 
         consoleScanner.close();

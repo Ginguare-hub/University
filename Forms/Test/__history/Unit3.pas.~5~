@@ -1,0 +1,28 @@
+unit Unit3;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
+
+type
+  TCloseForm = class(TForm)
+    Label1: TLabel;
+    ConfirmCloseButton: TButton;
+    CancelCloseButton: TButton;
+    procedure ConfirmCloseButtonClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  CloseForm: TCloseForm;
+
+implementation
+
+{$R *.dfm}
+
+end.
