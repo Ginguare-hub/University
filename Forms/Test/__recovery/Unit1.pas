@@ -19,8 +19,10 @@ Uses
 
 Type
     ERROR_CODES = (NO_ERROROS,
-              NUMBER_NOT_VALID
-              );
+                   NUMBER_NOT_VALID,
+                   FILE_NOT_EXIST,
+                   FILE_CLOSE_TO_READ,
+                   FILE_CLOSE_TO_WRITE);
     TMainForm = Class(TForm)
     NumberOneEdit: TEdit;
     ResultButton: TButton;
@@ -39,13 +41,14 @@ Type
     NumberTwoEdit: TEdit;
     NumberTwoLabel: TLabel;
     AnswerLabel: TLabel;
-    IdMessage1: TIdMessage;
     procedure LeaveTabClick(Sender: TObject);
     procedure NumberOneEditKeyPress(Sender: TObject; var Key: Char);
     procedure NumberOneEditChange(Sender: TObject);
     procedure NumberTwoEditKeyPress(Sender: TObject; var Key: Char);
     procedure NumberTwoEditChange(Sender: TObject);
     procedure AboutDeveloperTabClick(Sender: TObject);
+    procedure ResultButtonClick(Sender: TObject);
+    procedure OpenTabClick(Sender: TObject);
     //procedure NumberOneEditKeyDown(Sender: TObject; var Key: Word;
    //   Shift: TShiftState);
 
@@ -62,7 +65,7 @@ Const
     NONE_CHAR = #0;
     DIGITS = ['0'..'9'];
     ERROR_TEXT: Array [ERROR_CODES] Of String = ('',
-                                                 'Строка имеет некорректный ввод числа.')
+                                                 'Строка имеет некорректный ввод числа.');
 
 Var
     MainForm: TMainForm;
@@ -98,27 +101,28 @@ end;
 
 procedure TMainForm.LeaveTabClick(Sender: TObject);
 Var
-    CloseForm: TCloseForm;
-begin
-    CloseForm := TCloseForm.Create(Self);
-    CloseForm.ShowModal;
-    CloseForm.Free;
-end;
+    IsFormShouldClose: Integer;
+
+Begin
+    IsFormShouldClose := Application.MessageBox(PChar('Вы хотите выйти?'), PChar('Выход'), MB_YESNO+MB_ICONQUESTION);
+
+    If IsFormShouldClose = mrYes Then
+        Close;
+
+End;
 
 Function CheckStringOnEdit(TestString: String; Var IsPointAllowed{, IsMinusAllowed}: Boolean): Boolean;
 Var
     FirstChar, LastChar: Char;
-    IsStringReadible, IsFirstAndLastCharFine, IsPointValid, IsMinusValid: Boolean;
+    IsStringReadible, IsFirstAndLastCharFine, IsPointValid: Boolean;
     I, CountOfPoints, CountOfMinuses, PointIndex: Integer;
 
 Begin
     IsStringReadible       := False;
     IsFirstAndLastCharFine := False;
     IsPointValid           := False;
-    IsMinusValid           := False;
 
     CountOfPoints   := 0;
-    CountOfMinuses  := 0;
     PointIndex      := 0;
 
     If Length(TestString) = 0 Then
@@ -129,9 +133,8 @@ Begin
         LastChar  := TestString[High(TestString)];
 
         // Проверка строки
-        IsFirstAndLastCharFine := ((FirstChar in DIGITS)
-                                    Or (FirstChar = '-'))
-                                    And (LastChar in DIGITS);
+        IsFirstAndLastCharFine := (FirstChar in DIGITS)
+                              And (LastChar in DIGITS);
 
         For I := Low(TestString) To High(TestString) Do
         Begin
@@ -140,19 +143,7 @@ Begin
                 CountOfPoints := CountOfPoints + 1;
                 PointIndex := I;
             End;
-
-            If TestString[I] = '-' Then
-                CountOfMinuses := CountOfMinuses + 1;
         End;
-
-        If CountOfMinuses = 0 Then
-        Begin
-            IsMinusValid := True;
-        End;
-
-        If (CountOfMinuses = 1) And (FirstChar = '-') And
-            (Length(TestString) > 1) And (TestString[2] in DIGITS) Then
-            IsMinusValid := True;
 
         If CountOfPoints = 0 Then
         Begin
@@ -167,7 +158,7 @@ Begin
             And (TestString[PointIndex - 1] in DIGITS) Then
             IsPointValid := True;
 
-        IsStringReadible := IsFirstAndLastCharFine And IsPointValid And IsMinusValid;
+        IsStringReadible := IsFirstAndLastCharFine And IsPointValid;
     End;
 
     CheckStringOnEdit := IsStringReadible;
@@ -196,11 +187,11 @@ begin
     WrittenString := NumberOneEdit.Text;
 
     // Проверяем первый символ будущей строки
-    If ( (Length(WrittenString) = 0) And ((Key in DIGITS) Or (Key = '-')) ) Then
+    If ( (Length(WrittenString) = 0) And (Key in DIGITS) ) Then
         IsKeyAllowed := True;
 
     // Проверяем возможные вторые символы строки
-    If ( (Length(WrittenString) = 1) And ((Key in DIGITS) Or ((Key = ',') And Not(WrittenString[1] = '-'))) ) Then
+    If ( (Length(WrittenString) = 1) And ((Key in DIGITS) Or (Key = ',')) ) Then
         IsKeyAllowed := True;
 
     // Проверяем ввод остальных символов строки
@@ -233,11 +224,11 @@ begin
     WrittenString := NumberTwoEdit.Text;
 
     // Проверяем первый символ будущей строки
-    If ( (Length(WrittenString) = 0) And ((Key in DIGITS) Or (Key = '-')) ) Then
+    If ( (Length(WrittenString) = 0) And (Key in DIGITS) ) Then
         IsKeyAllowed := True;
 
     // Проверяем возможные вторые символы строки
-    If ( (Length(WrittenString) = 1) And ((Key in DIGITS) Or ((Key = ',') And Not(WrittenString[1] = '-'))) ) Then
+    If ( (Length(WrittenString) = 1) And ((Key in DIGITS) Or (Key = ',')) ) Then
         IsKeyAllowed := True;
 
     // Проверяем ввод остальных символов строки
@@ -258,6 +249,28 @@ begin
 
     If Not IsKeyAllowed Then
         Key := #0;
+end;
+
+procedure TMainForm.OpenTabClick(Sender: TObject);
+begin
+     SaveTextFileDialog1.Execute;
+end;
+
+procedure TMainForm.ResultButtonClick(Sender: TObject);
+Var
+    NumberOne, NumberTwo, ArithmeticMean, GeometricMean: Double;
+    AnswerString: String;
+
+begin
+    NumberOne := StrToFloat(NumberOneEdit.Text);
+    NumberTwo := StrToFloat(NumberTwoEdit.Text);
+
+    ArithmeticMean := (NumberOne + NumberTwo) / 2;
+    GeometricMean := Sqrt(NumberOne * NumberTwo);
+
+    AnswerString := 'Среднее арифметическое: ' + FloatToStr(ArithmeticMean)+ #13#10 + 'Среднее геометрическое: ' + FloatToStr(GeometricMean) + #13#10 + FloatToStr(ArithmeticMean) + ' >= ' + FloatToStr(GeometricMean);
+
+    AnswerLabel.Caption := AnswerString;
 end;
 
 End.

@@ -40,7 +40,7 @@ end;
 
 procedure TAboutDeveloperForm.FormCreate(Sender: TObject);
 begin
-    //CloseButton.Left := (AboutDeveloperForm.Width Div 2) - (CloseButton.Width Div 2);
+    AboutDeveloperLabel.Left := (ClientWidth - AboutDeveloperLabel.Width) Div 2;
 end;
 
 end.

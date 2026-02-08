@@ -18,9 +18,7 @@ object AboutDeveloperForm: TAboutDeveloperForm
   Font.Height = -24
   Font.Name = 'Segoe UI'
   Font.Style = []
-  FormStyle = fsStayOnTop
   Position = poMainFormCenter
-  Visible = True
   OnCreate = FormCreate
   PixelsPerInch = 192
   TextHeight = 32

@@ -17,7 +17,8 @@ Type
     TAboutDeveloperForm = Class(TForm)
     AboutDeveloperLabel: TLabel;
     CloseButton: TButton;
-    procedure FormCreate(Sender: TObject);
+    procedure CloseButtonClick(Sender: TObject);
+
     Private
         { Private declarations }
     Public
@@ -31,9 +32,9 @@ Implementation
 
 {$R *.dfm}
 
-procedure TAboutDeveloperForm.FormCreate(Sender: TObject);
+procedure TAboutDeveloperForm.CloseButtonClick(Sender: TObject);
 begin
-    AboutDeveloperLabel.Caption := 'Разработчик: Педько Владислав Юрьевич'#13#10'Группа: 551004'#13#10'Telegram: @ginguare';
+    Close;
 end;
 
-End.
+end.

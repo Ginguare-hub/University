@@ -17,8 +17,9 @@ Type
     TAboutDeveloperForm = Class(TForm)
     AboutDeveloperLabel: TLabel;
     CloseButton: TButton;
-    procedure FormCreate(Sender: TObject);
     procedure CloseButtonClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+
     Private
         { Private declarations }
     Public
@@ -37,6 +38,9 @@ begin
     Close;
 end;
 
+procedure TAboutDeveloperForm.FormCreate(Sender: TObject);
+begin
+    CloseButton.Left := (AboutDeveloperForm.Width Div 2) - (CloseButton.Width Div 2);
+end;
 
-
-End.
+end.

@@ -8,11 +8,13 @@ object AboutDeveloperForm: TAboutDeveloperForm
   BorderIcons = [biSystemMenu, biMaximize]
   BorderStyle = bsDialog
   Caption = #1054' '#1056#1072#1079#1088#1072#1073#1086#1090#1095#1080#1082#1077
-  ClientHeight = 312
-  ClientWidth = 638
+  ClientHeight = 329
+  ClientWidth = 724
   Color = clBtnFace
-  Constraints.MaxHeight = 500
-  Constraints.MaxWidth = 1000
+  Constraints.MaxHeight = 400
+  Constraints.MaxWidth = 750
+  Constraints.MinHeight = 400
+  Constraints.MinWidth = 750
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -24
@@ -44,7 +46,7 @@ object AboutDeveloperForm: TAboutDeveloperForm
     WordWrap = True
   end
   object CloseButton: TButton
-    Left = 224
+    Left = 264
     Top = 237
     Width = 200
     Height = 50

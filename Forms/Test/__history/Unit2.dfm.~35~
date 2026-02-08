@@ -8,19 +8,20 @@ object AboutDeveloperForm: TAboutDeveloperForm
   BorderIcons = [biSystemMenu, biMaximize]
   BorderStyle = bsDialog
   Caption = #1054' '#1056#1072#1079#1088#1072#1073#1086#1090#1095#1080#1082#1077
-  ClientHeight = 312
-  ClientWidth = 638
+  ClientHeight = 329
+  ClientWidth = 1397
   Color = clBtnFace
   Constraints.MaxHeight = 500
-  Constraints.MaxWidth = 1000
+  Constraints.MaxWidth = 1500
+  Constraints.MinHeight = 383
+  Constraints.MinWidth = 664
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -24
   Font.Name = 'Segoe UI'
   Font.Style = []
-  FormStyle = fsStayOnTop
   Position = poMainFormCenter
-  Visible = True
+  OnCreate = FormCreate
   PixelsPerInch = 192
   TextHeight = 32
   object AboutDeveloperLabel: TLabel
