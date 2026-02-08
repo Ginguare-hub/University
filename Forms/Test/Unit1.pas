@@ -19,8 +19,10 @@ Uses
 
 Type
     ERROR_CODES = (NO_ERROROS,
-              NUMBER_NOT_VALID
-              );
+                   NUMBER_NOT_VALID,
+                   FILE_NOT_EXIST,
+                   FILE_CLOSE_TO_READ,
+                   FILE_CLOSE_TO_WRITE);
     TMainForm = Class(TForm)
     NumberOneEdit: TEdit;
     ResultButton: TButton;
@@ -63,7 +65,10 @@ Const
     NONE_CHAR = #0;
     DIGITS = ['0'..'9'];
     ERROR_TEXT: Array [ERROR_CODES] Of String = ('',
-                                                 'Строка имеет некорректный ввод числа.');
+                                                 'Строка файла имеет некорректный ввод числа.',
+                                                 'Файл не найден.',
+                                                 'Файл закрыть для чтения.',
+                                                 'Файл закрыть для записи.');
 
 Var
     MainForm: TMainForm;

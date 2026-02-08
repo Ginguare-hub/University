@@ -1,26 +1,27 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.Forms.pas',0,1,13439,1,13451,0,0,{{2051,4},{2067,15},{'TScrollWindow'}}{{2161,4},{2265,15},{'TMainMenuBarStyleHook'}},
-File_1=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.Controls.pas',0,1,10809,1,10831,0,0,,
-File_2=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\source\rtl\common\System.Classes.pas',0,1,19069,1,19087,0,0,,
-File_3=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.StdCtrls.pas',0,1,5829,1,5845,0,0,{{1775,4},{1793,15},{'TScrollWindow'}},
-File_4=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\RTL\SYS\System.pas',0,1,21477,1,21477,0,0,,
-File_5=TSourceModule,'C:\GitHub\University\Forms\Test\MainForm.pas',0,1,2,14,19,0,0,,
-File_6=TSourceModule,'C:\GitHub\University\Forms\Test\MainForm.dfm',0,1,1,1,1,0,0,,
+File_0=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\RTL\SYS\System.SysUtils.pas',0,1,19203,1,19222,0,0,,
+File_1=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.Forms.pas',0,1,13439,1,13451,0,0,{{2051,4}
+File_2=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.Controls.pas',0,1,10809,1,10831,0,0,,
+File_3=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\source\rtl\common\System.Classes.pas',0,1,19069,1,19087,0,0,,
+File_4=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.StdCtrls.pas',0,1,5829,1,5845,0,0,{{1775,4}
+File_5=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\RTL\SYS\System.pas',0,1,21477,1,21477,0,0,,
+File_6=TSourceModule,'C:\GitHub\University\Forms\Test\MainForm.pas',0,1,2,14,19,0,0,,
+File_7=TSourceModule,'C:\GitHub\University\Forms\Test\MainForm.dfm',0,1,1,1,1,0,0,,
 
 [Modules]
 Module0=C:\GitHub\University\Forms\Test\Unit1.pas
-Module1=C:\GitHub\University\Forms\Test\Unit3.pas
-Module2=C:\GitHub\University\Forms\Test\Unit2.pas
+Module1=C:\GitHub\University\Forms\Test\Unit2.pas
+Module2=C:\GitHub\University\Forms\Test\Unit3.pas
 Count=3
 EditWindowCount=1
 
 [C:\GitHub\University\Forms\Test\Unit1.pas]
 ModuleType=TSourceModule
 
-[C:\GitHub\University\Forms\Test\Unit3.pas]
+[C:\GitHub\University\Forms\Test\Unit2.pas]
 ModuleType=TSourceModule
 
-[C:\GitHub\University\Forms\Test\Unit2.pas]
+[C:\GitHub\University\Forms\Test\Unit3.pas]
 ModuleType=TSourceModule
 
 [EditWindow0]
@@ -66,24 +67,24 @@ TabDockRightClients=DockSite2=0,DockSite4=1
 [View0]
 CustomEditViewType=TEditView
 Module=C:\GitHub\University\Forms\Test\Unit1.pas
-CursorX=33
-CursorY=249
-TopLine=241
+CursorX=99
+CursorY=71
+TopLine=38
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=Borland.FormDesignerView
+EditViewName=C:\GitHub\University\Forms\Test\Unit1.pas
 
 [View1]
 CustomEditViewType=TEditView
 Module=C:\GitHub\University\Forms\Test\Unit2.pas
-CursorX=7
+CursorX=24
 CursorY=43
-TopLine=16
+TopLine=41
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=Borland.FormDesignerView
+EditViewName=C:\GitHub\University\Forms\Test\Unit2.pas
 
 [View2]
 CustomEditViewType=TEditView
@@ -121,8 +122,7 @@ Dockable=1
 StayOnTop=0
 
 [Breakpoints]
-Count=1
-Breakpoint0='C:\GitHub\University\Forms\Test\Unit1.pas',261,'',0,1,'',1,0,0,'',1,'','','',0,''
+Count=0
 
 [EmbarcaderoWin32Debugger_AddressBreakpoints]
 Count=0
@@ -158,12 +158,12 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=1836
-Height=8321
+Width=1816
+Height=8625
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1836
-ClientHeight=8321
+ClientWidth=1816
+ClientHeight=8625
 TBDockHeight=5902
 LRDockWidth=2350
 Dockable=1
@@ -225,12 +225,12 @@ TBDockHeight=9011
 LRDockWidth=1885
 Dockable=1
 StayOnTop=0
-SplitPos=96
+SplitPos=111
 
 [PropInspDesignerSelection]
 ArrangeBy=Name
-SelectedItem=Name,Action
-ExpandedItems=Anchors=0,BorderIcons=0,Constraints=0,CustomTitleBar=0,Font=0,GlassFrame=0,HorzScrollBar=0,LiveBindings=0,"LiveBindings Designer=0",Margins=0,Padding=0,StyleElements=0,Touch=0,VertScrollBar=0,Menu=0,ImageMargins=0
+SelectedItem=Action,OnCreate
+ExpandedItems=Anchors=0,BorderIcons=0,Constraints=1,CustomTitleBar=0,Font=1,LiveBindings=0,"LiveBindings Designer=0",Margins=0,StyleElements=0,Touch=0,Font.Style=0
 
 [frmDesignPreview]
 PercentageSizes=1
@@ -240,11 +240,11 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=1836
+Width=1816
 Height=8321
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1836
+ClientWidth=1816
 ClientHeight=8321
 TBDockHeight=5957
 LRDockWidth=2510
@@ -326,8 +326,8 @@ TBDockHeight=364
 LRDockWidth=273
 Dockable=1
 StayOnTop=0
-Name=5
-Description=11
+Name=8
+Description=21
 filter=1
 
 [DebugLogView]
@@ -502,11 +502,11 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=1836
+Width=1816
 Height=8321
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1836
+ClientWidth=1816
 ClientHeight=8321
 TBDockHeight=4880
 LRDockWidth=7148
@@ -585,11 +585,11 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=1836
+Width=1816
 Height=8321
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1836
+ClientWidth=1816
 ClientHeight=8321
 TBDockHeight=4880
 LRDockWidth=5309
@@ -676,18 +676,18 @@ Docked=1
 State=0
 Left=2473
 Top=191
-Width=1921
+Width=1901
 Height=9011
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1836
+ClientWidth=1816
 ClientHeight=8625
 TBDockHeight=9011
-LRDockWidth=1921
+LRDockWidth=1901
 Dockable=1
 StayOnTop=0
 TabPosition=1
-ActiveTabID=ProjectManager
+ActiveTabID=ModelViewTool
 TabDockClients=ProjectManager,ModelViewTool,DataExplorerContainer,frmDesignPreview
 
 [DockSite3]
@@ -735,6 +735,6 @@ LRDockWidth=1921
 Dockable=1
 StayOnTop=0
 TabPosition=1
-ActiveTabID=TemplateView
+ActiveTabID=ToolForm
 TabDockClients=ToolForm,TemplateView
 

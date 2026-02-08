@@ -46,6 +46,7 @@ Type
     procedure NumberTwoEditChange(Sender: TObject);
     procedure AboutDeveloperTabClick(Sender: TObject);
     procedure ResultButtonClick(Sender: TObject);
+    procedure OpenTabClick(Sender: TObject);
     //procedure NumberOneEditKeyDown(Sender: TObject; var Key: Word;
    //   Shift: TShiftState);
 
@@ -98,12 +99,15 @@ end;
 
 procedure TMainForm.LeaveTabClick(Sender: TObject);
 Var
-    CloseForm: TCloseForm;
-begin
-    CloseForm := TCloseForm.Create(Self);
-    CloseForm.ShowModal;
-    CloseForm.Free;
-end;
+    IsFormShouldClose: Integer;
+
+Begin
+    IsFormShouldClose := Application.MessageBox(PChar('Вы хотите выйти?'), PChar('Выход'), MB_YESNO+MB_ICONQUESTION);
+
+    If IsFormShouldClose = mrYes Then
+        Close;
+
+End;
 
 Function CheckStringOnEdit(TestString: String; Var IsPointAllowed{, IsMinusAllowed}: Boolean): Boolean;
 Var
@@ -243,6 +247,11 @@ begin
 
     If Not IsKeyAllowed Then
         Key := #0;
+end;
+
+procedure TMainForm.OpenTabClick(Sender: TObject);
+begin
+     SaveTextFileDialog1.Execute;
 end;
 
 procedure TMainForm.ResultButtonClick(Sender: TObject);
