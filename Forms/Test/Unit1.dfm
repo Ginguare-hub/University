@@ -162,6 +162,7 @@ object MainForm: TMainForm
     end
     object InstructionTab: TMenuItem
       Caption = #1048#1085#1089#1090#1088#1091#1082#1094#1080#1103
+      OnClick = InstructionTabClick
     end
     object AboutDeveloperTab: TMenuItem
       Caption = #1054' '#1056#1072#1079#1088#1072#1073#1086#1090#1095#1080#1082#1077

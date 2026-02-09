@@ -3,7 +3,7 @@ program Project1;
 uses
   Vcl.Forms,
   Unit1 in 'Unit1.pas' {MainForm},
-  Unit2 in 'Unit2.pas' {AboutDeveloperForm},
+  Unit2 in 'Unit2.pas' {GuideForm},
   Vcl.Themes,
   Vcl.Styles,
   Unit3 in 'Unit3.pas' {CloseForm};

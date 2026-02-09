@@ -130,7 +130,7 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Unit2.pas">
-            <Form>AboutDeveloperForm</Form>
+            <Form>GuideForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Unit3.pas">

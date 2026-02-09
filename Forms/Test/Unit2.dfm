@@ -1,4 +1,4 @@
-object AboutDeveloperForm: TAboutDeveloperForm
+object GuideForm: TGuideForm
   Left = 0
   Top = 0
   Margins.Left = 6
@@ -7,7 +7,6 @@ object AboutDeveloperForm: TAboutDeveloperForm
   Margins.Bottom = 6
   BorderIcons = [biSystemMenu, biMaximize]
   BorderStyle = bsDialog
-  Caption = #1054' '#1056#1072#1079#1088#1072#1073#1086#1090#1095#1080#1082#1077
   ClientHeight = 329
   ClientWidth = 724
   Color = clBtnFace
@@ -24,19 +23,16 @@ object AboutDeveloperForm: TAboutDeveloperForm
   OnCreate = FormCreate
   PixelsPerInch = 192
   TextHeight = 32
-  object AboutDeveloperLabel: TLabel
-    Left = 11
+  object GuideLabel: TLabel
+    Left = 31
     Top = 43
-    Width = 610
-    Height = 182
+    Width = 600
+    Height = 158
     Margins.Left = 6
     Margins.Top = 6
     Margins.Right = 6
     Margins.Bottom = 6
     AutoSize = False
-    Caption = 
-      #1056#1072#1079#1088#1072#1073#1086#1090#1095#1080#1082': '#1055#1077#1076#1100#1082#1086' '#1042#1083#1072#1076#1080#1089#1083#1072#1074' '#1070#1088#1100#1077#1074#1080#1095#13#10#1043#1088#1091#1087#1087#1072': 551004'#13#10'Telegram:' +
-      ' @ginguare'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -29

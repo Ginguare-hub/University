@@ -18,11 +18,14 @@ Uses
     Vcl.Menus, Vcl.ExtDlgs, IdBaseComponent, IdMessage;
 
 Type
-    ERROR_CODES = (NO_ERROROS,
+    ERROR_CODES = (NO_ERRORS,
                    NUMBER_NOT_VALID,
                    FILE_NOT_EXIST,
+                   FILE_NOT_TXT,
                    FILE_CLOSE_TO_READ,
-                   FILE_CLOSE_TO_WRITE);
+                   FILE_CLOSE_TO_WRITE,
+                   FILE_IS_EMPTY,
+                   FILE_DATA_NOT_CORRECT);
     TMainForm = Class(TForm)
     NumberOneEdit: TEdit;
     ResultButton: TButton;
@@ -49,6 +52,7 @@ Type
     procedure AboutDeveloperTabClick(Sender: TObject);
     procedure ResultButtonClick(Sender: TObject);
     procedure OpenTabClick(Sender: TObject);
+    procedure InstructionTabClick(Sender: TObject);
     //procedure NumberOneEditKeyDown(Sender: TObject; var Key: Word;
    //   Shift: TShiftState);
 
@@ -67,8 +71,16 @@ Const
     ERROR_TEXT: Array [ERROR_CODES] Of String = ('',
                                                  'Строка файла имеет некорректный ввод числа.',
                                                  'Файл не найден.',
+                                                 'Файл не соответствует формату .txt',
                                                  'Файл закрыть для чтения.',
-                                                 'Файл закрыть для записи.');
+                                                 'Файл закрыть для записи.',
+                                                 'Файл пустой.',
+                                                 'Файл имеет некоректный формат данных.');
+
+    // TODO проверка на 0 первым символом
+    // TODO Сохранения
+    // TODO корректный выход из приложения (В случае не сохранения) (Через нажатие крестика)
+    // TODO Панель инструкций
 
 Var
     MainForm: TMainForm;
@@ -83,23 +95,169 @@ Implementation
 
 {$R *.dfm}
 
-//Procedure TMainForm.Button1Click(Sender: TObject);
-//Var
-//    lolForm: TForm2;
-//Begin
-//    lolForm := TForm2.Create(Self);
-//    lolForm.Label1.Caption := Edit1.Text;
-//    lolForm.ShowModal;
-//    lolForm.Free;
-//End;
+// ФАЙЛЫ Проверки
+
+Function IsFileText(FilePath: String): Boolean;
+
+Const
+    MIN_PATH_LENGTH: Integer = 3;
+
+Var
+    FileExt: String;
+    IsText: Boolean;
+    Index: Integer;
+
+Begin
+    Index := Length(FilePath);
+    IsText := False;
+
+    If Index > MIN_PATH_LENGTH Then
+        FileExt := FilePath[Index - 3] + FilePath[Index - 2] + FilePath[Index - 1] + FilePath[Index]
+    Else
+        IsText := False;
+
+    IsText := FileExt = '.txt';
+
+    IsFileText := IsText;
+End;
+
+Function IsFileNotEmpty(Var InputFile: TextFile): Boolean;
+
+Var
+    IsNotEmpty: Boolean;
+
+Begin
+
+    Try
+        Reset(InputFile);
+        IsNotEmpty := Not EOF(InputFile);
+    Finally
+        CloseFile(InputFile);
+    End;
+
+    IsFileNotEmpty := IsNotEmpty;
+End;
+
+Function CanRead(Var InputFile: TextFile): Boolean;
+
+Var
+    IsReady: Boolean;
+
+Begin
+
+    Try
+        Reset(InputFile);
+        CloseFile(InputFile);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanRead := IsReady;
+End;
+
+Function CanWrite(Var FileVar: TextFile): Boolean;
+
+Var
+    IsReady: Boolean;
+
+Begin
+
+    Try
+        Append(FileVar);
+        CloseFile(FileVar);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanWrite := IsReady;
+End;
+
+Function CheckMyFile(Var InputFile: TextFile; FilePath: String; IsFileOutput: Boolean): ERROR_CODES;
+
+Var
+    CheckInput: Boolean;
+    ERROR: ERROR_CODES;
+
+Begin
+    CheckInput := False;
+
+    If Not FileExists(FilePath) Then
+        ERROR := FILE_NOT_EXIST
+    Else
+        If Not IsFileText(FilePath) Then
+            ERROR := FILE_NOT_TXT
+        Else
+            If (Not IsFileOutput) And (Not CanRead(InputFile)) Then
+                ERROR := FILE_CLOSE_TO_READ
+            Else
+                If IsFileOutput And (Not CanWrite(InputFile)) Then
+                    ERROR := FILE_CLOSE_TO_WRITE
+                Else
+                    If Not IsFileNotEmpty(InputFile) Then
+                        ERROR := FILE_IS_EMPTY
+                    Else
+                    Begin
+                        ERROR := NO_ERRORS;
+                    End;
+
+    CheckMyFile := ERROR;
+End;
+
+//
+
+procedure TMainForm.OpenTabClick(Sender: TObject);
+Var
+    FilePath: String;
+    OpenedFile: TextFile;
+    ERROR: ERROR_CODES;
+    IsToWriteToFile: Boolean;
+
+begin
+    IsToWriteToFile := False;
+
+     If OpenTextFileDialog1.Execute Then
+     Begin
+        FilePath := OpenTextFileDialog1.FileName;
+        AssignFile(OpenedFile, FilePath);
+        ERROR := CheckMyFile(OpenedFile, FilePath, IsToWriteToFile);
+
+        If ERROR = NO_ERRORS Then
+        Begin
+            //ERROR := ReadFileData;
+        End;
+        If ERROR <> NO_ERRORS Then
+            Application.MessageBox(PWideChar(ERROR_TEXT[ERROR]), 'Ошибка', MB_OK+MB_ICONERROR);
+
+     End;
+end;
 
 procedure TMainForm.AboutDeveloperTabClick(Sender: TObject);
 Var
-    AboutDeveloperForm: TAboutDeveloperForm;
+    AboutDeveloperForm: TGuideForm;
 begin
-    AboutDeveloperForm := TAboutDeveloperForm.Create(Self);
+    AboutDeveloperForm := TGuideForm.Create(Self);
+    AboutDeveloperForm.GuideLabel.Caption := 'Разработчик: Педько Владислав Юрьевич'#13#10'Группа: 551004'#13#10'Telegram: @ginguare';
+    AboutDeveloperForm.GuideLabel.Font.Size := 11;
+    AboutDeveloperForm.Caption := 'О Разработчике';
     AboutDeveloperForm.ShowModal;
     AboutDeveloperForm.Free;
+end;
+
+
+
+procedure TMainForm.InstructionTabClick(Sender: TObject);
+Var
+    InstructionForm: TGuideForm;
+begin
+    InstructionForm := TGuideForm.Create(Self);
+    InstructionForm.GuideLabel.Caption := 'ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА';
+    InstructionForm.GuideLabel.Font.Size := 8;
+    InstructionForm.Caption := 'Инструкция';
+    InstructionForm.GuideLabel.WordWrap := True;
+    InstructionForm.ShowModal;
+    InstructionForm.Free;
 end;
 
 procedure TMainForm.LeaveTabClick(Sender: TObject);
@@ -138,6 +296,8 @@ Begin
         // Проверка строки
         IsFirstAndLastCharFine := (FirstChar in DIGITS)
                               And (LastChar in DIGITS);
+
+        // TODO  0
 
         For I := Low(TestString) To High(TestString) Do
         Begin
@@ -247,16 +407,13 @@ begin
             IsKeyAllowed := True;
     End;
 
+    // TODO Проверять ввод на 0 первым символом
+
     If Key = BACKSPACE Then
         IsKeyAllowed := True;
 
     If Not IsKeyAllowed Then
         Key := #0;
-end;
-
-procedure TMainForm.OpenTabClick(Sender: TObject);
-begin
-     SaveTextFileDialog1.Execute;
 end;
 
 procedure TMainForm.ResultButtonClick(Sender: TObject);

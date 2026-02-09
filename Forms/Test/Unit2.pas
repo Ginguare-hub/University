@@ -14,8 +14,8 @@ Uses
     Vcl.Dialogs, Vcl.StdCtrls;
 
 Type
-    TAboutDeveloperForm = Class(TForm)
-    AboutDeveloperLabel: TLabel;
+    TGuideForm = Class(TForm)
+    GuideLabel: TLabel;
     CloseButton: TButton;
     procedure CloseButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -27,20 +27,20 @@ Type
     End;
 
 Var
-    AboutDeveloperForm: TAboutDeveloperForm;
+    GuideForm: TGuideForm;
 
 Implementation
 
 {$R *.dfm}
 
-procedure TAboutDeveloperForm.CloseButtonClick(Sender: TObject);
+procedure TGuideForm.CloseButtonClick(Sender: TObject);
 begin
     Close;
 end;
 
-procedure TAboutDeveloperForm.FormCreate(Sender: TObject);
+procedure TGuideForm.FormCreate(Sender: TObject);
 begin
-    AboutDeveloperLabel.Left := (ClientWidth - AboutDeveloperLabel.Width) Div 2;
+    GuideLabel.Left := (ClientWidth - GuideLabel.Width) Div 2;
 end;
 
 end.
