@@ -52,6 +52,7 @@ Type
     procedure AboutDeveloperTabClick(Sender: TObject);
     procedure ResultButtonClick(Sender: TObject);
     procedure OpenTabClick(Sender: TObject);
+    procedure InstructionTabClick(Sender: TObject);
     //procedure NumberOneEditKeyDown(Sender: TObject; var Key: Word;
    //   Shift: TShiftState);
 
@@ -75,6 +76,13 @@ Const
                                                  'Файл закрыть для записи.',
                                                  'Файл пустой.',
                                                  'Файл имеет некоректный формат данных.');
+
+    // TODO проверка на 0 первым символом     <--
+    // TODO Сохранения
+    // TODO корректный выход из приложения (В случае не сохранения) (Через нажатие крестика)
+    // TODO Панель инструкций
+    // Установить картинку приложения
+
 
 Var
     MainForm: TMainForm;
@@ -218,20 +226,40 @@ begin
         ERROR := CheckMyFile(OpenedFile, FilePath, IsToWriteToFile);
 
         If ERROR = NO_ERRORS Then
+        Begin
             //ERROR := ReadFileData;
+        End;
         If ERROR <> NO_ERRORS Then
-            Application.MessageBox(PWideChar(ERROR_TEXT[ERROR]), 'Ошибка', MB_OK+MB_ICONERROR)
+            Application.MessageBox(PWideChar(ERROR_TEXT[ERROR]), 'Ошибка', MB_OK+MB_ICONERROR);
 
      End;
 end;
 
 procedure TMainForm.AboutDeveloperTabClick(Sender: TObject);
 Var
-    AboutDeveloperForm: TAboutDeveloperForm;
+    AboutDeveloperForm: TGuideForm;
 begin
-    AboutDeveloperForm := TAboutDeveloperForm.Create(Self);
+    AboutDeveloperForm := TGuideForm.Create(Self);
+    AboutDeveloperForm.GuideLabel.Caption := 'Разработчик: Педько Владислав Юрьевич'#13#10'Группа: 551004'#13#10'Telegram: @ginguare';
+    AboutDeveloperForm.GuideLabel.Font.Size := 11;
+    AboutDeveloperForm.Caption := 'О Разработчике';
     AboutDeveloperForm.ShowModal;
     AboutDeveloperForm.Free;
+end;
+
+
+
+procedure TMainForm.InstructionTabClick(Sender: TObject);
+Var
+    InstructionForm: TGuideForm;
+begin
+    InstructionForm := TGuideForm.Create(Self);
+    InstructionForm.GuideLabel.Caption := 'ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА';
+    InstructionForm.GuideLabel.Font.Size := 8;
+    InstructionForm.Caption := 'Инструкция';
+    InstructionForm.GuideLabel.WordWrap := True;
+    InstructionForm.ShowModal;
+    InstructionForm.Free;
 end;
 
 procedure TMainForm.LeaveTabClick(Sender: TObject);
@@ -243,19 +271,19 @@ Begin
 
     If IsFormShouldClose = mrYes Then
         Close;
-
 End;
 
-Function CheckStringOnEdit(TestString: String; Var IsPointAllowed{, IsMinusAllowed}: Boolean): Boolean;
+Function CheckStringOnValidity(TestString: String; Var IsPointAllowed{, IsMinusAllowed}: Boolean): Boolean;
 Var
     FirstChar, LastChar: Char;
-    IsStringReadible, IsFirstAndLastCharFine, IsPointValid: Boolean;
+    IsStringReadible, IsFirstAndLastCharFine, IsPointValid, IsAfterFirstZegoGoesPoint: Boolean;
     I, CountOfPoints, CountOfMinuses, PointIndex: Integer;
 
 Begin
-    IsStringReadible       := False;
-    IsFirstAndLastCharFine := False;
-    IsPointValid           := False;
+    IsStringReadible          := False;
+    IsFirstAndLastCharFine    := False;
+    IsPointValid              := False;
+    IsAfterFirstZegoGoesPoint := False;
 
     CountOfPoints   := 0;
     PointIndex      := 0;
@@ -290,25 +318,29 @@ Begin
             And (PointIndex < High(TestString))
             And (PointIndex > Low(TestString))
             And (TestString[PointIndex + 1] in DIGITS)
-            And (TestString[PointIndex - 1] in DIGITS) Then
+            And (TestString[PointIndex - 1] in DIGITS)
+            And Not(LastChar = '0') Then
             IsPointValid := True;
 
-        IsStringReadible := IsFirstAndLastCharFine And IsPointValid;
+        If ( ((Length(TestString) > 1) And (FirstChar = '0') And (TestString[Low(TestString) + 1] = ',')) Or Not (FirstChar = '0') ) Then
+            IsAfterFirstZegoGoesPoint := True;
+
+        IsStringReadible := IsFirstAndLastCharFine And IsPointValid And IsAfterFirstZegoGoesPoint;
     End;
 
-    CheckStringOnEdit := IsStringReadible;
+    CheckStringOnValidity := IsStringReadible;
 End;
 
 procedure TMainForm.NumberOneEditChange(Sender: TObject);
 
 begin
-    IsFirstNumberCorrect := CheckStringOnEdit(NumberOneEdit.Text, IsPointInFirstStringAllowed);
+    IsFirstNumberCorrect := CheckStringOnValidity(NumberOneEdit.Text, IsPointInFirstStringAllowed);
     ResultButton.Enabled := IsFirstNumberCorrect And IsSecondNumberCorrect;
 end;
 
 procedure TMainForm.NumberTwoEditChange(Sender: TObject);
 begin
-    IsSecondNumberCorrect := CheckStringOnEdit(NumberTwoEdit.Text, IsPointInSecondStringAllowed);
+    IsSecondNumberCorrect := CheckStringOnValidity(NumberTwoEdit.Text, IsPointInSecondStringAllowed);
     ResultButton.Enabled := IsFirstNumberCorrect And IsSecondNumberCorrect;
 end;
 
@@ -328,6 +360,9 @@ begin
     // Проверяем возможные вторые символы строки
     If ( (Length(WrittenString) = 1) And ((Key in DIGITS) Or (Key = ',')) ) Then
         IsKeyAllowed := True;
+
+    If ( (Length(WrittenString) = 1) And (WrittenString[Low(WrittenString)] = '0') And Not(Key = ',') ) Then
+        IsKeyAllowed := False;
 
     // Проверяем ввод остальных символов строки
     If ( (Length(WrittenString) > 1) And (Length(WrittenString) <= 10) And ((Key in DIGITS) Or (Key = ',')) ) Then
@@ -378,6 +413,8 @@ begin
         If (Key in DIGITS) Then
             IsKeyAllowed := True;
     End;
+
+    // TODO Проверять ввод на 0 первым символом
 
     If Key = BACKSPACE Then
         IsKeyAllowed := True;

@@ -77,7 +77,7 @@ Const
                                                  'Файл пустой.',
                                                  'Файл имеет некоректный формат данных.');
 
-    // TODO проверка на 0 первым символом
+    // TODO проверка на 0 первым символом     <--
     // TODO Сохранения
     // TODO корректный выход из приложения (В случае не сохранения) (Через нажатие крестика)
     // TODO Панель инструкций
@@ -271,19 +271,19 @@ Begin
 
     If IsFormShouldClose = mrYes Then
         Close;
-
 End;
 
-Function CheckStringOnEdit(TestString: String; Var IsPointAllowed{, IsMinusAllowed}: Boolean): Boolean;
+Function CheckStringOnValidity(TestString: String; Var IsPointAllowed{, IsMinusAllowed}: Boolean): Boolean;
 Var
     FirstChar, LastChar: Char;
-    IsStringReadible, IsFirstAndLastCharFine, IsPointValid: Boolean;
+    IsStringReadible, IsFirstAndLastCharFine, IsPointValid, IsAfterFirstZegoGoesPoint: Boolean;
     I, CountOfPoints, CountOfMinuses, PointIndex: Integer;
 
 Begin
-    IsStringReadible       := False;
-    IsFirstAndLastCharFine := False;
-    IsPointValid           := False;
+    IsStringReadible          := False;
+    IsFirstAndLastCharFine    := False;
+    IsPointValid              := False;
+    IsAfterFirstZegoGoesPoint := False;
 
     CountOfPoints   := 0;
     PointIndex      := 0;
@@ -298,8 +298,6 @@ Begin
         // Проверка строки
         IsFirstAndLastCharFine := (FirstChar in DIGITS)
                               And (LastChar in DIGITS);
-
-        // TODO  0
 
         For I := Low(TestString) To High(TestString) Do
         Begin
@@ -320,25 +318,29 @@ Begin
             And (PointIndex < High(TestString))
             And (PointIndex > Low(TestString))
             And (TestString[PointIndex + 1] in DIGITS)
-            And (TestString[PointIndex - 1] in DIGITS) Then
+            And (TestString[PointIndex - 1] in DIGITS)
+            And Not(LastChar = '0') Then
             IsPointValid := True;
 
-        IsStringReadible := IsFirstAndLastCharFine And IsPointValid;
+        If ( ((Length(TestString) > 1) And (FirstChar = '0') And (TestString[Low(TestString) + 1] = ',')) Or Not (FirstChar = '0') ) Then
+            IsAfterFirstZegoGoesPoint := True;
+
+        IsStringReadible := IsFirstAndLastCharFine And IsPointValid And IsAfterFirstZegoGoesPoint;
     End;
 
-    CheckStringOnEdit := IsStringReadible;
+    CheckStringOnValidity := IsStringReadible;
 End;
 
 procedure TMainForm.NumberOneEditChange(Sender: TObject);
 
 begin
-    IsFirstNumberCorrect := CheckStringOnEdit(NumberOneEdit.Text, IsPointInFirstStringAllowed);
+    IsFirstNumberCorrect := CheckStringOnValidity(NumberOneEdit.Text, IsPointInFirstStringAllowed);
     ResultButton.Enabled := IsFirstNumberCorrect And IsSecondNumberCorrect;
 end;
 
 procedure TMainForm.NumberTwoEditChange(Sender: TObject);
 begin
-    IsSecondNumberCorrect := CheckStringOnEdit(NumberTwoEdit.Text, IsPointInSecondStringAllowed);
+    IsSecondNumberCorrect := CheckStringOnValidity(NumberTwoEdit.Text, IsPointInSecondStringAllowed);
     ResultButton.Enabled := IsFirstNumberCorrect And IsSecondNumberCorrect;
 end;
 
@@ -358,6 +360,9 @@ begin
     // Проверяем возможные вторые символы строки
     If ( (Length(WrittenString) = 1) And ((Key in DIGITS) Or (Key = ',')) ) Then
         IsKeyAllowed := True;
+
+    If ( (Length(WrittenString) = 1) And (WrittenString[Low(WrittenString)] = '0') And Not(Key = ',') ) Then
+        IsKeyAllowed := False;
 
     // Проверяем ввод остальных символов строки
     If ( (Length(WrittenString) > 1) And (Length(WrittenString) <= 10) And ((Key in DIGITS) Or (Key = ',')) ) Then
@@ -395,6 +400,9 @@ begin
     // Проверяем возможные вторые символы строки
     If ( (Length(WrittenString) = 1) And ((Key in DIGITS) Or (Key = ',')) ) Then
         IsKeyAllowed := True;
+
+    If ( (Length(WrittenString) = 1) And (WrittenString[Low(WrittenString)] = '0') And Not(Key = ',') ) Then
+        IsKeyAllowed := False;
 
     // Проверяем ввод остальных символов строки
     If ( (Length(WrittenString) > 1) And (Length(WrittenString) <= 10) And ((Key in DIGITS) Or (Key = ',')) ) Then
