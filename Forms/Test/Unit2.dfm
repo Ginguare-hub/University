@@ -7,12 +7,12 @@ object GuideForm: TGuideForm
   Margins.Bottom = 6
   BorderIcons = [biSystemMenu, biMaximize]
   BorderStyle = bsDialog
-  ClientHeight = 329
+  ClientHeight = 469
   ClientWidth = 724
   Color = clBtnFace
-  Constraints.MaxHeight = 400
+  Constraints.MaxHeight = 540
   Constraints.MaxWidth = 750
-  Constraints.MinHeight = 400
+  Constraints.MinHeight = 540
   Constraints.MinWidth = 750
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -26,8 +26,8 @@ object GuideForm: TGuideForm
   object GuideLabel: TLabel
     Left = 31
     Top = 43
-    Width = 600
-    Height = 158
+    Width = 650
+    Height = 298
     Margins.Left = 6
     Margins.Top = 6
     Margins.Right = 6
@@ -43,7 +43,7 @@ object GuideForm: TGuideForm
   end
   object CloseButton: TButton
     Left = 264
-    Top = 237
+    Top = 377
     Width = 200
     Height = 50
     Margins.Left = 6

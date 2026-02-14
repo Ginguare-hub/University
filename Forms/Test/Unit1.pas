@@ -15,7 +15,10 @@ Uses
     Unit2,
     Unit3,
     Vcl.StdCtrls,
-    Vcl.Menus, Vcl.ExtDlgs, IdBaseComponent, IdMessage;
+    Vcl.Menus,
+    Vcl.ExtDlgs,
+    IdBaseComponent,
+    IdMessage;
 
 Type
     ERROR_CODES = (NO_ERRORS,
@@ -25,79 +28,84 @@ Type
                    FILE_CLOSE_TO_READ,
                    FILE_CLOSE_TO_WRITE,
                    FILE_IS_EMPTY,
-                   FILE_DATA_NOT_CORRECT);
-    TMainForm = Class(TForm)
-    NumberOneEdit: TEdit;
-    ResultButton: TButton;
-    MainMenu1: TMainMenu;
-    FileTab: TMenuItem;
-    OpenTab: TMenuItem;
-    SaveTab: TMenuItem;
-    Separator1: TMenuItem;
-    LeaveTab: TMenuItem;
-    InstructionTab: TMenuItem;
-    AboutDeveloperTab: TMenuItem;
-    OpenTextFileDialog1: TOpenTextFileDialog;
-    SaveTextFileDialog1: TSaveTextFileDialog;
-    TaskLabel: TLabel;
-    NumberOneLabel: TLabel;
-    NumberTwoEdit: TEdit;
-    NumberTwoLabel: TLabel;
-    AnswerLabel: TLabel;
-    procedure LeaveTabClick(Sender: TObject);
-    procedure NumberOneEditKeyPress(Sender: TObject; var Key: Char);
-    procedure NumberOneEditChange(Sender: TObject);
-    procedure NumberTwoEditKeyPress(Sender: TObject; var Key: Char);
-    procedure NumberTwoEditChange(Sender: TObject);
-    procedure AboutDeveloperTabClick(Sender: TObject);
-    procedure ResultButtonClick(Sender: TObject);
-    procedure OpenTabClick(Sender: TObject);
-    procedure InstructionTabClick(Sender: TObject);
-    //procedure NumberOneEditKeyDown(Sender: TObject; var Key: Word;
-   //   Shift: TShiftState);
+                   FILE_DATA_NOT_CORRECT,
+                   FILE_ASSIGN_ERROR);
 
-        //Procedure Button1Click(Sender: TObject);
+    TMainForm = Class(TForm)
+        NumberOneEdit: TEdit;
+        ResultButton: TButton;
+        MainMenu1: TMainMenu;
+        FileTab: TMenuItem;
+        OpenTab: TMenuItem;
+        SaveTab: TMenuItem;
+        Separator1: TMenuItem;
+        LeaveTab: TMenuItem;
+        InstructionTab: TMenuItem;
+        AboutDeveloperTab: TMenuItem;
+        OpenTextFileDialog1: TOpenTextFileDialog;
+        SaveTextFileDialog1: TSaveTextFileDialog;
+        TaskLabel: TLabel;
+        NumberOneLabel: TLabel;
+        NumberTwoEdit: TEdit;
+        NumberTwoLabel: TLabel;
+        AnswerLabel: TLabel;
+        Procedure LeaveTabClick(Sender: TObject);
+        Procedure NumberOneEditKeyPress(Sender: TObject; Var Key: Char);
+        Procedure NumberOneEditChange(Sender: TObject);
+        Procedure NumberTwoEditKeyPress(Sender: TObject; Var Key: Char);
+        Procedure NumberTwoEditChange(Sender: TObject);
+        Procedure AboutDeveloperTabClick(Sender: TObject);
+        Procedure ResultButtonClick(Sender: TObject);
+        Procedure OpenTabClick(Sender: TObject);
+        Procedure InstructionTabClick(Sender: TObject);
+    procedure SaveTabClick(Sender: TObject);
+
     Private
         { Private declarations }
     Public
         { Public declarations }
     End;
+    Function ReadAndWriteOutFileData(Var ReadedFile: TextFile): ERROR_CODES;
+    Function SaveFileData(Var SavedFile: TextFile): ERROR_CODES;
 
 Const
     BACKSPACE = #8;
     //ENTER = #13;
     NONE_CHAR = #0;
-    DIGITS = ['0'..'9'];
+    DIGITS = ['0' .. '9'];
     ERROR_TEXT: Array [ERROR_CODES] Of String = ('',
                                                  'Строка файла имеет некорректный ввод числа.',
                                                  'Файл не найден.',
                                                  'Файл не соответствует формату .txt',
-                                                 'Файл закрыть для чтения.',
-                                                 'Файл закрыть для записи.',
+                                                 'Файл закрыт для чтения.',
+                                                 'Файл закрыт для записи либо во время записи возникли проблемы.',
                                                  'Файл пустой.',
-                                                 'Файл имеет некоректный формат данных.');
+                                                 'Файл имеет некоректный формат данных.',
+                                                 'Ошибка присоединения файла.');
 
-    // TODO проверка на 0 первым символом     <--
-    // TODO Сохранения
-    // TODO корректный выход из приложения (В случае не сохранения) (Через нажатие крестика)
-    // TODO Панель инструкций
-    // Установить картинку приложения
+    //DONE TODO проверка на 0 первым символом
+    //DONE TODO Решить проблему взух запятых
+    //DONE TODO Панель инструкций
 
+    //TODO Сохранения                             <--
+    //TODO Проблема с плохо работающим лейблом
+    //TODO корректный выход из приложения (В случае не сохранения) (Через нажатие крестика)
+    //Установить картинку приложения
 
 Var
     MainForm: TMainForm;
-    IsPointInFirstStringAllowed:  Boolean = True;
+    IsPointInFirstStringAllowed: Boolean = True;
     IsPointInSecondStringAllowed: Boolean = True;
-//    IsMinusInFirstStringAllowed:  Boolean = True;
-//    IsMinusInSecondStringAllowed: Boolean = True;
-    IsFirstNumberCorrect:         Boolean = False;
-    IsSecondNumberCorrect:        Boolean = False;
+    //IsMinusInFirstStringAllowed:  Boolean = True;
+    //IsMinusInSecondStringAllowed: Boolean = True;
+    IsFirstNumberCorrect: Boolean = False;
+    IsSecondNumberCorrect: Boolean = False;
+    IsDataSaved: Boolean;
 
 Implementation
 
 {$R *.dfm}
-
-// ФАЙЛЫ Проверки
+//ФАЙЛЫ Проверки
 
 Function IsFileText(FilePath: String): Boolean;
 
@@ -129,7 +137,6 @@ Var
     IsNotEmpty: Boolean;
 
 Begin
-
     Try
         Reset(InputFile);
         IsNotEmpty := Not EOF(InputFile);
@@ -176,7 +183,7 @@ Begin
     CanWrite := IsReady;
 End;
 
-Function CheckMyFile(Var InputFile: TextFile; FilePath: String; IsFileOutput: Boolean): ERROR_CODES;
+Function CheckMyFile(Var InputFile: TextFile; FilePath: String; IsForWriteToFile: Boolean): ERROR_CODES;
 
 Var
     CheckInput: Boolean;
@@ -191,13 +198,13 @@ Begin
         If Not IsFileText(FilePath) Then
             ERROR := FILE_NOT_TXT
         Else
-            If (Not IsFileOutput) And (Not CanRead(InputFile)) Then
+            If (Not IsForWriteToFile) And (Not CanRead(InputFile)) Then
                 ERROR := FILE_CLOSE_TO_READ
             Else
-                If IsFileOutput And (Not CanWrite(InputFile)) Then
+                If IsForWriteToFile And (Not CanWrite(InputFile)) Then
                     ERROR := FILE_CLOSE_TO_WRITE
                 Else
-                    If Not IsFileNotEmpty(InputFile) Then
+                    If (Not IsForWriteToFile) And (Not IsFileNotEmpty(InputFile)) Then
                         ERROR := FILE_IS_EMPTY
                     Else
                     Begin
@@ -209,95 +216,136 @@ End;
 
 //
 
-procedure TMainForm.OpenTabClick(Sender: TObject);
+Procedure TMainForm.OpenTabClick(Sender: TObject);
 Var
     FilePath: String;
     OpenedFile: TextFile;
-    ERROR: ERROR_CODES;
+    Error: ERROR_CODES;
     IsToWriteToFile: Boolean;
 
-begin
+Begin
     IsToWriteToFile := False;
+    Error := NO_ERRORS;
 
-     If OpenTextFileDialog1.Execute Then
-     Begin
+    If OpenTextFileDialog1.Execute Then
+    Begin
         FilePath := OpenTextFileDialog1.FileName;
-        AssignFile(OpenedFile, FilePath);
-        ERROR := CheckMyFile(OpenedFile, FilePath, IsToWriteToFile);
 
-        If ERROR = NO_ERRORS Then
-        Begin
-            //ERROR := ReadFileData;
+        Try
+            AssignFile(OpenedFile, FilePath);
+            Error := CheckMyFile(OpenedFile, FilePath, IsToWriteToFile);
+        Except
+            Error := FILE_ASSIGN_ERROR;
         End;
-        If ERROR <> NO_ERRORS Then
-            Application.MessageBox(PWideChar(ERROR_TEXT[ERROR]), 'Ошибка', MB_OK+MB_ICONERROR);
 
-     End;
+        If Error = NO_ERRORS Then
+        Begin
+            Error := ReadAndWriteOutFileData(OpenedFile);
+
+        End;
+        If Error <> NO_ERRORS Then
+            Application.MessageBox(PWideChar(ERROR_TEXT[Error]), 'Ошибка', MB_OK + MB_ICONERROR);
+
+    End;
+End;
+
+procedure TMainForm.SaveTabClick(Sender: TObject);
+Var
+    FilePath: String;
+    SavedFile: TextFile;
+    Error: ERROR_CODES;
+    IsToWriteToFile: Boolean;
+
+Begin
+    IsToWriteToFile := True;
+    Error := NO_ERRORS;
+
+    If SaveTextFileDialog1.Execute Then
+    Begin
+        FilePath := SaveTextFileDialog1.FileName;
+
+        Try
+            AssignFile(SavedFile, FilePath);
+            Error := CheckMyFile(SavedFile, FilePath, IsToWriteToFile);
+        Except
+            Error := FILE_ASSIGN_ERROR;
+        End;
+
+        If Error = NO_ERRORS Then
+        Begin
+            Error := SaveFileData(SavedFile);
+        End;
+
+        If Error <> NO_ERRORS Then
+            Application.MessageBox(PWideChar(ERROR_TEXT[Error]), 'Ошибка', MB_OK + MB_ICONERROR)
+        Else
+            Application.MessageBox(PWideChar('Данные сохранены.'), 'Успешно', MB_OK + MB_ICONINFORMATION);
+    End;
 end;
 
-procedure TMainForm.AboutDeveloperTabClick(Sender: TObject);
+Procedure TMainForm.AboutDeveloperTabClick(Sender: TObject);
 Var
     AboutDeveloperForm: TGuideForm;
-begin
+Begin
     AboutDeveloperForm := TGuideForm.Create(Self);
     AboutDeveloperForm.GuideLabel.Caption := 'Разработчик: Педько Владислав Юрьевич'#13#10'Группа: 551004'#13#10'Telegram: @ginguare';
     AboutDeveloperForm.GuideLabel.Font.Size := 11;
     AboutDeveloperForm.Caption := 'О Разработчике';
     AboutDeveloperForm.ShowModal;
     AboutDeveloperForm.Free;
-end;
+End;
 
-
-
-procedure TMainForm.InstructionTabClick(Sender: TObject);
+Procedure TMainForm.InstructionTabClick(Sender: TObject);
 Var
     InstructionForm: TGuideForm;
-begin
+Begin
     InstructionForm := TGuideForm.Create(Self);
-    InstructionForm.GuideLabel.Caption := 'ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА ПРАВИЛА';
+    InstructionForm.GuideLabel.Caption := '1) Программа принимает исключительно положительные целые либо вещественные значения.'#13#10 +
+        '2) Число состоит из цифр от 0 до 9 с возможностью записи вещественного значения через символ запятой.'#13#10 +
+        '3) Если первый символ равен ''0'' то следующим символом может быть только знак '',''.'#13#10 +
+        '4) Числа в виде ''00,8'' ''4,200'' ''3,'' '',01'' и подобные будут считаться некорректными.';
     InstructionForm.GuideLabel.Font.Size := 8;
     InstructionForm.Caption := 'Инструкция';
     InstructionForm.GuideLabel.WordWrap := True;
     InstructionForm.ShowModal;
     InstructionForm.Free;
-end;
+End;
 
-procedure TMainForm.LeaveTabClick(Sender: TObject);
+Procedure TMainForm.LeaveTabClick(Sender: TObject);
 Var
     IsFormShouldClose: Integer;
 
 Begin
-    IsFormShouldClose := Application.MessageBox(PChar('Вы хотите выйти?'), PChar('Выход'), MB_YESNO+MB_ICONQUESTION);
+    IsFormShouldClose := Application.MessageBox(PChar('Вы хотите выйти?'), PChar('Выход'), MB_YESNO + MB_ICONQUESTION);
 
-    If IsFormShouldClose = mrYes Then
+    If IsFormShouldClose = MrYes Then
         Close;
 End;
 
-Function CheckStringOnValidity(TestString: String; Var IsPointAllowed{, IsMinusAllowed}: Boolean): Boolean;
+Function CheckStringOnValidity(TestString: String; Var IsPointAllowed { , IsMinusAllowed } : Boolean): Boolean;
 Var
     FirstChar, LastChar: Char;
     IsStringReadible, IsFirstAndLastCharFine, IsPointValid, IsAfterFirstZegoGoesPoint: Boolean;
     I, CountOfPoints, CountOfMinuses, PointIndex: Integer;
 
 Begin
-    IsStringReadible          := False;
-    IsFirstAndLastCharFine    := False;
-    IsPointValid              := False;
+    IsStringReadible := False;
+    IsFirstAndLastCharFine := False;
+    IsPointValid := False;
     IsAfterFirstZegoGoesPoint := False;
 
-    CountOfPoints   := 0;
-    PointIndex      := 0;
+    CountOfPoints := 0;
+    PointIndex := 0;
 
     If Length(TestString) = 0 Then
         IsStringReadible := False
     Else
     Begin
         FirstChar := TestString[Low(TestString)];
-        LastChar  := TestString[High(TestString)];
+        LastChar := TestString[High(TestString)];
 
-        // Проверка строки
-        IsFirstAndLastCharFine := (FirstChar in DIGITS)
-                              And (LastChar in DIGITS);
+        //Проверка строки
+        IsFirstAndLastCharFine := (FirstChar In DIGITS) And (LastChar In DIGITS);
 
         For I := Low(TestString) To High(TestString) Do
         Begin
@@ -314,15 +362,11 @@ Begin
             IsPointAllowed := True;
         End;
 
-        If (CountOfPoints = 1) And (Length(TestString) > 2)
-            And (PointIndex < High(TestString))
-            And (PointIndex > Low(TestString))
-            And (TestString[PointIndex + 1] in DIGITS)
-            And (TestString[PointIndex - 1] in DIGITS)
-            And Not(LastChar = '0') Then
+        If (CountOfPoints = 1) And (Length(TestString) > 2) And (PointIndex < High(TestString)) And (PointIndex > Low(TestString)) And
+            (TestString[PointIndex + 1] In DIGITS) And (TestString[PointIndex - 1] In DIGITS) And Not(LastChar = '0') Then
             IsPointValid := True;
 
-        If ( ((Length(TestString) > 1) And (FirstChar = '0') And (TestString[Low(TestString) + 1] = ',')) Or Not (FirstChar = '0') ) Then
+        If (((Length(TestString) > 1) And (FirstChar = '0') And (TestString[Low(TestString) + 1] = ',')) Or Not(FirstChar = '0')) Then
             IsAfterFirstZegoGoesPoint := True;
 
         IsStringReadible := IsFirstAndLastCharFine And IsPointValid And IsAfterFirstZegoGoesPoint;
@@ -331,41 +375,52 @@ Begin
     CheckStringOnValidity := IsStringReadible;
 End;
 
-procedure TMainForm.NumberOneEditChange(Sender: TObject);
+Procedure TMainForm.NumberOneEditChange(Sender: TObject);
 
-begin
+Begin
     IsFirstNumberCorrect := CheckStringOnValidity(NumberOneEdit.Text, IsPointInFirstStringAllowed);
     ResultButton.Enabled := IsFirstNumberCorrect And IsSecondNumberCorrect;
-end;
+    SaveTab.Enabled := IsFirstNumberCorrect And IsSecondNumberCorrect;
+End;
 
-procedure TMainForm.NumberTwoEditChange(Sender: TObject);
-begin
+Procedure TMainForm.NumberTwoEditChange(Sender: TObject);
+Begin
     IsSecondNumberCorrect := CheckStringOnValidity(NumberTwoEdit.Text, IsPointInSecondStringAllowed);
     ResultButton.Enabled := IsFirstNumberCorrect And IsSecondNumberCorrect;
-end;
+    SaveTab.Enabled := IsFirstNumberCorrect And IsSecondNumberCorrect;
+End;
 
-procedure TMainForm.NumberOneEditKeyPress(Sender: TObject; var Key: Char);
+Procedure TMainForm.NumberOneEditKeyPress(Sender: TObject; Var Key: Char);
 Var
     WrittenString: String;
     IsKeyAllowed: Boolean;
 
-begin
+Begin
     IsKeyAllowed := False;
     WrittenString := NumberOneEdit.Text;
 
-    // Проверяем первый символ будущей строки
-    If ( (Length(WrittenString) = 0) And (Key in DIGITS) ) Then
+    //Проверяем ПЕРВЫЙ символ будущей строки
+    If ((Length(WrittenString) = 0) And (Key In DIGITS)) Then
         IsKeyAllowed := True;
 
-    // Проверяем возможные вторые символы строки
-    If ( (Length(WrittenString) = 1) And ((Key in DIGITS) Or (Key = ',')) ) Then
-        IsKeyAllowed := True;
+    If (Length(WrittenString) = 1) Then
+    Begin
+        If (Not(WrittenString[Low(WrittenString)] = '0') And ((Key = ',') Or (Key In DIGITS))) Then
+        Begin
+            IsKeyAllowed := True;
+            If (Key = ',') Then
+                IsPointInFirstStringAllowed := False;
+        End;
 
-    If ( (Length(WrittenString) = 1) And (WrittenString[Low(WrittenString)] = '0') And Not(Key = ',') ) Then
-        IsKeyAllowed := False;
+        If ((WrittenString[Low(WrittenString)] = '0') And (Key = ',') And IsPointInFirstStringAllowed) Then
+        Begin
+            IsKeyAllowed := True;
+            IsPointInFirstStringAllowed := False;
+        End;
+    End;
 
-    // Проверяем ввод остальных символов строки
-    If ( (Length(WrittenString) > 1) And (Length(WrittenString) <= 10) And ((Key in DIGITS) Or (Key = ',')) ) Then
+    //Проверяем ввод остальных символов строки
+    If ((Length(WrittenString) > 1) And (Length(WrittenString) <= 5)) Then
     Begin
         If (Key = ',') And IsPointInFirstStringAllowed Then
         Begin
@@ -373,7 +428,7 @@ begin
             IsPointInFirstStringAllowed := False;
         End;
 
-        If (Key in DIGITS) Then
+        If (Key In DIGITS) Then
             IsKeyAllowed := True;
     End;
 
@@ -382,30 +437,40 @@ begin
 
     If Not IsKeyAllowed Then
         Key := #0;
-end;
+End;
 
-procedure TMainForm.NumberTwoEditKeyPress(Sender: TObject; var Key: Char);
+Procedure TMainForm.NumberTwoEditKeyPress(Sender: TObject; Var Key: Char);
 Var
     WrittenString: String;
     IsKeyAllowed: Boolean;
 
-begin
+Begin
     IsKeyAllowed := False;
     WrittenString := NumberTwoEdit.Text;
 
-    // Проверяем первый символ будущей строки
-    If ( (Length(WrittenString) = 0) And (Key in DIGITS) ) Then
+    //Проверяем первый символ будущей строки
+    If ((Length(WrittenString) = 0) And (Key In DIGITS)) Then
         IsKeyAllowed := True;
 
-    // Проверяем возможные вторые символы строки
-    If ( (Length(WrittenString) = 1) And ((Key in DIGITS) Or (Key = ',')) ) Then
-        IsKeyAllowed := True;
+    //Проверяем возможные вторые символы строки
+    If (Length(WrittenString) = 1) Then
+    Begin
+        If (Not(WrittenString[Low(WrittenString)] = '0') And ((Key = ',') Or (Key In DIGITS))) Then
+        Begin
+            IsKeyAllowed := True;
+            If (Key = ',') Then
+                IsPointInSecondStringAllowed := False;
+        End;
 
-    If ( (Length(WrittenString) = 1) And (WrittenString[Low(WrittenString)] = '0') And Not(Key = ',') ) Then
-        IsKeyAllowed := False;
+        If ((WrittenString[Low(WrittenString)] = '0') And (Key = ',') And IsPointInSecondStringAllowed) Then
+        Begin
+            IsKeyAllowed := True;
+            IsPointInSecondStringAllowed := False;
+        End;
+    End;
 
-    // Проверяем ввод остальных символов строки
-    If ( (Length(WrittenString) > 1) And (Length(WrittenString) <= 10) And ((Key in DIGITS) Or (Key = ',')) ) Then
+    //Проверяем ввод остальных символов строки
+    If ((Length(WrittenString) > 1) And (Length(WrittenString) <= 5) And ((Key In DIGITS) Or (Key = ','))) Then
     Begin
         If (Key = ',') And IsPointInSecondStringAllowed Then
         Begin
@@ -413,34 +478,120 @@ begin
             IsPointInSecondStringAllowed := False;
         End;
 
-        If (Key in DIGITS) Then
+        If (Key In DIGITS) Then
             IsKeyAllowed := True;
     End;
-
-    // TODO Проверять ввод на 0 первым символом
 
     If Key = BACKSPACE Then
         IsKeyAllowed := True;
 
     If Not IsKeyAllowed Then
         Key := #0;
-end;
+End;
 
-procedure TMainForm.ResultButtonClick(Sender: TObject);
+Procedure TMainForm.ResultButtonClick(Sender: TObject);
 Var
     NumberOne, NumberTwo, ArithmeticMean, GeometricMean: Double;
-    AnswerString: String;
+    AnswerString, FinalString: String;
 
-begin
+Begin
     NumberOne := StrToFloat(NumberOneEdit.Text);
     NumberTwo := StrToFloat(NumberTwoEdit.Text);
 
     ArithmeticMean := (NumberOne + NumberTwo) / 2;
     GeometricMean := Sqrt(NumberOne * NumberTwo);
 
-    AnswerString := 'Среднее арифметическое: ' + FloatToStr(ArithmeticMean)+ #13#10 + 'Среднее геометрическое: ' + FloatToStr(GeometricMean) + #13#10 + FloatToStr(ArithmeticMean) + ' >= ' + FloatToStr(GeometricMean);
+    AnswerString := FloatToStr(ArithmeticMean) + ' >= ' + FloatToStr(GeometricMean);
 
-    AnswerLabel.Caption := AnswerString;
-end;
+    FinalString := 'Среднее арифметическое: ' + FloatToStr(ArithmeticMean) + #13#10 + 'Среднее геометрическое: ' +
+        FloatToStr(GeometricMean) + #13#10 + AnswerString;
+
+    MainForm.AnswerLabel.Caption := FinalString;
+    //MainForm.AnswerLabel.Caption := FloatToStr(ArithmeticMean);
+End;
+
+Function  ReadAndWriteOutFileData(Var ReadedFile: TextFile): ERROR_CODES;
+Var
+    Error: ERROR_CODES;
+    NumberOne, NumberTwo, ArithmeticMean, GeometricMean: Double;
+    NumberOneStr, NumberTwoStr, ArithmeticMeanStr, GeometricMeanStr, AnswerString, FinalString: String;
+Begin
+    Error := NO_ERRORS;
+
+    Try
+        Reset(ReadedFile);
+    Except
+        Error := FILE_CLOSE_TO_READ;
+    End;
+
+    Try
+        ReadLn(ReadedFile, NumberOneStr);
+        If EOF(ReadedFile) Then
+            Error := (FILE_DATA_NOT_CORRECT);
+        NumberOne := StrToFloat(NumberOneStr);
+
+        ReadLn(ReadedFile, NumberTwoStr);
+        If EOF(ReadedFile) Then
+            Error := (FILE_DATA_NOT_CORRECT);
+        NumberTwo := StrToFloat(NumberTwoStr);
+
+        ReadLn(ReadedFile, ArithmeticMeanStr);
+        If EOF(ReadedFile) Then
+            Error := (FILE_DATA_NOT_CORRECT);
+        ArithmeticMean := StrToFloat(ArithmeticMeanStr);
+
+        ReadLn(ReadedFile, GeometricMeanStr);
+        If EOF(ReadedFile) Then
+            Error := (FILE_DATA_NOT_CORRECT);
+        GeometricMean := StrToFloat(GeometricMeanStr);
+
+        Read(ReadedFile, AnswerString);
+    Except
+        Error := NUMBER_NOT_VALID;
+    End;
+
+    CloseFile(ReadedFile);
+
+    If Error = NO_ERRORS Then
+    Begin
+        MainForm.NumberOneEdit.Text := FloatToStr(NumberOne);
+        MainForm.NumberTwoEdit.Text := FloatToStr(NumberTwo);
+
+        FinalString := 'Среднее арифметическое: ' + FloatToStr(ArithmeticMean) + #13#10 + 'Среднее геометрическое: ' +
+        FloatToStr(GeometricMean) + #13#10 + AnswerString;
+
+        MainForm.AnswerLabel.Caption := FinalString;
+    End;
+
+    ReadAndWriteOutFileData := Error;
+End;
+
+Function SaveFileData(Var SavedFile: TextFile): ERROR_CODES;
+Var
+    Error: ERROR_CODES;
+    NumberOne, NumberTwo, ArithmeticMean, GeometricMean: Double;
+Begin
+    Error := NO_ERRORS;
+
+    NumberOne := StrToFloat(MainForm.NumberOneEdit.Text);
+    NumberTwo := StrToFloat(MainForm.NumberTwoEdit.Text);
+
+    ArithmeticMean := (NumberOne + NumberTwo) / 2;
+    GeometricMean := Sqrt(NumberOne * NumberTwo);
+
+    Try
+        Rewrite(SavedFile);
+        WriteLn(SavedFile, MainForm.NumberOneEdit.Text);
+        WriteLn(SavedFile, MainForm.NumberTwoEdit.Text);
+        WriteLn(SavedFile, FloatToStr(ArithmeticMean));
+        WriteLn(SavedFile, FloatToStr(GeometricMean));
+        Write(SavedFile, FloatToStr(ArithmeticMean) + ' >= ' + FloatToStr(GeometricMean));
+        CloseFile(SavedFile);
+    Except
+        Error := FILE_CLOSE_TO_WRITE;
+    End;
+
+    SaveFileData := Error;
+End;
 
 End.
