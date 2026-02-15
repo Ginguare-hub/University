@@ -29,7 +29,8 @@ Type
                    FILE_CLOSE_TO_WRITE,
                    FILE_IS_EMPTY,
                    FILE_DATA_NOT_CORRECT,
-                   FILE_ASSIGN_ERROR);
+                   FILE_ASSIGN_ERROR,
+                   FILE_DATA_NOT_SAVED);
 
     TMainForm = Class(TForm)
         NumberOneEdit: TEdit;
@@ -59,6 +60,7 @@ Type
         Procedure OpenTabClick(Sender: TObject);
         Procedure InstructionTabClick(Sender: TObject);
     procedure SaveTabClick(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 
     Private
         { Private declarations }
@@ -66,7 +68,8 @@ Type
         { Public declarations }
     End;
     Function ReadAndWriteOutFileData(Var ReadedFile: TextFile): ERROR_CODES;
-    Function SaveFileData(Var SavedFile: TextFile): ERROR_CODES;
+    Function WriteDataToFile(Var SavedFile: TextFile): ERROR_CODES;
+    Function LeaveFromProgram(CanClose: Boolean): Boolean;
 
 Const
     BACKSPACE = #8;
@@ -81,15 +84,16 @@ Const
                                                  'Файл закрыт для записи либо во время записи возникли проблемы.',
                                                  'Файл пустой.',
                                                  'Файл имеет некоректный формат данных.',
-                                                 'Ошибка присоединения файла.');
+                                                 'Ошибка присоединения файла.',
+                                                 'Не удалось успешно сохранить данные в файл.');
 
     //DONE TODO проверка на 0 первым символом
     //DONE TODO Решить проблему взух запятых
     //DONE TODO Панель инструкций
+    //DONE TODO Проблема с плохо работающим лейблом
+    //DONE TODO Сохранения
 
-    //TODO Сохранения                             <--
-    //TODO Проблема с плохо работающим лейблом
-    //TODO корректный выход из приложения (В случае не сохранения) (Через нажатие крестика)
+    //TODO корректный выход из приложения (В случае не сохранения) (Через нажатие крестика)  <--
     //Установить картинку приложения
 
 Var
@@ -100,7 +104,7 @@ Var
     //IsMinusInSecondStringAllowed: Boolean = True;
     IsFirstNumberCorrect: Boolean = False;
     IsSecondNumberCorrect: Boolean = False;
-    IsDataSaved: Boolean;
+    IsDataSaved: Boolean = True;
 
 Implementation
 
@@ -241,7 +245,7 @@ Begin
         If Error = NO_ERRORS Then
         Begin
             Error := ReadAndWriteOutFileData(OpenedFile);
-
+            IsDataSaved := True;
         End;
         If Error <> NO_ERRORS Then
             Application.MessageBox(PWideChar(ERROR_TEXT[Error]), 'Ошибка', MB_OK + MB_ICONERROR);
@@ -249,7 +253,7 @@ Begin
     End;
 End;
 
-procedure TMainForm.SaveTabClick(Sender: TObject);
+Function SaveDataToFile(): ERROR_CODES;
 Var
     FilePath: String;
     SavedFile: TextFile;
@@ -260,9 +264,9 @@ Begin
     IsToWriteToFile := True;
     Error := NO_ERRORS;
 
-    If SaveTextFileDialog1.Execute Then
+    If MainForm.SaveTextFileDialog1.Execute Then
     Begin
-        FilePath := SaveTextFileDialog1.FileName;
+        FilePath := MainForm.SaveTextFileDialog1.FileName;
 
         Try
             AssignFile(SavedFile, FilePath);
@@ -273,15 +277,31 @@ Begin
 
         If Error = NO_ERRORS Then
         Begin
-            Error := SaveFileData(SavedFile);
+            Error := WriteDataToFile(SavedFile);
         End;
 
         If Error <> NO_ERRORS Then
             Application.MessageBox(PWideChar(ERROR_TEXT[Error]), 'Ошибка', MB_OK + MB_ICONERROR)
         Else
+        Begin
             Application.MessageBox(PWideChar('Данные сохранены.'), 'Успешно', MB_OK + MB_ICONINFORMATION);
+            IsDataSaved := True;
+        End;
+
+    End
+    Else
+    Begin
+        Error := FILE_DATA_NOT_SAVED;
     End;
-end;
+
+    SaveDataToFile := Error;
+End;
+
+
+Procedure TMainForm.SaveTabClick(Sender: TObject);
+Begin
+    SaveDataToFile();
+End;
 
 Procedure TMainForm.AboutDeveloperTabClick(Sender: TObject);
 Var
@@ -300,10 +320,12 @@ Var
     InstructionForm: TGuideForm;
 Begin
     InstructionForm := TGuideForm.Create(Self);
-    InstructionForm.GuideLabel.Caption := '1) Программа принимает исключительно положительные целые либо вещественные значения.'#13#10 +
+    InstructionForm.GuideLabel.Caption :=
+        '1) Программа принимает исключительно положительные целые либо вещественные значения.'#13#10 +
         '2) Число состоит из цифр от 0 до 9 с возможностью записи вещественного значения через символ запятой.'#13#10 +
         '3) Если первый символ равен ''0'' то следующим символом может быть только знак '',''.'#13#10 +
         '4) Числа в виде ''00,8'' ''4,200'' ''3,'' '',01'' и подобные будут считаться некорректными.';
+
     InstructionForm.GuideLabel.Font.Size := 8;
     InstructionForm.Caption := 'Инструкция';
     InstructionForm.GuideLabel.WordWrap := True;
@@ -311,15 +333,53 @@ Begin
     InstructionForm.Free;
 End;
 
-Procedure TMainForm.LeaveTabClick(Sender: TObject);
+Function LeaveFromProgram(CanClose: Boolean): Boolean;
 Var
     IsFormShouldClose: Integer;
+    Error: ERROR_CODES;
 
 Begin
-    IsFormShouldClose := Application.MessageBox(PChar('Вы хотите выйти?'), PChar('Выход'), MB_YESNO + MB_ICONQUESTION);
+    Error := NO_ERRORS;
+    CanClose := False;
 
-    If IsFormShouldClose = MrYes Then
-        Close;
+    If IsDataSaved Then
+    Begin
+        IsFormShouldClose := Application.MessageBox(PChar('Вы хотите выйти?'), PChar('Выход'), MB_YESNO + MB_ICONQUESTION);
+
+        If IsFormShouldClose = mrYes Then
+        Begin
+            CanClose := True;
+        End;
+    End
+    Else
+    Begin
+        IsFormShouldClose := Application.MessageBox(PChar('Данные не были сохранены, вы точно хотите выйти?'), PChar('Выход'), MB_YESNOCANCEL + MB_ICONQUESTION);
+
+        If IsFormShouldClose = MrYes Then
+            CanClose := True
+        Else
+            If IsFormShouldClose = MrNo Then
+            Begin
+                Error := SaveDataToFile();
+                If Error = NO_ERRORS Then
+                    CanClose := True;
+            End;
+
+    End;
+End;
+
+Procedure TMainForm.LeaveTabClick(Sender: TObject);
+Var
+    CanClose: Boolean;
+Begin
+    CanClose := LeaveFromProgram(CanClose);
+    If CanClose Then
+        MainForm.Close;
+End;
+
+Procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+Begin
+    CanClose := LeaveFromProgram(CanClose);
 End;
 
 Function CheckStringOnValidity(TestString: String; Var IsPointAllowed { , IsMinusAllowed } : Boolean): Boolean;
@@ -376,11 +436,11 @@ Begin
 End;
 
 Procedure TMainForm.NumberOneEditChange(Sender: TObject);
-
 Begin
     IsFirstNumberCorrect := CheckStringOnValidity(NumberOneEdit.Text, IsPointInFirstStringAllowed);
     ResultButton.Enabled := IsFirstNumberCorrect And IsSecondNumberCorrect;
     SaveTab.Enabled := IsFirstNumberCorrect And IsSecondNumberCorrect;
+    IsDataSaved := False;
 End;
 
 Procedure TMainForm.NumberTwoEditChange(Sender: TObject);
@@ -388,6 +448,7 @@ Begin
     IsSecondNumberCorrect := CheckStringOnValidity(NumberTwoEdit.Text, IsPointInSecondStringAllowed);
     ResultButton.Enabled := IsFirstNumberCorrect And IsSecondNumberCorrect;
     SaveTab.Enabled := IsFirstNumberCorrect And IsSecondNumberCorrect;
+    IsDataSaved := False;
 End;
 
 Procedure TMainForm.NumberOneEditKeyPress(Sender: TObject; Var Key: Char);
@@ -495,19 +556,35 @@ Var
     AnswerString, FinalString: String;
 
 Begin
-    NumberOne := StrToFloat(NumberOneEdit.Text);
-    NumberTwo := StrToFloat(NumberTwoEdit.Text);
+    AnswerLabel.Caption := ''; // ОБЯЗАТЕЛЬНО!!!!!
 
-    ArithmeticMean := (NumberOne + NumberTwo) / 2;
-    GeometricMean := Sqrt(NumberOne * NumberTwo);
+    Try
 
-    AnswerString := FloatToStr(ArithmeticMean) + ' >= ' + FloatToStr(GeometricMean);
+        NumberOne := StrToFloat(NumberOneEdit.Text);
+        NumberTwo := StrToFloat(NumberTwoEdit.Text);
 
-    FinalString := 'Среднее арифметическое: ' + FloatToStr(ArithmeticMean) + #13#10 + 'Среднее геометрическое: ' +
-        FloatToStr(GeometricMean) + #13#10 + AnswerString;
+        ArithmeticMean := (NumberOne + NumberTwo) / 2;
+        GeometricMean := Sqrt(NumberOne * NumberTwo);
 
-    MainForm.AnswerLabel.Caption := FinalString;
-    //MainForm.AnswerLabel.Caption := FloatToStr(ArithmeticMean);
+        AnswerString := FloatToStr(ArithmeticMean) + ' >= ' + FloatToStr(GeometricMean);
+
+        FinalString := 'Среднее арифметическое: ' + FloatToStr(ArithmeticMean) + #13#10 +
+                       'Среднее геометрическое: ' + FloatToStr(GeometricMean) + #13#10 +
+                       AnswerString;
+
+        //MainForm.AnswerLabel.Caption := FinalString;
+
+        AnswerLabel.Font.Size := 11;
+        //AnswerLabel.WordWrap := True;
+        AnswerLabel.Caption := FinalString;
+        //MainForm.AnswerLabel.Caption := FloatToStr(ArithmeticMean);
+    Except
+        On E: Exception Do
+            Application.MessageBox(PWideChar('An error occurred: ' + E.Message),
+            'Ошибка', MB_OK + MB_ICONINFORMATION);
+
+    End;
+
 End;
 
 Function  ReadAndWriteOutFileData(Var ReadedFile: TextFile): ERROR_CODES;
@@ -547,7 +624,7 @@ Begin
 
         Read(ReadedFile, AnswerString);
     Except
-        Error := NUMBER_NOT_VALID;
+        Error := FILE_DATA_NOT_CORRECT;
     End;
 
     CloseFile(ReadedFile);
@@ -560,13 +637,15 @@ Begin
         FinalString := 'Среднее арифметическое: ' + FloatToStr(ArithmeticMean) + #13#10 + 'Среднее геометрическое: ' +
         FloatToStr(GeometricMean) + #13#10 + AnswerString;
 
+        MainForm.AnswerLabel.Font.Size := 11;
+        //MainForm.AnswerLabel.WordWrap := True;
         MainForm.AnswerLabel.Caption := FinalString;
     End;
 
     ReadAndWriteOutFileData := Error;
 End;
 
-Function SaveFileData(Var SavedFile: TextFile): ERROR_CODES;
+Function WriteDataToFile(Var SavedFile: TextFile): ERROR_CODES;
 Var
     Error: ERROR_CODES;
     NumberOne, NumberTwo, ArithmeticMean, GeometricMean: Double;
@@ -591,7 +670,7 @@ Begin
         Error := FILE_CLOSE_TO_WRITE;
     End;
 
-    SaveFileData := Error;
+    WriteDataToFile := Error;
 End;
 
 End.

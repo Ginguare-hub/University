@@ -25,10 +25,11 @@ object MainForm: TMainForm
   Position = poDesktopCenter
   Visible = True
   ShowInTaskBar = True
+  OnCloseQuery = FormCloseQuery
   PixelsPerInch = 192
   TextHeight = 32
   object TaskLabel: TLabel
-    Left = 31
+    Left = 30
     Top = 27
     Width = 1130
     Height = 100
@@ -57,7 +58,7 @@ object MainForm: TMainForm
     StyleName = 'Windows'
   end
   object NumberOneLabel: TLabel
-    Left = 31
+    Left = 30
     Top = 180
     Width = 256
     Height = 32
@@ -79,8 +80,8 @@ object MainForm: TMainForm
     Caption = #1042#1074#1077#1076#1080#1090#1077' '#1074#1090#1086#1088#1086#1077' '#1095#1080#1089#1083#1086':'
   end
   object AnswerLabel: TLabel
-    Left = 31
-    Top = 488
+    Left = 30
+    Top = 468
     Width = 9
     Height = 45
     Margins.Left = 6
@@ -95,7 +96,7 @@ object MainForm: TMainForm
     ParentFont = False
   end
   object NumberOneEdit: TEdit
-    Left = 31
+    Left = 30
     Top = 244
     Width = 242
     Height = 40
@@ -110,7 +111,7 @@ object MainForm: TMainForm
     OnKeyPress = NumberOneEditKeyPress
   end
   object ResultButton: TButton
-    Left = 31
+    Left = 30
     Top = 371
     Width = 209
     Height = 49
