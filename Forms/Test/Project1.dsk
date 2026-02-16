@@ -74,11 +74,11 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 [View0]
 CustomEditViewType=TEditView
 Module=C:\GitHub\University\Forms\Test\Unit1.pas
-CursorX=91
-CursorY=528
-TopLine=494
+CursorX=77
+CursorY=97
+TopLine=363
 LeftCol=1
-Elisions={{113,47},{135,3},{''}}{{137,58},{151,3},{''}}{{153,51},{169,3},{''}}{{171,50},{187,3},{''}}{{189,104},{218,3},{''}}
+Elisions={{114,47},{136,3},{''}}{{138,58},{152,3},{''}}{{154,51},{170,3},{''}}{{172,50},{188,3},{''}}{{190,104},{219,3},{''}}
 Bookmarks=
 EditViewName=C:\GitHub\University\Forms\Test\Unit1.pas
 
@@ -140,7 +140,8 @@ Dockable=1
 StayOnTop=0
 
 [Breakpoints]
-Count=0
+Count=1
+Breakpoint0='C:\GitHub\University\Forms\Test\Unit1.pas',345,'',0,1,'',1,0,0,'',1,'','','',0,''
 
 [EmbarcaderoWin32Debugger_AddressBreakpoints]
 Count=0
@@ -247,8 +248,8 @@ SplitPos=111
 
 [PropInspDesignerSelection]
 ArrangeBy=Name
-SelectedItem=Caption,Action
-ExpandedItems=Constraints=0,LiveBindings=0
+SelectedItem=Text,
+ExpandedItems=StyleElements=0
 
 [frmDesignPreview]
 PercentageSizes=1

@@ -92,9 +92,9 @@ Const
     //DONE TODO Панель инструкций
     //DONE TODO Проблема с плохо работающим лейблом
     //DONE TODO Сохранения
+    //DONE TODO корректный выход из приложения (В случае не сохранения) (Через нажатие крестика)
 
-    //TODO корректный выход из приложения (В случае не сохранения) (Через нажатие крестика)  <--
-    //Установить картинку приложения
+    //Установить картинку приложения   <--
 
 Var
     MainForm: TMainForm;
@@ -366,15 +366,13 @@ Begin
             End;
 
     End;
+
+    LeaveFromProgram := CanClose;
 End;
 
 Procedure TMainForm.LeaveTabClick(Sender: TObject);
-Var
-    CanClose: Boolean;
 Begin
-    CanClose := LeaveFromProgram(CanClose);
-    If CanClose Then
-        MainForm.Close;
+    Close;
 End;
 
 Procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
