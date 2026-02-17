@@ -1,0 +1,520 @@
+Unit Unit1;
+
+Interface
+
+Uses
+    Winapi.Windows,
+    Winapi.Messages,
+    System.SysUtils,
+    System.Variants,
+    System.Classes,
+    Vcl.Graphics,
+    Vcl.Controls,
+    Vcl.Forms,
+    Vcl.Dialogs,
+    Vcl.Menus,
+    Vcl.StdCtrls,
+    Vcl.ExtCtrls,
+    Vcl.ExtDlgs,
+    Vcl.Imaging.Pngimage,
+    Unit2;
+
+Type
+    ERROR_CODES = (
+        NO_ERRORS,
+        NUMBER_NOT_VALID,
+        FILE_NOT_EXIST,
+        FILE_NOT_TXT,
+        FILE_CLOSE_TO_READ,
+        FILE_CLOSE_TO_WRITE,
+        FILE_IS_EMPTY,
+        FILE_DATA_NOT_CORRECT,
+        FILE_ASSIGN_ERROR,
+        FILE_DATA_NOT_SAVED);
+
+    TMainForm = Class(TForm)
+        MainMenu1: TMainMenu;
+        FileTab: TMenuItem;
+        OpenTab: TMenuItem;
+        SaveTab: TMenuItem;
+        Separator1: TMenuItem;
+        LeaveTab: TMenuItem;
+        InstructionTab: TMenuItem;
+        AboutDeveloperTab: TMenuItem;
+        ResultButton: TButton;
+        NumberOneEdit: TEdit;
+        NumberOneLabel: TLabel;
+        TaskLabel: TLabel;
+        OpenTextFileDialog1: TOpenTextFileDialog;
+        SaveTextFileDialog1: TSaveTextFileDialog;
+    AnswerLabel: TLabel;
+        Image1: TImage;
+        Procedure NumberOneEditKeyPress(Sender: TObject; Var Key: Char);
+    procedure InstructionTabClick(Sender: TObject);
+    procedure AboutDeveloperTabClick(Sender: TObject);
+    procedure NumberOneEditChange(Sender: TObject);
+    procedure SaveTabClick(Sender: TObject);
+    procedure ResultButtonClick(Sender: TObject);
+    procedure OpenTabClick(Sender: TObject);
+    procedure LeaveTabClick(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    Private
+        { Private declarations }
+    Public
+        { Public declarations }
+    End;
+
+    Function IsFileText(FilePath: String): Boolean;
+    Function IsFileNotEmpty(Var InputFile: TextFile): Boolean;
+    Function CanRead(Var InputFile: TextFile): Boolean;
+    Function CanWrite(Var FileVar: TextFile): Boolean;
+    Function CheckMyFile(Var InputFile: TextFile; FilePath: String; IsForWriteToFile: Boolean): ERROR_CODES;
+//    Procedure SaveTabClick(Sender: TObject);
+//    Procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    Function CheckStringOnValidity(TestString: String): Boolean;
+    Function SaveDataToFile(): ERROR_CODES;
+    Function LeaveFromProgram(CanClose: Boolean): Boolean;
+    Function WriteDataToFile(Var SavedFile: TextFile): ERROR_CODES;
+    Function  ReadAndWriteOutFileData(Var ReadedFile: TextFile): ERROR_CODES;
+
+Const
+    BACKSPACE = #8;
+    NONE_CHAR = #0;
+    DIGITS = ['0' .. '9'];
+    ERROR_TEXT: Array [ERROR_CODES] Of String = (
+        '',
+        'Строка файла имеет некорректный ввод числа.', 'Файл не найден.',
+        'Файл не соответствует формату .txt', 'Файл закрыт для чтения.',
+        'Файл закрыт для записи либо во время записи возникли проблемы.',
+        'Файл пустой.', 'Файл имеет некоректный формат данных.',
+        'Ошибка присоединения файла.',
+        'Не удалось успешно сохранить данные в файл.');
+
+Var
+    MainForm: TMainForm;
+    IsFirstNumberCorrect: Boolean = False;
+    IsDataSaved: Boolean = True;
+
+    //TODO Поменять инструкцию
+
+Implementation
+
+{$R *.dfm}
+
+Function IsFileText(FilePath: String): Boolean;
+
+Const
+    MIN_PATH_LENGTH: Integer = 3;
+
+Var
+    FileExt: String;
+    IsText: Boolean;
+    Index: Integer;
+
+Begin
+    Index := Length(FilePath);
+    IsText := False;
+
+    If Index > MIN_PATH_LENGTH Then
+        FileExt := FilePath[Index - 3] + FilePath[Index - 2] + FilePath[Index - 1] + FilePath[Index]
+    Else
+        IsText := False;
+
+    IsText := FileExt = '.txt';
+
+    IsFileText := IsText;
+End;
+
+Function IsFileNotEmpty(Var InputFile: TextFile): Boolean;
+
+Var
+    IsNotEmpty: Boolean;
+
+Begin
+    Try
+        Reset(InputFile);
+        IsNotEmpty := Not EOF(InputFile);
+    Finally
+        CloseFile(InputFile);
+    End;
+
+    IsFileNotEmpty := IsNotEmpty;
+End;
+
+Function CanRead(Var InputFile: TextFile): Boolean;
+
+Var
+    IsReady: Boolean;
+
+Begin
+
+    Try
+        Reset(InputFile);
+        CloseFile(InputFile);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanRead := IsReady;
+End;
+
+Function CanWrite(Var FileVar: TextFile): Boolean;
+
+Var
+    IsReady: Boolean;
+
+Begin
+
+    Try
+        Append(FileVar);
+        CloseFile(FileVar);
+        IsReady := True;
+    Except
+        IsReady := False;
+    End;
+
+    CanWrite := IsReady;
+End;
+
+Function CheckMyFile(Var InputFile: TextFile; FilePath: String; IsForWriteToFile: Boolean): ERROR_CODES;
+
+Var
+    CheckInput: Boolean;
+    ERROR: ERROR_CODES;
+
+Begin
+    CheckInput := False;
+
+    If Not FileExists(FilePath) Then
+        ERROR := FILE_NOT_EXIST
+    Else
+        If Not IsFileText(FilePath) Then
+            ERROR := FILE_NOT_TXT
+        Else
+            If (Not IsForWriteToFile) And (Not CanRead(InputFile)) Then
+                ERROR := FILE_CLOSE_TO_READ
+            Else
+                If IsForWriteToFile And (Not CanWrite(InputFile)) Then
+                    ERROR := FILE_CLOSE_TO_WRITE
+                Else
+                    If (Not IsForWriteToFile) And (Not IsFileNotEmpty(InputFile)) Then
+                        ERROR := FILE_IS_EMPTY
+                    Else
+                    Begin
+                        ERROR := NO_ERRORS;
+                    End;
+
+    CheckMyFile := ERROR;
+End;
+
+Function CheckStringOnValidity(TestString: String): Boolean;
+Var
+    IsStringReadible: Boolean;
+    TestInteger: Integer;
+
+Begin
+    IsStringReadible := False;
+
+    If Length(TestString) = 0 Then
+        IsStringReadible := False
+    Else
+    Begin
+        Try
+            TestInteger := StrToInt(TestString);
+            If (TestInteger >= 1) And (TestInteger <= 30) Then
+                IsStringReadible := True;
+        Except
+            IsStringReadible := False;
+        End;
+    End;
+
+    CheckStringOnValidity := IsStringReadible;
+End;
+
+Procedure TMainForm.NumberOneEditKeyPress(Sender: TObject; Var Key: Char);
+Var
+    WrittenString: String;
+    IsKeyAllowed: Boolean;
+
+Begin
+    IsKeyAllowed := False;
+    WrittenString := NumberOneEdit.Text;
+
+    //Проверяем ПЕРВЫЙ символ будущей строки
+    If ((Length(WrittenString) = 0) And (Key In DIGITS) And Not(Key = '0')) Then
+        IsKeyAllowed := True;
+
+    If (Length(WrittenString) > 0) And (Length(WrittenString) < 2) Then
+    Begin
+        If Key in DIGITS Then
+        Begin
+            IsKeyAllowed := True;
+        End;
+    End;
+
+    If Key = BACKSPACE Then
+        IsKeyAllowed := True;
+
+    If Not IsKeyAllowed Then
+        Key := #0;
+End;
+
+Procedure TMainForm.OpenTabClick(Sender: TObject);
+Var
+    FilePath: String;
+    OpenedFile: TextFile;
+    Error: ERROR_CODES;
+    IsToWriteToFile: Boolean;
+
+Begin
+    IsToWriteToFile := False;
+    Error := NO_ERRORS;
+
+    If OpenTextFileDialog1.Execute Then
+    Begin
+        FilePath := OpenTextFileDialog1.FileName;
+
+        Try
+            AssignFile(OpenedFile, FilePath);
+            Error := CheckMyFile(OpenedFile, FilePath, IsToWriteToFile);
+        Except
+            Error := FILE_ASSIGN_ERROR;
+        End;
+
+        If Error = NO_ERRORS Then
+        Begin
+            Error := ReadAndWriteOutFileData(OpenedFile);
+            IsDataSaved := True;
+        End;
+        If Error <> NO_ERRORS Then
+            Application.MessageBox(PWideChar(ERROR_TEXT[Error]), 'Ошибка', MB_OK + MB_ICONERROR);
+
+    End;
+End;
+
+Procedure TMainForm.ResultButtonClick(Sender: TObject);
+Var
+    I, N, Temp, SumOfNumbers: Integer;
+Begin
+    AnswerLabel.Caption := '';
+    SumOfNumbers := 0;
+    Temp := 1;
+
+    N := StrToInt(MainForm.NumberOneEdit.Text);
+
+    For I := 1 To N Do
+    Begin
+        Temp := Temp * -2;
+        SumOfNumbers := SumOfNumbers + Temp;
+    End;
+
+    MainForm.AnswerLabel.Font.Size := 11;
+    AnswerLabel.Caption := 'Сумма по формуле равна числу: ' + IntToStr(SumOfNumbers);
+End;
+
+procedure TMainForm.SaveTabClick(Sender: TObject);
+Begin
+    SaveDataToFile();
+End;
+
+Procedure TMainForm.AboutDeveloperTabClick(Sender: TObject);
+Var
+    AboutDeveloperForm: TGuideForm;
+Begin
+    AboutDeveloperForm := TGuideForm.Create(Self);
+    AboutDeveloperForm.GuideLabel.Caption := 'Разработчик: Педько Владислав Юрьевич'#13#10'Группа: 551004'#13#10'Telegram: @ginguare';
+    AboutDeveloperForm.GuideLabel.Font.Size := 11;
+    AboutDeveloperForm.Caption := 'О Разработчике';
+    AboutDeveloperForm.ShowModal;
+    AboutDeveloperForm.Free;
+End;
+
+Procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+Begin
+    CanClose := LeaveFromProgram(CanClose);
+End;
+
+Procedure TMainForm.InstructionTabClick(Sender: TObject);
+Var
+    InstructionForm: TGuideForm;
+Begin
+    InstructionForm := TGuideForm.Create(Self);
+    InstructionForm.GuideLabel.Font.Size := 15;
+    InstructionForm.GuideLabel.Caption :=
+        '1) Программа принимает исключительно положительные целые числа в диапазоне [1;30].'#13#10 +
+        '2) Число состоит из цифр от 0 до 9.'#13#10;
+
+    InstructionForm.GuideLabel.Font.Size := 8;
+    InstructionForm.Caption := 'Инструкция';
+    InstructionForm.GuideLabel.WordWrap := True;
+    InstructionForm.ShowModal;
+    InstructionForm.Free;
+End;
+
+Procedure TMainForm.LeaveTabClick(Sender: TObject);
+Begin
+    Close;
+End;
+
+Procedure TMainForm.NumberOneEditChange(Sender: TObject);
+Begin
+    IsFirstNumberCorrect := CheckStringOnValidity(NumberOneEdit.Text);
+    ResultButton.Enabled := IsFirstNumberCorrect;
+    SaveTab.Enabled := IsFirstNumberCorrect;
+    IsDataSaved := False;
+End;
+
+Function SaveDataToFile(): ERROR_CODES;
+Var
+    FilePath: String;
+    SavedFile: TextFile;
+    Error: ERROR_CODES;
+    IsToWriteToFile: Boolean;
+
+Begin
+    IsToWriteToFile := True;
+    Error := NO_ERRORS;
+
+    If MainForm.SaveTextFileDialog1.Execute Then
+    Begin
+        FilePath := MainForm.SaveTextFileDialog1.FileName;
+
+        Try
+            AssignFile(SavedFile, FilePath);
+            Error := CheckMyFile(SavedFile, FilePath, IsToWriteToFile);
+        Except
+            Error := FILE_ASSIGN_ERROR;
+        End;
+
+        If Error = NO_ERRORS Then
+        Begin
+            Error := WriteDataToFile(SavedFile);
+        End;
+
+        If Error <> NO_ERRORS Then
+            Application.MessageBox(PWideChar(ERROR_TEXT[Error]), 'Ошибка', MB_OK + MB_ICONERROR)
+        Else
+        Begin
+            Application.MessageBox(PWideChar('Данные сохранены.'), 'Успешно', MB_OK + MB_ICONINFORMATION);
+            IsDataSaved := True;
+        End;
+
+    End
+    Else
+    Begin
+        Error := FILE_DATA_NOT_SAVED;
+    End;
+
+    SaveDataToFile := Error;
+End;
+
+Function WriteDataToFile(Var SavedFile: TextFile): ERROR_CODES;
+Var
+    Error: ERROR_CODES;
+    I, N, Temp, SumOfNumbers: Integer;
+Begin
+    Error := NO_ERRORS;
+    SumOfNumbers := 0;
+    Temp := 1;
+
+    N := StrToInt(MainForm.NumberOneEdit.Text);
+
+    For I := 1 To N Do
+    Begin
+        Temp := Temp * -2;
+        SumOfNumbers := SumOfNumbers + Temp;
+    End;
+
+    Try
+        Rewrite(SavedFile);
+        WriteLn(SavedFile, MainForm.NumberOneEdit.Text);
+        Write(SavedFile, SumOfNumbers);
+        CloseFile(SavedFile);
+    Except
+        Error := FILE_CLOSE_TO_WRITE;
+    End;
+
+    WriteDataToFile := Error;
+End;
+
+Function  ReadAndWriteOutFileData(Var ReadedFile: TextFile): ERROR_CODES;
+Var
+    Error: ERROR_CODES;
+    NumberOne, SumOfNumbers: Integer;
+    NumberOneStr, SumOfNumbersStr, FinalString: String;
+Begin
+    Error := NO_ERRORS;
+
+    Try
+        Reset(ReadedFile);
+    Except
+        Error := FILE_CLOSE_TO_READ;
+    End;
+
+    Try
+        ReadLn(ReadedFile, NumberOneStr);
+        If EOF(ReadedFile) Then
+            Error := (FILE_DATA_NOT_CORRECT);
+
+        NumberOne := StrToInt(NumberOneStr);
+
+        Read(ReadedFile, SumOfNumbersStr);
+    Except
+        Error := FILE_DATA_NOT_CORRECT;
+    End;
+
+    CloseFile(ReadedFile);
+
+    If Error = NO_ERRORS Then
+    Begin
+        MainForm.NumberOneEdit.Text := FloatToStr(NumberOne);
+
+        FinalString := 'Сумма по формуле равна числу: ' + SumOfNumbersStr;
+
+        MainForm.AnswerLabel.Font.Size := 11;
+        //MainForm.AnswerLabel.WordWrap := True;
+        MainForm.AnswerLabel.Caption := FinalString;
+    End;
+
+    ReadAndWriteOutFileData := Error;
+End;
+
+Function LeaveFromProgram(CanClose: Boolean): Boolean;
+Var
+    IsFormShouldClose: Integer;
+    Error: ERROR_CODES;
+
+Begin
+    Error := NO_ERRORS;
+    CanClose := False;
+
+    If IsDataSaved Then
+    Begin
+        IsFormShouldClose := Application.MessageBox(PChar('Вы хотите выйти?'), PChar('Выход'), MB_YESNO + MB_ICONQUESTION);
+
+        If IsFormShouldClose = mrYes Then
+        Begin
+            CanClose := True;
+        End;
+    End
+    Else
+    Begin
+        IsFormShouldClose := Application.MessageBox(PChar('Данные не были сохранены, вы точно хотите выйти?'), PChar('Выход'), MB_YESNOCANCEL + MB_ICONQUESTION);
+
+        If IsFormShouldClose = MrYes Then
+            CanClose := True
+        Else
+            If IsFormShouldClose = MrNo Then
+            Begin
+                Error := SaveDataToFile();
+                If Error = NO_ERRORS Then
+                    CanClose := True;
+            End;
+
+    End;
+
+    LeaveFromProgram := CanClose;
+End;
+
+End.

@@ -8,6 +8,6 @@
 #define R3 0.27
 #define F  1.2
 
-int calculate(int x);
+double calculate(int x);
 
 #endif

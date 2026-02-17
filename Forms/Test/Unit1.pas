@@ -324,7 +324,8 @@ Begin
         '1) Программа принимает исключительно положительные целые либо вещественные значения.'#13#10 +
         '2) Число состоит из цифр от 0 до 9 с возможностью записи вещественного значения через символ запятой.'#13#10 +
         '3) Если первый символ равен ''0'' то следующим символом может быть только знак '',''.'#13#10 +
-        '4) Числа в виде ''00,8'' ''4,200'' ''3,'' '',01'' и подобные будут считаться некорректными.';
+        '4) Числа в виде ''00,8'' ''4,200'' ''3,'' '',01'' и подобные будут считаться некорректными.'#13#10 +
+        '5) Максимаум, введённое число может состоять из 10 символов.';
 
     InstructionForm.GuideLabel.Font.Size := 8;
     InstructionForm.Caption := 'Инструкция';
@@ -479,7 +480,7 @@ Begin
     End;
 
     //Проверяем ввод остальных символов строки
-    If ((Length(WrittenString) > 1) And (Length(WrittenString) <= 5)) Then
+    If ((Length(WrittenString) > 1) And (Length(WrittenString) < 10)) Then
     Begin
         If (Key = ',') And IsPointInFirstStringAllowed Then
         Begin
@@ -529,7 +530,7 @@ Begin
     End;
 
     //Проверяем ввод остальных символов строки
-    If ((Length(WrittenString) > 1) And (Length(WrittenString) <= 5) And ((Key In DIGITS) Or (Key = ','))) Then
+    If ((Length(WrittenString) > 1) And (Length(WrittenString) < 10) And ((Key In DIGITS) Or (Key = ','))) Then
     Begin
         If (Key = ',') And IsPointInSecondStringAllowed Then
         Begin

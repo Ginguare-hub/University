@@ -1,12 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.983,=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.495,=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.575,C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Unit1.pas=C:\GitHub\University\Forms\Test\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.626,=C:\GitHub\University\Forms\Test\Unit2.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.495,=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.983,=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.016,=C:\GitHub\University\Forms\Test\Unit3.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.575,C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Unit1.dfm=C:\GitHub\University\Forms\Test\Unit1.dfm</Transaction>
     <Transaction>1899.12.30 00:00:00.000.793,C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\GitHub\University\Forms\Test\Project1.dproj</Transaction>
-  </Transactions>
+  </Transactions>  <ProjectSortOrder AutoSort="0" SortType="0">
+    <File Path="Unit1.pas"/>
+    <File Path="Unit1.dfm"/>
+    <File Path="Unit2.pas"/>
+    <File Path="Unit2.dfm"/>
+    <File Path="Unit3.pas"/>
+    <File Path="Unit3.dfm"/>
+  </ProjectSortOrder>
 </BorlandProject>

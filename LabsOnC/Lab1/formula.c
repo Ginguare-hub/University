@@ -1,6 +1,6 @@
 #include "formula.h"
 
-int calculate(int x)
+double calculate(int x)
 {
     double s;
     s = 0;

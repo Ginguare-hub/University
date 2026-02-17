@@ -1,0 +1,10 @@
+﻿[CloseButton]
+Coordinates=10,10,85,58
+Visible=True
+
+[]
+Coordinates=176,1,91,36
+
+[GuideLabel]
+Coordinates=105,10,53,58
+
