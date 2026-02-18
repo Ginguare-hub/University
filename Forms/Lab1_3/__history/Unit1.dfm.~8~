@@ -1,0 +1,148 @@
+object MainForm: TMainForm
+  Left = 0
+  Top = 0
+  Margins.Left = 6
+  Margins.Top = 6
+  Margins.Right = 6
+  Margins.Bottom = 6
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = '551004 '#1055#1077#1076#1100#1082#1086' '#1042#1083#1072#1076#1080#1089#1083#1072#1074' Lab1.2'
+  ClientHeight = 490
+  ClientWidth = 1086
+  Color = clBtnFace
+  Constraints.MaxHeight = 600
+  Constraints.MaxWidth = 1112
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -24
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  Menu = MainMenu1
+  Position = poDesktopCenter
+  OnCloseQuery = FormCloseQuery
+  PixelsPerInch = 192
+  TextHeight = 32
+  object NumberOneLabel: TLabel
+    Left = 11
+    Top = 133
+    Width = 186
+    Height = 32
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    Caption = #1042#1074#1077#1076#1080#1090#1077' '#1095#1080#1089#1083#1086' '#949':'
+  end
+  object TaskLabel: TLabel
+    Left = 11
+    Top = 11
+    Width = 1031
+    Height = 110
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    AutoSize = False
+    BiDiMode = bdLeftToRight
+    Caption = 
+      #1055#1088#1086#1075#1088#1072#1084#1084#1072' '#1085#1072#1093#1086#1076#1080#1090' '#1082#1086#1088#1077#1085#1100' '#1091#1088#1072#1074#1085#1077#1085#1080#1103'  ln(7,622x) '#8211' 8,59'#1093' + 5 = 0 '#1089 +
+      ' '#1090#1086#1095#1085#1086#1089#1090#1100#1102' '#949' '#1084#1077#1090#1086#1076#1086#1084' '#1087#1088#1086#1089#1090#1086#1081' '#1080#1090#1077#1088#1072#1094#1080#1080'.'
+    Constraints.MaxHeight = 1000
+    Constraints.MaxWidth = 1130
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -32
+    Font.Name = 'Segoe UI'
+    Font.Style = [fsBold]
+    ParentBiDiMode = False
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = False
+    WordWrap = True
+    StyleName = 'Windows'
+  end
+  object AnswerLabel: TLabel
+    Left = 30
+    Top = 396
+    Width = 631
+    Height = 63
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    AutoSize = False
+  end
+  object ResultButton: TButton
+    Left = 11
+    Top = 315
+    Width = 209
+    Height = 49
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    Caption = #1056#1077#1079#1091#1083#1100#1090#1072#1090
+    Enabled = False
+    TabOrder = 0
+    OnClick = ResultButtonClick
+  end
+  object NumberOneEdit: TEdit
+    Left = 11
+    Top = 199
+    Width = 170
+    Height = 40
+    Hint = #949
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    Ctl3D = True
+    ParentCtl3D = False
+    TabOrder = 1
+    TextHint = '0,'
+    OnChange = NumberOneEditChange
+    OnKeyPress = NumberOneEditKeyPress
+  end
+  object MainMenu1: TMainMenu
+    Left = 938
+    Top = 364
+    object FileTab: TMenuItem
+      Caption = #1060#1072#1081#1083
+      object OpenTab: TMenuItem
+        Caption = #1054#1090#1082#1088#1099#1090#1100
+        ShortCut = 16463
+        OnClick = OpenTabClick
+      end
+      object SaveTab: TMenuItem
+        Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
+        Enabled = False
+        ShortCut = 16467
+        OnClick = SaveTabClick
+      end
+      object Separator1: TMenuItem
+        Caption = '-'
+      end
+      object LeaveTab: TMenuItem
+        Caption = #1042#1099#1081#1090#1080
+        OnClick = LeaveTabClick
+      end
+    end
+    object InstructionTab: TMenuItem
+      Caption = #1048#1085#1089#1090#1088#1091#1082#1094#1080#1103
+      OnClick = InstructionTabClick
+    end
+    object AboutDeveloperTab: TMenuItem
+      Caption = #1054' '#1056#1072#1079#1088#1072#1073#1086#1090#1095#1080#1082#1077
+      OnClick = AboutDeveloperTabClick
+    end
+  end
+  object OpenTextFileDialog1: TOpenTextFileDialog
+    Left = 938
+    Top = 140
+  end
+  object SaveTextFileDialog1: TSaveTextFileDialog
+    Left = 938
+    Top = 252
+  end
+end

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.560,C:\GitHub\University\Forms\Lab1_2\Lab1_2.dproj=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.983,=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.276,=C:\GitHub\University\Forms\Lab1_2\Unit2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.221,=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.436,C:\GitHub\University\Forms\Lab1_2\Unit1.dfm=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.436,C:\GitHub\University\Forms\Lab1_2\Unit1.pas=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2026.02.18 19:22:43.848,C:\GitHub\University\Forms\Lab1_3\Lab1_3.dproj=C:\GitHub\University\Forms\Lab1_2\Lab1_2.dproj</Transaction>
+    <Transaction>2026.02.18 19:23:00.739,C:\GitHub\University\Forms\Lab1_3\Unit1.pas=C:\GitHub\University\Forms\Lab1_2\Unit1.pas</Transaction>
+    <Transaction>2026.02.18 19:23:00.739,C:\GitHub\University\Forms\Lab1_3\Unit1.dfm=C:\GitHub\University\Forms\Lab1_2\Unit1.dfm</Transaction>
+    <Transaction>2026.02.18 19:23:12.270,C:\GitHub\University\Forms\Lab1_3\Unit2.dfm=C:\GitHub\University\Forms\Lab1_2\Unit2.dfm</Transaction>
+    <Transaction>2026.02.18 19:23:12.270,C:\GitHub\University\Forms\Lab1_3\Unit2.pas=C:\GitHub\University\Forms\Lab1_2\Unit2.pas</Transaction>
+  </Transactions>
+</BorlandProject>
