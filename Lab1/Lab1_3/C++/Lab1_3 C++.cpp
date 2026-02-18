@@ -18,7 +18,7 @@ int main()
     int count = 0;
     bool isIncorrect = false;
 
-    x0 = 0.0;
+    x0 = 0.0; 
     x1 = 0.0;
     derivative = 0.0;
     equivEquation = 0.0;
