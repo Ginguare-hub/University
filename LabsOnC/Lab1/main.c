@@ -1,20 +1,39 @@
 #include <stdio.h>
 #include "formula.h"
+#include "locale.h"
 
-int main(void) 
+double scanX()
 {
     int x;
-    double s;
-    _Bool isCorrect;
-
     x = 0;
-    s = 0;
-    isCorrect = 0;
-
+    printf("Введите величину потребления X: ");
     scanf("%d", &x);
-    s = calculate(x);
+    return x;
+}
 
-    printf("%f", s);
+void printAnswer(int x)
+{
+    double s;
+    s = 0;
+
+    if (x >= 0)
+    {
+        s = calculate(x);
+        printf("Тариф: %0.2f", s);
+    }
+    else
+        printf("Число не может быть меньше чем 0.");
+}
+
+int main(void)
+{
+    int x;
+    x = 0;
+
+    setlocale(LC_ALL, "Russian");
+
+    x = scanX();
+    printAnswer(x);
 
     return 0;
 }

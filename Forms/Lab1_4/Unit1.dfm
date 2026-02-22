@@ -119,6 +119,7 @@ object MainForm: TMainForm
     DefaultColWidth = 100
     DefaultRowHeight = 40
     RowCount = 2
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goFixedRowDefAlign]
     TabOrder = 2
     Visible = False
     OnKeyPress = StringGridAKeyPress

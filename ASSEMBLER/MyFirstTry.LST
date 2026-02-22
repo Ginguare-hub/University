@@ -1,0 +1,34 @@
+  ADDR B1 B2 B3 B4 thrass11.tmp                                     PAGE       1
+
+                    org $8000
+  8000 8E 00 F9     LDS #$00f9
+
+  8003 B6 80 00     LDAA $8000
+  8006 36           PSHA
+
+  8007 B6 80 01     LDAA $8001
+  800A 36           PSHA
+
+  800B B6 80 02     LDAA $8002
+  800E 36           PSHA
+
+  800F B6 80 03     LDAA $8003
+  8012 36           PSHA
+
+  8013 B6 80 04     LDAA $8004
+  8016 36           PSHA
+
+  8017 B6 80 05     LDAA $8005
+  801A 36           PSHA
+
+  801B B6 80 06     LDAA    $8006
+  801E 36           PSHA
+
+  801F B6 80 07     LDAA    $8007
+  8022 36           PSHA
+
+  8023 B6 80 08     LDAA    $8008
+  8026 36           PSHA
+
+  8027 B6 80 09     LDAA    $8009
+  802A 36           PSHA

@@ -1,0 +1,325 @@
+Program Alien_Labyrinth;
+
+{$APPTYPE CONSOLE}
+{$R *.res}
+
+Uses
+    System.SysUtils;
+
+Type
+    Floors = (flFirst, flSecond, flThird);
+    Rooms  = (rExit, rXeno, rLab, rGlad_ai, rRelic, rControlHub, rDisco);
+
+Procedure ShowFirstFloorMap();
+Begin
+    Write(
+      #13#10'Карта Первого этажа:'#13#10 +
+            '   __________________________________________________ '#13#10 +
+            '  |##|  POINT  |                           |         |'#13#10 +
+            '  |##| "XEN-O" |             __________       POINT  |'#13#10 +
+            '  |##|__    __/|            |                 "LAB"  |'#13#10 +
+            '  |##|       /#|_______     |_________     |_________|'#13#10 +
+            '  |##|      /|         |    |#########|              |'#13#10 +
+            '  |##/     /#|         |    |#########|_________     |'#13#10 +
+            '  |#/     /##|    |    |    |#########|         |    |'#13#10 +
+            '  |/     /###|    |    |    |         |         |    |'#13#10 +
+            '  |     /####|    |    |    |         |    |         |'#13#10 +
+            '  |          |    |    |         |    |    |         |'#13#10 +
+            '  |_____     |    |    |_____    |         |__     __|'#13#10 +
+            '  |#####|         |              |   EXT   |    ?    |'#13#10 +
+            '  |#####|_________|______________|    ?    |____?____|'#13#10#13#10);
+End;
+
+Procedure ShowSecondFloorMap();
+Begin
+    Write(
+      #13#10'Карта Второго этажа:'#13#10 +
+            '   __________________________________________________ '#13#10 +
+            '  |                  |                        |######|'#13#10 +
+            '  |    __________    |     ______________     |######|'#13#10 +
+            '  |         |             |     #########|    |######|'#13#10 +
+            '  |_____    |__         __|             #|    |######|'#13#10 +
+            '  |     |   |    POINT    |    |# POINT #|    |######|'#13#10 +
+            '  |  ?      |  "GLaD-AI"  |    |#       #|    |######|'#13#10 +
+            '  |  ?      |_____________|    |#"RELIC"#|           |'#13#10 +
+            '  | 2-3     |###|              |#       #|           |'#13#10 +
+            '  |_____|   |###|     ____     |#########|           |'#13#10 +
+            '  |         |###|    |####|    |                     |'#13#10 +
+            '  |    _____|###|    |####|    |    |       __     __|'#13#10 +
+            '  |                  |####|         |      |  ? 1-2  |'#13#10 +
+            '  |__________________|####|_________|______|__?______|'#13#10#13#10);
+End;
+
+Procedure ShowThirdFloorMap();
+Begin
+    Write(
+      #13#10'Карта Третьего этажа:'#13#10 +
+            '   __________________________________________________ '#13#10 +
+            '  |               | ? ? ? ? ? ?|                     |'#13#10 +
+            '  |     POINT     |            |       "POINT"       |'#13#10 +
+            '  | "CONTROL HUB" |     ____   | THE LARGEST         |'#13#10 +
+            '  |_____      ____|    |       |  SHIP COMPARTMENT   |'#13#10 +
+            '  |     |    |####     |   ____|   IN THE WHOLE      |'#13#10 +
+            '  |  ?       |         |       |    UNIVERSE         |'#13#10 +
+            '  |  ?       |    _____|__     |     DEDICATED       |'#13#10 +
+            '  | 2-3      |            |    |      EXCLUSIVELY    |'#13#10 +
+            '  |_____|    |   ______   |    |       TO PLAY       |'#13#10 +
+            '  |          |            |    |        ? DISCO ?    |'#13#10 +
+            '  |    ______|__        __|    |________      _______|'#13#10 +
+            '  |                     ##|                   #######|'#13#10 +
+            '  |_____________________##|___________________#######|'#13#10#13#10);
+End;
+
+Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
+
+Var
+    IsCorrect: Boolean;
+    Number: Integer;
+
+Begin
+    IsCorrect := True;
+    Number := 0;
+
+    Repeat
+        Write(MyString);
+        IsCorrect := True;
+
+        Try
+            ReadLn(Number);
+        Except
+            WriteLn('Incorrect input, try again.');
+            IsCorrect := False;
+        End;
+
+        If IsCorrect And ((Number < MIN_NUMBER) Or (Number > MAX_NUMBER)) Then
+        Begin
+            WriteLn('Введённое число должно попадать в диапазон [', MIN_NUMBER, ',', MAX_NUMBER, '].');
+            IsCorrect := False;
+        End;
+
+    Until IsCorrect;
+
+    ReadAndVerify := Number;
+End;
+
+Function FindPlayerFloor(): Floors;
+Var
+    ExactFloor: Floors;
+    ReadedNumber: Integer;
+Begin
+    ExactFloor := flFirst;
+
+    WriteLn('Какого цвета стены вокруг Вы наблюдаете?');
+    Write(  '1)  Зелёный'#13#10 +
+            '2)  Фиолетовый'#13#10 +
+            '3)  Белый'#13#10);
+
+    ReadedNumber := ReadAndVerify(1, 3, '> ');
+
+    If ReadedNumber = 1 Then
+    Begin
+        ExactFloor := flSecond;
+        Write(#13#10'Вы находитесь на Втором этаже'#13#10);
+    End
+    Else
+        If ReadedNumber = 2 Then
+        Begin
+            ExactFloor := flThird;
+            Write(#13#10'Вы находитесь на Третьем этаже'#13#10);
+        End
+        Else
+            If ReadedNumber = 3 Then
+            Begin
+                ExactFloor := flFirst;
+                Write(#13#10'Вы находитесь на Первом этаже'#13#10);
+            End;
+
+    FindPlayerFloor := ExactFloor;
+End;
+
+Procedure ShowFloorMap(ExactFloor: Floors);
+Begin
+    Case ExactFloor of
+        flFirst:
+            ShowFirstFloorMap;
+        flSecond:
+            ShowSecondFloorMap;
+        flThird:
+            ShowThirdFloorMap;
+    End;
+End;
+
+Function SelectFirstFloorRoom(): Rooms;
+Var
+    Room: Rooms;
+    RoomNumber: Integer;
+Begin
+    RoomNumber := 0;
+
+    WriteLn('В какой комнате вы находитесь?');
+    Write('1)  XEN-O'#13#10 +
+          '2)  LAB'#13#10);
+
+    RoomNumber := ReadAndVerify(1, 2, '> ');
+
+    If RoomNumber = 1 Then
+        Room := rXeno
+    Else
+        Room := rLab;
+
+    SelectFirstFloorRoom := Room;
+End;
+
+Function SelectSecondFloorRoom(): Rooms;
+Var
+    Room: Rooms;
+    RoomNumber: Integer;
+Begin
+    RoomNumber := 0;
+
+    WriteLn('В какой комнате вы находитесь?');
+    Write('1)  GLaD-AI'#13#10 +
+          '2)  RELIC'#13#10);
+
+    RoomNumber := ReadAndVerify(1, 2, '> ');
+
+    If RoomNumber = 1 Then
+        Room := rGlad_ai
+    Else
+        Room := rRelic;
+
+    SelectSecondFloorRoom := Room;
+End;
+
+Function SelectThirdFloorRoom(): Rooms;
+Var
+    Room: Rooms;
+    RoomNumber: Integer;
+Begin
+    RoomNumber := 0;
+
+    WriteLn('В какой комнате вы находитесь?');
+    Write('1)  CONTROL HUB'#13#10 +
+          '2)  THE LARGEST SHIP COMPARTMENT IN THE WHOLE UNIVERSE DEDICATED EXCLUSIVELY TO PLAY DISCO'#13#10);
+
+    RoomNumber := ReadAndVerify(1, 2, '> ');
+
+    If RoomNumber = 1 Then
+        Room := rControlHub
+    Else
+        Room := rDisco;
+
+    SelectThirdFloorRoom := Room;
+End;
+
+Procedure FromElevetorOneToExit();
+Begin
+    Write(#13#10'Успешно спустившись на первый этаж идите в левый коридор'#13#10 +
+          '-> Поверните налево два раза'#13#10 +
+          '-> Ещё немного вперёд, и ступайте в шлюз выхода чтобы наконец покинуть это странное место.'#13#10
+          );
+End;
+
+Procedure FromElevatorTwoToExit();
+Begin
+
+End;
+
+Procedure FromXenoToExit();
+Begin
+    Write(#13#10#13#10'Осмотревшись по сторонам Вы замечаете большое количество инопланетных животных самых разнообразных форм, цветов и размеров, которые находятся в высокотехнологичных клетках. Но ничего, заблудиться тут будет довольно сложно, просто следуйте простой инструкции: '#13#10);
+    Write('-> Выход из комнаты представляет собой направленный под углом корридор, смело идите по нему'#13#10 +
+          '-> Поверните налево'#13#10 +
+          '-> Направо'#13#10 +
+          '-> Налево за угол'#13#10 +
+          '-> Долго идите вперёд, пока не появится поворот направо, поверните туда'#13#10 +
+          '-> Примерно столько же снова идите вперёд'#13#10 +
+          '-> Когда дойдёте до стены поверните налево'#13#10 +
+          '-> Поверните налево на 90 градусов и идите вперёд'#13#10 +
+          '-> После, повернувшись направо два раза, Вы увидите шлюз выхода. Ступайте туда для того, чтобы выйти от сюда.'#13#10
+          );
+End;
+
+Procedure FromLabToExit();
+Begin
+    Write(#13#10#13#10'Итак, Вы находитесь в межпланетарной лаборатории, для того, чтобы выбраться от сюда нужно сделать такие шаги: '#13#10);
+    Write('-> При выходе с комнаты идите налево и вперёд'#13#10 +
+          '-> Снова налево'#13#10 +
+          '-> Направо'#13#10 +
+          '-> Вы увидите лифт, в него НЕ нужно идти, просто поверните снова направо и идите по коридору'#13#10 +
+          '-> На следующем повороте налево будет видно шлюз выхода, смело идите туда чтобы выйти.');
+End;
+
+Procedure FromGlad_aiToExit();
+Begin
+    Write(#13#10#13#10'Вы обнаруживаете себя в отсеке с большим компъютером, подойдя к нему, на Вас обрушивается неизвесный вам женский голос, который начал что-то говорить про эксперименты, тайную подземную лабораторию и какие-то ''Модули подавления интеллекта'' которые сейчас летают где-то в космосе. ' +
+          'Голос не внушает большого доверия и звучит довольно.. высокомерно, поэтому Вы решаете сосредоточиться на поиске выхода. Вот подробная инструкция: '#13#10 +
+          '-> При выходе из отсека держитесь правее'#13#10 +
+          '-> После поворота направо идите вперёд до комнаты с каким-то инопланетным хламом. Тут ничего полезного найти не получится'#13#10 +
+          '-> Снова поверните направо и идите вперёд'#13#10 +
+          '-> Смело заходите в отсек перед вами, по характерным стрелкам и надпии ''1-2'' вы понимаете - перед вами лифт на первый этаж.'#13#10
+          );
+    FromElevetorOneToExit();
+End;
+
+Procedure FromRelicToExit();
+Begin
+    Write(#13#10#13#10'Вокруг Вас находится большое количество различных странных вещей, и видимо пришельцам они довольно ценны, так как украшены чудно переливающимися сплавами и камнями неизвестного происхождения. Для того, чтобы выйти следуйте последовательности шагов: '#13#10 +
+          '-> После выхода из комнаты идите налево'#13#10 +
+          '-> По правую сторону Вы увидите коридор, просто продолжайте двигаться прямо'#13#10 +
+          '-> После того, как упрётесь в стену, два раза поверните налево'#13#10 +
+          '-> Поверните направо и идите вперёд пока не увидите небольшую комнатку'#13#10 +
+          '-> Смело заходите в отсек перед вами, по характерным стрелкам и надпии ''1-2'' вы понимаете - перед вами лифт на первый этаж.'#13#10
+          );
+    FromElevetorOneToExit();
+End;
+
+Procedure FromControlHubToExit();
+Begin
+
+End;
+
+Procedure FromDiscoToExit();
+Begin
+
+End;
+
+Procedure WriteInstructionsToExit(InitialFloor: Floors);
+Var
+    ActualRoom: Rooms;
+Begin
+    Case InitialFloor of
+        flFirst:
+            ActualRoom := SelectFirstFloorRoom;
+        flSecond:
+            ActualRoom := SelectSecondFloorRoom;
+        flThird:
+            ActualRoom := SelectThirdFloorRoom;
+    End;
+
+    Case ActualRoom of
+        rXeno:
+            FromXenoToExit();
+        rLab:
+            FromLabToExit();
+        rGlad_ai:
+            FromGlad_aiToExit();
+        rRelic:
+            FromRelicToExit();
+        rControlHub:
+            FromControlHubToExit();
+        rDisco:
+            FromDiscoToExit();
+    End;
+
+End;
+
+Var
+    ExactFloor: Floors;
+
+Begin
+    ExactFloor := FindPlayerFloor();
+    ShowFloorMap(ExactFloor);
+    WriteInstructionsToExit(ExactFloor);
+    ReadLn;
+End.

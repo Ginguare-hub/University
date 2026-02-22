@@ -1,0 +1,10 @@
+  ADDR B1 B2 B3 B4 C:\GitHub\University\ASSEMBLER\MySecondTry.asm   PAGE       1
+
+                    ORG $8000
+  8000 96 00        LDAA $0
+  8002 D6 01        LDAB $1
+  8004 11           CBA
+  8005 07           TPA              ; CC   A
+  8006 84 04        ANDA #%00000100  ;  AND  A
+  8008 44           LSRA             ; 1
+  8009 44           LSRA

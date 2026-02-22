@@ -1,3 +1,44 @@
-  ADDR B1 B2 B3 B4 C:\GitHub\University\ASSEMBLER\HelloWorld.asm    PAGE       1
+  ADDR B1 B2 B3 B4 thrass11.tmp                                     PAGE       1
 
+                    .data
+E                   ^ Unexpected character in instruction or directive.
 
+                    /* Data segment: define our message string and calculate its
+.                  length. */
+E                   ^ Unexpected character in instruction or directive.
+                    msg:
+E                      ^ Unexpected character in instruction or directive.
+                       .ascii      "Hello, ARM!\n"
+E                      ^ Unexpected character in instruction or directive.
+                    len = . - msg
+E                   ^ Unknown instruction or directive.
+
+                    .text
+E                   ^ Unexpected character in instruction or directive.
+
+                    /* Our application's entry point. */
+E                   ^ Unexpected character in instruction or directive.
+                    .globl _start
+E                   ^ Unexpected character in instruction or directive.
+                    _start:
+E                   ^ Unexpected character in instruction or directive.
+                       /* syscall write(int fd, const void *buf, size_t count) *
+.                  /
+E                      ^ Unexpected character in instruction or directive.
+                       mov     %r0, $1     /* fd := STDOUT_FILENO */
+E                      ^ Unknown instruction or directive.
+                       ldr     %r1, =msg   /* buf := msg */
+E                      ^ Unknown instruction or directive.
+                       ldr     %r2, =len   /* count := len */
+E                      ^ Unknown instruction or directive.
+                       mov     %r7, $4     /* write is syscall #4 */
+E                      ^ Unknown instruction or directive.
+  C000 3F              swi     $0          /* invoke syscall */
+
+                       /* syscall exit(int status) */
+E                      ^ Unexpected character in instruction or directive.
+                       mov     %r0, $0     /* status := 0 */
+E                      ^ Unknown instruction or directive.
+                       mov     %r7, $1     /* exit is syscall #1 */
+E                      ^ Unknown instruction or directive.
+  C001 3F              swi     $0          /* invoke syscall */
