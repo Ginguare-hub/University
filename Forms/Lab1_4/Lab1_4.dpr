@@ -2,7 +2,7 @@ program Lab1_4;
 
 uses
   Vcl.Forms,
-  Unit1 in 'Unit1.pas' {MainForm},
+  Unit1 in '..\Lab2_1\Unit1.pas' {MainForm},
   Unit2 in 'Unit2.pas' {GuideForm};
 
 {$R *.res}

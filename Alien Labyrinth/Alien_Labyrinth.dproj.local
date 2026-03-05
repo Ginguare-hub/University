@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.466,=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.808,C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\GitHub\University\Alien Labyrinth\Alien_Labyrinth.dproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.983,=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2026.02.22 19:24:18.808,C:\GitHub\University\Alien Labyrinth\Alien_Labyrinth.dproj=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.466,=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
   </Transactions>
 </BorlandProject>

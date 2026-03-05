@@ -7,7 +7,7 @@ object MainForm: TMainForm
   Margins.Bottom = 6
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = '551004 '#1055#1077#1076#1100#1082#1086' '#1042#1083#1072#1076#1080#1089#1083#1072#1074' Lab1.3'
+  Caption = '551004 '#1055#1077#1076#1100#1082#1086' '#1042#1083#1072#1076#1080#1089#1083#1072#1074' Lab1.4'
   ClientHeight = 640
   ClientWidth = 1086
   Color = clBtnFace
@@ -62,21 +62,22 @@ object MainForm: TMainForm
     WordWrap = True
     StyleName = 'Windows'
   end
-  object AnswerLabel: TLabel
-    Left = 11
-    Top = 550
-    Width = 1031
-    Height = 79
+  object LabelResult: TLabel
+    Left = 20
+    Top = 390
+    Width = 400
+    Height = 31
     Margins.Left = 6
     Margins.Top = 6
     Margins.Right = 6
     Margins.Bottom = 6
     AutoSize = False
-    WordWrap = True
+    Caption = #1052#1072#1089#1089#1080#1074' b:'
+    Visible = False
   end
   object ResultButton: TButton
-    Left = 60
-    Top = 543
+    Left = 530
+    Top = 122
     Width = 209
     Height = 49
     Margins.Left = 6
@@ -108,21 +109,101 @@ object MainForm: TMainForm
   end
   object StringGridA: TStringGrid
     Left = 20
-    Top = 221
-    Width = 1022
+    Top = 201
+    Width = 1041
     Height = 130
     Margins.Left = 6
     Margins.Top = 6
     Margins.Right = 6
     Margins.Bottom = 6
+    Color = clBtnFace
     ColCount = 50
     DefaultColWidth = 100
     DefaultRowHeight = 40
+    FixedCols = 0
     RowCount = 2
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goFixedRowDefAlign]
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goEditing, goThumbTracking, goFixedRowDefAlign]
+    ScrollBars = ssHorizontal
     TabOrder = 2
     Visible = False
+    OnExit = StringGridAExit
     OnKeyPress = StringGridAKeyPress
+    OnSelectCell = StringGridASelectCell
+    ColWidths = (
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100
+      100)
+  end
+  object StringGridResult: TStringGrid
+    Left = 20
+    Top = 459
+    Width = 1041
+    Height = 130
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    Color = clBtnFace
+    ColCount = 50
+    DefaultColWidth = 100
+    DefaultRowHeight = 40
+    Enabled = False
+    FixedCols = 0
+    RowCount = 2
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goEditing, goThumbTracking, goFixedRowDefAlign]
+    ScrollBars = ssHorizontal
+    TabOrder = 3
+    Visible = False
+    OnExit = StringGridAExit
+    OnKeyPress = StringGridAKeyPress
+    OnSelectCell = StringGridASelectCell
     ColWidths = (
       100
       100
@@ -176,8 +257,8 @@ object MainForm: TMainForm
       100)
   end
   object MainMenu1: TMainMenu
-    Left = 818
-    Top = 112
+    Left = 758
+    Top = 352
     object FileTab: TMenuItem
       Caption = #1060#1072#1081#1083
       object OpenTab: TMenuItem
@@ -209,11 +290,11 @@ object MainForm: TMainForm
     end
   end
   object OpenTextFileDialog1: TOpenTextFileDialog
-    Left = 638
-    Top = 112
+    Left = 958
+    Top = 352
   end
   object SaveTextFileDialog1: TSaveTextFileDialog
-    Left = 706
-    Top = 114
+    Left = 556
+    Top = 352
   end
 end

@@ -19,14 +19,14 @@
  LDAA $8005
  PSHA
         
- LDAA    $8006
+ LDAA $8006
  PSHA
         
- LDAA    $8007
+ LDAA $8007
  PSHA
         
- LDAA    $8008
+ LDAA $8008
  PSHA
         
- LDAA    $8009
+ LDAA $8009
  PSHA

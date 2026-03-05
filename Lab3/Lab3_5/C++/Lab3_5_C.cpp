@@ -514,7 +514,7 @@ string* readSeparatorsFromConsole(int& arrayLength, string& givenString)
     return array1;
 }
 
-void readingStage(string*& arrayOfSeparators, int& arrayLength, string& givenString)
+void readingStage(string* &arrayOfSeparators, int &arrayLength, string &givenString)
 {
     bool isFromFile;
     string filePath;
