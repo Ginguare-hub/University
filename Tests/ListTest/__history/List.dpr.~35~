@@ -1,0 +1,235 @@
+Program List;
+
+{$APPTYPE CONSOLE}
+{$R *.res}
+
+Uses
+    System.SysUtils;
+
+Type
+    UnidirNode = ^UniElement;
+    UniElement = Record
+        Data: Integer;
+        Index: Integer;
+        Next: UnidirNode;
+    End;
+
+    BidirNode = ^BiElement;
+    BiElement = Record
+        Data: Integer;
+        Next: BidirNode;
+        Prev: BidirNode;
+    End;
+
+Function ReadAndVerify(Const MIN_NUMBER1, MAX_NUMBER1, MIN_NUMBER2, MAX_NUMBER2: Integer; MyString: String): Integer;
+Var
+    IsCorrect: Boolean;
+    Number: Integer;
+Begin
+    IsCorrect := True;
+    Number := 0;
+
+    Repeat
+
+        Write(MyString);
+        IsCorrect := True;
+
+        Try
+            ReadLn(Number);
+        Except
+            WriteLn('Некорректный ввод, повторите снова.');
+            IsCorrect := False;
+        End;
+
+        If IsCorrect And ( Not((Number >= MIN_NUMBER1) And (Number <= MAX_NUMBER1)) And Not((Number >= MIN_NUMBER2) And (Number <= MAX_NUMBER2)) And Not(Number = 0)) Then
+        Begin
+            WriteLn('Число должно входить в диапазон [', MIN_NUMBER1, ',', MAX_NUMBER1, '] либо [', MIN_NUMBER2, ',', MAX_NUMBER2, '] или равняться 0.');
+            IsCorrect := False;
+        End;
+
+    Until IsCorrect;
+
+    ReadAndVerify := Number;
+End;
+
+//Procedure Make(var Head: UnidirNode);
+//Var
+//    I: Integer;
+//    Current: UnidirNode;
+//Begin
+//    New(Head);
+//    Current := Head;
+//
+//    While Current^.Next.Next <> Nil Do
+//    Begin
+//        Readln(Current^.Data);
+//        New(Current^.Next);
+//        Current := Current^.Next;
+//    End;
+//
+//    New(Current^.Next);
+//    Current := Current^.Next;
+//    Current^.Next := Nil;
+//End;
+
+Procedure Print(X: BidirNode);
+Begin
+    X := X^.Next;
+    While X <> Nil Do
+    Begin
+        Write(X^.Data, ' ');
+        X := X^.Next;
+    End;
+End;
+
+Procedure PrintReverse(Head: BidirNode);
+Var
+    Temp: BidirNode;
+Begin
+    Temp := Head;
+    While Temp^.Next <> Nil Do
+    Begin
+        Temp := Temp^.Next;
+    End;
+
+    While Temp.Data <> 0 Do
+    Begin
+        Write(Temp^.Data, ' ');
+        Head := Head^.Prev;
+    End;
+End;
+
+Procedure Append(X: Integer; Var Head: BidirNode);
+Var
+    Temp: BidirNode;
+Begin
+    Temp := Head;
+    While Temp^.Next <> Nil Do
+    Begin
+        Temp := Temp^.Next;
+    End;
+
+    New(Temp^.Next);
+    Temp^.Next.Data := X;
+    Temp^.Next^.Prev := Temp;
+    Temp^.Next^.Next := Nil;
+End;
+
+Var
+    UniHead: UnidirNode;
+    BiHead: BidirNode;
+    Number: Integer;
+Begin
+    BiHead := Nil;
+    New(BiHead);
+    BiHead^.Next := Nil;
+    BiHead^.Prev := Nil;
+
+    UniHead := Nil;
+    New(UniHead);
+    UniHead^.Next := Nil;
+
+    Number := 0;
+
+    Writeln('Введите число 0 если закончили вводить номера телефонов.');
+
+    Repeat
+        Number := ReadAndVerify(100, 999, 1_000_000, 9_999_999, 'Введите номер телефона: ');
+        If Number <> 0 Then
+            Append(Number, BiHead);
+    Until Number = 0;
+
+    Print(BiHead);
+    PrintReverse(BiHead);
+    ReadLn;
+End.
+
+
+
+
+
+
+//Program List;
+//
+//{$APPTYPE CONSOLE}
+//{$R *.res}
+//
+//Uses
+//    System.SysUtils;
+//
+//Type
+//    Ptr = ^Elem;
+//    Elem = Record
+//        Data: Integer;
+//        Next: Ptr;
+//    End;
+//
+//Procedure Make(var Head: Ptr);
+//Var
+//    I: Integer;
+//    Current: Ptr;
+//Begin
+//    // Создаем первый элемент
+//    New(Head);
+//    Current := Head;
+//
+//    Writeln('Введите 5 чисел:');
+//    For I := 1 To 5 Do
+//    Begin
+//        Readln(Current^.Data);
+//        If I < 5 Then  // Для последнего элемента не создаем следующий
+//        Begin
+//            New(Current^.Next);
+//            Current := Current^.Next;
+//        End;
+//    End;
+//    Current^.Next := Nil;  // Последний элемент указывает на Nil
+//End;
+//
+//Procedure Print(Head: Ptr);
+//Begin
+//    If Head = Nil Then
+//        Writeln('Список пуст')
+//    Else
+//    Begin
+//        While Head <> Nil Do
+//        Begin
+//            Write(Head^.Data, ' ');
+//            Head := Head^.Next;
+//        End;
+//        Writeln;
+//    End;
+//End;
+//
+//Procedure Insert(X: Integer; P: Ptr);
+//Var
+//    Temp: Ptr;  // Исправлено: используем правильный тип
+//Begin
+//    If P <> Nil Then
+//    Begin
+//        Temp := P^.Next;
+//        New(P^.Next);
+//        P^.Next^.Data := X;
+//        P^.Next^.Next := Temp;
+//    End;
+//End;
+//
+//Var
+//    First: Ptr;  // Исправлено: используем правильный тип
+//
+//Begin
+//    First := Nil;
+//
+//    Make(First);     // Теперь First изменится
+//    Write('Список: ');
+//    Print(First);
+//
+//    // Пример вставки после первого элемента
+//    If First <> Nil Then
+//        Insert(99, First);
+//
+//    Write('После вставки: ');
+//    Print(First);
+//
+//    ReadLn;
+//End.

@@ -1,0 +1,15 @@
+program Lab2_6;
+
+uses
+  Vcl.Forms,
+  Unit1 in '..\Lab2_2\Unit1.pas' {MainForm},
+  Unit2 in '..\Lab2_2\Unit2.pas' {GuideForm};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TMainForm, MainForm);
+  Application.Run;
+end.

@@ -13,27 +13,26 @@ File_10=TSourceModule,'C:\GitHub\University\Forms\Test\Unit1.pas',0,1,363,88,378
 File_11=TSourceModule,'C:\GitHub\University\Forms\Test\Unit2.pas',0,1,16,44,43,0,0,,
 File_12=TSourceModule,'C:\GitHub\University\Forms\Test\Unit3.pas',0,1,1,36,14,0,0,,
 File_13=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.Dialogs.pas',0,1,2349,1,2365,0,0,,
-File_14=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.ExtDlgs.pas',0,1,703,1,723,0,0,,
 
 [Modules]
-Module0=C:\GitHub\University\Forms\Lab1_4\Unit1.pas
-Module1=C:\GitHub\University\Forms\Lab1_4\Lab1_4.dproj
+Module0=C:\GitHub\University\Forms\Lab1_4\Lab1_4.dproj
+Module1=C:\GitHub\University\Forms\Lab1_4\Unit1.pas
 Module2=C:\GitHub\University\Forms\Lab1_4\Unit2.pas
 Count=3
 EditWindowCount=1
 
-[C:\GitHub\University\Forms\Lab1_4\Unit1.pas]
-ModuleType=TSourceModule
-
 [C:\GitHub\University\Forms\Lab1_4\Lab1_4.dproj]
 ModuleType=TBaseProject
+
+[C:\GitHub\University\Forms\Lab1_4\Unit1.pas]
+ModuleType=TSourceModule
 
 [C:\GitHub\University\Forms\Lab1_4\Unit2.pas]
 ModuleType=TSourceModule
 
 [EditWindow0]
 ViewCount=3
-CurrentEditView=C:\GitHub\University\Forms\Lab1_4\Unit1.pas
+CurrentEditView=C:\GitHub\University\Forms\Lab1_4\Lab1_4.dpr
 View0=0
 View1=1
 View2=2
@@ -59,38 +58,38 @@ BorlandEditorCodeExplorer=BorlandEditorCodeExplorer@EditWindow0
 TopPanelSize=0
 LeftPanelSize=1895
 LeftPanelClients=PropertyInspector,DockSite3
-LeftPanelData=000008000101000000001F150000000000000167070000000000000100000000580E000009000000446F636B53697465330100000000CB2100001100000050726F7065727479496E73706563746F72FFFFFFFF
+LeftPanelData=0000080001010000000041110000000000000167070000000000000100000000580E000009000000446F636B536974653301000000009C1B00001100000050726F7065727479496E73706563746F72FFFFFFFF
 RightPanelSize=1999
 RightPanelClients=DockSite2,DockSite4
-RightPanelData=000008000101000000001F1500000000000001CF0700000000000001000000004A12000009000000446F636B53697465320100000000CB21000009000000446F636B5369746534FFFFFFFF
-BottomPanelSize=0
+RightPanelData=00000800010100000000411100000000000001CF0700000000000001000000004A12000009000000446F636B536974653201000000009C1B000009000000446F636B5369746534FFFFFFFF
+BottomPanelSize=1500
 BottomPanelClients=MessageView,DockSite1
-BottomPanelData=000008000102020000000F0000004D65737361676556696577466F726D09000000446F636B53697465311534000000000000022506000000000000FFFFFFFF
+BottomPanelData=0000080001020100000009000000446F636B5369746531D93D00000000000002DC050000000000000100000000D93D00000F0000004D65737361676556696577466F726DFFFFFFFF
 BottomMiddlePanelSize=0
 BottomMiddlePanelClients=DockSite0,GraphDrawingModel
 BottomMiddelPanelData=0000080001020200000009000000446F636B536974653010000000477261706844726177696E67566965779A1D00000000000002F506000000000000FFFFFFFF
 
 [View0]
 CustomEditViewType=TEditView
-Module=C:\GitHub\University\Forms\Lab1_4\Unit1.pas
-CursorX=4
-CursorY=683
-TopLine=671
-LeftCol=1
-Elisions={{161,47},{183,3},{''}}{{185,58},{199,3},{''}}{{201,51},{217,3},{''}}{{219,50},{235,3},{''}}{{237,104},{266,3},{''}}{{465,74},{491,3},{''}}
-Bookmarks=
-EditViewName=Borland.FormDesignerView
-
-[View1]
-CustomEditViewType=TEditView
 Module=C:\GitHub\University\Forms\Lab1_4\Lab1_4.dpr
-CursorX=1
+CursorX=77
 CursorY=15
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
 EditViewName=C:\GitHub\University\Forms\Lab1_4\Lab1_4.dpr
+
+[View1]
+CustomEditViewType=TEditView
+Module=C:\GitHub\University\Forms\Lab1_4\Unit1.pas
+CursorX=69
+CursorY=887
+TopLine=843
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=Borland.FormDesignerView
 
 [View2]
 CustomEditViewType=TEditView
@@ -178,18 +177,18 @@ StayOnTop=0
 [MessageView]
 PercentageSizes=1
 Create=1
-Visible=0
+Visible=1
 Docked=1
 State=0
 Left=0
-Top=0
-Width=2770
-Height=1419
+Top=48
+Width=9896
+Height=1290
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2770
-ClientHeight=1419
-TBDockHeight=1419
+ClientWidth=9896
+ClientHeight=1290
+TBDockHeight=1290
 LRDockWidth=2770
 Dockable=1
 StayOnTop=0
@@ -203,11 +202,11 @@ State=0
 Left=0
 Top=0
 Width=1999
-Height=3839
+Height=2204
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1999
-ClientHeight=3839
+ClientHeight=2204
 TBDockHeight=7151
 LRDockWidth=1999
 Dockable=1
@@ -222,12 +221,12 @@ State=0
 Left=0
 Top=753
 Width=1895
-Height=4882
+Height=3247
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1895
-ClientHeight=4882
-TBDockHeight=9011
+ClientHeight=3247
+TBDockHeight=8672
 LRDockWidth=1895
 Dockable=1
 StayOnTop=0
@@ -235,8 +234,8 @@ SplitPos=111
 
 [PropInspDesignerSelection]
 ArrangeBy=Name
-SelectedItem=Name,
-ExpandedItems="LiveBindings Designer=0",Options=0,OptionsEx=0
+SelectedItem=Caption,
+ExpandedItems=Anchors=0,Constraints=0,Font=0,BorderIcons=0
 
 [frmDesignPreview]
 PercentageSizes=1
@@ -688,7 +687,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1999
 ClientHeight=4489
-TBDockHeight=9011
+TBDockHeight=8672
 LRDockWidth=1999
 Dockable=1
 StayOnTop=0
@@ -712,7 +711,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1895
 ClientHeight=3446
-TBDockHeight=9011
+TBDockHeight=8672
 LRDockWidth=1895
 Dockable=1
 StayOnTop=0
@@ -731,12 +730,12 @@ State=0
 Left=0
 Top=947
 Width=1999
-Height=3839
+Height=2204
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1999
-ClientHeight=3839
-TBDockHeight=9011
+ClientHeight=2204
+TBDockHeight=8672
 LRDockWidth=1999
 Dockable=1
 StayOnTop=0

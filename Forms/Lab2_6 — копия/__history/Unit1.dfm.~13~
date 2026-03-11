@@ -1,0 +1,173 @@
+object MainForm: TMainForm
+  Left = 0
+  Top = 0
+  Margins.Left = 6
+  Margins.Top = 6
+  Margins.Right = 6
+  Margins.Bottom = 6
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = '551004 '#1055#1077#1076#1100#1082#1086' '#1042#1083#1072#1076#1080#1089#1083#1072#1074' Lab2.6'
+  ClientHeight = 554
+  ClientWidth = 1086
+  Color = clBtnFace
+  Constraints.MaxHeight = 664
+  Constraints.MaxWidth = 1112
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -24
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  Menu = MainMenu1
+  Position = poDesktopCenter
+  OnCloseQuery = FormCloseQuery
+  PixelsPerInch = 192
+  TextHeight = 32
+  object NumberOneLabel: TLabel
+    Left = 21
+    Top = 239
+    Width = 224
+    Height = 32
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    Caption = #1063#1080#1089#1083#1086' '#1084#1077#1085#1100#1096#1077', '#1095#1077#1084':'
+  end
+  object TaskLabel: TLabel
+    Left = 21
+    Top = 27
+    Width = 980
+    Height = 104
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    AutoSize = False
+    BiDiMode = bdLeftToRight
+    Caption = #1055#1088#1086#1075#1088#1072#1084#1084#1072' '#1085#1072#1093#1086#1076#1080#1090' '#1074#1089#1077' '#1087#1072#1088#1099' '#1076#1088#1091#1078#1077#1089#1090#1074#1077#1085#1085#1099#1093' '#1095#1080#1089#1077#1083', '#1084#1077#1085#1100#1096#1080#1093' 100 000.'
+    Constraints.MaxHeight = 1000
+    Constraints.MaxWidth = 1130
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -32
+    Font.Name = 'Segoe UI'
+    Font.Style = [fsBold]
+    ParentBiDiMode = False
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = False
+    WordWrap = True
+    StyleName = 'Windows'
+  end
+  object LabelResult: TLabel
+    Left = 21
+    Top = 333
+    Width = 690
+    Height = 31
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    AutoSize = False
+    Visible = False
+  end
+  object ResultButton: TButton
+    Left = 430
+    Top = 232
+    Width = 209
+    Height = 49
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    Caption = #1056#1077#1079#1091#1083#1100#1090#1072#1090
+    TabOrder = 0
+    OnClick = ResultButtonClick
+  end
+  object NumberOneEdit: TEdit
+    Left = 257
+    Top = 236
+    Width = 144
+    Height = 40
+    Hint = #1044#1083#1080#1085#1085#1072
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    TabStop = False
+    Ctl3D = True
+    Enabled = False
+    HideSelection = False
+    MaxLength = 6
+    ParentCtl3D = False
+    ParentShowHint = False
+    ReadOnly = True
+    ShowHint = True
+    TabOrder = 1
+    Text = '100000'
+    OnChange = NumberOneEditChange
+    OnKeyPress = NumberOneEditKeyPress
+  end
+  object StringGridA: TStringGrid
+    Left = 11
+    Top = 413
+    Width = 1050
+    Height = 130
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    Color = clBtnFace
+    ColCount = 50
+    DefaultColWidth = 250
+    DefaultRowHeight = 40
+    FixedCols = 0
+    RowCount = 2
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goThumbTracking, goFixedRowDefAlign]
+    ScrollBars = ssHorizontal
+    TabOrder = 2
+    Visible = False
+  end
+  object MainMenu1: TMainMenu
+    Left = 438
+    Top = 292
+    object FileTab: TMenuItem
+      Caption = #1060#1072#1081#1083
+      object OpenTab: TMenuItem
+        Caption = #1054#1090#1082#1088#1099#1090#1100
+        ShortCut = 16463
+        OnClick = OpenTabClick
+      end
+      object SaveTab: TMenuItem
+        Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
+        Enabled = False
+        ShortCut = 16467
+        OnClick = SaveTabClick
+      end
+      object Separator1: TMenuItem
+        Caption = '-'
+      end
+      object LeaveTab: TMenuItem
+        Caption = #1042#1099#1081#1090#1080
+        OnClick = LeaveTabClick
+      end
+    end
+    object InstructionTab: TMenuItem
+      Caption = #1048#1085#1089#1090#1088#1091#1082#1094#1080#1103
+      OnClick = InstructionTabClick
+    end
+    object AboutDeveloperTab: TMenuItem
+      Caption = #1054' '#1056#1072#1079#1088#1072#1073#1086#1090#1095#1080#1082#1077
+      OnClick = AboutDeveloperTabClick
+    end
+  end
+  object OpenTextFileDialog1: TOpenTextFileDialog
+    Left = 878
+    Top = 292
+  end
+  object SaveTextFileDialog1: TSaveTextFileDialog
+    Left = 636
+    Top = 292
+  end
+end

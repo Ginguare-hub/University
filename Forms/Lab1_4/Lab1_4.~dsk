@@ -13,7 +13,6 @@ File_10=TSourceModule,'C:\GitHub\University\Forms\Test\Unit1.pas',0,1,363,88,378
 File_11=TSourceModule,'C:\GitHub\University\Forms\Test\Unit2.pas',0,1,16,44,43,0,0,,
 File_12=TSourceModule,'C:\GitHub\University\Forms\Test\Unit3.pas',0,1,1,36,14,0,0,,
 File_13=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.Dialogs.pas',0,1,2349,1,2365,0,0,,
-File_14=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.ExtDlgs.pas',0,1,703,1,723,0,0,,
 
 [Modules]
 Module0=C:\GitHub\University\Forms\Lab1_4\Unit1.pas
@@ -72,25 +71,25 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 
 [View0]
 CustomEditViewType=TEditView
-Module=C:\GitHub\University\Forms\Lab1_4\Unit1.pas
-CursorX=95
-CursorY=683
-TopLine=671
-LeftCol=1
-Elisions={{161,47},{183,3},{''}}{{185,58},{199,3},{''}}{{201,51},{217,3},{''}}{{219,50},{235,3},{''}}{{237,104},{266,3},{''}}{{465,74},{491,3},{''}}
-Bookmarks=
-EditViewName=Borland.FormDesignerView
-
-[View1]
-CustomEditViewType=TEditView
 Module=C:\GitHub\University\Forms\Lab1_4\Lab1_4.dpr
-CursorX=1
+CursorX=87
 CursorY=15
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
 EditViewName=C:\GitHub\University\Forms\Lab1_4\Lab1_4.dpr
+
+[View1]
+CustomEditViewType=TEditView
+Module=C:\GitHub\University\Forms\Lab1_4\Unit1.pas
+CursorX=4
+CursorY=683
+TopLine=671
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=Borland.FormDesignerView
 
 [View2]
 CustomEditViewType=TEditView
@@ -235,8 +234,8 @@ SplitPos=111
 
 [PropInspDesignerSelection]
 ArrangeBy=Name
-SelectedItem=Name,
-ExpandedItems=Font=0,LiveBindings=0,"LiveBindings Designer=0",Margins=0,Options=0
+SelectedItem=Caption,
+ExpandedItems=Anchors=0,BorderIcons=0,Constraints=0
 
 [frmDesignPreview]
 PercentageSizes=1

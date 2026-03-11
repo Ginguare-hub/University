@@ -1,0 +1,391 @@
+Program List;
+
+{$APPTYPE CONSOLE}
+{$R *.res}
+
+Uses
+    System.SysUtils;
+
+Type
+    UnidirNode = ^UniElement;
+    UniElement = Record
+        Data: Integer;
+        Index: Integer;
+        Next: UnidirNode;
+    End;
+
+    BidirNode = ^BiElement;
+    BiElement = Record
+        Data: Integer;
+        Next: BidirNode;
+        Prev: BidirNode;
+    End;
+
+    TArrayOI = Array Of Integer;
+
+Function ReadAndVerify(Const MIN_NUMBER1, MAX_NUMBER1, MIN_NUMBER2, MAX_NUMBER2: Integer; MyString: String): Integer;
+Var
+    IsCorrect: Boolean;
+    Number: Integer;
+Begin
+    IsCorrect := True;
+    Number := 0;
+
+    Repeat
+
+        Write(MyString);
+        IsCorrect := True;
+
+        Try
+            ReadLn(Number);
+        Except
+            WriteLn('Некорректный ввод, повторите снова.');
+            IsCorrect := False;
+        End;
+
+        If IsCorrect And ( Not((Number >= MIN_NUMBER1) And (Number <= MAX_NUMBER1)) And Not((Number >= MIN_NUMBER2) And (Number <= MAX_NUMBER2)) And Not(Number = 0)) Then
+        Begin
+            WriteLn('Число должно входить в диапазон [', MIN_NUMBER1, ',', MAX_NUMBER1, '] либо [', MIN_NUMBER2, ',', MAX_NUMBER2, '] или равняться 0.');
+            IsCorrect := False;
+        End;
+
+    Until IsCorrect;
+
+    ReadAndVerify := Number;
+End;
+
+Procedure Make(var Head: UnidirNode);
+Var
+    I: Integer;
+    Current: UnidirNode;
+Begin
+    New(Head);
+    Current := Head;
+
+    While Current^.Next.Next <> Nil Do
+    Begin
+        Readln(Current^.Data);
+        New(Current^.Next);
+        Current := Current^.Next;
+    End;
+
+    New(Current^.Next);
+    Current := Current^.Next;
+    Current^.Next := Nil;
+End;
+
+Procedure Print(X: BidirNode) Overload;
+Begin
+    X := X^.Next;
+    While X <> Nil Do
+    Begin
+        Write(X^.Data, ' ');
+        X := X^.Next;
+    End;
+    WriteLn;
+End;
+
+Procedure Print(X: UnidirNode) Overload;
+Begin
+    X := X^.Next;
+    While X <> Nil Do
+    Begin
+        WriteLn(X^.Index, ') ', X^.Data, ' ');
+        X := X^.Next;
+    End;
+End;
+
+Procedure PrintReverse(Head: BidirNode);
+Var
+    Temp: BidirNode;
+Begin
+    Temp := Head;
+    While Temp^.Next <> Nil Do
+    Begin
+        Temp := Temp^.Next;
+    End;
+
+    While Temp.Data <> 0 Do
+    Begin
+        Write(Temp^.Data, ' ');
+        Temp := Temp^.Prev;
+    End;
+    WriteLn;
+End;
+
+Procedure Append(X: Integer; Var Head: BidirNode);
+Var
+    Temp: BidirNode;
+Begin
+    Temp := Head;
+    While Temp^.Next <> Nil Do
+    Begin
+        Temp := Temp^.Next;
+    End;
+
+    New(Temp^.Next);
+    Temp^.Next.Data := X;
+    Temp^.Next^.Prev := Temp;
+    Temp^.Next^.Next := Nil;
+End;
+
+Function FillArrayByRule(Head: BidirNode): TArrayOI;
+Var
+    Arr: TArrayOI;
+    ArrLength: Integer;
+Begin
+    Head := Head^.Next;
+    ArrLength := 0;
+
+    While Head <> Nil Do
+    Begin
+        ArrLength := ArrLength + 1;
+        SetLength(Arr, ArrLength);
+
+        Arr[ArrLength - 1] := Head^.Data;
+        Head := Head^.Next;
+    End;
+    FillArrayByRule := Arr;
+End;
+
+Function Merge(Array1: TArrayOI; Array2: TArrayOI): TArrayOI;
+
+Var
+    I, J, Index, NewIndex: Integer;
+    AnswerArray: TArrayOI;
+
+Begin
+    I := 0;
+    J := 0;
+    Index := 0;
+    NewIndex := 0;
+    AnswerArray := [];
+
+    SetLength(AnswerArray, Length(Array1) + Length(Array2));
+
+    While ((Index < High(AnswerArray)) Or (Index = High(AnswerArray))) And ((I < High(Array1)) Or (I = High(Array1))) And ((J <= High(Array2)) Or (J <= High(Array2))) Do
+    Begin
+
+        If ((J < Length(Array2)) And (I < Length(Array1)) And (Array1[I] > Array2[J])) Then
+        Begin
+            AnswerArray[Index] := Array2[J];
+            Inc(J);
+        End
+        Else
+            If ((I < Length(Array1)) And (J < Length(Array2))) Then
+            Begin
+                AnswerArray[Index] := Array1[I];
+                Inc(I);
+            End;
+
+        Inc(Index);
+    End;
+
+    If (I = Length(Array1)) And (J < Length(Array2)) Then
+    Begin
+        For NewIndex := Index To High(AnswerArray) Do
+        Begin
+            AnswerArray[NewIndex] := Array2[J];
+            Inc(J);
+        End;
+    End
+    Else
+        If ((I < Length(Array1)) And (J = Length(Array2))) Then
+        Begin
+            For NewIndex := Index To High(AnswerArray) Do
+            Begin
+                AnswerArray[NewIndex] := Array1[I];
+                Inc(I);
+            End;
+        End;
+
+    Merge := AnswerArray;
+End;
+
+Procedure SortArray(Var GivenArray: TArrayOI);
+
+Var
+    I, J, K, L, ArrayLength, AmountOfMerges, AmountOfMergesM1: Integer;
+    Array1, Array2, Array3, ArrayOfLabelIndices, NewArray, MergedArray: TArrayOI;
+
+Begin
+    I := Low(GivenArray);
+    J := 0;
+    K := 0;
+    ArrayLength := 0;
+    AmountOfMerges := 0;
+    AmountOfMergesM1 := 0;
+    Array1 := [];
+    Array2 := [];
+    Array3 := [];
+    ArrayOfLabelIndices := [];
+    NewArray := [];
+    MergedArray := [];
+
+    NewArray := Copy(GivenArray);
+
+    Repeat
+        I := Low(GivenArray);
+        J := 0;
+        K := 0;
+        L := 0;
+        ArrayLength := 0;
+
+        While I < High(GivenArray) Do
+        Begin
+
+            If GivenArray[I] > GivenArray[I + 1] Then
+            Begin
+                Inc(ArrayLength);
+            End;
+
+            Inc(I);
+        End;
+
+        SetLength(ArrayOfLabelIndices, ArrayLength);
+        I := Low(GivenArray);
+
+        While I < High(GivenArray) Do
+        Begin
+
+            If GivenArray[I] > GivenArray[I + 1] Then
+            Begin
+                ArrayOfLabelIndices[J] := I;
+                Inc(J);
+            End;
+
+            Inc(I);
+        End;
+
+        AmountOfMerges := (ArrayLength + 1) Div 2;
+        AmountOfMergesM1 := AmountOfMerges - 1;
+
+        For I := 0 To AmountOfMergesM1 Do
+        Begin
+
+            If I = 0 Then
+            Begin
+                Array1 := Copy(GivenArray, 0, ArrayOfLabelIndices[I] + 1);
+                Array2 := Copy(GivenArray, ArrayOfLabelIndices[High(ArrayOfLabelIndices)] + 1, High(GivenArray) - ArrayOfLabelIndices[High(ArrayOfLabelIndices)]);
+            End
+            Else
+            Begin
+                Array1 := Copy(GivenArray, ArrayOfLabelIndices[I - 1] + 1, ArrayOfLabelIndices[I] - ArrayOfLabelIndices[I - 1]);
+                Array2 := Copy(GivenArray, ArrayOfLabelIndices[ArrayLength - I - 1] + 1, ArrayOfLabelIndices[ArrayLength - I] - ArrayOfLabelIndices[ArrayLength - I - 1]);
+            End;
+
+            If (Odd(High(ArrayOfLabelIndices)) And (I = 0)) Then
+                Array3 := Copy(GivenArray, ArrayOfLabelIndices[High(ArrayOfLabelIndices) Div 2] + 1, ArrayOfLabelIndices[(High(ArrayOfLabelIndices) Div 2) + 1] - ArrayOfLabelIndices[High(ArrayOfLabelIndices) Div 2]);
+
+            SetLength(MergedArray, Length(Array1) + Length(Array2));
+            MergedArray := Merge(Array1, Array2);
+
+            For L := 0 To High(MergedArray) Do
+            Begin
+                NewArray[K] := MergedArray[L];
+                Inc(K);
+            End;
+
+            If (I = AmountOfMergesM1) And (Odd(High(ArrayOfLabelIndices))) Then
+            Begin
+
+                For L := 0 To High(Array3) Do
+                Begin
+                    NewArray[K] := Array3[L];
+                    Inc(K);
+                End;
+
+            End;
+
+        End;
+
+        GivenArray := NewArray;
+
+    Until ArrayLength = 0;
+End;
+
+Function FillUnidirNode(Arr: TArrayOI): UnidirNode;
+Var
+    Head, Current: UnidirNode;
+    I, Element: Integer;
+Begin
+    New(Head);
+    Current := Head;
+    Current^.Index := 0;
+    New(Current^.Next);
+    Current := Current^.Next;
+
+    For I := 0 To High(Arr) - 1 Do
+    Begin
+        Current^.Data := Arr[I];
+        Current^.Index := I + 1;
+        New(Current^.Next);
+        Current := Current^.Next;
+    End;
+
+    Current^.Index := Length(Arr);
+    Current^.Data := Arr[High(Arr)];
+    Current^.Next := Nil;
+
+    FillUnidirNode := Head;
+End;
+
+Procedure DeleteEmergencyNumbers(Var Arr: TArrayOI);
+Var
+    NewArr: TArrayOI;
+    I, ArrLength: Integer;
+Begin
+    NewArr := Nil;
+    ArrLength := 0;
+
+    For I := 0 To High(Arr) Do
+    Begin
+        If (Arr[I] >= 1_000_000) And (Arr[I] <= 9_999_999) Then
+        Begin
+            ArrLength := ArrLength + 1;
+            SetLength(NewArr, ArrLength);
+            NewArr[High(NewArr)] := Arr[I];
+        End;
+    End;
+
+    Arr := Copy(NewArr);
+End;
+
+Var
+    UniHead: UnidirNode;
+    BiHead: BidirNode;
+    Number: Integer;
+    Arr: TArrayOI;
+Begin
+    BiHead := Nil;
+    New(BiHead);
+    BiHead^.Next := Nil;
+    BiHead^.Prev := Nil;
+
+    UniHead := Nil;
+    New(UniHead);
+    UniHead^.Next := Nil;
+
+    Number := 0;
+
+    Writeln('Введите число 0 если закончили вводить номера телефонов.');
+
+    Repeat
+        Number := ReadAndVerify(100, 999, 1_000_000, 9_999_999, 'Введите номер телефона: ');
+        If Number <> 0 Then
+            Append(Number, BiHead);
+    Until Number = 0;
+
+    WriteLn(#13#10'Воспроизведение неупорядоченного списка с конца: ');
+    PrintReverse(BiHead);
+
+    Arr := FillArrayByRule(BiHead);
+    SortArray(Arr);
+    DeleteEmergencyNumbers(Arr);
+    UniHead := FillUnidirNode(Arr);
+
+    WriteLn(#13#10'Воспроизведение упорядоченного однонаправленного списка: ');
+    Print(UniHead);
+
+    ReadLn;
+End.

@@ -1,8 +1,62 @@
   ADDR B1 B2 B3 B4 thrass11.tmp                                     PAGE       1
 
-  C000 CE 46 44     ldx #$4644
-  C003 DF 20        stx $20
-  C005 86 20        ldaa #$20
-  C007 16           tab
-  C008 DD 21        std $21
-  C00A 18 DE 20     ldy $20
+                    ;ORG $8200
+
+                    org $8000
+  8000 CE 00 00            ldx #0          ;
+  8003 EC 00               ldd 0,x         ;
+  8005 5D                  tstb            ;      0
+  8006 27 29               beq invalid     ;   13,
+  8008 4D                  tsta
+  8009 27 26               beq invalid
+  800B C1 13               cmpb #$13
+  800D 24 22               bhs invalid
+  800F C1 02               cmpb #$2        ;    ,
+  8011 26 0C               bne lab2        ;
+  8013 E6 03               ldab 3,x        ;
+  8015 8D 1D               bsr bcd2bin
+  8017 D4 03               andb $03        ;      4
+  8019 26 04               bne lab2        ;  ,      4
+  801B C6 29               ldab #$29
+  801D 20 0C               bra lab1
+  801F 8D 13       lab2    bsr bcd2bin     ;
+  8021 5A                  decb
+  8022 18 CE 80 44         ldy #dpm        ;
+  8026 18 3A               aby
+  8028 18 E6 00            ldab 0,y        ;
+  802B 11          lab1    cba             ;     ,
+  802C 22 03               bhi invalid     ;
+  802E 0C          valid   clc             ;    ,
+  802F 20 01               bra done        ;
+  8031 0D          invalid sec             ;
+  8032 20 FE       done    bra *
+  8034 36          bcd2bin psha            ;     BCD,
+  8035 17                  tba             ;
+  8036 84 0F               anda #$0F       ;
+  8038 54                  lsrb
+  8039 54                  lsrb
+  803A 54                  lsrb
+  803B 54                  lsrb ;
+  803C 58                  lslb ;   10
+  803D 1B                  aba  ;
+  803E 58                  lslb
+  803F 58                  lslb
+  8040 1B                  aba
+  8041 16                  tab
+  8042 32                  pula
+  8043 39                  rts
+  8044 31 28 31 30 dpm     fcb $31,$28,$31,$30,$31,$30,$31,$31,$30,$31,$30,$31
+. 8048 31 30 31 31
+. 804C 30 32 30 31
+
+
+
+  Symbol Table 
+
+  DONE               8032
+  INVALID            8031
+  DPM                8044
+  VALID              802E
+  LAB1               802B
+  LAB2               801F
+  BCD2BIN            8034

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.765,C:\GitHub\University\Tests\ListTest\List.dproj=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.211,C:\GitHub\University\AaDS\Lab1.1\List.dproj=C:\GitHub\University\Tests\ListTest\List.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.466,=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.983,=C:\Users\Vlad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+  </Transactions>
+</BorlandProject>

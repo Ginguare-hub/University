@@ -68,8 +68,6 @@ Type
     procedure StringGridAExit(Sender: TObject);
     procedure StringGridAKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    //procedure StringGridADrawCell(Sender: TObject; ACol, ARow: LongInt;
-    // Rect: TRect; State: TGridDrawState);
     Private
         { Private declarations }
     Public
@@ -405,6 +403,9 @@ Begin
                             IsNumber := IsNumber And (TestString[I] In DIGITS);
                         End;
                     End;
+
+                    If (FirstChar = '0') Then
+                        IsFirstAndLastCharFine := False;
                 End;
 
                 Try
@@ -692,7 +693,7 @@ Begin
     WrittenString := StringGridA.Cells[StringGridA.Col, StringGridA.Row];
 
     //Проверяем ПЕРВЫЙ символ будущей строки
-    If ( (Length(WrittenString) = 0) And ((Key In DIGITS) And Not(Key = '0') Or (Key = '-')) ) Then
+    If ( (Length(WrittenString) = 0) And ((Key In DIGITS) {And Not(Key = '0')} Or (Key = '-')) ) Then
         IsKeyAllowed := True;
 
     If (Length(WrittenString) > 0) And (Length(WrittenString) < 4) And Not(WrittenString[1] = '-') Then
@@ -750,9 +751,11 @@ End;
 
 Procedure TMainForm.StringGridASelectCell(Sender: TObject; ACol, ARow: LongInt; Var CanSelect: Boolean);
 Begin
+    FixStringGridOnIncorrecValue();
     StrGridACol := ACol;
     StrGridARow := ARow;
     OnGridAChange();
+    FixStringGridOnIncorrecValue();
 End;
 
 Procedure TMainForm.AboutDeveloperTabClick(Sender: TObject);
@@ -777,7 +780,7 @@ Begin
         '2) Элемент массива представляет собой целое число в диапазоне от -9999 до 9999.'#13#10 +
         '3) Для возможности вывода результатов нужно заполнить корректными значениями все ячейки массива и убрать фокус мыши с него.'#13#10;
 
-    InstructionForm.GuideLabel.Font.Size := 11;
+    InstructionForm.GuideLabel.Font.Size := 10;
     InstructionForm.Caption := 'Инструкция';
     InstructionForm.GuideLabel.WordWrap := True;
     InstructionForm.ShowModal;
@@ -790,7 +793,6 @@ Var
     SavedFile: TextFile;
     Error: ERROR_CODES;
     IsToWriteToFile: Boolean;
-
 Begin
     IsToWriteToFile := True;
     Error := NO_ERRORS;
