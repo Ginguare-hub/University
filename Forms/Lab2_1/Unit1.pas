@@ -24,17 +24,8 @@ Uses
 Type
     TArrayOI = Array Of Integer;
     TArrayOS = Array Of String;
-    ERROR_CODES = (
-        NO_ERRORS,
-        NUMBER_NOT_VALID,
-        FILE_NOT_EXIST,
-        FILE_NOT_TXT,
-        FILE_CLOSE_TO_READ,
-        FILE_CLOSE_TO_WRITE,
-        FILE_IS_EMPTY,
-        FILE_DATA_NOT_CORRECT,
-        FILE_ASSIGN_ERROR,
-        FILE_DATA_NOT_SAVED);
+    ERROR_CODES = (NO_ERRORS, NUMBER_NOT_VALID, FILE_NOT_EXIST, FILE_NOT_TXT, FILE_CLOSE_TO_READ, FILE_CLOSE_TO_WRITE, FILE_IS_EMPTY,
+        FILE_DATA_NOT_CORRECT, FILE_ASSIGN_ERROR, FILE_DATA_NOT_SAVED);
 
     TMainForm = Class(TForm)
         MainMenu1: TMainMenu;
@@ -53,46 +44,45 @@ Type
         SaveTextFileDialog1: TSaveTextFileDialog;
         StringGridA: TStringGrid;
         LabelResult: TLabel;
-    Procedure NumberOneEditKeyPress(Sender: TObject; Var Key: Char);
-    procedure InstructionTabClick(Sender: TObject);
-    procedure AboutDeveloperTabClick(Sender: TObject);
-    procedure NumberOneEditChange(Sender: TObject);
-    procedure SaveTabClick(Sender: TObject);
-    procedure ResultButtonClick(Sender: TObject);
-    procedure OpenTabClick(Sender: TObject);
-    procedure LeaveTabClick(Sender: TObject);
-    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure StringGridAKeyPress(Sender: TObject; var Key: Char);
-    procedure StringGridASelectCell(Sender: TObject; ACol, ARow: LongInt;
-      var CanSelect: Boolean);
-    procedure StringGridAExit(Sender: TObject);
-    procedure StringGridAKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+        Procedure NumberOneEditKeyPress(Sender: TObject; Var Key: Char);
+        Procedure InstructionTabClick(Sender: TObject);
+        Procedure AboutDeveloperTabClick(Sender: TObject);
+        Procedure NumberOneEditChange(Sender: TObject);
+        Procedure SaveTabClick(Sender: TObject);
+        Procedure ResultButtonClick(Sender: TObject);
+        Procedure OpenTabClick(Sender: TObject);
+        Procedure LeaveTabClick(Sender: TObject);
+        Procedure FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
+        Procedure StringGridAKeyPress(Sender: TObject; Var Key: Char);
+        Procedure StringGridASelectCell(Sender: TObject; ACol, ARow: LongInt; Var CanSelect: Boolean);
+        Procedure StringGridAExit(Sender: TObject);
+        Procedure StringGridAKeyDown(Sender: TObject; Var Key: Word; Shift: TShiftState);
+        Function FormHelp(Command: Word; Data: THelpEventData; Var CallHelp: Boolean): Boolean;
     Private
         { Private declarations }
     Public
         { Public declarations }
     End;
 
-    Function IsFileText(FilePath: String): Boolean;
-    Function IsFileNotEmpty(Var InputFile: TextFile): Boolean;
-    Function CanRead(Var InputFile: TextFile): Boolean;
-    Function CanWrite(Var FileVar: TextFile): Boolean;
-    Function CheckMyFile(Var InputFile: TextFile; FilePath: String; IsForWriteToFile: Boolean): ERROR_CODES;
-    //Function CheckStringOnValidity(TestString: String; Var IsPointAllowed: Boolean): Boolean;
-    Function SaveDataToFile(): ERROR_CODES;
-    Function LeaveFromProgram(CanClose: Boolean): Boolean;
-    Function WriteDataToFile(Var SavedFile: TextFile): ERROR_CODES;
-    Function ReadAndWriteOutFileData(Var ReadedFile: TextFile): ERROR_CODES;
-    Function CheckLengthStringOnValidity(TestString: String): Boolean;
-    Procedure SetStringGridACorrect();
-    Procedure NumberTheFirstCol(StringGrid: TStringGrid);
-    Function CheckGridOnValidity(StringGrid: TStringGrid): Boolean;
-    Function GetStringArrayFromGrid(StringGrid: TStringGrid): TArrayOS;
-    Function ChangeStringArrayToIntArray(StringArray: TArrayOS): TArrayOI;
-    Procedure OnGridAChange();
-    Procedure FixStringOnInvalidValue();
-    Procedure FixStringGridOnIncorrecValue();
+Function IsFileText(FilePath: String): Boolean;
+Function IsFileNotEmpty(Var InputFile: TextFile): Boolean;
+Function CanRead(Var InputFile: TextFile): Boolean;
+Function CanWrite(Var FileVar: TextFile): Boolean;
+Function CheckMyFile(Var InputFile: TextFile; FilePath: String; IsForWriteToFile: Boolean): ERROR_CODES;
+//Function CheckStringOnValidity(TestString: String; Var IsPointAllowed: Boolean): Boolean;
+Function SaveDataToFile(): ERROR_CODES;
+Function LeaveFromProgram(CanClose: Boolean): Boolean;
+Function WriteDataToFile(Var SavedFile: TextFile): ERROR_CODES;
+Function ReadAndWriteOutFileData(Var ReadedFile: TextFile): ERROR_CODES;
+Function CheckLengthStringOnValidity(TestString: String): Boolean;
+Procedure SetStringGridACorrect();
+Procedure PrepareGrid(StringGrid: TStringGrid);
+Function CheckGridOnValidity(StringGrid: TStringGrid): Boolean;
+Function GetStringArrayFromGrid(StringGrid: TStringGrid): TArrayOS;
+Function ChangeStringArrayToIntArray(StringArray: TArrayOS): TArrayOI;
+Procedure OnGridAChange();
+Procedure FixStringOnInvalidValue();
+Procedure FixStringGridOnIncorrecValue();
 
 Const
     MAX_ARRAY_LENGTH: Integer = 99;
@@ -100,14 +90,9 @@ Const
     BACKSPACE = #8;
     NONE_CHAR = #0;
     DIGITS = ['0' .. '9'];
-    ERROR_TEXT: Array [ERROR_CODES] Of String = (
-        '',
-        'Строка файла имеет некорректный ввод числа.', 'Файл не найден.',
-        'Файл не соответствует формату .txt', 'Файл закрыт для чтения.',
-        'Файл закрыт для записи либо во время записи возникли проблемы.',
-        'Файл пустой.',
-        'Файл имеет некоректный формат данных.',
-        'Ошибка присоединения файла.',
+    ERROR_TEXT: Array [ERROR_CODES] Of String = ('', 'Строка файла имеет некорректный ввод числа.', 'Файл не найден.',
+        'Файл не соответствует формату .txt', 'Файл закрыт для чтения.', 'Файл закрыт для записи либо во время записи возникли проблемы.',
+        'Файл пустой.', 'Файл имеет некоректный формат данных.', 'Ошибка присоединения файла.',
         'Не удалось успешно сохранить данные в файл.');
 
 Var
@@ -278,69 +263,69 @@ End;
 
 //Function CheckStringOnValidity(TestString: String; Var IsPointAllowed: Boolean): Boolean;
 //Var
-//    FirstChar, LastChar: Char;
-//    IsStringReadible, IsFirstAndLastCharFine, IsPointValid, IsAfterFirstZegoGoesPoint, IsAllReadible, IsInRange: Boolean;
-//    I, CountOfPoints, CountOfMinuses, PointIndex, TestInt: Integer;
+//FirstChar, LastChar: Char;
+//IsStringReadible, IsFirstAndLastCharFine, IsPointValid, IsAfterFirstZegoGoesPoint, IsAllReadible, IsInRange: Boolean;
+//I, CountOfPoints, CountOfMinuses, PointIndex, TestInt: Integer;
 //
 //Begin
-//    IsStringReadible := False;
-//    IsFirstAndLastCharFine := False;
-//    IsPointValid := False;
-//    IsAfterFirstZegoGoesPoint := False;
-//    IsAllReadible := False;
-//    IsInRange := False;
+//IsStringReadible := False;
+//IsFirstAndLastCharFine := False;
+//IsPointValid := False;
+//IsAfterFirstZegoGoesPoint := False;
+//IsAllReadible := False;
+//IsInRange := False;
 //
-//    CountOfPoints := 0;
-//    PointIndex := 0;
-//    TestInt := 0;
+//CountOfPoints := 0;
+//PointIndex := 0;
+//TestInt := 0;
 //
-//    If Length(TestString) = 0 Then
-//        IsAllReadible := False
-//    Else
-//    Begin
-//        FirstChar := TestString[Low(TestString)];
-//        LastChar := TestString[High(TestString)];
+//If Length(TestString) = 0 Then
+//IsAllReadible := False
+//Else
+//Begin
+//FirstChar := TestString[Low(TestString)];
+//LastChar := TestString[High(TestString)];
 //
-//        //Проверка строки
-//        IsFirstAndLastCharFine := (FirstChar In DIGITS) And (LastChar In DIGITS);
+// //Проверка строки
+//IsFirstAndLastCharFine := (FirstChar In DIGITS) And (LastChar In DIGITS);
 //
-//        For I := Low(TestString) To High(TestString) Do
-//        Begin
-//            If TestString[I] = ',' Then
-//            Begin
-//                CountOfPoints := CountOfPoints + 1;
-//                PointIndex := I;
-//            End;
-//        End;
+//For I := Low(TestString) To High(TestString) Do
+//Begin
+//If TestString[I] = ',' Then
+//Begin
+//CountOfPoints := CountOfPoints + 1;
+//PointIndex := I;
+//End;
+//End;
 //
-//        If CountOfPoints = 0 Then
-//        Begin
-//            IsPointValid := True;
-//            IsPointAllowed := True;
-//        End;
+//If CountOfPoints = 0 Then
+//Begin
+//IsPointValid := True;
+//IsPointAllowed := True;
+//End;
 //
-//        If (CountOfPoints = 1) And (Length(TestString) > 2) And (PointIndex < High(TestString)) And (PointIndex > Low(TestString)) And
-//            (TestString[PointIndex + 1] In DIGITS) And (TestString[PointIndex - 1] In DIGITS) And Not(LastChar = '0') Then
-//            IsPointValid := True;
+//If (CountOfPoints = 1) And (Length(TestString) > 2) And (PointIndex < High(TestString)) And (PointIndex > Low(TestString)) And
+//(TestString[PointIndex + 1] In DIGITS) And (TestString[PointIndex - 1] In DIGITS) And Not(LastChar = '0') Then
+//IsPointValid := True;
 //
-//        If (((Length(TestString) > 1) And (FirstChar = '0') And (TestString[Low(TestString) + 1] = ',')) Or Not(FirstChar = '0')) Then
-//            IsAfterFirstZegoGoesPoint := True;
+//If (((Length(TestString) > 1) And (FirstChar = '0') And (TestString[Low(TestString) + 1] = ',')) Or Not(FirstChar = '0')) Then
+//IsAfterFirstZegoGoesPoint := True;
 //
-//        Try
-//            TestInt := StrToInt(TestString);
-//            IsStringReadible := True;
-//        Except
-//            IsStringReadible := False;
-//        End;
+//Try
+//TestInt := StrToInt(TestString);
+//IsStringReadible := True;
+//Except
+//IsStringReadible := False;
+//End;
 //
-//        If IsStringReadible Then
-//            If (TestInt >= 1) And (TestInt <= 99) Then
-//                IsInRange := True;
+//If IsStringReadible Then
+//If (TestInt >= 1) And (TestInt <= 99) Then
+//IsInRange := True;
 //
-//        IsAllReadible := IsInRange And IsStringReadible And IsFirstAndLastCharFine And IsPointValid And IsAfterFirstZegoGoesPoint;
-//    End;
+//IsAllReadible := IsInRange And IsStringReadible And IsFirstAndLastCharFine And IsPointValid And IsAfterFirstZegoGoesPoint;
+//End;
 //
-//    CheckStringOnValidity := IsAllReadible;
+//CheckStringOnValidity := IsAllReadible;
 //End;
 
 Function CheckGridOnValidity(StringGrid: TStringGrid): Boolean;
@@ -352,14 +337,14 @@ Var
     StringGridArray: TArrayOS;
 
 Begin
-    IsCellReadible        := False;
-    IsFirstAndLastCharFine  := False;
-    IsAllGridCorrect        := True;
-    IsNumber                := True;
+    IsCellReadible := False;
+    IsFirstAndLastCharFine := False;
+    IsAllGridCorrect := True;
+    IsNumber := True;
 
     CountOfPoints := 0;
-    Index         := 0;
-    ArrHigh       := 0;
+    Index := 0;
+    ArrHigh := 0;
     TestString := #0;
 
     StringGridArray := Nil;
@@ -384,8 +369,7 @@ Begin
                 LastChar := TestString[High(TestString)];
 
                 //Проверка если это число, или на то, если это не просто один написанный минус
-                IsFirstAndLastCharFine := ((FirstChar In DIGITS) And (LastChar In DIGITS))
-                                            Or ((FirstChar = '-') And (LastChar In DIGITS));
+                IsFirstAndLastCharFine := ((FirstChar In DIGITS) And (LastChar In DIGITS)) Or ((FirstChar = '-') And (LastChar In DIGITS));
 
                 If Length(TestString) > 1 Then
                 Begin
@@ -393,7 +377,7 @@ Begin
                     Begin
                         For I := 2 To High(TestString) Do
                         Begin
-                        IsNumber := IsNumber And (TestString[I] In DIGITS) And Not(TestString[2] = '0');
+                            IsNumber := IsNumber And (TestString[I] In DIGITS) And Not(TestString[2] = '0');
                         End;
                     End
                     Else
@@ -485,13 +469,16 @@ Begin
     CheckLengthStringOnValidity := IsStringReadible;
 End;
 
-Procedure NumberTheFirstCol(StringGrid: TStringGrid);
+Procedure PrepareGrid(StringGrid: TStringGrid);
 Var
     I: Integer;
 Begin
+    //Нумерует первую строку и обнуляет значения, отключает кнопку "Результат".
+    MainForm.ResultButton.Enabled := False;
     For I := 0 To StringGrid.ColCount Do
     Begin
         StringGrid.Cells[I, 0] := '№ ' + IntToStr(I + 1);
+        StringGrid.Cells[I, 1] := '';
     End;
 End;
 
@@ -510,7 +497,7 @@ Begin
 
     If (Length(WrittenString) > 0) And (Length(WrittenString) < 2) Then
     Begin
-        If Key in DIGITS Then
+        If Key In DIGITS Then
         Begin
             IsKeyAllowed := True;
         End;
@@ -573,7 +560,8 @@ Begin
     IsFirstNumberCorrect := CheckLengthStringOnValidity(NumberOneEdit.Text);
     ResultButton.Enabled := IsFirstNumberCorrect And CheckGridOnValidity(StringGridA);
     SaveTab.Enabled := IsFirstNumberCorrect And CheckGridOnValidity(StringGridA);
-    IsDataSaved := False;
+    //IsDataSaved := False;
+    SaveTab.Enabled := False;
     SetStringGridACorrect;
     LabelResult.Visible := False;
     FixStringOnInvalidValue()
@@ -591,7 +579,7 @@ Begin
     FixStringGridOnIncorrecValue();
 
     MainForm.ResultButton.Enabled := IsGridValid And IsFirstNumberCorrect;
-    MainForm.SaveTab.Enabled := IsFirstNumberCorrect And CheckGridOnValidity(MainForm.StringGridA);
+    MainForm.SaveTab.Enabled := False;
     MainForm.LabelResult.Visible := False;
 End;
 
@@ -600,7 +588,7 @@ Begin
     If IsFirstNumberCorrect Then
     Begin
         MainForm.StringGridA.ColCount := StrToInt(MainForm.NumberOneEdit.Text);
-        NumberTheFirstCol(MainForm.StringGridA);
+        PrepareGrid(MainForm.StringGridA);
     End;
     MainForm.StringGridA.Visible := IsFirstNumberCorrect;
 End;
@@ -627,7 +615,7 @@ Begin
             Error := FILE_ASSIGN_ERROR;
         End;
 
-        If Error =NO_ERRORS Then
+        If Error = NO_ERRORS Then
         Begin
             Error := ReadAndWriteOutFileData(OpenedFile);
             IsDataSaved := True;
@@ -652,6 +640,8 @@ Begin
     ArrHigh := 0;
     NumberOneText := '';
 
+    IsDataSaved := False;
+
     NumberOneText := MainForm.NumberOneEdit.Text;
 
     ArrLength := StrToInt(NumberOneText);
@@ -660,12 +650,14 @@ Begin
     StringArray := GetStringArrayFromGrid(StringGridA);
     IntArray := ChangeStringArrayToIntArray(StringArray);
 
+    MainForm.SaveTab.Enabled := IsFirstNumberCorrect And CheckGridOnValidity(MainForm.StringGridA);
+
     AnswerNumber := CalculateFunction(IntArray);
     MainForm.LabelResult.Visible := True;
     MainForm.LabelResult.Caption := 'Номер элемента: ' + IntToStr(AnswerNumber);
 End;
 
-procedure TMainForm.SaveTabClick(Sender: TObject);
+Procedure TMainForm.SaveTabClick(Sender: TObject);
 Begin
     SaveDataToFile();
 End;
@@ -677,13 +669,13 @@ End;
 
 Procedure TMainForm.StringGridAKeyDown(Sender: TObject; Var Key: Word; Shift: TShiftState);
 Begin
-    If (ssCtrl In Shift) And (Key = Ord('V')) Then
+    If (SsCtrl In Shift) And (Key = Ord('V')) Then
     Begin
         Key := 0;
     End;
 End;
 
-Procedure TMainForm.StringGridAKeyPress(Sender: TObject; var Key: Char);
+Procedure TMainForm.StringGridAKeyPress(Sender: TObject; Var Key: Char);
 Var
     WrittenString: String;
     IsKeyAllowed: Boolean;
@@ -693,32 +685,32 @@ Begin
     WrittenString := StringGridA.Cells[StringGridA.Col, StringGridA.Row];
 
     //Проверяем ПЕРВЫЙ символ будущей строки
-    If ( (Length(WrittenString) = 0) And ((Key In DIGITS) {And Not(Key = '0')} Or (Key = '-')) ) Then
+    If ((Length(WrittenString) = 0) And ((Key In DIGITS) { And Not(Key = '0') } Or (Key = '-'))) Then
         IsKeyAllowed := True;
 
     If (Length(WrittenString) > 0) And (Length(WrittenString) < 4) And Not(WrittenString[1] = '-') Then
     Begin
-        If Key in DIGITS Then
+        If Key In DIGITS Then
         Begin
             IsKeyAllowed := True;
         End;
     End;
 
-    If ( (Length(WrittenString) > 0) And (WrittenString[1] = '-') And (Length(WrittenString) < 5) )Then
+    If ((Length(WrittenString) > 0) And (WrittenString[1] = '-') And (Length(WrittenString) < 5)) Then
     Begin
-        If ( ((Length(WrittenString) = 1) And (Key in DIGITS) And Not(Key = '0')) ) Then
+        If (((Length(WrittenString) = 1) And (Key In DIGITS) And Not(Key = '0'))) Then
         Begin
             IsKeyAllowed := True;
         End;
 
-        If ((Length(WrittenString) > 1) And (Key in DIGITS)) Then
+        If ((Length(WrittenString) > 1) And (Key In DIGITS)) Then
         Begin
             IsKeyAllowed := True;
         End;
     End;
 
-//    With TStringGrid(Sender) Do
-//        if IsCharAlphaNumeric(key) and (Length(Cells[Col,Row])>3) then Key:=#0;
+    //With TStringGrid(Sender) Do
+    //if IsCharAlphaNumeric(key) and (Length(Cells[Col,Row])>3) then Key:=#0;
 
     If Key = BACKSPACE Then
         IsKeyAllowed := True;
@@ -739,7 +731,7 @@ Begin
     GridHigh := High(FromArray);
 
     ToGrid.ColCount := StrToInt(MainForm.NumberOneEdit.Text);
-    NumberTheFirstCol(ToGrid);
+    PrepareGrid(ToGrid);
 
     For I := 0 To GridHigh Do
     Begin
@@ -775,8 +767,7 @@ Var
     InstructionForm: TGuideForm;
 Begin
     InstructionForm := TGuideForm.Create(Self);
-    InstructionForm.GuideLabel.Caption :=
-        '1) За длинну массива принимается целое число от 1 до 99.'#13#10 +
+    InstructionForm.GuideLabel.Caption := '1) За длинну массива принимается целое число от 1 до 99.'#13#10 +
         '2) Элемент массива представляет собой целое число в диапазоне от -9999 до 9999.'#13#10 +
         '3) Для возможности вывода результатов нужно заполнить корректными значениями все ячейки массива и убрать фокус мыши с него.'#13#10;
 
@@ -855,13 +846,14 @@ Begin
         Rewrite(SavedFile);
         WriteLn(SavedFile, MainForm.NumberOneEdit.Text);
 
-        For I := 0 To ArrHigh Do
+        For I := 0 To ArrHigh - 1 Do
         Begin
             Write(SavedFile, StringGridAArray[I], ' ');
         End;
+        Write(SavedFile, StringGridAArray[High(StringGridAArray)]);
         WriteLn(SavedFile);
 
-        WriteLn(SavedFile, MainForm.LabelResult.Caption);
+        Write(SavedFile, StringReplace(MainForm.LabelResult.Caption, 'Номер элемента: ', '', [RfReplaceAll]));
 
         CloseFile(SavedFile);
     Except
@@ -871,10 +863,10 @@ Begin
     WriteDataToFile := Error;
 End;
 
-Function  ReadAndWriteOutFileData(Var ReadedFile: TextFile): ERROR_CODES;
+Function ReadAndWriteOutFileData(Var ReadedFile: TextFile): ERROR_CODES;
 Const
-    MIN_LENGTH: Integer  = 1;
-    MAX_LENGTH: Integer  = 99;
+    MIN_LENGTH: Integer = 1;
+    MAX_LENGTH: Integer = 99;
     MAX_ELEMENT: Integer = 9999;
     MIN_ELEMENT: Integer = -9999;
 Var
@@ -883,6 +875,13 @@ Var
     ArrLengthStr, FinalString: String;
     GridAArray: TArrayOI;
 Begin
+    ArrLength := 0;
+    ArrHigh := 0;
+    I := 0;
+    AnswerNumber := 0;
+    ArrLengthStr := '';
+    FinalString  := '';
+    GridAArray := Nil;
     Error := NO_ERRORS;
 
     Try
@@ -892,9 +891,11 @@ Begin
     End;
 
     Try
-        ReadLn(ReadedFile, ArrLengthStr);
         If EOF(ReadedFile) Then
-            Error := (FILE_DATA_NOT_CORRECT);
+            Error := (FILE_DATA_NOT_CORRECT)
+        Else
+            ReadLn(ReadedFile, ArrLengthStr);
+
         ArrLength := StrToInt(ArrLengthStr);
         ArrHigh := ArrLength - 1;
     Except
@@ -914,8 +915,9 @@ Begin
         End;
     End;
 
-    If Not(GridAArray = Nil) And (Error = NO_ERRORS) Then
+    If (Error = NO_ERRORS) Then
     Begin
+
         For I := 0 To ArrHigh Do
         Begin
             If Error = NO_ERRORS Then
@@ -939,6 +941,11 @@ Begin
             End;
         End;
 
+        If Not(EOF(ReadedFile)) Then
+        Begin
+            GridAArray := Nil;
+            Error := FILE_DATA_NOT_CORRECT;
+        End;
 
     End;
 
@@ -958,9 +965,14 @@ Begin
     ReadAndWriteOutFileData := Error;
 End;
 
-Procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+Procedure TMainForm.FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
 Begin
     CanClose := LeaveFromProgram(CanClose);
+End;
+
+Function TMainForm.FormHelp(Command: Word; Data: THelpEventData; Var CallHelp: Boolean): Boolean;
+Begin
+    CallHelp := False;
 End;
 
 Procedure TMainForm.LeaveTabClick(Sender: TObject);
@@ -981,14 +993,15 @@ Begin
     Begin
         IsFormShouldClose := Application.MessageBox(PChar('Вы хотите выйти?'), PChar('Выход'), MB_YESNO + MB_ICONQUESTION);
 
-        If IsFormShouldClose = mrYes Then
+        If IsFormShouldClose = MrYes Then
         Begin
             CanClose := True;
         End;
     End
     Else
     Begin
-        IsFormShouldClose := Application.MessageBox(PChar('Данные не были сохранены, вы точно хотите выйти?'), PChar('Выход'), MB_YESNOCANCEL + MB_ICONQUESTION);
+        IsFormShouldClose := Application.MessageBox(PChar('Данные не были сохранены, вы точно хотите выйти?'), PChar('Выход'),
+            MB_YESNOCANCEL + MB_ICONQUESTION);
 
         If IsFormShouldClose = MrYes Then
             CanClose := True

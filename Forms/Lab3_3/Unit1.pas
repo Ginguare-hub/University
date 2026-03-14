@@ -66,6 +66,8 @@ Type
     procedure StringGridASelectCell(Sender: TObject; ACol, ARow: LongInt;
       var CanSelect: Boolean);
     procedure StringGridAExit(Sender: TObject);
+    function FormHelp(Command: Word; Data: THelpEventData;
+      var CallHelp: Boolean): Boolean;
     //procedure StringGridADrawCell(Sender: TObject; ACol, ARow: LongInt;
     // Rect: TRect; State: TGridDrawState);
     Private
@@ -86,7 +88,7 @@ Type
     Function ReadAndWriteOutFileData(Var ReadedFile: TextFile): ERROR_CODES;
     Function CheckLengthStringOnValidity(TestString: String): Boolean;
     Procedure SetStringGridACorrect();
-    Procedure NumberTheFirstCol(StringGrid: TStringGrid);
+    Procedure PrepareGrid(StringGrid: TStringGrid);
     Function CheckGridOnValidity(StringGrid: TStringGrid): Boolean;
     Function GetStringArrayFromGrid(StringGrid: TStringGrid): TArrayOS;
     Procedure OnGridAChange();
@@ -602,13 +604,14 @@ Begin
     CheckLengthStringOnValidity := IsStringReadible;
 End;
 
-Procedure NumberTheFirstCol(StringGrid: TStringGrid);
+Procedure PrepareGrid(StringGrid: TStringGrid);
 Var
     I: Integer;
 Begin
     For I := 0 To StringGrid.ColCount Do
     Begin
         StringGrid.Cells[I, 0] := '¹ ' + IntToStr(I + 1);
+        StringGrid.Cells[I, 1] := '';
     End;
 End;
 
@@ -664,7 +667,7 @@ Begin
     FixStringGridOnIncorrecValue();
 
     MainForm.ResultButton.Enabled := IsGridValid And IsFirstNumberCorrect;
-    MainForm.SaveTab.Enabled := IsFirstNumberCorrect And CheckGridOnValidity(MainForm.StringGridA);
+    //MainForm.SaveTab.Enabled := IsFirstNumberCorrect And CheckGridOnValidity(MainForm.StringGridA);
     MainForm.LabelResult.Visible := False;
     MainForm.StringGridResult.Visible := False;
 End;
@@ -674,9 +677,9 @@ Begin
     If IsFirstNumberCorrect Then
     Begin
         MainForm.StringGridA.ColCount := StrToInt(MainForm.NumberOneEdit.Text);
-        NumberTheFirstCol(MainForm.StringGridA);
+        PrepareGrid(MainForm.StringGridA);
         MainForm.StringGridResult.ColCount := StrToInt(MainForm.NumberOneEdit.Text);
-        NumberTheFirstCol(MainForm.StringGridResult);
+        PrepareGrid(MainForm.StringGridResult);
     End;
     MainForm.StringGridA.Visible := IsFirstNumberCorrect;
 End;
@@ -778,10 +781,12 @@ Begin
     StringArray := GetStringArrayFromGrid(StringGridA);
 
     MainForm.StringGridResult.ColCount := StrToInt(MainForm.NumberOneEdit.Text);
-    NumberTheFirstCol(StringGridResult);
+    PrepareGrid(StringGridResult);
 
     IntArray := GetIntArrayFromStringArray(StringArray);
     SortArray(IntArray);
+
+    MainForm.SaveTab.Enabled := IsFirstNumberCorrect And CheckGridOnValidity(MainForm.StringGridA);
 
     For I := 0 To ArrHigh Do
     Begin
@@ -853,7 +858,7 @@ Begin
     GridHigh := High(FromArray);
 
     ToGrid.ColCount := StrToInt(MainForm.NumberOneEdit.Text);
-    NumberTheFirstCol(ToGrid);
+    PrepareGrid(ToGrid);
 
     For I := 0 To GridHigh Do
     Begin
@@ -980,11 +985,11 @@ Begin
         End;
         WriteLn(SavedFile);
 
-        For I := 0 To ArrHigh Do
+        For I := 0 To ArrHigh - 1 Do
         Begin
             Write(SavedFile, StringGridResultArray[I], ' ');
         End;
-        WriteLn(SavedFile);
+        Write(SavedFile, StringGridResultArray[High(StringGridResultArray)]);
 
         CloseFile(SavedFile);
     Except
@@ -1007,6 +1012,13 @@ Var
     GridAArray, GridResultArray: TArrayOI;
 Begin
     Error := NO_ERRORS;
+    ArrLength := 0;
+    ArrHigh := 0;
+    ArrLengthStr := '';
+    AnswerNumberStr := '';
+    FinalString := '';
+    GridAArray := Nil;
+    GridResultArray := Nil;
 
     Try
         Reset(ReadedFile);
@@ -1015,9 +1027,10 @@ Begin
     End;
 
     Try
-        ReadLn(ReadedFile, ArrLengthStr);
         If EOF(ReadedFile) Then
             Error := (FILE_DATA_NOT_CORRECT);
+        ReadLn(ReadedFile, ArrLengthStr);
+
         ArrLength := StrToInt(ArrLengthStr);
         ArrHigh := ArrLength - 1;
     Except
@@ -1038,7 +1051,7 @@ Begin
         End;
     End;
 
-    If Not(GridAArray = Nil) And (Error = NO_ERRORS) Then
+    If (Error = NO_ERRORS) Then
     Begin
         For I := 0 To ArrHigh Do
         Begin
@@ -1064,20 +1077,44 @@ Begin
         End;
     End;
 
+    If Not(GridAArray = Nil) And (Error = NO_ERRORS) Then
+    Begin
+        For I := 0 To ArrHigh Do
+        Begin
+            If Error = NO_ERRORS Then
+            Begin
+
+                If EOF(ReadedFile) Then
+                Begin
+                    GridAArray := Nil;
+                    Error := FILE_DATA_NOT_CORRECT;
+                End;
+
+                Try
+                    Read(ReadedFile, GridResultArray[I]);
+                Except
+                    GridAArray := Nil;
+                    Error := FILE_DATA_NOT_CORRECT;
+                End;
+
+            End;
+        End;
+    End;
+
+    If Not(EOF(ReadedFile)) Then
+        Begin
+            GridAArray := Nil;
+            Error := FILE_DATA_NOT_CORRECT;
+        End;
+
     CloseFile(ReadedFile);
 
-    If (Error = NO_ERRORS) And Not(GridAArray = Nil) Then
+    If (Error = NO_ERRORS) Then
     Begin
         MainForm.NumberOneEdit.Text := IntToStr(ArrLength);
 
         MainForm.LabelResult.Visible := True;
         MainForm.StringGridResult.Visible := True;
-
-        For I := 0 To ArrLength - 1 Do
-        Begin
-            GridResultArray := Copy(GridAArray);
-            SortArray(GridResultArray);
-        End;
 
         FillGridByArrayData(GridAArray, MainForm.StringGridA);
         FillGridByArrayData(GridResultArray, MainForm.StringGridResult);
@@ -1089,6 +1126,11 @@ End;
 Procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 Begin
     CanClose := LeaveFromProgram(CanClose);
+End;
+
+Function TMainForm.FormHelp(Command: Word; Data: THelpEventData; Var CallHelp: Boolean): Boolean;
+Begin
+    CallHelp := False;
 End;
 
 Procedure TMainForm.LeaveTabClick(Sender: TObject);
