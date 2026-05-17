@@ -124,6 +124,16 @@ void getTimeFromOnlyMinutes(int amountOfMinutes, int *hour, int *minute);
 
 void freeLists(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 
+// ? To Test
+int isEarlierAppointment(appointment *a, appointment *b);
+void resetQueueNumbers(appointment *head);
+appointment *findFirstUnassigned(appointment *head, int *cabinet);
+appointment *findEarliestUnassignedInCabinet(appointment *head, int cabinet);
+void numberCabinet(appointment *head, int cabinet);
+void assignQueueNumbers(appointment *head);
+// ?
+
+
 int main(void)
 {
     appointment *appointmentsHead;
@@ -159,6 +169,7 @@ void processUserChoice(appointment *appointmentsHead, doctorSchedule *schedulesH
         {
         case 1:
             readDataFormFiles(appointmentsHead, schedulesHead);
+            assignQueueNumbers(appointmentsHead);
             break;
         case 2:
             showLists(appointmentsHead, schedulesHead);
@@ -171,15 +182,19 @@ void processUserChoice(appointment *appointmentsHead, doctorSchedule *schedulesH
             break;
         case 5:
             addDataToList(appointmentsHead, schedulesHead);
+            assignQueueNumbers(appointmentsHead);
             break;
         case 6:
             deleteDataFromList(appointmentsHead, schedulesHead);
+            assignQueueNumbers(appointmentsHead);
             break;
         case 7:
             changeData(appointmentsHead, schedulesHead);
+            assignQueueNumbers(appointmentsHead);
             break;
         case 8:
             manageAppointments(appointmentsHead, schedulesHead);
+            assignQueueNumbers(appointmentsHead);
             break;
         case 9:
             quitWithoutSave();
@@ -397,6 +412,10 @@ doctorSchedule *fillSchedule()
     int counter, hour, minute;
     size_t len;
 
+    counter = 0;
+    hour = 0;
+    minute = 0;
+
     doctorSchedule *newSchedule;
     newSchedule = (doctorSchedule *)malloc(sizeof(doctorSchedule));
 
@@ -453,6 +472,10 @@ void readAppointmentsFromFile(appointment *head)
     size_t read;
     FILE *appFile;
     appointment *last, *newNode;
+    _Bool isMore;
+
+    isMore = 1;
+    read = 0;
 
     appFile = fopen("appointments.bin", "rb");
 
@@ -466,15 +489,14 @@ void readAppointmentsFromFile(appointment *head)
     while (last->next != NULL)
         last = last->next;
 
-    int hasMore = 1;
-    while (hasMore)
+    while (isMore)
     {
         newNode = (appointment*)malloc(sizeof(appointment));
 
         if (newNode == NULL)
         {
             printf("Memory allocation error while reading appointments\n");
-            hasMore = 0;
+            isMore = 0;
         }
         else
         {
@@ -490,7 +512,7 @@ void readAppointmentsFromFile(appointment *head)
             if (read != 8)
             {
                 free(newNode);
-                hasMore = 0;
+                isMore = 0;
             }
             else
             {
@@ -513,6 +535,7 @@ void readSchedulesFromFile(doctorSchedule *head)
     size_t read;
 
     isMore = 1;
+    read = 0;
 
     schFile = fopen("schedules.bin", "rb");
 
@@ -656,7 +679,7 @@ void showSchedulesList(doctorSchedule *schedulesHead)
 
 void findData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
-}А
+}
 
 void deleteDataFromList(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
@@ -789,5 +812,136 @@ void freeLists(appointment *appointmentsHead, doctorSchedule *schedulesHead)
         schNext = schCurr->next;
         free(schCurr);
         schCurr = schNext;
+    }
+}
+
+// --------------------------------------------------------------
+// Сравнение двух талонов: возвращает 1, если a раньше b, иначе 0
+// --------------------------------------------------------------
+int isEarlierAppointment(appointment *a, appointment *b)
+{
+    int aTime;
+    int bTime;
+
+    bTime = 0;
+    aTime = 0;
+
+    if (a->appointmentDate.year != b->appointmentDate.year)
+        return (a->appointmentDate.year < b->appointmentDate.year);
+
+    if (a->appointmentDate.month != b->appointmentDate.month)
+        return (a->appointmentDate.month < b->appointmentDate.month);
+
+    if (a->appointmentDate.day != b->appointmentDate.day)
+        return (a->appointmentDate.day < b->appointmentDate.day);
+
+    aTime = getTimeInMinutes(a->appointmentTime.hour, a->appointmentTime.minute);
+    bTime = getTimeInMinutes(b->appointmentTime.hour, b->appointmentTime.minute);
+    return (aTime < bTime);
+}
+
+// --------------------------------------------------------------
+// Сброс всех номеров очереди (кроме фиктивной головы)
+// --------------------------------------------------------------
+void resetQueueNumbers(appointment *head)
+{
+    appointment *curr;
+
+    curr = head->next;
+
+    while (curr != NULL)
+    {
+        curr->queuePlace = 0;
+        curr = curr->next;
+    }
+}
+
+// --------------------------------------------------------------
+// Находит ПЕРВЫЙ непронумерованный талон и возвращает его кабинет
+// --------------------------------------------------------------
+appointment *findFirstUnassigned(appointment *head, int *cabinet)
+{
+    appointment *curr = NULL;
+    appointment *found = NULL;
+
+    *cabinet = 0;
+    curr = head->next;
+
+    while (curr != NULL && found == NULL)
+    {
+        if (curr->queuePlace == 0)
+        {
+            *cabinet = curr->cabinet;
+            found = curr;
+        }
+        curr = curr->next;
+    }
+    return found;
+}
+
+// --------------------------------------------------------------
+// Находит самый ранний непронумерованный талон в заданном кабинете
+// --------------------------------------------------------------
+appointment *findEarliestUnassignedInCabinet(appointment *head, int cabinet)
+{
+    appointment *curr;
+    appointment *earliest;
+
+    curr = head->next;
+    earliest = NULL;
+
+    while (curr != NULL)
+    {
+        if (curr->cabinet == cabinet && curr->queuePlace == 0)
+        {
+            if (earliest == NULL)
+                earliest = curr;
+            else 
+                if (isEarlierAppointment(curr, earliest))
+                    earliest = curr;
+        }
+        curr = curr->next;
+    }
+    return earliest;
+}
+
+// --------------------------------------------------------------
+// Нумерует все талоны одного кабинета по порядку времени
+// --------------------------------------------------------------
+void numberCabinet(appointment *head, int cabinet)
+{
+    int nextNumber;
+    appointment *earliest;
+
+    nextNumber = 1;
+    earliest = NULL;
+
+    earliest = findEarliestUnassignedInCabinet(head, cabinet);
+    while (earliest != NULL)
+    {
+        earliest->queuePlace = nextNumber;
+        nextNumber = nextNumber + 1;
+        earliest = findEarliestUnassignedInCabinet(head, cabinet);
+    }
+}
+
+// --------------------------------------------------------------
+// Главная функция: полностью пересчитывает номера очереди для всех талонов
+// --------------------------------------------------------------
+void assignQueueNumbers(appointment *head)
+{
+    int cabinet;
+    appointment *first;
+
+    cabinet = 0;
+    first = NULL;
+
+    resetQueueNumbers(head);
+
+    first = findFirstUnassigned(head, &cabinet);
+    while (first != NULL)
+    {
+        numberCabinet(head, cabinet);
+        first = findFirstUnassigned(head, &cabinet);
     }
 }
