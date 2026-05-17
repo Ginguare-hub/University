@@ -99,6 +99,18 @@ void showLists(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 void showAppointmentsList(appointment *appointmentsHead);
 void showSchedulesList(doctorSchedule *schedulesHead);
 
+void sortList(appointment *appointmentsHead, doctorSchedule *schedulesHead);
+void sortAppointmentsByDoctorID(appointment *appointmentsHead);
+void sortAppointmentsBySurname(appointment *appointmentsHead);    
+void sortSchedulesByDoctorID(doctorSchedule *schedulesHead);
+void sortSchedulesBySurname(doctorSchedule *schedulesHead);
+appointment* insertAppointmentSortedByDoctorID(appointment *sorted, appointment *node);
+appointment* insertAppointmentSortedBySurname(appointment *sorted, appointment *node);
+_Bool isAppointmentNodeBefore(const appointment *node, const appointment *other);
+doctorSchedule* insertScheduleSortedByDoctorID(doctorSchedule *sorted, doctorSchedule *node);
+_Bool isScheduleNodeBefore(const doctorSchedule *node, const doctorSchedule *other);
+doctorSchedule* insertScheduleSortedBySurname(doctorSchedule *sorted, doctorSchedule *node);
+
 void findData(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 
 void addDataToList(appointment *appointmentsHead, doctorSchedule *schedulesHead);
@@ -108,7 +120,6 @@ doctorSchedule *fillSchedule();
 void deleteDataFromList(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 void changeData(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 void manageAppointments(appointment *appointmentsHead, doctorSchedule *schedulesHead);
-void quitWithoutSave();
 
 void quitAndSave(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 void saveAppointmentsToFile(appointment *head);
@@ -132,7 +143,6 @@ appointment *findEarliestUnassignedInCabinet(appointment *head, int cabinet);
 void numberCabinet(appointment *head, int cabinet);
 void assignQueueNumbers(appointment *head);
 // ?
-
 
 int main(void)
 {
@@ -175,7 +185,7 @@ void processUserChoice(appointment *appointmentsHead, doctorSchedule *schedulesH
             showLists(appointmentsHead, schedulesHead);
             break;
         case 3:
-            // ! ============================ Не понятно что сортировать
+            sortList(appointmentsHead, schedulesHead);
             break;
         case 4:
             findData(appointmentsHead, schedulesHead);
@@ -197,7 +207,6 @@ void processUserChoice(appointment *appointmentsHead, doctorSchedule *schedulesH
             assignQueueNumbers(appointmentsHead);
             break;
         case 9:
-            quitWithoutSave();
             isContinue = 0;
             break;
         case 10:
@@ -366,7 +375,7 @@ appointment *fillAppointment()
     int maxDay;
 
     appointment *newAppointment;
-    newAppointment = (appointment*)malloc(sizeof(appointment));
+    newAppointment = (appointment *)malloc(sizeof(appointment));
 
     if (!newAppointment)
         return NULL;
@@ -491,7 +500,7 @@ void readAppointmentsFromFile(appointment *head)
 
     while (isMore)
     {
-        newNode = (appointment*)malloc(sizeof(appointment));
+        newNode = (appointment *)malloc(sizeof(appointment));
 
         if (newNode == NULL)
         {
@@ -551,7 +560,7 @@ void readSchedulesFromFile(doctorSchedule *head)
 
     while (isMore)
     {
-        newNode = (doctorSchedule*)malloc(sizeof(doctorSchedule));
+        newNode = (doctorSchedule *)malloc(sizeof(doctorSchedule));
         if (newNode == NULL)
         {
             printf("Memory allocation error while reading schedules\n");
@@ -677,6 +686,434 @@ void showSchedulesList(doctorSchedule *schedulesHead)
     }
 }
 
+// Сортировки
+void sortList(appointment *appointmentsHead, doctorSchedule *schedulesHead)
+{
+    int optionList, optionSort;
+
+    printf("\nWhich list do you want to sort?\n");
+    printf(" 1 - Appointments list\n");
+    printf(" 2 - Schedule list\n");
+    optionList = scanInt(1, 2, "> ");
+
+    printf("\nHow do you want to sort the list?\n");
+    printf(" 1 - Sort by doctorID\n");
+    printf(" 2 - Sort by surname\n");
+    optionSort = scanInt(1, 2, "> ");
+    
+    if (optionList == 1)
+    {
+        if (optionSort == 1)
+            sortAppointmentsByDoctorID(appointmentsHead);
+        else
+            sortAppointmentsBySurname(appointmentsHead);    
+    }
+    else
+    {
+        if (optionSort == 1)
+            sortSchedulesByDoctorID(schedulesHead);
+        else
+            sortSchedulesBySurname(schedulesHead); 
+    }
+
+}
+
+// Сортировка appointments по doctorID
+void sortAppointmentsByDoctorID(appointment *appointmentsHead)
+{
+    appointment *sorted;
+    appointment *current;
+    appointment *next;
+
+    sorted = NULL;
+    current = appointmentsHead->next;
+
+    if (current == NULL || current->next == NULL)
+    {
+        return;                     /* нечего сортировать */
+    }
+
+    while (current != NULL)
+    {
+        next = current->next;
+        sorted = insertAppointmentSortedByDoctorID(sorted, current);
+        current = next;
+    }
+
+    appointmentsHead->next = sorted;
+}
+
+appointment* insertAppointmentSortedByDoctorID(appointment *sorted, appointment *node)
+{
+    appointment *prev;
+    appointment *curr;
+    _Bool isSearching;
+
+    if (sorted == NULL)
+    {
+        node->next = NULL;
+        sorted = node;
+    }
+    else
+    {
+        prev = NULL;
+        curr = sorted;
+        isSearching = 1;
+
+        while (isSearching)
+        {
+            if (curr == NULL)
+            {
+                isSearching = 0;
+            }
+            else
+            {
+                if (node->doctorID <= curr->doctorID)
+                {
+                    isSearching = 0;
+                }
+                else
+                {
+                    prev = curr;
+                    curr = curr->next;
+                }
+            }
+        }
+
+        if (prev == NULL)
+        {
+            node->next = sorted;
+            sorted = node;
+        }
+        else
+        {
+            node->next = curr;
+            prev->next = node;
+        }
+    }
+
+    return sorted;
+}
+
+// Сортировка appointments по фамилии
+void sortAppointmentsBySurname(appointment *appointmentsHead)
+{
+    appointment *sorted;
+    appointment *current;
+    appointment *next;
+
+    sorted = NULL;
+    current = appointmentsHead->next;
+
+    if (current == NULL || current->next == NULL)
+        return;
+
+    while (current != NULL)
+    {
+        next = current->next;
+        sorted = insertAppointmentSortedBySurname(sorted, current);
+        current = next;
+    }
+
+    appointmentsHead->next = sorted;
+}  
+
+appointment* insertAppointmentSortedBySurname(appointment *sorted, appointment *node)
+{
+    appointment *prev;
+    appointment *curr;
+    _Bool isSearching;
+
+    if (sorted == NULL)
+    {
+        node->next = NULL;
+        sorted = node;
+        return sorted;
+    }
+
+    prev = NULL;
+    curr = sorted;
+    isSearching = 1;
+
+    while (isSearching)
+    {
+        if (curr == NULL)
+        {
+            isSearching = 0;
+        }
+        else
+        {
+            if (isAppointmentNodeBefore(node, curr))
+            {
+                isSearching = 0;     
+            }
+            else
+            {
+                prev = curr;
+                curr = curr->next;
+            }
+        }
+    }
+
+    if (prev == NULL)
+    {
+        node->next = sorted;
+        sorted = node;
+    }
+    else
+    {
+        node->next = curr;
+        prev->next = node;
+    }
+
+    return sorted;
+}
+
+_Bool isAppointmentNodeBefore(const appointment *node, const appointment *other)
+{
+    int cmpSurname;
+    int cmpName;
+    int cmpPatronymic;
+    _Bool isBefore;
+
+    cmpSurname = strcasecmp(node->surname, other->surname);
+
+    if (cmpSurname < 0)
+    {
+        isBefore = 1;
+    }
+    else
+    {
+        if (cmpSurname > 0)
+        {
+            isBefore = 0;
+        }
+        else
+        {
+            cmpName = strcasecmp(node->name, other->name);
+            if (cmpName < 0)
+            {
+                isBefore = 1;
+            }
+            else
+            {
+                if (cmpName > 0)
+                {
+                    isBefore = 0;
+                }
+                else
+                {
+                    cmpPatronymic = strcasecmp(node->patronymic, other->patronymic);
+                    if (cmpPatronymic < 0)
+                    {
+                        isBefore = 1;
+                    }
+                    else
+                    {
+                        isBefore = 0;
+                    }
+                }
+            }
+        }
+    }
+
+    return isBefore;
+}
+
+// Сортировка schedules по doctorID
+void sortSchedulesByDoctorID(doctorSchedule *schedulesHead)
+{
+    doctorSchedule *sorted;
+    doctorSchedule *current;
+    doctorSchedule *next;
+
+    sorted = NULL;
+    current = schedulesHead->next;
+
+    if (current == NULL || current->next == NULL)
+        return;
+
+    while (current != NULL)
+    {
+        next = current->next;
+        sorted = insertScheduleSortedByDoctorID(sorted, current);
+        current = next;
+    }
+
+    schedulesHead->next = sorted;
+}
+
+doctorSchedule* insertScheduleSortedByDoctorID(doctorSchedule *sorted, doctorSchedule *node)
+{
+    doctorSchedule *prev;
+    doctorSchedule *curr;
+    _Bool isSearching;
+
+    if (sorted == NULL)
+    {
+        node->next = NULL;
+        sorted = node;
+    }
+    else
+    {
+        prev = NULL;
+        curr = sorted;
+        isSearching = 1;
+
+        while (isSearching)
+        {
+            if (curr == NULL)
+            {
+                isSearching = 0;
+            }
+            else
+            {
+                if (node->doctorID <= curr->doctorID)
+                {
+                    isSearching = 0;
+                }
+                else
+                {
+                    prev = curr;
+                    curr = curr->next;
+                }
+            }
+        }
+
+        if (prev == NULL)
+        {
+            node->next = sorted;
+            sorted = node;
+        }
+        else
+        {
+            node->next = curr;
+            prev->next = node;
+        }
+    }
+
+    return sorted;
+}
+
+// Сортировка schedules по фамилии
+void sortSchedulesBySurname(doctorSchedule *schedulesHead)
+{
+    doctorSchedule *sorted;
+    doctorSchedule *current;
+    doctorSchedule *next;
+
+    sorted = NULL;
+    current = schedulesHead->next;
+
+    if (current == NULL || current->next == NULL)
+    {
+        return;
+    }
+
+    while (current != NULL)
+    {
+        next = current->next;
+        sorted = insertScheduleSortedBySurname(sorted, current);
+        current = next;
+    }
+
+    schedulesHead->next = sorted;
+}
+
+doctorSchedule* insertScheduleSortedBySurname(doctorSchedule *sorted, doctorSchedule *node)
+{
+    doctorSchedule *prev;
+    doctorSchedule *curr;
+    _Bool isSearching;
+
+    if (sorted == NULL)
+    {
+        node->next = NULL;
+        sorted = node;
+        return sorted;
+    }
+
+    prev = NULL;
+    curr = sorted;
+    isSearching = 1;
+
+    while (isSearching)
+    {
+        if (curr == NULL)
+        {
+            isSearching = 0;
+        }
+        else
+        {
+            if (isScheduleNodeBefore(node, curr))
+            {
+                isSearching = 0;       /* место перед curr найдено */
+            }
+            else
+            {
+                prev = curr;
+                curr = curr->next;
+            }
+        }
+    }
+
+    if (prev == NULL)
+    {
+        node->next = sorted;
+        sorted = node;
+    }
+    else
+    {
+        node->next = curr;
+        prev->next = node;
+    }
+
+    return sorted;
+}
+
+_Bool isScheduleNodeBefore(const doctorSchedule *node, const doctorSchedule *other)
+{
+    int cmpSurname;
+    int cmpName;
+    int cmpPatronymic;
+    _Bool isBefore;
+
+    cmpSurname = strcasecmp(node->surname, other->surname);
+
+    if (cmpSurname < 0)
+        isBefore = 1;
+    else
+    {
+        if (cmpSurname > 0)
+            isBefore = 0;
+        else
+        {
+            cmpName = strcasecmp(node->name, other->name);
+
+            if (cmpName < 0)
+                isBefore = 1;
+            else
+            {
+                if (cmpName > 0)
+                    isBefore = 0;
+                else
+                {
+                    cmpPatronymic = strcasecmp(node->patronymic, other->patronymic);
+                    if (cmpPatronymic < 0)
+                        isBefore = 1;
+                    else
+                        isBefore = 0;
+                }
+            }
+        }
+    }
+
+    return isBefore;
+}
+
+
+
+
 void findData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
 }
@@ -690,10 +1127,6 @@ void changeData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 }
 
 void manageAppointments(appointment *appointmentsHead, doctorSchedule *schedulesHead)
-{
-}
-
-void quitWithoutSave()
 {
 }
 
@@ -717,7 +1150,7 @@ void saveAppointmentsToFile(appointment *head)
         return;
     }
 
-    curr = head->next; 
+    curr = head->next;
     while (curr != NULL)
     {
         // пишем все поля, кроме указателя next
@@ -856,9 +1289,9 @@ void resetQueueNumbers(appointment *head)
     }
 }
 
-// --------------------------------------------------------------
+// --------
 // Находит ПЕРВЫЙ непронумерованный талон и возвращает его кабинет
-// --------------------------------------------------------------
+// --------
 appointment *findFirstUnassigned(appointment *head, int *cabinet)
 {
     appointment *curr = NULL;
@@ -896,9 +1329,8 @@ appointment *findEarliestUnassignedInCabinet(appointment *head, int cabinet)
         {
             if (earliest == NULL)
                 earliest = curr;
-            else 
-                if (isEarlierAppointment(curr, earliest))
-                    earliest = curr;
+            else if (isEarlierAppointment(curr, earliest))
+                earliest = curr;
         }
         curr = curr->next;
     }
