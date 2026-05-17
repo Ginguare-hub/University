@@ -92,6 +92,8 @@ void processUserChoice(appointment *appointmentsHead, doctorSchedule *schedulesH
 
 // ! Menu function
 void readDataFormFiles(appointment *appointmentsHead, doctorSchedule *schedulesHead);
+void readAppointmentsFromFile(appointment *head);
+void readSchedulesFromFile(doctorSchedule *head);
 
 void showLists(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 void showAppointmentsList(appointment *appointmentsHead);
@@ -107,7 +109,10 @@ void deleteDataFromList(appointment *appointmentsHead, doctorSchedule *schedules
 void changeData(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 void manageAppointments(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 void quitWithoutSave();
+
 void quitAndSave(appointment *appointmentsHead, doctorSchedule *schedulesHead);
+void saveAppointmentsToFile(appointment *head);
+void saveSchedulesToFile(doctorSchedule *head);
 // !
 
 int getTimeInMinutes(int hour, int minute);
@@ -150,8 +155,6 @@ void processUserChoice(appointment *appointmentsHead, doctorSchedule *schedulesH
         option = getOption();
         writeMenuOptionHeader(option);
 
-        printf("\n%d\n", option);
-
         switch (option)
         {
         case 1:
@@ -184,6 +187,7 @@ void processUserChoice(appointment *appointmentsHead, doctorSchedule *schedulesH
             break;
         case 10:
             quitAndSave(appointmentsHead, schedulesHead);
+            isContinue = 0;
             break;
         }
     }
@@ -347,7 +351,7 @@ appointment *fillAppointment()
     int maxDay;
 
     appointment *newAppointment;
-    newAppointment = (appointment *)malloc(sizeof(appointment));
+    newAppointment = (appointment*)malloc(sizeof(appointment));
 
     if (!newAppointment)
         return NULL;
@@ -358,14 +362,12 @@ appointment *fillAppointment()
     printf("surname: ");
     scanf("%29s", newAppointment->surname);
     printf("patronymic: ");
-    printf("\n");
+    scanf("%29s", newAppointment->patronymic);
 
     printf("Write doctor's ID: ");
     newAppointment->doctorID = scanInt(0, MAX_ID, "");
     printf("Write doctor's cabinet: ");
     newAppointment->cabinet = scanInt(0, MAX_CABINET, "");
-
-    printf("\n");
 
     printf("Write appointment date\n");
     printf("year: ");
@@ -397,9 +399,6 @@ doctorSchedule *fillSchedule()
 
     doctorSchedule *newSchedule;
     newSchedule = (doctorSchedule *)malloc(sizeof(doctorSchedule));
-
-    if (!newSchedule)
-        return NULL;
 
     if (!newSchedule)
         return NULL;
@@ -445,6 +444,121 @@ doctorSchedule *fillSchedule()
 
 void readDataFormFiles(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
+    readAppointmentsFromFile(appointmentsHead);
+    readSchedulesFromFile(schedulesHead);
+}
+
+void readAppointmentsFromFile(appointment *head)
+{
+    size_t read;
+    FILE *appFile;
+    appointment *last, *newNode;
+
+    appFile = fopen("appointments.bin", "rb");
+
+    if (appFile == NULL)
+    {
+        printf("No appointments.bin found, starting with empty list\n");
+        return;
+    }
+
+    last = head;
+    while (last->next != NULL)
+        last = last->next;
+
+    int hasMore = 1;
+    while (hasMore)
+    {
+        newNode = (appointment*)malloc(sizeof(appointment));
+
+        if (newNode == NULL)
+        {
+            printf("Memory allocation error while reading appointments\n");
+            hasMore = 0;
+        }
+        else
+        {
+            read = fread(&newNode->appointmentDate, sizeof(date), 1, appFile);
+            read = read + fread(&newNode->appointmentTime, sizeof(time), 1, appFile);
+            read = read + fread(&newNode->queuePlace, sizeof(int), 1, appFile);
+            read = read + fread(newNode->name, sizeof(newNode->name), 1, appFile);
+            read = read + fread(newNode->surname, sizeof(newNode->surname), 1, appFile);
+            read = read + fread(newNode->patronymic, sizeof(newNode->patronymic), 1, appFile);
+            read = read + fread(&newNode->cabinet, sizeof(int), 1, appFile);
+            read = read + fread(&newNode->doctorID, sizeof(int), 1, appFile);
+
+            if (read != 8)
+            {
+                free(newNode);
+                hasMore = 0;
+            }
+            else
+            {
+                newNode->next = NULL;
+                last->next = newNode;
+                last = newNode;
+            }
+        }
+    }
+
+    fclose(appFile);
+    printf("Appointments loaded from appointments.bin\n");
+}
+
+void readSchedulesFromFile(doctorSchedule *head)
+{
+    FILE *schFile;
+    doctorSchedule *last, *newNode;
+    _Bool isMore;
+    size_t read;
+
+    isMore = 1;
+
+    schFile = fopen("schedules.bin", "rb");
+
+    if (schFile == NULL)
+    {
+        printf("No schedules.bin found, starting with empty list\n");
+        return;
+    }
+
+    last = head;
+    while (last->next != NULL)
+        last = last->next;
+
+    while (isMore)
+    {
+        newNode = (doctorSchedule*)malloc(sizeof(doctorSchedule));
+        if (newNode == NULL)
+        {
+            printf("Memory allocation error while reading schedules\n");
+            isMore = 0;
+        }
+        else
+        {
+            read = fread(&newNode->doctorID, sizeof(int), 1, schFile);
+            read = read + fread(newNode->specialization, sizeof(newNode->specialization), 1, schFile);
+            read = read + fread(newNode->name, sizeof(newNode->name), 1, schFile);
+            read = read + fread(newNode->surname, sizeof(newNode->surname), 1, schFile);
+            read = read + fread(newNode->patronymic, sizeof(newNode->patronymic), 1, schFile);
+            read = read + fread(newNode->schedule, sizeof(newNode->schedule), 1, schFile);
+
+            if (read != 6)
+            {
+                free(newNode);
+                isMore = 0;
+            }
+            else
+            {
+                newNode->next = NULL;
+                last->next = newNode;
+                last = newNode;
+            }
+        }
+    }
+
+    fclose(schFile);
+    printf("Schedules loaded from schedules.bin\n");
 }
 
 void showLists(appointment *appointmentsHead, doctorSchedule *schedulesHead)
@@ -464,56 +578,6 @@ void showLists(appointment *appointmentsHead, doctorSchedule *schedulesHead)
     {
         showSchedulesList(schedulesHead);
     }
-}
-
-void findData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
-{
-}
-
-void deleteDataFromList(appointment *appointmentsHead, doctorSchedule *schedulesHead)
-{
-}
-
-void changeData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
-{
-}
-
-void manageAppointments(appointment *appointmentsHead, doctorSchedule *schedulesHead)
-{
-}
-
-void quitWithoutSave()
-{
-}
-
-void quitAndSave(appointment *appointmentsHead, doctorSchedule *schedulesHead)
-{
-}
-
-int findMaxDay(int month, int year)
-{
-    int maxDayInEachMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; // Индекс = месяц - 1; значение = max количество дней
-    int maxDay;
-
-    maxDay = maxDayInEachMonth[month - 1];
-
-    if (month == 2 && (year % 4 == 0 && year % 100 != 0 || year % 400 == 0))
-        maxDay++;
-
-    return maxDay;
-}
-
-int getTimeInMinutes(int hour, int minute)
-{
-    int answer;
-    answer = hour * 60 + minute;
-    return answer;
-}
-
-void getTimeFromOnlyMinutes(int amountOfMinutes, int *hour, int *minute)
-{
-    *hour = amountOfMinutes / 60;
-    *minute = amountOfMinutes % 60;
 }
 
 void showAppointmentsList(appointment *appointmentsHead)
@@ -556,7 +620,7 @@ void showAppointmentsList(appointment *appointmentsHead)
 void showSchedulesList(doctorSchedule *schedulesHead)
 {
     doctorSchedule *curr;
-    int i, count;
+    int i, count, startHour, startMinute, endHour, endMinute;
     char *dayNames[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
     curr = schedulesHead->next; // пропускаем фиктивный головной узел
@@ -580,20 +644,128 @@ void showSchedulesList(doctorSchedule *schedulesHead)
 
         for (i = 0; i < 6; i++)
         {
-            int startHour, startMinute, endHour, endMinute;
             getTimeFromOnlyMinutes(curr->schedule[i][0], &startHour, &startMinute);
             getTimeFromOnlyMinutes(curr->schedule[i][1], &endHour, &endMinute);
-            printf("  %s: %02d:%02d – %02d:%02d\n",
-                   dayNames[i],
-                   startHour,
-                   startMinute,
-                   endHour,
-                   endMinute);
+            printf("  %-9s: %02d:%02d - %02d:%02d\n", dayNames[i], startHour, startMinute, endHour, endMinute);
         }
 
         curr = curr->next;
         count++;
     }
+}
+
+void findData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
+{
+}А
+
+void deleteDataFromList(appointment *appointmentsHead, doctorSchedule *schedulesHead)
+{
+}
+
+void changeData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
+{
+}
+
+void manageAppointments(appointment *appointmentsHead, doctorSchedule *schedulesHead)
+{
+}
+
+void quitWithoutSave()
+{
+}
+
+void quitAndSave(appointment *appointmentsHead, doctorSchedule *schedulesHead)
+{
+    saveAppointmentsToFile(appointmentsHead);
+    saveSchedulesToFile(schedulesHead);
+    printf("\nData saved successfully\n");
+}
+
+void saveAppointmentsToFile(appointment *head)
+{
+    FILE *file;
+    appointment *curr;
+
+    file = fopen("appointments.bin", "wb");
+
+    if (file == NULL)
+    {
+        printf("Error: cannot create appointments.bin\n");
+        return;
+    }
+
+    curr = head->next; 
+    while (curr != NULL)
+    {
+        // пишем все поля, кроме указателя next
+        fwrite(&curr->appointmentDate, sizeof(date), 1, file);
+        fwrite(&curr->appointmentTime, sizeof(time), 1, file);
+        fwrite(&curr->queuePlace, sizeof(int), 1, file);
+        fwrite(curr->name, sizeof(curr->name), 1, file);
+        fwrite(curr->surname, sizeof(curr->surname), 1, file);
+        fwrite(curr->patronymic, sizeof(curr->patronymic), 1, file);
+        fwrite(&curr->cabinet, sizeof(int), 1, file);
+        fwrite(&curr->doctorID, sizeof(int), 1, file);
+
+        curr = curr->next;
+    }
+
+    fclose(file);
+}
+
+void saveSchedulesToFile(doctorSchedule *head)
+{
+    FILE *file;
+    doctorSchedule *curr;
+
+    file = fopen("schedules.bin", "wb");
+
+    if (file == NULL)
+    {
+        printf("Error: cannot create schedules.bin\n");
+        return;
+    }
+
+    curr = head->next; // пропускаем фиктивный узел
+    while (curr != NULL)
+    {
+        fwrite(&curr->doctorID, sizeof(int), 1, file);
+        fwrite(curr->specialization, sizeof(curr->specialization), 1, file);
+        fwrite(curr->name, sizeof(curr->name), 1, file);
+        fwrite(curr->surname, sizeof(curr->surname), 1, file);
+        fwrite(curr->patronymic, sizeof(curr->patronymic), 1, file);
+        fwrite(curr->schedule, sizeof(curr->schedule), 1, file); // массив 6x2 int
+
+        curr = curr->next;
+    }
+
+    fclose(file);
+}
+
+int findMaxDay(int month, int year)
+{
+    int maxDayInEachMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; // Индекс = месяц - 1; значение = max количество дней
+    int maxDay;
+
+    maxDay = maxDayInEachMonth[month - 1];
+
+    if (month == 2 && (year % 4 == 0 && year % 100 != 0 || year % 400 == 0))
+        maxDay++;
+
+    return maxDay;
+}
+
+int getTimeInMinutes(int hour, int minute)
+{
+    int answer;
+    answer = hour * 60 + minute;
+    return answer;
+}
+
+void getTimeFromOnlyMinutes(int amountOfMinutes, int *hour, int *minute)
+{
+    *hour = amountOfMinutes / 60;
+    *minute = amountOfMinutes % 60;
 }
 
 void freeLists(appointment *appointmentsHead, doctorSchedule *schedulesHead)
