@@ -96,11 +96,11 @@ void readAppointmentsFromFile(appointment *head);
 void readSchedulesFromFile(doctorSchedule *head);
 
 void showLists(appointment *appointmentsHead, doctorSchedule *schedulesHead);
-void printAppointmentsListHead();
-void printAppointmentsListRow(int rowNumber, const appointment *curr);
+void showAppointmentsListHead();
+void showAppointmentsListRow(int rowNumber, const appointment *curr);
 void showAppointmentsList(appointment *appointmentsHead);
 void showSchedulesListHead();
-void printSchedulesListRow(int rowNumber, const doctorSchedule *curr);
+void showSchedulesListRow(int rowNumber, const doctorSchedule *curr);
 void showSchedulesList(doctorSchedule *schedulesHead);
 
 void sortList(appointment *appointmentsHead, doctorSchedule *schedulesHead);
@@ -119,8 +119,7 @@ void findData(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 void findAllAppointmentsByDoctorNameAndDate(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 void inputFullName(char *surname, char *name, char *patronymic);
 void inputDateForSearch(int *day, int *month, int *year);
-int findDoctorIDsByFullName(doctorSchedule *head, const char *surname, const char *name, const char *patronymic, int *ids, int maxIds);
-void printFoundAppointments(appointment *head, const int *doctorIDs, int doctorCount, int day, int month, int year);
+int findDoctorIDsByFullName(doctorSchedule *head, const char *surname, const char *name, const char *patronymic);
 void findAllAppointmentsByPatientName(appointment *appointmentsHead);
 
 void addDataToList(appointment *appointmentsHead, doctorSchedule *schedulesHead);
@@ -624,7 +623,7 @@ void showLists(appointment *appointmentsHead, doctorSchedule *schedulesHead)
         showSchedulesList(schedulesHead);
 }
 
-void printAppointmentsListHead()
+void showAppointmentsListHead()
 {
     printf("+-----+------------+----------+-------+----------------------------------------------------+------+----------+\n");
     printf("|  #  |    Date    |     Time | Queue | Patient name                                       | Cab. | DoctorID |\n");
@@ -648,11 +647,11 @@ void showAppointmentsList(appointment *appointmentsHead)
         return;
     }
 
-    printAppointmentsListHead();
+    showAppointmentsListHead();
 
     while (curr != NULL)
     {
-        printAppointmentsListRow(count, curr);
+        showAppointmentsListRow(count, curr);
 
         curr = curr->next;
         count++;
@@ -661,7 +660,7 @@ void showAppointmentsList(appointment *appointmentsHead)
     printf("+-----+------------+----------+-------+----------------------------------------------------+------+----------+\n");
 }
 
-void printAppointmentsListRow(int rowNumber, const appointment *curr)
+void showAppointmentsListRow(int rowNumber, const appointment *curr)
 {
     char fullName[51];
     snprintf(fullName, sizeof(fullName), "%s %s %s", curr->surname, curr->name, curr->patronymic);
@@ -706,14 +705,14 @@ void showSchedulesList(doctorSchedule *schedulesHead)
 
     while (curr != NULL)
     {
-        printSchedulesListRow(rowCount, curr);
+        showSchedulesListRow(rowCount, curr);
         printf("+-----+----------+-------------------------------------+----------------------------------------------------+-----------+---------+---------+\n");
         rowCount++;
         curr = curr->next;
     }
 }
 
-void printSchedulesListRow(int rowNumber, const doctorSchedule *curr)
+void showSchedulesListRow(int rowNumber, const doctorSchedule *curr)
 {
     char fullName[51], specialization[36];
     int i, startHour, startMinute, endHour, endMinute, firstForDoctor;
@@ -1186,14 +1185,17 @@ _Bool isScheduleNodeBefore(const doctorSchedule *node, const doctorSchedule *oth
     return isBefore;
 }
 
+
+
+
 // Главная функция findData (оркестрация)
 void findData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
     int option;
 
     printf("What data you need to find?\n");
-    printf("1 - Find all appointments by doctor full name and date\n");
-    printf("2 - Find all appointments by patient fill name\n");
+    printf(" 1 - Find all appointments by doctor full name and date\n");
+    printf(" 2 - Find all appointments by patient fill name\n");
     option = scanInt(1, 2, "> ");
 
     if (option == 1) 
@@ -1204,12 +1206,17 @@ void findData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 
 void findAllAppointmentsByDoctorNameAndDate(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
-    char surname[17];
-    char name[17];
-    char patronymic[17];
-    int day, month, year;
-    //int doctorIDs[100];
-    //int doctorCount;
+    char surname[17], name[17], patronymic[17];
+    int day, month, year, count, doctorIDByFullName;
+    appointment *curr;
+    _Bool isThereNoRightAppointments;
+
+    count = 1;
+    day = 0;
+    month = 0;
+    year = 0;
+    isThereNoRightAppointments = 1;
+    doctorIDByFullName = -1;
 
     if (appointmentsHead->next == NULL)
     {
@@ -1217,16 +1224,18 @@ void findAllAppointmentsByDoctorNameAndDate(appointment *appointmentsHead, docto
         return;
     }
 
+    curr = appointmentsHead->next;
+
     printf("\nEnter doctor full name to search appointments:\n");
 
     inputFullName(surname, name, patronymic);
     inputDateForSearch(&day, &month, &year);
 
-    doctorCount = findDoctorIDsByFullName(schedulesHead, surname, name, patronymic, doctorIDs, 100);
+    doctorIDByFullName = findDoctorIDsByFullName(schedulesHead, surname, name, patronymic);
 
-    if (doctorCount == 0)
+    if (doctorIDByFullName == -1)
     {
-        printf("\nNo doctor found with full name: %s %s %s\n", surname, name, patronymic);
+        printf("No doctor with this name found\n");
         return;
     }
 
@@ -1235,23 +1244,34 @@ void findAllAppointmentsByDoctorNameAndDate(appointment *appointmentsHead, docto
     printf("Date: %02d.%02d.%04d\n", day, month, year);
     printf("\n");
 
-    // Используем существующую шапку таблицы
-    printAppointmentsListHead();
+    showAppointmentsListHead();
 
-    printFoundAppointments(appointmentsHead, doctorIDs, doctorCount, day, month, year);
+    while (curr->next != NULL)
+    {
+        if (doctorIDByFullName == curr->doctorID && curr->appointmentDate.year == year &&
+            curr->appointmentDate.month == month && curr->appointmentDate.day == day)
+        {
+            isThereNoRightAppointments = 0;
+            showAppointmentsListRow(count, curr);
 
-    // Нижняя граница (такая же, как в showAppointmentsList)
-    printf("+-----+------------+----------+-------+----------------------------------------------------+------+----------+\n");
+            printf("+-----+------------+----------+-------+----------------------------------------------------+------+----------+\n");
+            count++;
+        }
+        curr = curr->next;
+    }
+
+    if (isThereNoRightAppointments)
+        printf("No appointments found\n");
 }
 
 // Ввод ФИО врача
 void inputFullName(char *surname, char *name, char *patronymic)
 {
-    printf("Name: ");
+    printf("name: ");
     scanf("%29s", name);
-    printf("Surname: ");
+    printf("surname: ");
     scanf("%29s", surname);
-    printf("Patronymic: ");
+    printf("patronymic: ");
     scanf("%29s", patronymic);
 }
 
@@ -1273,84 +1293,73 @@ void inputDateForSearch(int *day, int *month, int *year)
     *day = scanInt(1, maxDay, "");
 }
 
-// int findDoctorIDsByFullName(doctorSchedule *head, const char *surname, const char *name, const char *patronymic, int *ids, int maxIds)
-// {
-//     doctorSchedule *curr;
-//     int count;
+int findDoctorIDsByFullName(doctorSchedule *head, const char *surname, const char *name, const char *patronymic)
+{
+    doctorSchedule *curr;
+    int doctorID;
 
-//     curr = head->next;
-//     count = 0;
+    curr = head->next;
+    doctorID = -1;
 
-//     while (curr != NULL)
-//     {
-//         if (strcasecmp(curr->surname, surname) == 0 &&
-//             strcasecmp(curr->name, name) == 0 &&
-//             strcasecmp(curr->patronymic, patronymic) == 0)
-//         {
-//             if (count < maxIds)
-//             {
-//                 ids[count] = curr->doctorID;
-//                 count++;
-//             }
-//         }
-//         curr = curr->next;
-//     }
-//     return count;
-// }
-
-// Вывод всех подходящих записей, используя существующие функции showAppointmentsList
-// (но мы не вызываем showAppointmentsList целиком, а только её строки)
-// void printFoundAppointments(appointment *head, const int *doctorIDs, int doctorCount, int day, int month, int year)
-// {
-//     appointment *curr;
-//     int rowNumber;
-//     int anyFound;
-//     int i;
-//     int matched;
-
-//     curr = head->next;
-//     rowNumber = 1;
-//     anyFound = 0;
-
-//     while (curr != NULL)
-//     {
-//         if (curr->appointmentDate.day == day &&
-//             curr->appointmentDate.month == month &&
-//             curr->appointmentDate.year == year)
-//         {
-//             matched = 0;
-//             i = 0;
-//             while (i < doctorCount)
-//             {
-//                 if (curr->doctorID == doctorIDs[i])
-//                 {
-//                     matched = 1;
-//                 }
-//                 i = i + 1;
-//             }
-//             if (matched)
-//             {
-//                 printAppointmentsListRow(rowNumber, curr);
-//                 rowNumber = rowNumber + 1;
-//                 anyFound = 1;
-//             }
-//         }
-//         curr = curr->next;
-//     }
-
-//     if (!anyFound)
-//     {
-//         // Центрированное сообщение об отсутствии записей (под ширину таблицы)
-//         printf("|                     No appointments found                       |\n");
-//     }
-// }
+    while (curr != NULL)
+    {
+        if (strcasecmp(curr->surname, surname) == 0 &&
+            strcasecmp(curr->name, name) == 0 &&
+            strcasecmp(curr->patronymic, patronymic) == 0)
+        {
+            doctorID = curr->doctorID;
+        }
+        curr = curr->next;
+    }
+    return doctorID;
+}
 
 void findAllAppointmentsByPatientName(appointment *appointmentsHead)
 {
+    char surname[17], name[17], patronymic[17];
+    _Bool isThereNoRightAppointments;
+    int count;
+    appointment *curr;
 
+    count = 1;
+    isThereNoRightAppointments = 1;
+
+    if (appointmentsHead->next == NULL)
+    {
+        printf("No appointments found. No data available for search\n");
+        return;
+    }
+
+    curr = appointmentsHead->next;
+
+    printf("\nEnter patient full name to search appointments:\n");
+
+    inputFullName(surname, name, patronymic);
+
+    printf("\n==================== APPOINTMENTS BY PATIENT NAME ====================\n");
+    printf("Patient: %s %s %s\n", surname, name, patronymic);
+    printf("\n");
+
+    showAppointmentsListHead();
+
+    while (curr->next != NULL)
+    {
+        if (strcasecmp(curr->surname, surname) == 0 &&
+            strcasecmp(curr->name, name) == 0 &&
+            strcasecmp(curr->patronymic, patronymic) == 0)
+        {
+            isThereNoRightAppointments = 0;
+            showAppointmentsListRow(count, curr);
+
+            printf("+-----+------------+----------+-------+----------------------------------------------------+------+----------+\n");
+            count++;
+        }
+        curr = curr->next;
+    }
+
+    if (isThereNoRightAppointments)
+        printf("No appointments found\n");
 }
-
-
 
 
 
@@ -1358,13 +1367,19 @@ void deleteDataFromList(appointment *appointmentsHead, doctorSchedule *schedules
 {
 }
 
+
+
 void changeData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
 }
 
+
+
 void manageAppointments(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
 }
+
+
 
 void quitAndSave(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
@@ -1372,6 +1387,8 @@ void quitAndSave(appointment *appointmentsHead, doctorSchedule *schedulesHead)
     saveSchedulesToFile(schedulesHead);
     printf("\nData saved successfully\n");
 }
+
+
 
 void saveAppointmentsToFile(appointment *head)
 {
