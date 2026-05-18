@@ -612,6 +612,7 @@ void showLists(appointment *appointmentsHead, doctorSchedule *schedulesHead)
     }
 }
 
+// Сделать в виде таблицы
 void showAppointmentsList(appointment *appointmentsHead)
 {
     appointment *curr;
