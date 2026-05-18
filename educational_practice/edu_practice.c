@@ -98,10 +98,10 @@ void readSchedulesFromFile(doctorSchedule *head);
 void showLists(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 void showAppointmentsListHead();
 void showAppointmentsListRow(int rowNumber, const appointment *curr);
-void showAppointmentsList(appointment *appointmentsHead);
+int showAppointmentsList(appointment *appointmentsHead);
 void showSchedulesListHead();
 void showSchedulesListRow(int rowNumber, const doctorSchedule *curr);
-void showSchedulesList(doctorSchedule *schedulesHead);
+int showSchedulesList(doctorSchedule *schedulesHead);
 
 void sortList(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 void sortAppointmentsByDoctorID(appointment *appointmentsHead);
@@ -127,6 +127,10 @@ appointment *fillAppointment();
 doctorSchedule *fillSchedule();
 
 void deleteDataFromList(appointment *appointmentsHead, doctorSchedule *schedulesHead);
+void deleteFromAppointmentsList(appointment *appointmentsHead, int count);
+void deleteFromSchedulesList(doctorSchedule *schedulesHead, int count);
+_Bool checkIsClientSureToDelete(int index);
+
 void changeData(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 void manageAppointments(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 
@@ -630,34 +634,34 @@ void showAppointmentsListHead()
     printf("+-----+------------+----------+-------+----------------------------------------------------+------+----------+\n");
 }
 
-// Сделать в виде таблицы
-void showAppointmentsList(appointment *appointmentsHead)
+// Сделать в виде таблицы (возвращает количество элементов списка)
+int showAppointmentsList(appointment *appointmentsHead)
 {
     appointment *curr;
     int count;
 
     curr = appointmentsHead->next;
-    count = 1;
+    count = 0;
 
     printf("\n==================== APPOINTMENTS LIST ====================\n");
 
     if (curr == NULL)
     {
         printf("No appointments found.\n");
-        return;
+        return count;
     }
 
     showAppointmentsListHead();
 
     while (curr != NULL)
     {
-        showAppointmentsListRow(count, curr);
-
-        curr = curr->next;
         count++;
+        showAppointmentsListRow(count, curr);
+        curr = curr->next;
     }
 
     printf("+-----+------------+----------+-------+----------------------------------------------------+------+----------+\n");
+    return count;
 }
 
 void showAppointmentsListRow(int rowNumber, const appointment *curr)
@@ -685,31 +689,34 @@ void showSchedulesListHead()
     printf("+-----+----------+-------------------------------------+----------------------------------------------------+-----------+---------+---------+\n");
 }
 
-void showSchedulesList(doctorSchedule *schedulesHead)
+// возвращает количество элементов списка
+int showSchedulesList(doctorSchedule *schedulesHead)
 {
     doctorSchedule *curr;
     int rowCount;
 
     curr = schedulesHead->next;
-    rowCount = 1;
+    rowCount = 0;
 
     printf("\n==================== DOCTOR SCHEDULES LIST ====================\n");
 
     if (curr == NULL)
     {
         printf("No schedules found.\n");
-        return;
+        return rowCount;
     }
 
     showSchedulesListHead();
 
     while (curr != NULL)
     {
+        rowCount++;
         showSchedulesListRow(rowCount, curr);
         printf("+-----+----------+-------------------------------------+----------------------------------------------------+-----------+---------+---------+\n");
-        rowCount++;
         curr = curr->next;
     }
+
+    return rowCount;
 }
 
 void showSchedulesListRow(int rowNumber, const doctorSchedule *curr)
@@ -1185,9 +1192,6 @@ _Bool isScheduleNodeBefore(const doctorSchedule *node, const doctorSchedule *oth
     return isBefore;
 }
 
-
-
-
 // Главная функция findData (оркестрация)
 void findData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
@@ -1198,7 +1202,7 @@ void findData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
     printf(" 2 - Find all appointments by patient fill name\n");
     option = scanInt(1, 2, "> ");
 
-    if (option == 1) 
+    if (option == 1)
         findAllAppointmentsByDoctorNameAndDate(appointmentsHead, schedulesHead);
     else
         findAllAppointmentsByPatientName(appointmentsHead);
@@ -1361,25 +1365,138 @@ void findAllAppointmentsByPatientName(appointment *appointmentsHead)
         printf("No appointments found\n");
 }
 
-
-
 void deleteDataFromList(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
+    int option, count;
+
+    printf("\nFrom which list do you want to delete?\n");
+    printf(" 1 - Appointments list\n");
+    printf(" 2 - Schedule list\n");
+    option = scanInt(1, 2, "> ");
+
+    if (option == 1)
+    {
+        count = showAppointmentsList(appointmentsHead);
+        deleteFromAppointmentsList(appointmentsHead, count);
+    }
+    else
+    {
+        count = showSchedulesList(schedulesHead);
+        deleteFromSchedulesList(schedulesHead, count);
+    }
 }
 
+void deleteFromAppointmentsList(appointment *appointmentsHead, int count)
+{
+    appointment *curr, *prev;
+    int indexToDelete;
 
+    if (count == 0)
+    {
+        printf("There is no data to delete in appointments list\n");
+        return;
+    }
+
+    prev = appointmentsHead;
+    curr = prev->next;
+
+    printf("Write number "
+           "#"
+           " which you need to delete\n");
+    indexToDelete = scanInt(1, count, "> ");
+    indexToDelete--;
+
+    if (checkIsClientSureToDelete(indexToDelete))
+    {
+
+        while (curr->next != NULL && indexToDelete != 0)
+        {
+            prev = curr;
+            curr = curr->next;
+            indexToDelete--;
+        }
+
+        if (indexToDelete == 0)
+        {
+            prev->next = curr->next;
+            free(curr);
+            printf("The element was deleted\n");
+        }
+        else
+            printf("Unknown error happened, element was NOT deleted\n");
+    }
+    else
+        printf("The element was NOT deleted by user's choice\n");
+}
+
+void deleteFromSchedulesList(doctorSchedule *schedulesHead, int count)
+{
+    doctorSchedule *curr, *prev;
+    int indexToDelete;
+
+    if (count == 0)
+    {
+        printf("There is no data to delete in schedules list\n");
+        return;
+    }
+
+    prev = schedulesHead;
+    curr = prev->next;
+
+    printf("Write number "
+           "#"
+           " which you need to delete\n");
+    indexToDelete = scanInt(1, count, "> ");
+    indexToDelete--;
+
+    if (checkIsClientSureToDelete(indexToDelete))
+    {
+
+        while (curr->next != NULL && indexToDelete != 0)
+        {
+            prev = curr;
+            curr = curr->next;
+            indexToDelete--;
+        }
+
+        if (indexToDelete == 0)
+        {
+            prev->next = curr->next;
+            free(curr);
+            printf("The element was deleted\n");
+        }
+        else
+            printf("Unknown error happened, element was NOT deleted\n");
+    }
+    else
+        printf("The element was NOT deleted by user's choice\n");
+}
+
+_Bool checkIsClientSureToDelete(int index)
+{
+    int option;
+    _Bool isSure;
+
+    printf("\nAre you sure you want to delete element number <%d> ?\n", index);
+    printf(" 1 - YES\n");
+    printf(" 2 - NO\n");
+    option = scanInt(1, 2, "> ");
+
+    if (option == 1)
+        isSure = 1;
+    else
+        isSure = 0;
+
+    return isSure;
+}
 
 void changeData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
 }
 
-
-
 void manageAppointments(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
 }
-
-
 
 void quitAndSave(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
@@ -1387,8 +1504,6 @@ void quitAndSave(appointment *appointmentsHead, doctorSchedule *schedulesHead)
     saveSchedulesToFile(schedulesHead);
     printf("\nData saved successfully\n");
 }
-
-
 
 void saveAppointmentsToFile(appointment *head)
 {
