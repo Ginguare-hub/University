@@ -91,7 +91,7 @@ int getOption();
 void processUserChoice(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 
 // ! Menu function
-void readDataFormFiles(appointment *appointmentsHead, doctorSchedule *schedulesHead);
+void readDataFormFiles(appointment **appointmentsHead, doctorSchedule **schedulesHead);
 void readAppointmentsFromFile(appointment *head);
 void readSchedulesFromFile(doctorSchedule *head);
 
@@ -178,7 +178,7 @@ void processUserChoice(appointment *appointmentsHead, doctorSchedule *schedulesH
         switch (option)
         {
         case 1:
-            readDataFormFiles(appointmentsHead, schedulesHead);
+            readDataFormFiles(&appointmentsHead, &schedulesHead);
             assignQueueNumbers(appointmentsHead);
             break;
         case 2:
@@ -470,10 +470,16 @@ doctorSchedule *fillSchedule()
     return newSchedule;
 }
 
-void readDataFormFiles(appointment *appointmentsHead, doctorSchedule *schedulesHead)
+void readDataFormFiles(appointment **appointmentsHead, doctorSchedule **schedulesHead)
 {
-    readAppointmentsFromFile(appointmentsHead);
-    readSchedulesFromFile(schedulesHead);
+    freeLists(*appointmentsHead, *schedulesHead);
+    *appointmentsHead = (appointment *)malloc(sizeof(appointment));
+    (*appointmentsHead)->next = NULL;
+    *schedulesHead = (doctorSchedule *)malloc(sizeof(doctorSchedule));
+    (*schedulesHead)->next = NULL;
+
+    readAppointmentsFromFile(*appointmentsHead);
+    readSchedulesFromFile(*schedulesHead);
 }
 
 void readAppointmentsFromFile(appointment *head)
@@ -617,11 +623,12 @@ void showAppointmentsList(appointment *appointmentsHead)
 {
     appointment *curr;
     int count;
+    char fullName[94]; // 93 символов + \0
 
-    curr = appointmentsHead->next; // пропускаем фиктивный головной узел
+    curr = appointmentsHead->next;
     count = 1;
 
-    printf("\n========== APPOINTMENTS LIST ==========\n");
+    printf("\n==================== APPOINTMENTS LIST ====================\n");
 
     if (curr == NULL)
     {
@@ -629,62 +636,112 @@ void showAppointmentsList(appointment *appointmentsHead)
         return;
     }
 
+    // Таблица с фиксированной шириной колонок
+    // Ширина колонки "Patient name" = 30 символов
+    printf("+----+------------+----------+-------+----------------------------------------------------+------+----------+\n");
+    printf("| #  |    Date    |   Time   | Queue | Patient name                                       | Cab. | DoctorID |\n");
+    printf("+----+------------+----------+-------+----------------------------------------------------+------+----------+\n");
+
     while (curr != NULL)
     {
-        printf("\n--- Appointment #%d ---\n", count);
-        printf("Date: %02d.%02d.%04d\n",
+        snprintf(fullName, sizeof(fullName), "%s %s %s", curr->surname, curr->name, curr->patronymic);
+
+        // Важно: %-30.30s - ровно 30 символов, левое выравнивание
+        printf("| %2d | %02d.%02d.%04d |  %02d:%02d   | %5d | %-50.50s | %4d | %8d |\n",
+               count,
                curr->appointmentDate.day,
                curr->appointmentDate.month,
-               curr->appointmentDate.year);
-        printf("Time: %02d:%02d\n",
+               curr->appointmentDate.year,
                curr->appointmentTime.hour,
-               curr->appointmentTime.minute);
-        printf("Queue number: %d\n", curr->queuePlace);
-        printf("Patient: %s %s %s\n",
-               curr->surname, curr->name, curr->patronymic);
-        printf("Cabinet: %d\n", curr->cabinet);
-        printf("Doctor ID: %d\n", curr->doctorID);
+               curr->appointmentTime.minute,
+               curr->queuePlace,
+               fullName,
+               curr->cabinet,
+               curr->doctorID);
 
         curr = curr->next;
         count++;
     }
+
+    printf("+----+------------+----------+-------+----------------------------------------------------+------+----------+\n");
 }
 
 void showSchedulesList(doctorSchedule *schedulesHead)
 {
     doctorSchedule *curr;
-    int i, count, startHour, startMinute, endHour, endMinute;
-    char *dayNames[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+    int rowCount;
+    int i, startHour, startMinute, endHour, endMinute;
+    char *dayNames[6];
+    char fullName[31];
+    char specialization[21];
+    int firstForDoctor;
+    const char *specOut;
+    const char *nameOut;
 
-    curr = schedulesHead->next; // пропускаем фиктивный головной узел
-    count = 1;
+    dayNames[0] = "Monday";
+    dayNames[1] = "Tuesday";
+    dayNames[2] = "Wednesday";
+    dayNames[3] = "Thursday";
+    dayNames[4] = "Friday";
+    dayNames[5] = "Saturday";
 
-    printf("\n========== DOCTOR SCHEDULES LIST ==========\n");
+    curr = schedulesHead->next;
+    rowCount = 1;
+
+    printf("\n==================== DOCTOR SCHEDULES LIST ====================\n");
 
     if (curr == NULL)
     {
         printf("No schedules found.\n");
         return;
     }
+                                                     
+    printf("+-----+----------+----------------------+----------------------------------------------------+-----------+---------+---------+\n");
+    printf("|  #  | DoctorID | Specialization       | Doctor name                                        | Day       |  Start  |   End   |\n");
+    printf("+-----+----------+----------------------+----------------------------------------------------+-----------+---------+---------+\n");
 
     while (curr != NULL)
     {
-        printf("\n--- Doctor #%d ---\n", count);
-        printf("ID: %d\n", curr->doctorID);
-        printf("Specialization: %s\n", curr->specialization);
-        printf("Full name: %s %s %s\n", curr->surname, curr->name, curr->patronymic);
-        printf("Working schedule (Monday to Saturday):\n");
+        snprintf(fullName, sizeof(fullName), "%s %s %s",
+                 curr->surname, curr->name, curr->patronymic);
+        snprintf(specialization, sizeof(specialization), "%s", curr->specialization);
+
+        firstForDoctor = 1;
 
         for (i = 0; i < 6; i++)
         {
-            getTimeFromOnlyMinutes(curr->schedule[i][0], &startHour, &startMinute);
-            getTimeFromOnlyMinutes(curr->schedule[i][1], &endHour, &endMinute);
-            printf("  %-9s: %02d:%02d - %02d:%02d\n", dayNames[i], startHour, startMinute, endHour, endMinute);
-        }
+            if (curr->schedule[i][0] != 0 || curr->schedule[i][1] != 0)
+            {
+                getTimeFromOnlyMinutes(curr->schedule[i][0], &startHour, &startMinute);
+                getTimeFromOnlyMinutes(curr->schedule[i][1], &endHour, &endMinute);
 
+                if (firstForDoctor)
+                {
+                    specOut = specialization;
+                    nameOut = fullName;
+                }
+                else
+                {
+                    specOut = "";
+                    nameOut = "";
+                }
+
+                printf("| %3d | %8d | %-20.20s | %-50.50s | %-9s |  %02d:%02d  |  %02d:%02d  |\n",
+                       rowCount++,
+                       curr->doctorID,
+                       specOut,
+                       nameOut,
+                       dayNames[i],
+                       startHour, startMinute,
+                       endHour, endMinute);
+
+                firstForDoctor = 0;
+            }
+        }
+        printf("+-----+----------+----------------------+----------------------------------------------------+-----------+---------+---------+\n");
         curr = curr->next;
-        count++;
     }
+
 }
 
 // Сортировки
@@ -1247,6 +1304,9 @@ void freeLists(appointment *appointmentsHead, doctorSchedule *schedulesHead)
         free(schCurr);
         schCurr = schNext;
     }
+
+    appointmentsHead = NULL;
+    schedulesHead = NULL;
 }
 
 // --------------------------------------------------------------
