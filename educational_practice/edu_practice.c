@@ -144,13 +144,12 @@ void saveAppointmentsToFile(appointment *head);
 void saveSchedulesToFile(doctorSchedule *head);
 // !
 
+int findMaxDay(int month, int year);
+int findDayOfWeek(int day, int month, int year);
+void getTimeFromOnlyMinutes(int amountOfMinutes, int *hour, int *minute);
 int getTimeInMinutes(int hour, int minute);
 
-int findMaxDay(int month, int year);
-
 int scanInt(const int MIN_NUMBER, const int MAX_NUMBER, const char myString[]);
-void getTimeFromOnlyMinutes(int amountOfMinutes, int *hour, int *minute);
-
 void freeLists(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 
 // ? To Test
@@ -456,7 +455,7 @@ doctorSchedule *fillSchedule()
     printf("name: ");
     scanf("%16s", newSchedule->name);
     printf("surname: ");
-    scanf("%16s", newSchedule->surname);
+    scanf("%16s", newSchedule->surname); 
     printf("patronymic: ");
     scanf("%16s", newSchedule->patronymic);
 
@@ -468,7 +467,6 @@ doctorSchedule *fillSchedule()
     len = strlen(newSchedule->specialization);
     if (len > 0 && newSchedule->specialization[len - 1] == '\n')
         newSchedule->specialization[len - 1] = '\0';
-    printf("%s\n", newSchedule->specialization);
 
     printf("Write doctor schedule for each working day (Monday to Saturday):\n");
 
@@ -1563,7 +1561,7 @@ void changeFromAppointmentsList(appointment *appointmentsHead, int count)
     optionChange = chooseWhatToChangeAsAppointment();
     changed = appointmentsHead;
 
-    printf("Write number \"#\" which you need to change\n");
+    printf("\nWrite number \"#\" which you need to change\n\n");
     indexToChange = scanInt(1, count, "> ");
 
     while (changed->next != NULL && indexToChange != 0)
@@ -1594,7 +1592,7 @@ void changeFromAppointmentsList(appointment *appointmentsHead, int count)
             break;
         case 4:
             printf("Old date: <%02d.%02d.%d>\n", changed->appointmentDate.day, changed->appointmentDate.month, changed->appointmentDate.year);
-            printf("New date");
+            printf("New date\n");
             printf("year: ");
             changed->appointmentDate.year = scanInt(MIN_YEAR, MAX_YEAR, "");
             printf("month: ");
@@ -1972,9 +1970,9 @@ void numberCabinet(appointment *head, int cabinet)
     }
 }
 
-// --------------------------------------------------------------
+// ---
 // Главная функция: полностью пересчитывает номера очереди для всех талонов
-// --------------------------------------------------------------
+// ---
 void assignQueueNumbers(appointment *head)
 {
     int cabinet;
@@ -1991,4 +1989,28 @@ void assignQueueNumbers(appointment *head)
         numberCabinet(head, cabinet);
         first = findFirstUnassigned(head, &cabinet);
     }
+}
+
+int findDayOfWeek(int day, int month, int year)
+{
+    int totalDays, yearCounter, monthCounter, startDay2026, dayOfWeek;
+
+    totalDays = 0;
+    startDay2026 = 3;
+
+    for (yearCounter = 2026; yearCounter < year; yearCounter++)
+        if ((yearCounter % 4 == 0 && yearCounter % 100 != 0) || (yearCounter % 400 == 0))
+            totalDays = totalDays + 366;
+        else
+            totalDays = totalDays + 365;
+
+
+    for (monthCounter = 1; monthCounter < month; monthCounter++) 
+        totalDays = totalDays + findMaxDay(monthCounter, year);
+
+    totalDays = totalDays + day;
+
+    dayOfWeek = (startDay2026 + totalDays - 1) % 7;
+
+    return dayOfWeek;
 }
