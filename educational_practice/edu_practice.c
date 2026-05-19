@@ -118,7 +118,7 @@ doctorSchedule *insertScheduleSortedBySurname(doctorSchedule *sorted, doctorSche
 void findData(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 void findAllAppointmentsByDoctorNameAndDate(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 void inputFullName(char *surname, char *name, char *patronymic);
-void inputDateForSearch(int *day, int *month, int *year);
+void inputDate(int *day, int *month, int *year);
 int findDoctorIDsByFullName(doctorSchedule *head, const char *surname, const char *name, const char *patronymic);
 void findAllAppointmentsByPatientName(appointment *appointmentsHead);
 
@@ -138,6 +138,12 @@ int chooseWhatToChangeAsSchedule();
 void changeFromSchedulesList(doctorSchedule *schedulesHead, int count);
 
 void manageAppointments(appointment *appointmentsHead, doctorSchedule *schedulesHead);
+int showDoctorsList(doctorSchedule *schedulesHead);
+int isSlotTaken(appointment *appointmentsHead, int doctorID, int year, int month, int day, int hour, int minute);
+void printFreeSlotsForDay(date d, int wday, doctorSchedule *doc, appointment *appointmentsHead);
+void displayWeekSchedule(doctorSchedule *doc, date startDate, appointment *appointmentsHead);
+void createAppointmentForDoctor(doctorSchedule *doc, appointment *appointmentsHead);
+doctorSchedule *getDoctorByIndex(doctorSchedule *head, int index);
 
 void quitAndSave(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 void saveAppointmentsToFile(appointment *head);
@@ -407,9 +413,9 @@ appointment *fillAppointment()
     printf("patronymic: ");
     scanf("%16s", newAppointment->patronymic);
 
-    printf("Write doctor ID: ");
+    printf("doctorID: ");
     newAppointment->doctorID = scanInt(0, MAX_ID, "");
-    printf("Write doctor cabinet: ");
+    printf("cabinet: ");
     newAppointment->cabinet = scanInt(0, MAX_CABINET, "");
 
     printf("Write appointment date\n");
@@ -459,10 +465,10 @@ doctorSchedule *fillSchedule()
     printf("patronymic: ");
     scanf("%16s", newSchedule->patronymic);
 
-    printf("\nWrite doctor ID: ");
+    printf("\ndoctorID: ");
     newSchedule->doctorID = scanInt(0, MAX_ID, "");
 
-    printf("\nWrite doctor specialization: ");
+    printf("\ndoctor specialization: ");
     fgets(newSchedule->specialization, sizeof(newSchedule->specialization), stdin);
     len = strlen(newSchedule->specialization);
     if (len > 0 && newSchedule->specialization[len - 1] == '\n')
@@ -1246,7 +1252,8 @@ void findAllAppointmentsByDoctorNameAndDate(appointment *appointmentsHead, docto
     printf("\nEnter doctor full name to search appointments:\n");
 
     inputFullName(surname, name, patronymic);
-    inputDateForSearch(&day, &month, &year);
+    printf("\nEnter appointment date:\n");
+    inputDate(&day, &month, &year);
 
     doctorIDByFullName = findDoctorIDsByFullName(schedulesHead, surname, name, patronymic);
 
@@ -1293,14 +1300,13 @@ void inputFullName(char *surname, char *name, char *patronymic)
 }
 
 // ¬вод даты дл€ поиска
-void inputDateForSearch(int *day, int *month, int *year)
+void inputDate(int *day, int *month, int *year)
 {
     int maxDay;
     const int MIN_YEAR = 2026;
     const int MAX_YEAR = 2028;
     const int MAX_MONTH = 12;
 
-    printf("\nEnter appointment date:\n");
     printf("year: ");
     *year = scanInt(MIN_YEAR, MAX_YEAR, "");
     printf("month: ");
@@ -1558,18 +1564,20 @@ void changeFromAppointmentsList(appointment *appointmentsHead, int count)
     appointment *changed;
 
     maxDay = 0;
-    optionChange = chooseWhatToChangeAsAppointment();
+    optionChange = 0;
     changed = appointmentsHead;
-
-    printf("\nWrite number \"#\" which you need to change\n\n");
+    
+    printf("\nWrite number \"#\" of patient which you need to change\n");
     indexToChange = scanInt(1, count, "> ");
-
+    
     while (changed->next != NULL && indexToChange != 0)
     {
         changed = changed->next;
         indexToChange--;
     }
 
+    optionChange = chooseWhatToChangeAsAppointment();
+    
     if (indexToChange == 0)
     {
 
@@ -1578,17 +1586,17 @@ void changeFromAppointmentsList(appointment *appointmentsHead, int count)
         case 1:
             printf("Old name <%s>\n", changed->name);
             printf("New name: ");
-            scanf("%29s", changed->name);
+            scanf("%16s", changed->name);
             break;
         case 2:
             printf("Old surname <%s>\n", changed->surname);
             printf("New surname: ");
-            scanf("%29s", changed->surname);
+            scanf("%16s", changed->surname);
             break;
         case 3:
             printf("Old patronymic <%s>\n", changed->patronymic);   
             printf("New patronymic: ");
-            scanf("%29s", changed->patronymic);
+            scanf("%16s", changed->patronymic);
             break;
         case 4:
             printf("Old date: <%02d.%02d.%d>\n", changed->appointmentDate.day, changed->appointmentDate.month, changed->appointmentDate.year);
@@ -1660,10 +1668,10 @@ void changeFromSchedulesList(doctorSchedule *schedulesHead, int count)
     maxDay = 0;
     counter = 0;
     indexToChange = 0;
-    optionChange = chooseWhatToChangeAsSchedule();
+    optionChange = 0;
     changed = schedulesHead;
 
-    printf("Write number \"#\" which you need to change\n");
+    printf("\nWrite number \"#\" of doctor which you need to change\n");
     indexToChange = scanInt(1, count, "> ");
 
     counter = indexToChange;
@@ -1673,6 +1681,8 @@ void changeFromSchedulesList(doctorSchedule *schedulesHead, int count)
         changed = changed->next;
         counter--;
     }
+
+    optionChange = chooseWhatToChangeAsSchedule();
     
     if (counter == 0)
     {
@@ -1681,17 +1691,17 @@ void changeFromSchedulesList(doctorSchedule *schedulesHead, int count)
         case 1:
             printf("Old name <%s>\n", changed->name);
             printf("New name: ");
-            scanf("%29s", changed->name);
+            scanf("%16s", changed->name);
             break;
         case 2:
             printf("Old surname <%s>\n", changed->surname);
             printf("New surname: ");
-            scanf("%29s", changed->surname);
+            scanf("%16s", changed->surname);
             break;
         case 3:
             printf("Old patronymic <%s>\n", changed->patronymic);   
             printf("New patronymic: ");
-            scanf("%29s", changed->patronymic);
+            scanf("%16s", changed->patronymic);
             break;
         case 4:
             printf("Old specialization <%s>\n", changed->specialization);   
@@ -1732,8 +1742,328 @@ void changeFromSchedulesList(doctorSchedule *schedulesHead, int count)
 
 //
 
+// void manageAppointments(appointment *appointmentsHead, doctorSchedule *schedulesHead)
+// {
+//     int count, doctorIndex, day, month, year, dayOfWeek, i, option;
+//     doctorSchedule *curr;
+//     date startDate;
+
+//     count = 0;
+//     doctorIndex = 0;
+//     day = 0;
+//     month = 0;
+//     year = 0;
+//     dayOfWeek = 0;
+
+//     curr = schedulesHead->next;
+//     i = 1;
+    
+//     if (schedulesHead->next == NULL)
+//     {
+//         printf("There are no doctors to take an appointment with\n");
+//         return;
+//     }
+
+//     // ѕолучить дату и день недели, с которого начать
+//     printf("\nEnter the starting date to display the doctor's schedule for the week:\n");
+//     inputDate(&day, &month, &year);
+//     dayOfWeek = findDayOfWeek(day, month, year);
+//     startDate.day = day;
+//     startDate.month = month;
+//     startDate.year = year;
+
+//     // ѕолучить пор€дковый номер врача, к которому человек хочет записатьс€
+//     count = showDoctorsList(appointmentsHead);
+//     printf("\nWrite number \"#\" of doctor which you need to change\n");
+//     doctorIndex = scanInt(1, count, "> ");
+
+//     // ¬ывести график врача на неделю с датами и дн€ми недели начина€ с введЄнного дн€
+
+//     // дать возможность зайти в день недели и посмотреть возможности записатьс€ 
+//     // (с периодом в пол часа), учитыва€ остальные записи к врачу от уже существующих записей.
+//     // ”честь возможность выйти и просмотреть другие дни и выбрать талончик
+
+//     while (curr->next != NULL && i < doctorIndex)
+//     {
+//         curr = curr->next;
+//         i++;
+//     }
+
+//     // 3. ѕоказать расписание на 7 дней с учЄтом зан€тых слотов
+//     displayWeekSchedule(curr, startDate, appointmentsHead);
+
+//     // 4. ѕредложить записатьс€
+//     printf("\nDo you want to book an appointment?\n");
+//     printf(" 1 - YES\n");
+//     printf(" 2 - NO\n");
+//     option = scanInt(1, 2, "> ");
+
+//     if (option == 1)
+//     {
+//         createAppointmentForDoctor(curr, appointmentsHead);
+//     }
+//     else
+//     {
+//         printf("Booking cancelled.\n");
+//     }
+// }
+
 void manageAppointments(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
+    int doctorCount, doctorIndex;
+    doctorSchedule *selectedDoctor;
+    date startDate;
+    int day, month, year;
+    int option;
+
+    // ѕроверка наличи€ врачей
+    if (schedulesHead->next == NULL)
+    {
+        printf("There are no doctors to take an appointment with\n");
+        return;
+    }
+
+    // 1. ѕоказать список врачей и выбрать нужного
+    doctorCount = showDoctorsList(schedulesHead);
+    if (doctorCount == 0)
+        return;
+
+    printf("\nEnter the number of the doctor you want to book: \n");
+    doctorIndex = scanInt(1, doctorCount, "> ");
+    selectedDoctor = getDoctorByIndex(schedulesHead, doctorIndex);
+    if (selectedDoctor == NULL)
+    {
+        printf("Invalid doctor number.\n");
+        return;
+    }
+
+    // 2. ¬вести начальную дату дл€ отображени€ недельного расписани€
+    printf("\nEnter the starting date to display the doctor's schedule for the week:\n");
+    inputDate(&day, &month, &year);
+    startDate.day = day;
+    startDate.month = month;
+    startDate.year = year;
+
+    // 3. ѕоказать расписание на 7 дней с учЄтом зан€тых слотов
+    displayWeekSchedule(selectedDoctor, startDate, appointmentsHead);
+
+    // 4. ѕредложить записатьс€
+    printf("\nDo you want to book an appointment?\n");
+    printf(" 1 - YES\n");
+    printf(" 2 - NO\n");
+    
+    option = scanInt(1, 2, "> ");
+
+    if (option == 1)
+    {
+        createAppointmentForDoctor(selectedDoctor, appointmentsHead);
+        // ѕосле добавлени€ пересчитать очереди (вызоветс€ в processUserChoice после возврата)
+    }
+    else
+    {
+        printf("Booking cancelled.\n");
+    }
+}
+
+doctorSchedule *getDoctorByIndex(doctorSchedule *head, int index)
+{
+    doctorSchedule *curr;
+    int i;
+
+    curr = head->next;
+    i = 1;
+    while (curr != NULL && i < index)
+    {
+        curr = curr->next;
+        i++;
+    }
+    return curr; // вернЄт NULL, если index больше количества элементов
+}
+
+// ---------- ¬спомогательные функции дл€ manageAppointments ----------
+
+// ѕоказать список врачей (только основные пол€) и вернуть количество
+int showDoctorsList(doctorSchedule *schedulesHead)
+{
+    doctorSchedule *curr;
+    int count;
+
+    curr = schedulesHead->next;
+    count = 0;
+
+    printf("\n==================== DOCTORS LIST ====================\n");
+    if (curr == NULL)
+    {
+        printf("No doctors found.\n");
+        return count;
+    }
+
+    printf("+-----+----------+-------------------------------------+----------------------------------------------------+\n");
+    printf("|  #  | DoctorID | Specialization                      | Doctor name                                        |\n");
+    printf("+-----+----------+-------------------------------------+----------------------------------------------------+\n");
+
+    while (curr != NULL)
+    {
+        count++;
+        printf("| %3d | %8d | %-35.35s | %-50.50s |\n",
+               count,
+               curr->doctorID,
+               curr->specialization,
+               curr->name); // можно добавить фамилию, но кратко
+        curr = curr->next;
+    }
+    printf("+-----+----------+-------------------------------------+----------------------------------------------------+\n");
+    return count;
+}
+
+// ѕроверить, зан€т ли уже слот у данного врача в указанные дату и врем€
+int isSlotTaken(appointment *appointmentsHead, int doctorID, int year, int month, int day, int hour, int minute)
+{
+    appointment *curr;
+    curr = appointmentsHead->next;
+    while (curr != NULL)
+    {
+        if (curr->doctorID == doctorID &&
+            curr->appointmentDate.year == year &&
+            curr->appointmentDate.month == month &&
+            curr->appointmentDate.day == day &&
+            curr->appointmentTime.hour == hour &&
+            curr->appointmentTime.minute == minute)
+        {
+            return 1; // зан€то
+        }
+        curr = curr->next;
+    }
+    return 0; // свободно
+}
+
+// ¬ывести свободные/зан€тые слоты дл€ одного дн€ (с шагом 30 минут)
+void printFreeSlotsForDay(date d, int wday, doctorSchedule *doc, appointment *appointmentsHead)
+{
+    int startMin, endMin, slotStart, hour, minute;
+    int isFree;
+    char *dayNames[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    int dayIndex; // дл€ графика врача (0-5 пн-сб)
+
+    // ≈сли день воскресенье (индекс 6) Ц нерабочий
+    if (wday == 6)
+    {
+        printf("%02d.%02d.%04d (%s) : Non-working day\n", d.day, d.month, d.year, dayNames[wday]);
+        return;
+    }
+
+    dayIndex = wday; // предполагаем, что findDayOfWeek возвращает 0=пн, 1=вт, ..., 6=вс
+    if (doc->schedule[dayIndex][0] == 0 && doc->schedule[dayIndex][1] == 0)
+    {
+        printf("%02d.%02d.%04d (%s) : No working hours set\n", d.day, d.month, d.year, dayNames[wday]);
+        return;
+    }
+
+    startMin = doc->schedule[dayIndex][0];
+    endMin = doc->schedule[dayIndex][1];
+
+    printf("%02d.%02d.%04d (%s) :\n", d.day, d.month, d.year, dayNames[wday]);
+
+    for (slotStart = startMin; slotStart < endMin; slotStart += 30)
+    {
+        hour = slotStart / 60;
+        minute = slotStart % 60;
+        isFree = !isSlotTaken(appointmentsHead, doc->doctorID, d.year, d.month, d.day, hour, minute);
+        if (isFree)
+            printf("    %02d:%02d - %02d:%02d  FREE\n", hour, minute, (slotStart+30)/60, (slotStart+30)%60);
+        else
+            printf("    %02d:%02d - %02d:%02d  TAKEN\n", hour, minute, (slotStart+30)/60, (slotStart+30)%60);
+    }
+}
+
+// ѕоказать расписание на неделю, начина€ с указанной даты
+void displayWeekSchedule(doctorSchedule *doc, date startDate, appointment *appointmentsHead)
+{
+    date currentDate;
+    int dayOfWeek, i;
+
+    currentDate = startDate;
+    dayOfWeek = findDayOfWeek(currentDate.day, currentDate.month, currentDate.year);
+
+    for (i = 0; i < 7; i++)
+    {
+        printFreeSlotsForDay(currentDate, dayOfWeek, doc, appointmentsHead);
+        // переходим к следующему дню
+        currentDate.day++;
+        if (currentDate.day > findMaxDay(currentDate.month, currentDate.year))
+        {
+            currentDate.day = 1;
+            currentDate.month++;
+            if (currentDate.month > 12)
+            {
+                currentDate.month = 1;
+                currentDate.year++;
+            }
+        }
+        dayOfWeek = (dayOfWeek + 1) % 7;
+    }
+}
+
+// —оздать новый талон (запись) дл€ выбранного врача
+void createAppointmentForDoctor(doctorSchedule *doc, appointment *appointmentsHead)
+{
+    appointment *newApp, *last;
+    int day, month, year, hour, minute;
+
+    printf("\n--- Book an appointment ---\n");
+    printf("Enter date (day month year): ");
+    day = scanInt(1, 31, "day: ");
+    month = scanInt(1, 12, "month: ");
+    year = scanInt(2026, 2028, "year: ");
+    printf("Enter time (hour minute): ");
+    hour = scanInt(0, 23, "hour: ");
+    minute = scanInt(0, 59, "minute: ");
+
+    // ѕроверка, что минуты кратны 30 (дл€ упрощени€)
+    if (minute != 0 && minute != 30)
+    {
+        printf("Only minutes 0 or 30 are allowed for booking.\n");
+        return;
+    }
+
+    if (isSlotTaken(appointmentsHead, doc->doctorID, year, month, day, hour, minute))
+    {
+        printf("This slot is already taken.\n");
+        return;
+    }
+
+    // —оздание новой записи
+    newApp = (appointment *)malloc(sizeof(appointment));
+    if (newApp == NULL)
+    {
+        printf("Memory allocation error.\n");
+        return;
+    }
+
+    printf("Enter patient name: ");
+    scanf("%16s", newApp->name);
+    printf("Enter patient surname: ");
+    scanf("%16s", newApp->surname);
+    printf("Enter patient patronymic: ");
+    scanf("%16s", newApp->patronymic);
+
+    newApp->appointmentDate.day = day;
+    newApp->appointmentDate.month = month;
+    newApp->appointmentDate.year = year;
+    newApp->appointmentTime.hour = hour;
+    newApp->appointmentTime.minute = minute;
+    newApp->doctorID = doc->doctorID;
+    newApp->cabinet = 0; // можно запросить отдельно, но пока оставим 0
+    newApp->queuePlace = 0;
+    newApp->next = NULL;
+
+    // ƒобавление в конец списка
+    last = appointmentsHead;
+    while (last->next != NULL)
+        last = last->next;
+    last->next = newApp;
+
+    printf("Appointment successfully created!\n");
 }
 
 //
