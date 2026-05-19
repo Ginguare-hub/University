@@ -1886,73 +1886,53 @@ void displayWeekSchedule(doctorSchedule *selectedDoctor, date startDate, appoint
     }
 }
 
-int *findAndWriteFreeSlotsForDay(date currDate, doctorSchedule *doctor, appointment *appointmentsHead, int *outCount)
+int *findAndWriteFreeSlotsForDay(date currDate, doctorSchedule *doctor, appointment *appointmentsHead)
 {
     const int DURATION = 30;
     const int SUNDAY = 6;
 
-    int dow, startMin, endMin, slot, hour, minute, endHour, endMin;
-    int capacity, count;
-    int *arr;
-    int freeFlag;
+    int startMinute, endMinute, slotStart, hour, minute, endHour, endMinute, dayOfWeek;
+    _Bool isFree;
+    char *dayNames[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    int *availableStartsInMinutes;
 
-    dow = findDayOfWeek(currDate.day, currDate.month, currDate.year);
-    startMin = doctor->schedule[dow][0];
-    endMin = doctor->schedule[dow][1];
-    capacity = 0;
-    count = 0;
-    arr = NULL;
-    *outCount = 0;
+    availableStartsInMinutes = NULL;
 
-    if (dow == SUNDAY || (startMin == 0 && endMin == 0))
+    dayOfWeek = findDayOfWeek(currDate.day, currDate.month, currDate.year);
+
+    if (dayOfWeek == SUNDAY)
     {
-        printf("No working hours\n");
-        return NULL;
+        printf("%02d.%02d.%04d (%s) : Non-working day\n", d.day, d.month, d.year, dayNames[SUNDAY]);
+        return availableStartsInMinutes;
     }
 
-    printf("%02d.%02d.%04d :\n", currDate.day, currDate.month, currDate.year);
-
-    for (slot = startMin; slot < endMin; slot = slot + DURATION)
+    if (doc->schedule[dayIndex][0] == 0 && doc->schedule[dayIndex][1] == 0)
     {
-        getTimeFromOnlyMinutes(slot, &hour, &minute);
+        printf("%02d.%02d.%04d (%s) : No working hours set\n", d.day, d.month, d.year, dayNames[wday]);
+        return availableStartsInMinutes;
+    }
 
-        endHour = (slot + DURATION) / 60;
-        endMin = (slot + DURATION) % 60;
+    startMinute = doctor->schedule[dayIndex][0];
+    endMinute = doctor->schedule[dayIndex][1];
 
-        freeFlag = isSlotFree(appointmentsHead, doctor->doctorID, currDate, slot, slot + DURATION);
+    printf("%02d.%02d.%04d (%s) :\n", d.day, d.month, d.year, dayNames[wday]);
 
-        if (freeFlag == 1)
-        {
-            printf("    %02d:%02d - %02d:%02d  FREE\n", hour, minute, endHour, endMin);
+    for (slotStart = startMin; slotStart < endMin; slotStart = slotStart + DURATION)
+    {
+        getTimeFromOnlyMinutes(slotStart, &hour, &minute);
 
-            if (count >= capacity)
-            {
-                if (capacity == 0)
-                    capacity = 4;
-                else
-                    capacity = capacity * 2;
+        isFree = isSlotFree(appointmentsHead, doc->doctorID, currDate, slotStart, slotStart + DURATION);
 
-                arr = (int *)realloc(arr, capacity * sizeof(int));
-                
-                if (arr == NULL)
-                {
-                    printf("Memory error while realloc\n");
-                    free(arr);
-                    *outCount = 0;
-                    return NULL;
-                }
-            }
-            arr[count] = slot;
-            count = count + 1;
-        }
+        endHour = (slotStart + DURATION) / 60;
+        endMinute = (slotStart + DURATION) % 60;
+
+        if (isFree)
+            printf("    %02d:%02d - %02d:%02d  FREE\n", hour, minute, endHour, endMinute);
         else
-        {
-            printf("    %02d:%02d - %02d:%02d  TAKEN\n", hour, minute, endHour, endMin);
-        }
+            printf("    %02d:%02d - %02d:%02d  TAKEN\n", hour, minute, endHour, endMinute);
     }
 
-    *outCount = count;
-    return arr;
+    return availableStartsInMinutes;
 }
 
 _Bool isSlotFree(appointment *appointmentHead, int doctorID, date currDate, int start, int end)
