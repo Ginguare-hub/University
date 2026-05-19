@@ -132,6 +132,11 @@ void deleteFromSchedulesList(doctorSchedule *schedulesHead, int count);
 _Bool checkIsClientSureToDelete(int index);
 
 void changeData(appointment *appointmentsHead, doctorSchedule *schedulesHead);
+int chooseWhatToChangeAsAppointment();
+void changeFromAppointmentsList(appointment *appointmentsHead, int count);
+int chooseWhatToChangeAsSchedule();
+void changeFromSchedulesList(doctorSchedule *schedulesHead, int count);
+
 void manageAppointments(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 
 void quitAndSave(appointment *appointmentsHead, doctorSchedule *schedulesHead);
@@ -338,6 +343,8 @@ int scanInt(const int MIN_NUMBER, const int MAX_NUMBER, const char myString[])
     return number;
 }
 
+//
+
 void addDataToList(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
     int option;
@@ -395,11 +402,11 @@ appointment *fillAppointment()
 
     printf("Write patient\n");
     printf("name: ");
-    scanf("%29s", newAppointment->name);
+    scanf("%16s", newAppointment->name);
     printf("surname: ");
-    scanf("%29s", newAppointment->surname);
+    scanf("%16s", newAppointment->surname);
     printf("patronymic: ");
-    scanf("%29s", newAppointment->patronymic);
+    scanf("%16s", newAppointment->patronymic);
 
     printf("Write doctor ID: ");
     newAppointment->doctorID = scanInt(0, MAX_ID, "");
@@ -433,6 +440,7 @@ doctorSchedule *fillSchedule()
     const int MAX_MINUTE = 59;
     int counter, hour, minute;
     size_t len;
+    char *dayNames[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
     counter = 0;
     hour = 0;
@@ -446,11 +454,11 @@ doctorSchedule *fillSchedule()
 
     printf("Write doctor\n");
     printf("name: ");
-    scanf("%29s", newSchedule->name);
+    scanf("%16s", newSchedule->name);
     printf("surname: ");
-    scanf("%29s", newSchedule->surname);
+    scanf("%16s", newSchedule->surname);
     printf("patronymic: ");
-    scanf("%29s", newSchedule->patronymic);
+    scanf("%16s", newSchedule->patronymic);
 
     printf("\nWrite doctor ID: ");
     newSchedule->doctorID = scanInt(0, MAX_ID, "");
@@ -463,7 +471,6 @@ doctorSchedule *fillSchedule()
     printf("%s\n", newSchedule->specialization);
 
     printf("Write doctor schedule for each working day (Monday to Saturday):\n");
-    char *dayNames[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
     for (counter = 0; counter < 6; counter++)
     {
@@ -482,6 +489,8 @@ doctorSchedule *fillSchedule()
     newSchedule->next = NULL;
     return newSchedule;
 }
+
+//
 
 void readDataFormFiles(appointment **appointmentsHead, doctorSchedule **schedulesHead)
 {
@@ -611,6 +620,8 @@ void readSchedulesFromFile(doctorSchedule *head)
     fclose(schFile);
     printf("Schedules loaded from schedules.bin\n");
 }
+
+//
 
 void showLists(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
@@ -767,6 +778,8 @@ void showSchedulesListRow(int rowNumber, const doctorSchedule *curr)
         }
     }
 }
+
+//
 
 // Сортировки
 void sortList(appointment *appointmentsHead, doctorSchedule *schedulesHead)
@@ -1192,6 +1205,8 @@ _Bool isScheduleNodeBefore(const doctorSchedule *node, const doctorSchedule *oth
     return isBefore;
 }
 
+//
+
 // Главная функция findData (оркестрация)
 void findData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
@@ -1365,6 +1380,8 @@ void findAllAppointmentsByPatientName(appointment *appointmentsHead)
         printf("No appointments found\n");
 }
 
+//
+
 void deleteDataFromList(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
     int option, count;
@@ -1400,9 +1417,7 @@ void deleteFromAppointmentsList(appointment *appointmentsHead, int count)
     prev = appointmentsHead;
     curr = prev->next;
 
-    printf("Write number "
-           "#"
-           " which you need to delete\n");
+    printf("Write number \"#\" which you need to delete\n");
     indexToDelete = scanInt(1, count, "> ");
     indexToDelete--;
 
@@ -1490,13 +1505,240 @@ _Bool checkIsClientSureToDelete(int index)
     return isSure;
 }
 
+//
+
 void changeData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
+    int option, count;
+
+    printf("\nFrom which list do you want to change element?\n");
+    printf(" 1 - Appointments list\n");
+    printf(" 2 - Schedule list\n");
+    option = scanInt(1, 2, "> ");
+
+    if (option == 1)
+    {
+        count = showAppointmentsList(appointmentsHead);
+        changeFromAppointmentsList(appointmentsHead, count);
+    }
+    else
+    {
+        count = showSchedulesList(schedulesHead);
+        changeFromSchedulesList(schedulesHead, count);
+    }
 }
+
+int chooseWhatToChangeAsAppointment()
+{
+    const int MAX_OPTION = 7;
+    int option;
+
+    printf("\nWhat should be changed?\n");
+    printf(" 1 - Name\n");
+    printf(" 2 - Surname\n");
+    printf(" 3 - Patronymic\n");
+    printf(" 4 - Appointment date\n");
+    printf(" 5 - Appointment time\n");
+    printf(" 6 - Cabinet\n");
+    printf(" 7 - DoctorID\n");
+    option = scanInt(1, MAX_OPTION, "> ");   
+
+    return option;
+}
+
+void changeFromAppointmentsList(appointment *appointmentsHead, int count)
+{   
+    const int MAX_ID = 1000000;
+    const int MAX_CABINET = 1000;
+    const int MAX_MONTH = 12;
+    const int MAX_YEAR = 2028;
+    const int MIN_YEAR = 2026;
+    const int MAX_HOUR = 23;
+    const int MAX_MINUTE = 59;
+
+    int optionChange, maxDay, indexToChange, hour, minute;
+    appointment *changed;
+
+    maxDay = 0;
+    optionChange = chooseWhatToChangeAsAppointment();
+    changed = appointmentsHead;
+
+    printf("Write number \"#\" which you need to change\n");
+    indexToChange = scanInt(1, count, "> ");
+
+    while (changed->next != NULL && indexToChange != 0)
+    {
+        changed = changed->next;
+        indexToChange--;
+    }
+
+    if (indexToChange == 0)
+    {
+
+        switch (optionChange)
+        {
+        case 1:
+            printf("Old name <%s>\n", changed->name);
+            printf("New name: ");
+            scanf("%29s", changed->name);
+            break;
+        case 2:
+            printf("Old surname <%s>\n", changed->surname);
+            printf("New surname: ");
+            scanf("%29s", changed->surname);
+            break;
+        case 3:
+            printf("Old patronymic <%s>\n", changed->patronymic);   
+            printf("New patronymic: ");
+            scanf("%29s", changed->patronymic);
+            break;
+        case 4:
+            printf("Old date: <%02d.%02d.%d>\n", changed->appointmentDate.day, changed->appointmentDate.month, changed->appointmentDate.year);
+            printf("New date");
+            printf("year: ");
+            changed->appointmentDate.year = scanInt(MIN_YEAR, MAX_YEAR, "");
+            printf("month: ");
+            changed->appointmentDate.month = scanInt(1, MAX_MONTH, "");
+            maxDay = findMaxDay(changed->appointmentDate.month, changed->appointmentDate.year);
+            printf("day: ");
+            changed->appointmentDate.day = scanInt(1, maxDay, "");
+            break;
+        case 5:
+            printf("Old time: <%02d:%02d>\n", changed->appointmentTime.hour, changed->appointmentTime.minute);
+            printf("New time");
+            printf("hour: ");
+            changed->appointmentTime.hour = scanInt(0, MAX_HOUR, "");
+            printf("minute: ");
+            changed->appointmentTime.minute = scanInt(0, MAX_MINUTE, "");
+            break;
+        case 6:
+            printf("Old cabinet <%d>\n", changed->cabinet);
+            printf("New cabinet: ");
+            changed->cabinet = scanInt(0, MAX_CABINET, "");
+            break;
+        case 7:
+            printf("Old doctorID <%d>\n", changed->doctorID);
+            printf("New doctorID: ");
+            changed->doctorID = scanInt(0, MAX_ID, "");
+            break;
+        }
+        
+        printf("Element was changed\n");
+    }
+    else    
+        printf("Element was NOT changed because of unexpected error\n");
+
+    changed->queuePlace = 0;
+}
+
+int chooseWhatToChangeAsSchedule()
+{
+    const int MAX_OPTION = 6;
+    int option;
+
+    printf("\nWhat should be changed?\n");
+    printf(" 1 - Name\n");
+    printf(" 2 - Surname\n");
+    printf(" 3 - Patronymic\n");
+    printf(" 4 - Specialization\n");
+    printf(" 5 - DoctorID\n");
+    printf(" 6 - Week schedule\n");
+    option = scanInt(1, MAX_OPTION, "> ");   
+
+    return option;
+}
+
+void changeFromSchedulesList(doctorSchedule *schedulesHead, int count)
+{
+    const int MAX_ID = 1000000;
+    const int MAX_MONTH = 12;
+    const int MAX_HOUR = 23;
+    const int MAX_MINUTE = 59;
+
+    int optionChange, maxDay, indexToChange, counter, hour, minute;
+    doctorSchedule *changed;
+    char *dayNames[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+
+    maxDay = 0;
+    counter = 0;
+    indexToChange = 0;
+    optionChange = chooseWhatToChangeAsSchedule();
+    changed = schedulesHead;
+
+    printf("Write number \"#\" which you need to change\n");
+    indexToChange = scanInt(1, count, "> ");
+
+    counter = indexToChange;
+
+    while (changed->next != NULL && counter != 0)
+    {
+        changed = changed->next;
+        counter--;
+    }
+    
+    if (counter == 0)
+    {
+        switch (optionChange)
+        {
+        case 1:
+            printf("Old name <%s>\n", changed->name);
+            printf("New name: ");
+            scanf("%29s", changed->name);
+            break;
+        case 2:
+            printf("Old surname <%s>\n", changed->surname);
+            printf("New surname: ");
+            scanf("%29s", changed->surname);
+            break;
+        case 3:
+            printf("Old patronymic <%s>\n", changed->patronymic);   
+            printf("New patronymic: ");
+            scanf("%29s", changed->patronymic);
+            break;
+        case 4:
+            printf("Old specialization <%s>\n", changed->specialization);   
+            printf("New specialization: ");
+            scanf("%29s", changed->specialization);
+            break;
+        case 5:
+            printf("Old doctorID <%d>\n", changed->doctorID);
+            printf("New doctorID: ");
+            changed->doctorID = scanInt(0, MAX_ID, "");
+            break;
+        case 6:
+            printf("Old week schedule\n");
+            showSchedulesListHead();
+            showSchedulesListRow(indexToChange, changed);
+            printf("New week schedule\n");
+            for (counter = 0; counter < 6; counter++)
+            {
+                printf("\n%s\n", dayNames[counter]);
+                printf("start:\n");
+                hour = scanInt(0, MAX_HOUR, "    hour: ");
+                minute = scanInt(0, MAX_MINUTE, "    minute: ");
+                changed->schedule[counter][0] = getTimeInMinutes(hour, minute);
+
+                printf("end:\n");
+                hour = scanInt(0, MAX_HOUR, "    hour: ");
+                minute = scanInt(0, MAX_MINUTE, "    minute: ");
+                changed->schedule[counter][1] = getTimeInMinutes(hour, minute);
+            }
+            break;
+        }
+        printf("Element was changed\n");
+    }
+    else
+        printf("Element was NOT changed because of unexpected error\n");
+
+}
+
+//
 
 void manageAppointments(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
 }
+
+//
 
 void quitAndSave(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
@@ -1565,6 +1807,8 @@ void saveSchedulesToFile(doctorSchedule *head)
 
     fclose(file);
 }
+
+//
 
 int findMaxDay(int month, int year)
 {
