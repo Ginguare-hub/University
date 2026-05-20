@@ -35,7 +35,12 @@
     временной диапазон работы на каждый день с понедельника по субботу.
  */
 
-// TODO Перед удалением спрашивать подтверждение
+// TODO Выводить какие числа можно вписать
+// TODO Исправить showPurpose
+// TODO Подумать над reallocSave
+// TODO Реализовать функции вставки в конец списка
+// TODO Использовать функцию заполнения ФИО
+// TODO Проверить и стандартизировать выводы в консоль 
 
 typedef struct date
 {
@@ -86,7 +91,6 @@ typedef struct doctorSchedule
 
 void showMenu();
 void showPurpose();
-void writeMenuOptionHeader(int option);
 
 int getOption();
 void processUserChoice(appointment *appointmentsHead, doctorSchedule *schedulesHead);
@@ -144,12 +148,13 @@ date chooseDateForBook(doctorSchedule *selectedDoctor, date startDate);
 void incrementDate(date *someDate);
 int chooseStartTimeOfAppointment(doctorSchedule* selectedDoctor, date choosenDate, appointment* appointmentHead);
 _Bool checkIsWorkingDay(doctorSchedule *selectedDoctor, date choosenDate);
-_Bool isSlotFree(appointment *appointmentHead, int doctorID, date currDate, int start, int end);
+_Bool checkIsSlotFree(appointment *appointmentHead, int doctorID, date currDate, int start, int end);
 
 
 void quitAndSave(appointment *appointmentsHead, doctorSchedule *schedulesHead);
 void saveAppointmentsToFile(appointment *head);
 void saveSchedulesToFile(doctorSchedule *head);
+void saveAppointmentToTextFile(const appointment *appt, const doctorSchedule *doctor);
 // !
 
 int findMaxDay(int month, int year);
@@ -162,7 +167,7 @@ appointment *getAppointmentByIndex(appointment *head, int index);
 
 int scanInt(const int MIN_NUMBER, const int MAX_NUMBER, const char myString[]);
 void freeLists(appointment *appointmentsHead, doctorSchedule *schedulesHead);
-int *reallocSafe(int *destination, int *destLen, int *newLen);
+//int *reallocSafe(int *destination, int *destLen, int *newLen);
 
 // ? To Test
 int checkIsEarlierAppointment(appointment *a, appointment *b);
@@ -204,43 +209,54 @@ void processUserChoice(appointment *appointmentsHead, doctorSchedule *schedulesH
     while (isContinue)
     {
         option = getOption();
-        writeMenuOptionHeader(option);
 
         switch (option)
         {
         case 1:
+            printf("\n====== READING DATA ======\n");
             readDataFormFiles(&appointmentsHead, &schedulesHead);
             assignQueueNumbers(appointmentsHead);
+            showAppointmentsList(appointmentsHead);
+            showSchedulesList(schedulesHead);
             break;
         case 2:
+            printf("\n====== SHOWING LISTS ======\n");
             showLists(appointmentsHead, schedulesHead);
             break;
         case 3:
+            printf("\n====== SORTING ======\n");
             sortList(appointmentsHead, schedulesHead);
             break;
         case 4:
+            printf("\n====== FINDING DATA ======\n");
             findData(appointmentsHead, schedulesHead);
             break;
         case 5:
+            printf("\n====== ADDING DATA ======\n");
             addDataToList(appointmentsHead, schedulesHead);
             assignQueueNumbers(appointmentsHead);
             break;
         case 6:
+            printf("\n====== DELETING DATA ======\n");
             deleteDataFromList(appointmentsHead, schedulesHead);
             assignQueueNumbers(appointmentsHead);
             break;
         case 7:
+            printf("\n====== CHANGING DATA ======\n");
             changeData(appointmentsHead, schedulesHead);
             assignQueueNumbers(appointmentsHead);
             break;
         case 8:
+            printf("\n====== MANAGING APPOINTMENTS ======\n");
             manageAppointments(appointmentsHead, schedulesHead);
             assignQueueNumbers(appointmentsHead);
             break;
         case 9:
+            printf("\n====== QUITTING WITHOUT SAVE ======\n");
             isContinue = 0;
             break;
         case 10:
+            printf("\n====== QUITTING AND SAVING ======\n");
             quitAndSave(appointmentsHead, schedulesHead);
             isContinue = 0;
             break;
@@ -263,50 +279,26 @@ void showMenu()
     printf("10 - Quit and save\n");
 }
 
-void writeMenuOptionHeader(int option)
-{
-    printf("\n");
-
-    switch (option)
-    {
-    case 1:
-        printf("====== READING DATA ======");
-        break;
-    case 2:
-        printf("====== SHOWING LISTS ======");
-        break;
-    case 3:
-        printf("====== SORTING ======");
-        break;
-    case 4:
-        printf("====== FINDING DATA ======");
-        break;
-    case 5:
-        printf("====== ADDING DATA ======");
-        break;
-    case 6:
-        printf("====== DELETING DATA ======");
-        break;
-    case 7:
-        printf("====== CHANGING DATA ======");
-        break;
-    case 8:
-        printf("====== MANAGING APPOINTMENTS ======");
-        break;
-    case 9:
-        printf("====== QUITTING WITHOUT SAVE ======");
-        break;
-    case 10:
-        printf("====== QUITTING AND SAVING ======");
-        break;
-    }
-
-    printf("\n");
-}
-
 void showPurpose()
 {
-    printf("PURPOSE_PURPOSE_PURPOSE_PURPOSE_PURPOSE_PURPOSE_PURPOSE_PURPOSE\n");
+    printf("=============================================================\n");
+    printf("   Clinic Appointment Management System\n");
+    printf("=============================================================\n");
+    printf(" This program automates patient appointment scheduling\n");
+    printf(" for a polyclinic.\n");
+    printf("\n");
+    printf(" Key features:\n");
+    printf("  - Book appointments based on doctor work schedules\n");
+    printf("  - Search appointments by doctor name and date\n");
+    printf("  - Search appointments by patient name\n");
+    printf("  - Add, edit and delete records in both lists\n");
+    printf("  - Save and load data from binary files\n");
+    printf("  - Export issued appointment tickets to a text file\n");
+    printf("\n");
+    printf(" Data is stored in two linked lists:\n");
+    printf("  - Appointments  (appointments.bin)\n");
+    printf("  - Doctor schedules (schedules.bin)\n");
+    printf("=============================================================\n");
 }
 
 int getOption()
@@ -383,6 +375,7 @@ void addDataToList(appointment *appointmentsHead, doctorSchedule *schedulesHead)
             apptCurr = apptCurr->next;
 
         apptCurr->next = fillAppointment();
+        showAppointmentsList(appointmentsHead);
     }
     else
     {
@@ -392,6 +385,7 @@ void addDataToList(appointment *appointmentsHead, doctorSchedule *schedulesHead)
             schdlCurr = schdlCurr->next;
 
         schdlCurr->next = fillSchedule();
+        showSchedulesList(schedulesHead);
     }
 }
 
@@ -427,12 +421,12 @@ appointment *fillAppointment()
     newAppointment->cabinet = scanInt(0, MAX_CABINET, "");
 
     printf("Write appointment date\n");
-    printf("year: ");
+    printf("year (%d..%d): ", MIN_YEAR, MAX_YEAR);
     newAppointment->appointmentDate.year = scanInt(MIN_YEAR, MAX_YEAR, "");
-    printf("month: ");
+    printf("month (1..12): ");
     newAppointment->appointmentDate.month = scanInt(1, MAX_MONTH, "");
     maxDay = findMaxDay(newAppointment->appointmentDate.month, newAppointment->appointmentDate.year);
-    printf("day: ");
+    printf("day (1..%d): ", maxDay);
     newAppointment->appointmentDate.day = scanInt(1, maxDay, "");
 
     printf("Write appointment time\n");
@@ -466,10 +460,10 @@ doctorSchedule *fillSchedule()
         return NULL;
 
     printf("Write doctor\n");
-    printf("name: ");
-    scanf("%16s", newSchedule->name);
     printf("surname: ");
     scanf("%16s", newSchedule->surname); 
+    printf("name: ");
+    scanf("%16s", newSchedule->name);
     printf("patronymic: ");
     scanf("%16s", newSchedule->patronymic);
 
@@ -666,7 +660,7 @@ int showAppointmentsList(appointment *appointmentsHead)
     curr = appointmentsHead->next;
     count = 0;
 
-    printf("\n==================== APPOINTMENTS LIST ====================\n");
+    printf("\n====== APPOINTMENTS LIST ======\n");
 
     if (curr == NULL)
     {
@@ -721,7 +715,7 @@ int showSchedulesList(doctorSchedule *schedulesHead)
     curr = schedulesHead->next;
     rowCount = 0;
 
-    printf("\n==================== DOCTOR SCHEDULES LIST ====================\n");
+    printf("\n====== DOCTOR SCHEDULES LIST ======\n");
 
     if (curr == NULL)
     {
@@ -826,6 +820,8 @@ void sortList(appointment *appointmentsHead, doctorSchedule *schedulesHead)
             sortAppointmentsByDoctorID(appointmentsHead);
         else
             sortAppointmentsBySurname(appointmentsHead);
+
+        showAppointmentsList(appointmentsHead);
     }
     else
     {
@@ -833,6 +829,8 @@ void sortList(appointment *appointmentsHead, doctorSchedule *schedulesHead)
             sortSchedulesByDoctorID(schedulesHead);
         else
             sortSchedulesBySurname(schedulesHead);
+
+        showSchedulesList(schedulesHead);
     }
 }
 
@@ -1283,7 +1281,7 @@ void findAllAppointmentsByDoctorNameAndDate(appointment *appointmentsHead, docto
         return;
     }
 
-    printf("\n==================== APPOINTMENTS FOR DOCTOR ====================\n");
+    printf("\n====== APPOINTMENTS FOR DOCTOR ======\n");
     printf("Doctor: %s %s %s\n", surname, name, patronymic);
     printf("Date: %02d.%02d.%04d\n", day, month, year);
     printf("\n");
@@ -1311,12 +1309,12 @@ void findAllAppointmentsByDoctorNameAndDate(appointment *appointmentsHead, docto
 // Ввод ФИО врача
 void inputFullName(char *surname, char *name, char *patronymic)
 {
-    printf("name: ");
-    scanf("%29s", name);
     printf("surname: ");
-    scanf("%29s", surname);
+    scanf("%16s", surname);
+    printf("name: ");
+    scanf("%16s", name);
     printf("patronymic: ");
-    scanf("%29s", patronymic);
+    scanf("%16s", patronymic);
 }
 
 // Ввод даты для поиска
@@ -1327,12 +1325,12 @@ void inputDate(int *day, int *month, int *year)
     const int MAX_YEAR = 2028;
     const int MAX_MONTH = 12;
 
-    printf("year: ");
+    printf("year (%d..%d): ", MIN_YEAR, MAX_YEAR);
     *year = scanInt(MIN_YEAR, MAX_YEAR, "");
-    printf("month: ");
+    printf("month (1..12): ");
     *month = scanInt(1, MAX_MONTH, "");
     maxDay = findMaxDay(*month, *year);
-    printf("day: ", maxDay);
+    printf("day (1..%d): ", maxDay);
     *day = scanInt(1, maxDay, "");
 }
 
@@ -1379,7 +1377,7 @@ void findAllAppointmentsByPatientName(appointment *appointmentsHead)
 
     inputFullName(surname, name, patronymic);
 
-    printf("\n==================== APPOINTMENTS BY PATIENT NAME ====================\n");
+    printf("\n====== APPOINTMENTS BY PATIENT NAME ======\n");
     printf("Patient: %s %s %s\n", surname, name, patronymic);
     printf("\n");
 
@@ -1419,11 +1417,13 @@ void deleteDataFromList(appointment *appointmentsHead, doctorSchedule *schedules
     {
         count = showAppointmentsList(appointmentsHead);
         deleteFromAppointmentsList(appointmentsHead, count);
+        showAppointmentsList(appointmentsHead);
     }
     else
     {
         count = showSchedulesList(schedulesHead);
         deleteFromSchedulesList(schedulesHead, count);
+        showSchedulesList(schedulesHead);
     }
 }
 
@@ -1445,7 +1445,7 @@ void deleteFromAppointmentsList(appointment *appointmentsHead, int count)
     indexToDelete = scanInt(1, count, "> ");
     indexToDelete--;
 
-    if (checkIsClientSureToDelete(indexToDelete))
+    if (checkIsClientSureToDelete(indexToDelete + 1))
     {
 
         while (curr->next != NULL && indexToDelete != 0)
@@ -1488,7 +1488,7 @@ void deleteFromSchedulesList(doctorSchedule *schedulesHead, int count)
     indexToDelete = scanInt(1, count, "> ");
     indexToDelete--;
 
-    if (checkIsClientSureToDelete(indexToDelete))
+    if (checkIsClientSureToDelete(indexToDelete + 1))
     {
 
         while (curr->next != NULL && indexToDelete != 0)
@@ -1550,6 +1550,7 @@ void changeData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
         
         count = showAppointmentsList(appointmentsHead);
         changeFromAppointmentsList(appointmentsHead, count);
+        showAppointmentsList(appointmentsHead);
     }
     else
     {
@@ -1561,6 +1562,7 @@ void changeData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 
         count = showSchedulesList(schedulesHead);
         changeFromSchedulesList(schedulesHead, count);
+        showSchedulesList(schedulesHead);
     }
 }
 
@@ -1633,12 +1635,12 @@ void changeFromAppointmentsList(appointment *appointmentsHead, int count)
         case 4:
             printf("Old date: <%02d.%02d.%d>\n", changed->appointmentDate.day, changed->appointmentDate.month, changed->appointmentDate.year);
             printf("New date\n");
-            printf("year: ");
+            printf("year (%d..%d): ", MIN_YEAR, MAX_YEAR);
             changed->appointmentDate.year = scanInt(MIN_YEAR, MAX_YEAR, "");
-            printf("month: ");
+            printf("month (1..12): ");
             changed->appointmentDate.month = scanInt(1, MAX_MONTH, "");
             maxDay = findMaxDay(changed->appointmentDate.month, changed->appointmentDate.year);
-            printf("day: ");
+            printf("day (1..%d): ", maxDay);
             changed->appointmentDate.day = scanInt(1, maxDay, "");
             break;
         case 5:
@@ -1888,7 +1890,49 @@ void manageAppointments(appointment *appointmentsHead, doctorSchedule *schedules
             curr = curr->next;
         
         curr->next = bookedAppointment;
+        assignQueueNumbers(appointmentsHead);
+        saveAppointmentToTextFile(bookedAppointment, selectedDoctor);
+        showAppointmentsList(appointmentsHead);
     }
+}
+
+void saveAppointmentToTextFile(const appointment *appt, const doctorSchedule *doctor)
+{
+    FILE *file;
+    char fullNamePatient[51];
+    char fullNameDoctor[51];
+
+    file = fopen("appointment_ticket.txt", "a"); // "a" — дописывает, не перезаписывает
+    if (file == NULL)
+    {
+        printf("Error: cannot open appointment_ticket.txt\n");
+        return;
+    }
+
+    snprintf(fullNamePatient, sizeof(fullNamePatient), "%s %s %s",
+             appt->surname, appt->name, appt->patronymic);
+    snprintf(fullNameDoctor, sizeof(fullNameDoctor), "%s %s %s",
+             doctor->surname, doctor->name, doctor->patronymic);
+
+    fprintf(file, "============================================================\n");
+    fprintf(file, "                     APPOINTMENT TICKET                    \n");
+    fprintf(file, "============================================================\n");
+    fprintf(file, "  Patient       : %s\n", fullNamePatient);
+    fprintf(file, "  Date          : %02d.%02d.%04d\n",
+            appt->appointmentDate.day,
+            appt->appointmentDate.month,
+            appt->appointmentDate.year);
+    fprintf(file, "  Time          : %02d:%02d\n",
+            appt->appointmentTime.hour,
+            appt->appointmentTime.minute);
+    fprintf(file, "  Doctor        : %s\n", fullNameDoctor);
+    fprintf(file, "  Specialization: %s\n", doctor->specialization);
+    fprintf(file, "  Cabinet       : %d\n", appt->cabinet);
+    fprintf(file, "  Queue number  : %d\n", appt->queuePlace);
+    fprintf(file, "============================================================\n\n");
+
+    fclose(file);
+    printf("\nAppointment ticket saved to appointment_ticket.txt\n");
 }
 
 appointment *bookAnAppointment(doctorSchedule *selectedDoctor, appointment *appointmentsHead, date startDate)
@@ -2078,7 +2122,7 @@ int chooseStartTimeOfAppointment(doctorSchedule* selectedDoctor, date choosenDat
 
     while (currStart < endOfShiftTime)
     {
-        isAvailable = isSlotFree(appointmentHead, selectedDoctor->doctorID, choosenDate, currStart, currStart + DURATION);
+        isAvailable = checkIsSlotFree(appointmentHead, selectedDoctor->doctorID, choosenDate, currStart, currStart + DURATION);
         if (isAvailable)
         {
             counter++;
@@ -2095,24 +2139,21 @@ int chooseStartTimeOfAppointment(doctorSchedule* selectedDoctor, date choosenDat
             }
             else
             {
-                // oldLen = counter - 1;
-                // newLen = counter;
-                //printf("\nBBB\n"); //! -----------------------
                 availableStartTime = realloc(availableStartTime, counter * sizeof(int));
-                //printf("\nCCC\n"); //! -----------------------
             }
 
-            //printf("\nAAA\n"); //! -----------------------
+            if(availableStartTime != NULL)
+            {
+                getTimeFromOnlyMinutes(currStart, &start.hour, &start.minute);
+                getTimeFromOnlyMinutes(currStart + DURATION, &end.hour, &end.minute);
 
-            getTimeFromOnlyMinutes(currStart, &start.hour, &start.minute);
-            getTimeFromOnlyMinutes(currStart + DURATION, &end.hour, &end.minute);
-
-            availableStartTime[counter - 1] = currStart;
-            printf("| %3d | %02d:%02d - %02d:%02d |\n", 
-                counter,
-                start.hour, start.minute, 
-                end.hour, end.minute
-            );
+                availableStartTime[counter - 1] = currStart;
+                printf("| %3d | %02d:%02d - %02d:%02d |\n", 
+                    counter,
+                    start.hour, start.minute, 
+                    end.hour, end.minute
+                );
+            }
         }
 
         currStart = currStart + DURATION;
@@ -2134,8 +2175,12 @@ int chooseStartTimeOfAppointment(doctorSchedule* selectedDoctor, date choosenDat
         if (choosenStartTime == 0)
             choosenStartTime = -1;
         else
-            choosenStartTime = availableStartTime[choosenStartTime - 1];    
+            choosenStartTime = availableStartTime[choosenStartTime - 1]; 
+            
+        free(availableStartTime);
+        availableStartTime = NULL;
     }
+
 
     return choosenStartTime;
 }
@@ -2156,58 +2201,7 @@ _Bool checkIsWorkingDay(doctorSchedule *selectedDoctor, date choosenDate)
     return isWorking;
 }
 
-
-
-/* int *findAndWriteFreeSlotsForDay(date currDate, doctorSchedule *doctor, appointment *appointmentsHead) // ! Не используется
-{
-    const int DURATION = 30;
-    const int SUNDAY = 6;
-
-    int startMinute, endMinute, slotStart, hour, minute, endHour, endMinute, dayOfWeek;
-    _Bool isFree;
-    char *dayNames[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-    int *availableStartsInMinutes;
-
-    availableStartsInMinutes = NULL;
-
-    dayOfWeek = findDayOfWeek(currDate.day, currDate.month, currDate.year);
-
-    if (dayOfWeek == SUNDAY)
-    {
-        printf("%02d.%02d.%04d (%s) : Non-working day\n", d.day, d.month, d.year, dayNames[SUNDAY]);
-        return availableStartsInMinutes;
-    }
-
-    if (doc->schedule[dayIndex][0] == 0 && doc->schedule[dayIndex][1] == 0)
-    {
-        printf("%02d.%02d.%04d (%s) : No working hours set\n", d.day, d.month, d.year, dayNames[wday]);
-        return availableStartsInMinutes;
-    }
-
-    startMinute = doctor->schedule[dayIndex][0];
-    endMinute = doctor->schedule[dayIndex][1];
-
-    printf("%02d.%02d.%04d (%s) :\n", d.day, d.month, d.year, dayNames[wday]);
-
-    for (slotStart = startMin; slotStart < endMin; slotStart = slotStart + DURATION)
-    {
-        getTimeFromOnlyMinutes(slotStart, &hour, &minute);
-
-        isFree = isSlotFree(appointmentsHead, doc->doctorID, currDate, slotStart, slotStart + DURATION);
-
-        endHour = (slotStart + DURATION) / 60;
-        endMinute = (slotStart + DURATION) % 60;
-
-        if (isFree)
-            printf("    %02d:%02d - %02d:%02d  FREE\n", hour, minute, endHour, endMinute);
-        else
-            printf("    %02d:%02d - %02d:%02d  TAKEN\n", hour, minute, endHour, endMinute);
-    }
-
-    return availableStartsInMinutes;
-} */
-
-_Bool isSlotFree(appointment *appointmentHead, int doctorID, date currDate, int start, int end)
+_Bool checkIsSlotFree(appointment *appointmentHead, int doctorID, date currDate, int start, int end)
 {
     const int DURATION = 30;
     _Bool isFree;
@@ -2219,10 +2213,11 @@ _Bool isSlotFree(appointment *appointmentHead, int doctorID, date currDate, int 
     if (appointmentHead->next == NULL)
         return isFree;
 
-    curr = appointmentHead->next;
+    curr = appointmentHead;
 
     while (curr->next != NULL && isFree)
     {
+        curr = curr->next;
         currStart = getTimeInMinutes(curr->appointmentTime.hour, curr->appointmentTime.minute);
         currEnd = currStart + DURATION;
 
@@ -2230,10 +2225,9 @@ _Bool isSlotFree(appointment *appointmentHead, int doctorID, date currDate, int 
             curr->appointmentDate.month == currDate.month &&
             curr->appointmentDate.year == currDate.year &&
             curr->doctorID == doctorID && 
-            !(start > currEnd || end < currStart))
+            !(start >= currEnd || end <= currStart))
             isFree = 0;
 
-        curr = curr->next;
     } 
 
     return isFree;
@@ -2312,8 +2306,7 @@ void saveSchedulesToFile(doctorSchedule *head)
 }
 
 //
-
-int *reallocSafe(int *destination, int *destLen, int *newLen)
+/* int *reallocSafe(int *destination, int *destLen, int *newLen)
 {
     int *temp = realloc(destination, *newLen);
     
@@ -2326,7 +2319,10 @@ int *reallocSafe(int *destination, int *destLen, int *newLen)
         destination = temp;
         *destLen = *newLen;
     }
+
+    return destination;
 }
+ */
 
 doctorSchedule *getDoctorByIndex(doctorSchedule *head, int index)
 {

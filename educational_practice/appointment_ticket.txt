@@ -1,0 +1,24 @@
+============================================================
+                     APPOINTMENT TICKET                    
+============================================================
+  Patient      : A A A
+  Date         : 10.03.2027
+  Time         : 15:30
+  Doctor       : Seleznyova Vera Savelieva
+  Specialization: Cardiologist
+  Cabinet      : 580
+  Queue number : 0
+============================================================
+
+============================================================
+                     APPOINTMENT TICKET                    
+============================================================
+  Patient      : B B B
+  Date         : 10.03.2027
+  Time         : 15:00
+  Doctor       : Seleznyova Vera Savelieva
+  Specialization: Cardiologist
+  Cabinet      : 548
+  Queue number : 1
+============================================================
+
