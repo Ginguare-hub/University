@@ -158,6 +158,7 @@ void getTimeFromOnlyMinutes(int amountOfMinutes, int *hour, int *minute);
 int getTimeInMinutes(int hour, int minute);
 doctorSchedule *getDoctorByIndex(doctorSchedule *head, int index);
 appointment *getAppointmentByIndex(appointment *head, int index);
+appointment *getScheduleByIndex(doctorSchedule *head, int index);
 
 
 int scanInt(const int MIN_NUMBER, const int MAX_NUMBER, const char myString[]);
@@ -1412,26 +1413,17 @@ void deleteFromAppointmentsList(appointment *appointmentsHead, int count)
 
     printf("Write number \"#\" which you need to delete\n");
     indexToDelete = scanInt(1, count, "> ");
-    indexToDelete--;
-
-    if (checkIsClientSureToDelete(indexToDelete + 1))
+    
+    if (checkIsClientSureToDelete(indexToDelete))
     {
+        indexToDelete--;
 
-        while (curr->next != NULL && indexToDelete != 0)
-        {
-            prev = curr;
-            curr = curr->next;
-            indexToDelete--;
-        }
+        prev = getAppointmentByIndex(appointmentsHead, indexToDelete);
+        curr = prev->next;
 
-        if (indexToDelete == 0)
-        {
-            prev->next = curr->next;
-            free(curr);
-            printf("The element was deleted\n");
-        }
-        else
-            printf("Unknown error happened, element was NOT deleted\n");
+        prev->next = curr->next;
+        free(curr);
+        printf("The element was deleted\n");
     }
     else
         printf("The element was NOT deleted by user's choice\n");
@@ -1451,30 +1443,19 @@ void deleteFromSchedulesList(doctorSchedule *schedulesHead, int count)
     prev = schedulesHead;
     curr = prev->next;
 
-    printf("Write number "
-           "#"
-           " which you need to delete\n");
+    printf("Write number \"#\" which you need to delete\n");
     indexToDelete = scanInt(1, count, "> ");
-    indexToDelete--;
-
+    
     if (checkIsClientSureToDelete(indexToDelete + 1))
     {
+        indexToDelete--;
 
-        while (curr->next != NULL && indexToDelete != 0)
-        {
-            prev = curr;
-            curr = curr->next;
-            indexToDelete--;
-        }
+        prev = getScheduleByIndex(schedulesHead, indexToDelete);
+        curr = prev->next;
 
-        if (indexToDelete == 0)
-        {
-            prev->next = curr->next;
-            free(curr);
-            printf("The element was deleted\n");
-        }
-        else
-            printf("Unknown error happened, element was NOT deleted\n");
+        prev->next = curr->next;
+        free(curr);
+        printf("The element was deleted\n");
     }
     else
         printf("The element was NOT deleted by user's choice\n");
@@ -2200,6 +2181,23 @@ doctorSchedule *getDoctorByIndex(doctorSchedule *head, int index)
 appointment *getAppointmentByIndex(appointment *head, int index)
 {
     appointment *curr;
+    int i;
+
+    curr = head;
+    i = 0;
+
+    while (curr->next != NULL && i < index)
+    {
+        curr = curr->next;
+        i++;
+    }
+
+    return curr;
+}
+
+appointment *getScheduleByIndex(doctorSchedule *head, int index)
+{
+    doctorSchedule *curr;
     int i;
 
     curr = head;
