@@ -1232,7 +1232,7 @@ void findAllAppointmentsByDoctorNameAndDate(appointment *appointmentsHead, docto
         return;
     }
 
-    curr = appointmentsHead->next;
+    curr = appointmentsHead;
 
     printf("\nEnter doctor full name to search appointments:\n");
 
@@ -1257,6 +1257,7 @@ void findAllAppointmentsByDoctorNameAndDate(appointment *appointmentsHead, docto
 
     while (curr->next != NULL)
     {
+        curr = curr->next;
         if (doctorIDByFullName == curr->doctorID && curr->appointmentDate.year == year &&
             curr->appointmentDate.month == month && curr->appointmentDate.day == day)
         {
@@ -1266,7 +1267,6 @@ void findAllAppointmentsByDoctorNameAndDate(appointment *appointmentsHead, docto
             printf("+-----+------------+----------+-------+----------------------------------------------------+------+----------+\n");
             count++;
         }
-        curr = curr->next;
     }
 
     if (isThereNoRightAppointments)
@@ -1307,19 +1307,19 @@ int findDoctorIDsByFullName(doctorSchedule *head, const char *surname, const cha
 {
     doctorSchedule *curr;
     int doctorID;
-
-    curr = head->next;
+    
+    curr = head;
     doctorID = -1;
 
-    while (curr != NULL)
+    while (curr->next != NULL)
     {
+        curr = curr->next;
         if (strcasecmp(curr->surname, surname) == 0 &&
             strcasecmp(curr->name, name) == 0 &&
             strcasecmp(curr->patronymic, patronymic) == 0)
         {
             doctorID = curr->doctorID;
         }
-        curr = curr->next;
     }
     return doctorID;
 }
@@ -1340,7 +1340,7 @@ void findAllAppointmentsByPatientName(appointment *appointmentsHead)
         return;
     }
 
-    curr = appointmentsHead->next;
+    curr = appointmentsHead;
 
     printf("\nEnter patient full name to search appointments:\n");
 
@@ -1354,6 +1354,7 @@ void findAllAppointmentsByPatientName(appointment *appointmentsHead)
 
     while (curr->next != NULL)
     {
+        curr = curr->next;
         if (strcasecmp(curr->surname, surname) == 0 &&
             strcasecmp(curr->name, name) == 0 &&
             strcasecmp(curr->patronymic, patronymic) == 0)
@@ -1364,7 +1365,6 @@ void findAllAppointmentsByPatientName(appointment *appointmentsHead)
             printf("+-----+------------+----------+-------+----------------------------------------------------+------+----------+\n");
             count++;
         }
-        curr = curr->next;
     }
 
     if (isThereNoRightAppointments)
