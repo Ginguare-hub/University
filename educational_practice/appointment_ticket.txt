@@ -22,3 +22,15 @@
   Queue number : 1
 ============================================================
 
+============================================================
+                     APPOINTMENT TICKET                    
+============================================================
+  Patient       : Fufailov Roman Igorevich
+  Date          : 03.12.2026
+  Time          : 16:30
+  Doctor        : Vrach Georgy Filipov
+  Specialization: Surgeon
+  Cabinet       : 458
+  Queue number  : 1
+============================================================
+
