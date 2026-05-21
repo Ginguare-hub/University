@@ -392,10 +392,10 @@ appointment *fillAppointment()
     printf("Write patient\n");
     inputFullName(newAppointment->surname, newAppointment->name, newAppointment->patronymic);
 
-    printf("doctorID: ");
-    newAppointment->doctorID = scanInt(0, MAX_ID, "");
-    printf("cabinet: ");
-    newAppointment->cabinet = scanInt(0, MAX_CABINET, "");
+    printf("doctorID (1..%d): ", MAX_ID);
+    newAppointment->doctorID = scanInt(1, MAX_ID, "");
+    printf("cabinet (1..%d): ", MAX_CABINET);
+    newAppointment->cabinet = scanInt(1, MAX_CABINET, "");
 
     printf("Write appointment date\n");
     inputDate(&newAppointment->appointmentDate.day, &newAppointment->appointmentDate.month, &newAppointment->appointmentDate.year);
@@ -433,8 +433,8 @@ doctorSchedule *fillSchedule()
     printf("Write doctor\n");
     inputFullName(newSchedule->surname, newSchedule->name, newSchedule->patronymic);
 
-    printf("doctorID: ");
-    newSchedule->doctorID = scanInt(0, MAX_ID, "");
+    printf("doctorID (1..%d): ", MAX_ID);
+    newSchedule->doctorID = scanInt(1, MAX_ID, "");
 
     printf("doctor specialization: ");
     fgets(newSchedule->specialization, sizeof(newSchedule->specialization), stdin);
@@ -1593,13 +1593,13 @@ void changeFromAppointmentsList(appointment *appointmentsHead, int count)
             break;
         case 6:
             printf("Old cabinet <%d>\n", changed->cabinet);
-            printf("New cabinet: ");
-            changed->cabinet = scanInt(0, MAX_CABINET, "");
+            printf("New cabinet (1..%d): ", MAX_CABINET);
+            changed->cabinet = scanInt(1, MAX_CABINET, "");
             break;
         case 7:
             printf("Old doctorID <%d>\n", changed->doctorID);
-            printf("New doctorID: ");
-            changed->doctorID = scanInt(0, MAX_ID, "");
+            printf("New doctorID (1..%d): ", MAX_ID);
+            changed->doctorID = scanInt(1, MAX_ID, "");
             break;
         }
         
@@ -1682,8 +1682,8 @@ void changeFromSchedulesList(doctorSchedule *schedulesHead, int count)
             break;
         case 5:
             printf("Old doctorID <%d>\n", changed->doctorID);
-            printf("New doctorID: ");
-            changed->doctorID = scanInt(0, MAX_ID, "");
+            printf("New doctorID (1..%d): ", MAX_ID);
+            changed->doctorID = scanInt(1, MAX_ID, "");
             break;
         case 6:
             printf("Old week schedule\n");
