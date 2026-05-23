@@ -1,5 +1,3 @@
-#include "search.h"
-
 // Программа должна:
 // 1. Сформировать массив записей.
 // 2. Выполнить сортировку массива по ключевому полю.
@@ -19,11 +17,43 @@
 
 // 20 Найти уникальные записи
 
+// ! ================================================================
+
+#include "search.h"
+ 
 int main(void)
 {
-    int length;
-    struct Record records[length];
+    Record *original;
+    Record *sorted;
+    SearchMetrics linearM;
+    SearchMetrics binaryM;
+    int len;
+ 
+    linearM.comparisons = 0;
+    binaryM.comparisons = 0;
+    len = 0;
+ 
+    setlocale(LC_ALL, "Russian");
+ 
+    writePurpose();
 
+    fillRecords(&original, &len);
+    writeTextUnsorted();
+    showRecords(original, len);
 
+    linearSearchStage(original, len, &linearM);
+    copyRecords(original, sorted, len);
+
+    //sortArray(sorted, len);
+    sortById(sorted, len);
+
+    writeTextSorted();
+    showRecords(sorted, len);
+
+    binarySearchStage(sorted, len, &binaryM);
+    analysisStage(linearM.comparisons, binaryM.comparisons, len);
+
+    endingAndFreeArrays(original, sorted);
+ 
     return 0;
 }

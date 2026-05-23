@@ -158,7 +158,7 @@ void getTimeFromOnlyMinutes(int amountOfMinutes, int *hour, int *minute);
 int getTimeInMinutes(int hour, int minute);
 doctorSchedule *getDoctorByIndex(doctorSchedule *head, int index);
 appointment *getAppointmentByIndex(appointment *head, int index);
-appointment *getScheduleByIndex(doctorSchedule *head, int index);
+doctorSchedule *getScheduleByIndex(doctorSchedule *head, int index);
 
 
 int scanInt(const int MIN_NUMBER, const int MAX_NUMBER, const char myString[]);
@@ -423,6 +423,7 @@ doctorSchedule *fillSchedule()
     counter = 0;
     hour = 0;
     minute = 0;
+    len = 0;
 
     doctorSchedule *newSchedule;
     newSchedule = (doctorSchedule *)malloc(sizeof(doctorSchedule));
@@ -510,13 +511,13 @@ void readAppointmentsFromFile(appointment *head)
         else
         {
             read = fread(&newNode->appointmentDate, sizeof(date), 1, appFile);
-            read = read + fread(&newNode->appointmentTime, sizeof(apptTime), 1, appFile);
-            read = read + fread(&newNode->queuePlace, sizeof(int), 1, appFile);
-            read = read + fread(newNode->name, sizeof(newNode->name), 1, appFile);
-            read = read + fread(newNode->surname, sizeof(newNode->surname), 1, appFile);
-            read = read + fread(newNode->patronymic, sizeof(newNode->patronymic), 1, appFile);
-            read = read + fread(&newNode->cabinet, sizeof(int), 1, appFile);
-            read = read + fread(&newNode->doctorID, sizeof(int), 1, appFile);
+            read += fread(&newNode->appointmentTime, sizeof(apptTime), 1, appFile);
+            read += fread(&newNode->queuePlace, sizeof(int), 1, appFile);
+            read += fread(newNode->name, sizeof(newNode->name), 1, appFile);
+            read += fread(newNode->surname, sizeof(newNode->surname), 1, appFile);
+            read += fread(newNode->patronymic, sizeof(newNode->patronymic), 1, appFile);
+            read += fread(&newNode->cabinet, sizeof(int), 1, appFile);
+            read += fread(&newNode->doctorID, sizeof(int), 1, appFile);
 
             if (read != 8)
             {
@@ -676,30 +677,30 @@ void showSchedulesListHead()
 int showSchedulesList(doctorSchedule *schedulesHead)
 {
     doctorSchedule *curr;
-    int rowCount;
+    int count;
 
     curr = schedulesHead->next;
-    rowCount = 0;
+    count = 0;
 
     printf("\n====== DOCTOR SCHEDULES LIST ======\n");
 
     if (curr == NULL)
     {
         printf("No schedules found\n");
-        return rowCount;
+        return count;
     }
 
     showSchedulesListHead();
 
     while (curr != NULL)
     {
-        rowCount++;
-        showSchedulesListRow(rowCount, curr);
+        count++;
+        showSchedulesListRow(count, curr);
         printf("+-----+----------+-------------------------------------+----------------------------------------------------+-----------+---------+---------+\n");
         curr = curr->next;
     }
 
-    return rowCount;
+    return count;
 }
 
 void showSchedulesListRow(int rowNumber, const doctorSchedule *curr)
@@ -1334,13 +1335,17 @@ void findAllAppointmentsByPatientName(appointment *appointmentsHead)
 
     count = 1;
     isThereNoRightAppointments = 1;
-
+    surname[0] = '\0';
+    name[0] = '\0';
+    patronymic[0] = '\0';
+    curr = NULL;
+    
     if (appointmentsHead->next == NULL)
     {
         printf("No appointments found. No data available for search\n");
         return;
     }
-
+    
     curr = appointmentsHead;
 
     printf("\nEnter patient full name to search appointments:\n");
@@ -1360,10 +1365,10 @@ void findAllAppointmentsByPatientName(appointment *appointmentsHead)
             strcasecmp(curr->name, name) == 0 &&
             strcasecmp(curr->patronymic, patronymic) == 0)
         {
-            isThereNoRightAppointments = 0;
             showAppointmentsListRow(count, curr);
-
+            
             printf("+-----+------------+----------+-------+----------------------------------------------------+------+----------+\n");
+            isThereNoRightAppointments = 0;
             count++;
         }
     }
@@ -1434,14 +1439,16 @@ void deleteFromSchedulesList(doctorSchedule *schedulesHead, int count)
     doctorSchedule *curr, *prev;
     int indexToDelete;
 
+    indexToDelete = 0;
+    prev = schedulesHead;
+    curr = prev->next;
+
     if (count == 0)
     {
         printf("There is no data to delete in schedules list\n");
         return;
     }
 
-    prev = schedulesHead;
-    curr = prev->next;
 
     printf("Write number \"#\" which you need to delete\n");
     indexToDelete = scanInt(1, count, "> ");
@@ -1726,8 +1733,8 @@ void manageAppointments(appointment *appointmentsHead, doctorSchedule *schedules
     doctorIndex = 0;
     selectedDoctor = NULL;
     bookedAppointment = NULL;
-    option = 0;
     curr = appointmentsHead;
+    option = 0;
 
     if (schedulesHead->next == NULL)
     {
@@ -1964,9 +1971,8 @@ int chooseStartTimeOfAppointment(doctorSchedule* selectedDoctor, date chosenDate
     apptTime start, end;
     _Bool isAvailable;
 
-
     availableStartTime = NULL;
-    chosenStartTime = -1; // При возврате -1 значит человек не выбрал
+    chosenStartTime = -1;
     counter = 0;
     dayOfWeek = findDayOfWeek(chosenDate.day, chosenDate.month, chosenDate.year);
     currStart = selectedDoctor->schedule[dayOfWeek][0];
@@ -2114,7 +2120,6 @@ void saveAppointmentsToFile(appointment *head)
     curr = head->next;
     while (curr != NULL)
     {
-        // пишем все поля, кроме указателя next
         fwrite(&curr->appointmentDate, sizeof(date), 1, file);
         fwrite(&curr->appointmentTime, sizeof(apptTime), 1, file);
         fwrite(&curr->queuePlace, sizeof(int), 1, file);
@@ -2195,7 +2200,7 @@ appointment *getAppointmentByIndex(appointment *head, int index)
     return curr;
 }
 
-appointment *getScheduleByIndex(doctorSchedule *head, int index)
+doctorSchedule *getScheduleByIndex(doctorSchedule *head, int index)
 {
     doctorSchedule *curr;
     int i;
