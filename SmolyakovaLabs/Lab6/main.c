@@ -44,7 +44,6 @@ int main(void)
     linearSearchStage(original, len, &linearM);
     copyRecords(original, sorted, len);
 
-    //sortArray(sorted, len);
     sortById(sorted, len);
 
     writeTextSorted();
