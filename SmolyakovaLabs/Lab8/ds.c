@@ -64,3 +64,41 @@ _Bool dequeue(Queue *q, int *value)
 
     return isSuccess;
 }
+
+int queueSize(const Queue *q) {
+    int answer = 0;
+
+    if (q->rear >= q->front)
+        answer = q->rear - q->front;
+    else
+        answer = MAX - q->front + q->rear;
+
+    return answer;
+}
+
+void printQueue(const Queue *q) {
+    int i;
+    _Bool isFirst;
+
+    if (checkIsEmpty(q)) 
+    {
+        printf("The queue is empty\n");
+        return;
+    }
+
+    i = q->front;
+    isFirst = 1;
+    printf("[");
+
+    while (i != q->rear) 
+    {
+        if (!isFirst)
+            printf(", ");
+
+        printf("%d", q->data[i]);
+        i = (i + 1) % MAX;
+        isFirst = 0;
+    }
+
+    printf("]\n");
+}

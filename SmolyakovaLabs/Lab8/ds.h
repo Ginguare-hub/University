@@ -1,10 +1,10 @@
-#ifndef DS
-#define DS
+#ifndef DS_H
+#define DS_H
 
 #include <stdio.h>
-#include <stdlib>
+#include <stdlib.h>
 
-#define MAX = 100
+#define MAX 100
 
 typedef struct Queue
 {
@@ -13,10 +13,12 @@ typedef struct Queue
     int rear;     // Последний
 } Queue;
 
-void init_queue(Queue *q);
-int is_empty(const Queue *q);
-int is_full(const Queue *q);
-int enqueue(Queue *q, int value);
-int dequeue(Queue *q, int *value);
+void initQueue(Queue *q);
+_Bool checkIsEmpty(const Queue *q);
+_Bool checkIsFull(const Queue *q);
+_Bool enqueue(Queue *q, int value);
+_Bool dequeue(Queue *q, int *value);
+void printQueue(const Queue *q);
+int queueSize(const Queue *q);
 
 #endif
