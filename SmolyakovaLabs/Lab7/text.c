@@ -48,12 +48,10 @@ void analyzeText(const char *text)
     {
         if (isalpha((unsigned char)text[i]))
             setOfLetters.size++;
-        else 
-            if (isdigit((unsigned char)text[i]))
-                setOfDigits.size++;
-            else    
-                if (isspace((unsigned char)text[i]))
-                    setOfSpaces.size++;
+        else if (isdigit((unsigned char)text[i]))
+            setOfDigits.size++;
+        else if (isspace((unsigned char)text[i]))
+            setOfSpaces.size++;
     }
 }
 
@@ -215,8 +213,7 @@ int scanInt(const int MIN_NUMBER, const int MAX_NUMBER, const char myString[])
         {
             isIncorrect = 1;
             printf("Incorrect input, try again\n");
-            while (getchar() != '\n')
-                ;
+            while (getchar() != '\n');
         }
 
         if (!isIncorrect && ((number < MIN_NUMBER) || (number > MAX_NUMBER)))

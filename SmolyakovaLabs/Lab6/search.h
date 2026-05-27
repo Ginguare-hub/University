@@ -9,9 +9,9 @@
 
 typedef struct Record
 {
-int id;
-char name[50];
-int value;
+    int id;
+    char name[50];
+    int value;
 } Record;
 
 typedef struct

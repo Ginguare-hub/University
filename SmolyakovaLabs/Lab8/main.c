@@ -27,7 +27,7 @@ int main(void) {
 void fillQueueFromInput(Queue *q)
 {
     const int MIN_LEN =     1;
-    const int MAX_LEN =   101;
+    const int MAX_LEN =    99;
     const int MIN_NUM = -1000;
     const int MAX_NUM =  1000;
 

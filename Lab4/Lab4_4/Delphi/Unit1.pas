@@ -68,8 +68,7 @@ Type
     procedure StringGridAExit(Sender: TObject);
     function FormHelp(Command: Word; Data: THelpEventData;
       var CallHelp: Boolean): Boolean;
-    //procedure StringGridADrawCell(Sender: TObject; ACol, ARow: LongInt;
-    // Rect: TRect; State: TGridDrawState);
+
     Private
         { Private declarations }
     Public
@@ -81,7 +80,6 @@ Type
     Function CanRead(Var InputFile: TextFile): Boolean;
     Function CanWrite(Var FileVar: TextFile): Boolean;
     Function CheckMyFile(Var InputFile: TextFile; FilePath: String; IsForWriteToFile: Boolean): ERROR_CODES;
-    //Function CheckStringOnValidity(TestString: String; Var IsPointAllowed: Boolean): Boolean;
     Function SaveDataToFile(): ERROR_CODES;
     Function LeaveFromProgram(CanClose: Boolean): Boolean;
     Function WriteDataToFile(Var SavedFile: TextFile): ERROR_CODES;
@@ -120,43 +118,9 @@ Var
     StrGridACol: LongInt = 0;
     StrGridARow: LongInt = 1;
 
-    //TODO Поменять инструкцию
-
 Implementation
 
 {$R *.dfm}
-
-//int partition(int **dataArray, const int arrayLength, int low, int high)
-//{
-//    int pivot, randomIndex, i, j;
-//    _Bool isDoNotStop;
-//
-//    randomIndex = 0;
-//    pivot = 0;
-//    i = low;
-//    j = high;
-//    isDoNotStop = 1;
-//
-//    randomIndex = low + rand() % (high - low);
-//    pivot = (*dataArray)[randomIndex];
-//
-//    while (isDoNotStop)
-//    {
-//        while ((*dataArray)[i] < pivot)
-//            i = i + 1;
-//
-//        while ((*dataArray)[j] > pivot)
-//            j = j - 1;
-//
-//        if (i >= j)
-//            isDoNotStop = 0;
-//        else
-//            swap(dataArray, i++, j--);
-//    }
-//
-//    return j;
-//}
-
 
 Procedure Swap(Var DataArray: TArrayOI; I, J: Integer);
 Begin
@@ -193,7 +157,7 @@ Begin
         Begin
             Swap(dataArray, I, J);
             Inc(I);
-            Dec(J)
+            Dec(J);
         End;
     End;
 
@@ -352,7 +316,6 @@ Begin
     For Index := 0 To ArrHigh Do
     Begin
         TestString := StringGridArray[Index];
-        //IsNumber := True;
 
         If (Length(TestString) = 0) Or (TestString = #0) Or (TestString = '') Then
             IsCellReadible := False
@@ -361,7 +324,6 @@ Begin
             FirstChar := TestString[Low(TestString)];
             LastChar := TestString[High(TestString)];
 
-            //Проверка если это число, или на то, если это не просто один написанный минус
             IsFirstAndLastCharFine := ((FirstChar In DIGITS) And (LastChar In DIGITS))
                                         Or ((FirstChar = '-') And (LastChar In DIGITS));
 
@@ -490,7 +452,6 @@ Begin
     IsKeyAllowed := False;
     WrittenString := NumberOneEdit.Text;
 
-    //Проверяем ПЕРВЫЙ символ будущей строки
     If ((Length(WrittenString) = 0) And (Key In DIGITS) And Not(Key = '0')) Then
         IsKeyAllowed := True;
 
@@ -533,7 +494,6 @@ Begin
     FixStringGridOnIncorrecValue();
 
     MainForm.ResultButton.Enabled := IsGridValid And IsFirstNumberCorrect;
-    //MainForm.SaveTab.Enabled := IsFirstNumberCorrect And CheckGridOnValidity(MainForm.StringGridA);
     MainForm.LabelResult.Visible := False;
     MainForm.StringGridResult.Visible := False;
     IsDataSaved := True;
@@ -682,8 +642,7 @@ Begin
     IsKeyAllowed := False;
     WrittenString := StringGridA.Cells[StringGridA.Col, StringGridA.Row];
 
-    //Проверяем ПЕРВЫЙ символ будущей строки
-    If ( (Length(WrittenString) = 0) And ((Key In DIGITS) {And Not(Key = '0')} Or (Key = '-')) ) Then
+    If ( (Length(WrittenString) = 0) And ((Key In DIGITS) Or (Key = '-')) ) Then
         IsKeyAllowed := True;
 
     If (Length(WrittenString) > 0) And (Length(WrittenString) < 4) And Not(WrittenString[1] = '-') Then
@@ -719,7 +678,7 @@ Var
     Error: ERROR_CODES;
     I, GridLength, GridHigh: Integer;
 Begin
-    Error := NO_ERRORS; //А нужно ли?
+    Error := NO_ERRORS;
 
     GridLength := 0;
 
@@ -768,7 +727,7 @@ Begin
         '2) Элемент массива представляет собой целое число в диапазоне от -9999 до 9999.'#13#10 +
         '3) Для возможности вывода результатов нужно заполнить корректными значениями все ячейки массива и убрать фокус мыши с него.'#13#10;
 
-    InstructionForm.GuideLabel.Font.Size := 11;
+    InstructionForm.GuideLabel.Font.Size := 9;
     InstructionForm.Caption := 'Инструкция';
     InstructionForm.GuideLabel.WordWrap := True;
     InstructionForm.ShowModal;
@@ -994,7 +953,7 @@ Begin
     Error := NO_ERRORS;
     CanClose := False;
 
-    If (IsDataSaved) {Or Not(CheckGridOnValidity(MainForm.StringGridA))} Then
+    If (IsDataSaved) Then
     Begin
         IsFormShouldClose := Application.MessageBox(PChar('Вы хотите выйти?'), PChar('Выход'), MB_YESNO + MB_ICONQUESTION);
 

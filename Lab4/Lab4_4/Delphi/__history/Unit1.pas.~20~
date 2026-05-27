@@ -172,8 +172,8 @@ Var
 Begin
     Pivot := 0;
     RandomIndex := 0;
-    I := 0;
-    J := 0;
+    I := Low;
+    J := High;
     IsDoNotStop := True;
 
     RandomIndex := Random(High - Low) + Low;
@@ -182,18 +182,18 @@ Begin
     While IsDoNotStop Do
     Begin
         While (DataArray[I] < Pivot) Do
-            I := I + 1;
+            Inc(I);
 
         While (DataArray[J] > Pivot) Do
-            J := J - 1;
+            Dec(J);
 
         If (I >= J) Then
             IsDoNotStop := False
         Else
         Begin
-            I := I + 1;
-            J := J - 1;
             Swap(dataArray, I, J);
+            Inc(I);
+            Dec(J)
         End;
     End;
 
@@ -215,8 +215,6 @@ Begin
             Quicksort(DataArray, Point + 1, High);
         End;
     End;
-
-
 End;
 
 Function IsFileText(FilePath: String): Boolean;
@@ -516,7 +514,7 @@ Begin
     IsFirstNumberCorrect := CheckLengthStringOnValidity(NumberOneEdit.Text);
     ResultButton.Enabled := IsFirstNumberCorrect And CheckGridOnValidity(StringGridA);
     SaveTab.Enabled := IsFirstNumberCorrect And CheckGridOnValidity(StringGridA);
-    IsDataSaved := False;
+    IsDataSaved := True;
     SetStringGridACorrect;
     LabelResult.Visible := False;
     StringGridResult.Visible := False;
@@ -538,6 +536,7 @@ Begin
     //MainForm.SaveTab.Enabled := IsFirstNumberCorrect And CheckGridOnValidity(MainForm.StringGridA);
     MainForm.LabelResult.Visible := False;
     MainForm.StringGridResult.Visible := False;
+    IsDataSaved := True;
 End;
 
 Procedure SetStringGridACorrect();
@@ -639,6 +638,7 @@ Var
 Begin
     LabelResult.Visible := True;
     StringGridResult.Visible := True;
+    IsDataSaved := False;
 
     NumberOneText := '';
     NumberOneText := MainForm.NumberOneEdit.Text;
@@ -764,7 +764,7 @@ Var
 Begin
     InstructionForm := TGuideForm.Create(Self);
     InstructionForm.GuideLabel.Caption :=
-        '1) «а длинну массива принимаетс€ целое число от 1 до 99.'#13#10 +
+        '1) «а длину массива принимаетс€ целое число от 1 до 99.'#13#10 +
         '2) Ёлемент массива представл€ет собой целое число в диапазоне от -9999 до 9999.'#13#10 +
         '3) ƒл€ возможности вывода результатов нужно заполнить корректными значени€ми все €чейки массива и убрать фокус мыши с него.'#13#10;
 
@@ -945,30 +945,6 @@ Begin
         End;
     End;
 
-    If Not(GridAArray = Nil) And (Error = NO_ERRORS) Then
-    Begin
-        For I := 0 To ArrHigh Do
-        Begin
-            If Error = NO_ERRORS Then
-            Begin
-
-                If EOF(ReadedFile) Then
-                Begin
-                    GridAArray := Nil;
-                    Error := FILE_DATA_NOT_CORRECT;
-                End;
-
-                Try
-                    Read(ReadedFile, GridResultArray[I]);
-                Except
-                    GridAArray := Nil;
-                    Error := FILE_DATA_NOT_CORRECT;
-                End;
-
-            End;
-        End;
-    End;
-
     If Not(EOF(ReadedFile)) Then
         Begin
             GridAArray := Nil;
@@ -979,6 +955,9 @@ Begin
 
     If (Error = NO_ERRORS) Then
     Begin
+        GridResultArray := Copy(GridAArray);
+        Quicksort(GridResultArray, 0, High(GridResultArray));
+
         MainForm.NumberOneEdit.Text := IntToStr(ArrLength);
 
         MainForm.LabelResult.Visible := True;
@@ -1015,7 +994,7 @@ Begin
     Error := NO_ERRORS;
     CanClose := False;
 
-    If (IsDataSaved) Or Not(CheckGridOnValidity(MainForm.StringGridA)) Then
+    If (IsDataSaved) {Or Not(CheckGridOnValidity(MainForm.StringGridA))} Then
     Begin
         IsFormShouldClose := Application.MessageBox(PChar('¬ы хотите выйти?'), PChar('¬ыход'), MB_YESNO + MB_ICONQUESTION);
 

@@ -39,7 +39,8 @@ static void printRangeError(int minVal, int maxVal)
 
 static void clearBuffer(void)
 {
-    while (getchar() != '\n');
+    while (getchar() != '\n')
+        ;
 }
 
 int scanInt(const int MIN_NUMBER, const int MAX_NUMBER, const char myString[])
@@ -61,7 +62,8 @@ int scanInt(const int MIN_NUMBER, const int MAX_NUMBER, const char myString[])
         {
             isIncorrect = 1;
             printf("Некорректный ввод, повторите попытку\n");
-            while (getchar() != '\n');
+            while (getchar() != '\n')
+                ;
         }
 
         if (!isIncorrect && ((number < MIN_NUMBER) || (number > MAX_NUMBER)))
@@ -126,14 +128,14 @@ static void scanName(char dest[], int maxLen)
    ================================================================ */
 static void fillOneRecord(Record *rec, int index)
 {
-    const int MAX_NUM =  999999;
+    const int MAX_NUM = 999999;
     const int MIN_NUM = -999999;
     const int MAX_BUFFER = 50;
 
     printf("--- Запись [%d] ---\n", index);
 
     printf("Введите id\n");
-    rec->id = scanInt(MIN_NUM, MAX_NUM, "> ");   // используем ->, а не (*rec[index])
+    rec->id = scanInt(MIN_NUM, MAX_NUM, "> "); // используем ->, а не (*rec[index])
 
     printf("Введите name\n");
     scanName(rec->name, MAX_BUFFER);
@@ -152,7 +154,7 @@ void fillRecords(Record **records, int *len)
     printf("Введите количество записей\n");
     *len = scanInt(1, MAX_COUNT, "> ");
 
-    *records = (Record*)malloc(*len * sizeof(Record));
+    *records = (Record *)malloc(*len * sizeof(Record));
     if (*records == NULL)
     {
         printf("Ошибка выделения памяти\n");
@@ -163,7 +165,7 @@ void fillRecords(Record **records, int *len)
     printf("\n");
 
     for (i = 0; i < *len; ++i)
-        fillOneRecord(&(*records)[i], i + 1);   // передаём адрес i-го элемента
+        fillOneRecord(&(*records)[i], i + 1); // передаём адрес i-го элемента
 }
 
 static void showRecord(const Record *r)
@@ -218,15 +220,15 @@ static void swapRecords(Record *a, Record *b)
 {
     Record tmp;
     tmp = *a;
-    *a  = *b;
-    *b  = tmp;
+    *a = *b;
+    *b = tmp;
 }
 
 static int findMinIdIdx(const Record *records, int from, int len)
 {
     int minIdx, j;
     minIdx = from;
-    j      = from + 1;
+    j = from + 1;
 
     for (j = from + 1; j < len; ++j)
     {
@@ -354,10 +356,10 @@ static _Bool isRecordEqual(const Record *a, const Record *b)
    ================================================================ */
 static _Bool hasDuplicateLinear(const Record *records, int len, int idx, SearchMetrics *m)
 {
-    int    i;
-    _Bool  found;
+    int i;
+    _Bool found;
 
-    i     = 0;
+    i = 0;
     found = 0;
 
     for (i = 0; i < len; ++i)
@@ -399,9 +401,9 @@ static int binaryFindById(const Record *records, int len, int targetId, int excl
 {
     int left, right, mid, result;
 
-    left   = 0;
-    right  = len - 1;
-    mid    = 0;
+    left = 0;
+    right = len - 1;
+    mid = 0;
     result = -1;
 
     while (left <= right)
@@ -412,17 +414,16 @@ static int binaryFindById(const Record *records, int len, int targetId, int excl
         if (records[mid].id == targetId && mid != excludeIdx)
         {
             result = mid;
-            left   = right + 1;
+            left = right + 1;
         }
-        else 
-            if (records[mid].id < targetId)
-            {
-                left = mid + 1;
-            }
-            else
-            {
-                right = mid - 1;
-            }
+        else if (records[mid].id < targetId)
+        {
+            left = mid + 1;
+        }
+        else
+        {
+            right = mid - 1;
+        }
     }
 
     return result;
@@ -435,15 +436,15 @@ static int binaryFindById(const Record *records, int len, int targetId, int excl
    уникальна. Если id совпал — дополнительно сравниваем все поля.
    Индексы уникальных кладёт в *unique, возвращает их количество.
    ================================================================ */
-   /* ================================================================
-   findRangeById — находит левую и правую границу блока с targetId
-   ================================================================ */
+/* ================================================================
+findRangeById — находит левую и правую границу блока с targetId
+================================================================ */
 static void findRangeById(const Record records[], int len, int targetId, int *first, int *last, SearchMetrics *m)
 {
     int left, right, mid;
 
     *first = -1;
-    *last  = -1;
+    *last = -1;
 
     /* Поиск левой границы */
     left = 0;
@@ -583,7 +584,7 @@ void linearSearchStage(const Record *records, int len, SearchMetrics *m)
     int *unique;
     int count;
 
-    unique = (int*)malloc(len * sizeof(int));
+    unique = (int *)malloc(len * sizeof(int));
     if (unique == NULL)
     {
         printf("Ошибка выделения памяти\n");
@@ -607,32 +608,32 @@ void linearSearchStage(const Record *records, int len, SearchMetrics *m)
 /* ================================================================
    binarySearchStage
    ================================================================ */
-   void binarySearchStage(const Record *sorted, int len, SearchMetrics *m)
-   {
-       int *unique;
-       int count;
-   
-       unique = (int*)malloc(len * sizeof(int));
-       if (unique == NULL)
-       {
-           printf("Ошибка выделения памяти\n");
-           return;
-       }
-   
-       m->comparisons = 0;
-   
-       printf("\n====== ДВОИЧНЫЙ ПОИСК ======\n");
-       printf("Поиск уникальных записей в отсортированном по id массиве\n");
-       printf("(двоичным поиском ищем дубликат по id, затем сверяем все поля)\n\n");
-   
-       count = binarySearchUnique(sorted, len, unique, m);
-   
-       showUniqueFound(sorted, unique, count);
-   
-       printf("Количество сравнений: %lld\n", m->comparisons);
-   
-       free(unique);
-   }
+void binarySearchStage(const Record *sorted, int len, SearchMetrics *m)
+{
+    int *unique;
+    int count;
+
+    unique = (int *)malloc(len * sizeof(int));
+    if (unique == NULL)
+    {
+        printf("Ошибка выделения памяти\n");
+        return;
+    }
+
+    m->comparisons = 0;
+
+    printf("\n====== ДВОИЧНЫЙ ПОИСК ======\n");
+    printf("Поиск уникальных записей в отсортированном по id массиве\n");
+    printf("(двоичным поиском ищем дубликат по id, затем сверяем все поля)\n\n");
+
+    count = binarySearchUnique(sorted, len, unique, m);
+
+    showUniqueFound(sorted, unique, count);
+
+    printf("Количество сравнений: %lld\n", m->comparisons);
+
+    free(unique);
+}
 
 static void showComparisonTable(long long linearCmp, long long binaryCmp, int len)
 {
@@ -641,7 +642,7 @@ static void showComparisonTable(long long linearCmp, long long binaryCmp, int le
     printf("+------------------------------------+------------+\n");
     printf("| Линейный поиск  (уникальные)       | %10lld |\n", linearCmp);
     printf("| Двоичный поиск  (уникальные)       | %10lld |\n", binaryCmp);
-    printf("| Размер массива                     | %10d |\n",   len);
+    printf("| Размер массива                     | %10d |\n", len);
     printf("+------------------------------------+------------+\n");
 }
 
