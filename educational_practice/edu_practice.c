@@ -5,37 +5,37 @@
 #include <time.h>
 
 /*
- (СФ) Организовать выдачу талонов к врачу
+ ()     
 
- •Осуществлять поиск всех записей к врачу на конкретную дату
-    (ФИО врача ввести с клавиатуры);
+         
+    (    );
 
- •Осуществлять поиск записей о больном по ФИО;
+       ;
 
- •Предусмотреть возможность добавлять, удалять и
-    корректировать записи из списков, а также просматривать списки полностью.
+   ,  
+       ,     .
 
 */
 
 /*
-Каждая запись списка содержит:
-    дату,
-    время,
-    № очереди,
-    ФИО больного (изначально поле пустое),
-    номер кабинета,
-    код врача.
+   :
+    ,
+    ,
+     ,
+      (  ),
+     ,
+     .
  */
 
 /*
- График работ содержит:
-    код врача,
-    специализацию врача,
-    ФИО врача,
-    временной диапазон работы на каждый день с понедельника по субботу.
+   :
+     ,
+     ,
+     ,
+             .
  */
 
-// TODO Проверить и стандартизировать выводы в консоль 
+// TODO       
 
 typedef struct date
 {
@@ -57,9 +57,9 @@ typedef struct appointment
 
     int queuePlace;
 
-    char name[17];       // Имя
-    char surname[17];    // Фамилия
-    char patronymic[17]; // Отчество
+    char name[17];       // 
+    char surname[17];    // 
+    char patronymic[17]; // 
 
     int cabinet;
     int doctorID;
@@ -73,12 +73,12 @@ typedef struct doctorSchedule
     int doctorID;
     char specialization[36];
 
-    char name[17];       // Имя
-    char surname[17];    // Фамилия
-    char patronymic[17]; // Отчество
+    char name[17];       // 
+    char surname[17];    // 
+    char patronymic[17]; // 
 
-    int schedule[6][2]; // Индексы от 0 до 5 это дни от понедельника до субботы
-                        // Первое число - старт (в минутах), второе число конец (в минутах)
+    int schedule[6][2]; //   0  5      
+                        //   -  ( ),    ( )
 
     struct doctorSchedule *next;
 
@@ -618,7 +618,7 @@ void showAppointmentsListHead()
     printf("+-----+------------+----------+-------+----------------------------------------------------+------+----------+\n");
 }
 
-// (возвращает количество элементов списка)
+// (   )
 int showAppointmentsList(appointment *appointmentsHead)
 {
     appointment *curr;
@@ -673,7 +673,7 @@ void showSchedulesListHead()
     printf("+-----+----------+-------------------------------------+----------------------------------------------------+-----------+---------+---------+\n");
 }
 
-// возвращает количество элементов списка
+//    
 int showSchedulesList(doctorSchedule *schedulesHead)
 {
     doctorSchedule *curr;
@@ -754,7 +754,7 @@ void showSchedulesListRow(int rowNumber, const doctorSchedule *curr)
 
 //
 
-// Сортировки
+// 
 void sortList(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
     int optionList, optionSort;
@@ -803,7 +803,7 @@ void sortList(appointment *appointmentsHead, doctorSchedule *schedulesHead)
     printf("\nSorted\n");
 }
 
-// Сортировка appointments по doctorID
+//  appointments  doctorID
 void sortAppointmentsByDoctorID(appointment *appointmentsHead)
 {
     appointment *sorted;
@@ -880,7 +880,7 @@ appointment *insertAppointmentSortedByDoctorID(appointment *sorted, appointment 
     return sorted;
 }
 
-// Сортировка appointments по фамилии
+//  appointments  
 void sortAppointmentsBySurname(appointment *appointmentsHead)
 {
     appointment *sorted;
@@ -1005,7 +1005,7 @@ _Bool isAppointmentNodeBefore(const appointment *node, const appointment *other)
     return isBefore;
 }
 
-// Сортировка schedules по doctorID
+//  schedules  doctorID
 void sortSchedulesByDoctorID(doctorSchedule *schedulesHead)
 {
     doctorSchedule *sorted;
@@ -1080,7 +1080,7 @@ doctorSchedule *insertScheduleSortedByDoctorID(doctorSchedule *sorted, doctorSch
     return sorted;
 }
 
-// Сортировка schedules по фамилии
+//  schedules  
 void sortSchedulesBySurname(doctorSchedule *schedulesHead)
 {
     doctorSchedule *sorted;
@@ -1132,7 +1132,7 @@ doctorSchedule *insertScheduleSortedBySurname(doctorSchedule *sorted, doctorSche
         {
             if (isScheduleNodeBefore(node, curr))
             {
-                isSearching = 0; /* место перед curr найдено */
+                isSearching = 0; /*   curr  */
             }
             else
             {
@@ -1198,7 +1198,7 @@ _Bool isScheduleNodeBefore(const doctorSchedule *node, const doctorSchedule *oth
 
 //
 
-// Главная функция findData (оркестрация)
+//   findData ()
 void findData(appointment *appointmentsHead, doctorSchedule *schedulesHead)
 {
     int option;
@@ -1275,7 +1275,7 @@ void findAllAppointmentsByDoctorNameAndDate(appointment *appointmentsHead, docto
         printf("No appointments found\n");
 }
 
-// Ввод ФИО
+//  
 void inputFullName(char *surname, char *name, char *patronymic)
 {
     printf("surname: ");
@@ -1286,7 +1286,7 @@ void inputFullName(char *surname, char *name, char *patronymic)
     scanf("%16s", patronymic);
 }
 
-// Ввод даты для поиска
+//    
 void inputDate(int *day, int *month, int *year)
 {
     const int MIN_YEAR = 2026;
@@ -1771,7 +1771,7 @@ void saveAppointmentToTextFile(const appointment *appt, const doctorSchedule *do
     char fullNamePatient[51];
     char fullNameDoctor[51];
 
-    file = fopen("appointment_ticket.txt", "a"); // "a" - дописывает, не перезаписывает
+    file = fopen("appointment_ticket.txt", "a"); // "a" - ,  
     if (file == NULL)
     {
         printf("Error: cannot open appointment_ticket.txt\n");
@@ -2148,7 +2148,7 @@ void saveSchedulesToFile(doctorSchedule *head)
         return;
     }
 
-    curr = head->next; // пропускаем фиктивный узел
+    curr = head->next; //   
     while (curr != NULL)
     {
         fwrite(&curr->doctorID, sizeof(int), 1, file);
@@ -2156,7 +2156,7 @@ void saveSchedulesToFile(doctorSchedule *head)
         fwrite(curr->name, sizeof(curr->name), 1, file);
         fwrite(curr->surname, sizeof(curr->surname), 1, file);
         fwrite(curr->patronymic, sizeof(curr->patronymic), 1, file);
-        fwrite(curr->schedule, sizeof(curr->schedule), 1, file); // массив 6x2 int
+        fwrite(curr->schedule, sizeof(curr->schedule), 1, file); //  6x2 int
 
         curr = curr->next;
     }
@@ -2219,7 +2219,7 @@ doctorSchedule *getScheduleByIndex(doctorSchedule *head, int index)
 
 int findMaxDay(int month, int year)
 {
-    int maxDayInEachMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; // Индекс = месяц - 1; значение = max количество дней
+    int maxDayInEachMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //  =  - 1;  = max  
     int maxDay;
 
     maxDay = maxDayInEachMonth[month - 1];
@@ -2248,7 +2248,7 @@ void freeLists(appointment *appointmentsHead, doctorSchedule *schedulesHead)
     appointment *apptCurr, *apptNext;
     doctorSchedule *schCurr, *schNext;
 
-    // Освобождение списка записей
+    //   
     apptCurr = appointmentsHead;
     while (apptCurr != NULL)
     {
@@ -2257,7 +2257,7 @@ void freeLists(appointment *appointmentsHead, doctorSchedule *schedulesHead)
         apptCurr = apptNext;
     }
 
-    // Освобождение списка расписаний
+    //   
     schCurr = schedulesHead;
     while (schCurr != NULL)
     {
@@ -2270,7 +2270,7 @@ void freeLists(appointment *appointmentsHead, doctorSchedule *schedulesHead)
     schedulesHead = NULL;
 }
 
-// Сравнение двух талонов: возвращает 1, если a раньше b, иначе 0
+//   :  1,  a  b,  0
 int checkIsEarlierAppointment(appointment *a, appointment *b)
 {
     int aTime;
@@ -2293,7 +2293,7 @@ int checkIsEarlierAppointment(appointment *a, appointment *b)
     return (aTime < bTime);
 }
 
-// Сброс всех номеров очереди (кроме фиктивной головы)
+//     (  )
 void resetQueueNumbers(appointment *head)
 {
     appointment *curr;
@@ -2307,7 +2307,7 @@ void resetQueueNumbers(appointment *head)
     }
 }
 
-// Находит ПЕРВЫЙ непронумерованный талон и возвращает его кабинет
+//        
 appointment *findFirstUnassigned(appointment *head, int *cabinet)
 {
     appointment *curr = NULL;
@@ -2328,7 +2328,7 @@ appointment *findFirstUnassigned(appointment *head, int *cabinet)
     return found;
 }
 
-// Находит самый ранний непронумерованный талон в заданном кабинете
+//        
 appointment *findEarliestUnassignedInCabinet(appointment *head, int cabinet)
 {
     appointment *curr;
@@ -2351,7 +2351,7 @@ appointment *findEarliestUnassignedInCabinet(appointment *head, int cabinet)
     return earliest;
 }
 
-// Нумерует все талоны одного кабинета по порядку времени
+//        
 void numberCabinet(appointment *head, int cabinet)
 {
     int nextNumber;
@@ -2369,7 +2369,7 @@ void numberCabinet(appointment *head, int cabinet)
     }
 }
 
-// Главная функция: полностью пересчитывает номера очереди для всех талонов
+//  :       
 void assignQueueNumbers(appointment *head)
 {
     int cabinet;
