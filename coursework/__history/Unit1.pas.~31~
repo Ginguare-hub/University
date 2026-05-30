@@ -13,20 +13,12 @@ Uses
     Vcl.Forms,
     Vcl.Dialogs,
     Vcl.ExtCtrls,
-    Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Menus;
+    Vcl.ComCtrls;
 
 Type
     TForm1 = Class(TForm)
         PaintBox1: TPaintBox;
         Timer1: TTimer;
-    TimeLabel: TLabel;
-    Label1: TLabel;
-    MainMenu1: TMainMenu;
-    N1: TMenuItem;
-    N2: TMenuItem;
-    N3: TMenuItem;
-    N4: TMenuItem;
-    ScrollBox1: TScrollBox;
         Procedure PaintBox1Paint(Sender: TObject);
         Procedure Timer1Timer(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
@@ -46,19 +38,18 @@ Implementation
 {$R *.dfm}
 
 Const
-    CELL_SIZE = 64; //пикселей
+    CELL_SIZE = 32; //пикселей
     MAP_WIDTH = 16; //клеток по горизонтали
     MAP_HEIGHT = 16; //клеток по вертикали
 
 Var
     GrassTex{, RoadTex, TowerTex}: TBitmap;
-    MapData: Array [0 .. MAP_WIDTH - 1, 0 .. MAP_HEIGHT - 1] Of Integer;  //0 Ц пусто, 1 Ц дорога, 2 Ц место дл€ башни и т.д.
-    GameTime: Integer; // врем€ в секундах (или миллисекундах)
+    MapData: Array [0 .. MAP_WIDTH - 1, 0 .. MAP_HEIGHT - 1] Of Integer;
+    //0 Ц пусто, 1 Ц дорога, 2 Ц место дл€ башни и т.д.
 
 Procedure TForm1.FormCreate(Sender: TObject);
 Begin
     GrassTex := TBitmap.Create;
-    GameTime := 0;
 //    RoadTex := TBitmap.Create;
 //    TowerTex := TBitmap.Create;
 
@@ -114,18 +105,8 @@ Begin
 End;
 
 Procedure TForm1.Timer1Timer(Sender: TObject);
-Const
-   SEC_IN_MIN: Integer = 60;
-Var
-    Hours, Minutes, Seconds: Integer;
 Begin
-    GameTime := GameTime + 1; // увеличиваем на 1 (или на интервал таймера)
-    PaintBox1.Invalidate;     //перерисовка по таймеру
-
-    Hours   := GameTime Div (SEC_IN_MIN * SEC_IN_MIN);
-    Minutes := (GameTime Div SEC_IN_MIN) Mod SEC_IN_MIN;
-    Seconds := GameTime Mod SEC_IN_MIN;
-    TimeLabel.Caption := Format('¬рем€: %.2d:%.2d:%.2d', [Hours, Minutes, Seconds]);
+    PaintBox1.Invalidate; //перерисовка по таймеру
 End;
 
 End.

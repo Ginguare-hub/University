@@ -13,20 +13,13 @@ Uses
     Vcl.Forms,
     Vcl.Dialogs,
     Vcl.ExtCtrls,
-    Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Menus;
+    Vcl.ComCtrls, Vcl.StdCtrls;
 
 Type
     TForm1 = Class(TForm)
         PaintBox1: TPaintBox;
         Timer1: TTimer;
     TimeLabel: TLabel;
-    Label1: TLabel;
-    MainMenu1: TMainMenu;
-    N1: TMenuItem;
-    N2: TMenuItem;
-    N3: TMenuItem;
-    N4: TMenuItem;
-    ScrollBox1: TScrollBox;
         Procedure PaintBox1Paint(Sender: TObject);
         Procedure Timer1Timer(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
@@ -125,7 +118,7 @@ Begin
     Hours   := GameTime Div (SEC_IN_MIN * SEC_IN_MIN);
     Minutes := (GameTime Div SEC_IN_MIN) Mod SEC_IN_MIN;
     Seconds := GameTime Mod SEC_IN_MIN;
-    TimeLabel.Caption := Format('Время: %.2d:%.2d:%.2d', [Hours, Minutes, Seconds]);
+    TimeLabel.Caption := Format('Время: %02d:%02d:%02d', [Hours, Minutes, Seconds]);
 End;
 
 End.

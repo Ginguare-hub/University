@@ -26,7 +26,6 @@ Type
     N2: TMenuItem;
     N3: TMenuItem;
     N4: TMenuItem;
-    ScrollBox1: TScrollBox;
         Procedure PaintBox1Paint(Sender: TObject);
         Procedure Timer1Timer(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
