@@ -90,8 +90,6 @@ object Form1: TForm1
     Margins.Top = 5
     Margins.Right = 5
     Margins.Bottom = 5
-    VertScrollBar.Smooth = True
-    BevelWidth = 2
     TabOrder = 0
     UseWheelForScrolling = True
     object Panel1: TPanel
@@ -103,7 +101,7 @@ object Form1: TForm1
       Margins.Top = 5
       Margins.Right = 5
       Margins.Bottom = 5
-      BevelWidth = 2
+      BevelOuter = bvSpace
       Caption = 'Panel1'
       TabOrder = 0
     end
@@ -116,7 +114,6 @@ object Form1: TForm1
       Margins.Top = 5
       Margins.Right = 5
       Margins.Bottom = 5
-      BevelWidth = 2
       Caption = 'Panel2'
       TabOrder = 1
     end

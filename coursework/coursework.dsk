@@ -1,32 +1,37 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'C:\GitHub\University\Lab4\Lab4_4\Delphi\Unit2.pas',0,1,1,74,30,0,0,,
-File_1=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.Controls.pas',0,1,7902,1,7921,0,0,,
-File_2=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.Grids.pas',0,1,1724,1,1744,0,0,,
-File_3=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.Forms.pas',0,1,7620,1,8640,0,0,{{2051,4}
-File_4=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.Menus.pas',0,1,3570,1,3589,0,0,,
-File_5=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\RTL\SYS\System.pas',0,1,26249,1,26251,0,0,,
-File_6=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\source\rtl\common\System.Classes.pas',0,1,19068,1,19087,0,0,,
-File_7=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.StdCtrls.pas',0,1,3547,1,3563,0,0,{{1775,4}
-File_8=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\source\rtl\win\Winapi.Windows.pas',0,1,42582,1,42598,0,0,,
-File_9=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\RTL\SYS\System.SysUtils.pas',0,1,8945,1,8962,0,0,,
-File_10=TSourceModule,'C:\Users\Vlad\Desktop\Education\Лабораторные Напарника\Task 3\MainUnit.pas',0,1,673,1,677,0,0,,
-File_11=TSourceModule,'C:\GitHub\University\Forms\Test\Unit1.pas',0,1,363,88,378,0,0,{{114,47}
-File_12=TSourceModule,'C:\GitHub\University\Forms\Test\Unit2.pas',0,1,16,44,43,0,0,,
-File_13=TSourceModule,'C:\GitHub\University\Forms\Test\Unit3.pas',0,1,1,36,14,0,0,,
-File_14=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.Dialogs.pas',0,1,2349,1,2365,0,0,,
+File_0=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\RTL\SYS\System.pas',0,1,18482,1,18507,0,0,,
+File_1=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\RTL\SYS\GETMEM.INC',0,1,1942,1,1985,0,0,,
+File_2=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\RTL\SYS\System.SysUtils.pas',0,1,24153,1,24177,0,0,,
+File_3=TSourceModule,'C:\GitHub\University\Lab4\Lab4_4\Delphi\Unit2.pas',0,1,1,74,30,0,0,,
+File_4=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.Controls.pas',0,1,7902,1,7921,0,0,,
+File_5=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.Grids.pas',0,1,1724,1,1744,0,0,,
+File_6=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.Forms.pas',0,1,7620,1,8640,0,0,{{2051,4}
+File_7=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.Menus.pas',0,1,3570,1,3589,0,0,,
+File_8=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\source\rtl\common\System.Classes.pas',0,1,19068,1,19087,0,0,,
+File_9=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\SOURCE\VCL\Vcl.StdCtrls.pas',0,1,3547,1,3563,0,0,{{1775,4}
+File_10=TSourceModule,'c:\program files (x86)\embarcadero\studio\23.0\source\rtl\win\Winapi.Windows.pas',0,1,42582,1,42598,0,0,,
+File_11=TSourceModule,'C:\Users\Vlad\Desktop\Education\Лабораторные Напарника\Task 3\MainUnit.pas',0,1,673,1,677,0,0,,
+File_12=TSourceModule,'C:\GitHub\University\Forms\Test\Unit1.pas',0,1,363,88,378,0,0,{{114,47}
+File_13=TSourceModule,'C:\GitHub\University\Forms\Test\Unit2.pas',0,1,16,44,43,0,0,,
+File_14=TSourceModule,'C:\GitHub\University\Forms\Test\Unit3.pas',0,1,1,36,14,0,0,,
 
 [Modules]
 Module0=C:\GitHub\University\coursework\Unit1.pas
-Count=1
+Module1=C:\GitHub\University\coursework\coursework.dproj
+Count=2
 EditWindowCount=1
 
 [C:\GitHub\University\coursework\Unit1.pas]
 ModuleType=TSourceModule
 
+[C:\GitHub\University\coursework\coursework.dproj]
+ModuleType=TBaseProject
+
 [EditWindow0]
-ViewCount=1
+ViewCount=2
 CurrentEditView=C:\GitHub\University\coursework\Unit1.pas
 View0=0
+View1=1
 PercentageSizes=1
 Create=1
 Visible=1
@@ -63,13 +68,24 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 [View0]
 CustomEditViewType=TEditView
 Module=C:\GitHub\University\coursework\Unit1.pas
-CursorX=7
-CursorY=55
+CursorX=75
+CursorY=248
+TopLine=535
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=C:\GitHub\University\coursework\Unit1.pas
+
+[View1]
+CustomEditViewType=TEditView
+Module=C:\GitHub\University\coursework\coursework.dpr
+CursorX=1
+CursorY=9
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=Borland.FormDesignerView
+EditViewName=C:\GitHub\University\coursework\coursework.dpr
 
 [Watches]
 Count=0
@@ -201,11 +217,6 @@ Dockable=1
 StayOnTop=0
 SplitPos=111
 
-[PropInspDesignerSelection]
-ArrangeBy=Name
-SelectedItem=Caption,
-ExpandedItems=Anchors=0,Constraints=1,Font=0,BorderIcons=0,CustomTitleBar=0,GlassFrame=0,HorzScrollBar=0,LiveBindings=0,"LiveBindings Designer=0",Margins=0,Menu=0,Padding=0,StyleElements=0,Touch=0,VertScrollBar=0,Touch.InteractiveGestureOptions=0,Touch.InteractiveGestures=0,Touch.TabletOptions=0
-
 [frmDesignPreview]
 PercentageSizes=1
 Create=1
@@ -215,11 +226,11 @@ State=0
 Left=0
 Top=0
 Width=1156
-Height=8539
+Height=6488
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1156
-ClientHeight=8539
+ClientHeight=6488
 TBDockHeight=5958
 LRDockWidth=2513
 Dockable=1
@@ -231,8 +242,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-8
-Top=-8
+Left=-14
+Top=-208
 Width=1849
 Height=3142
 MaxLeft=-1
@@ -288,8 +299,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=0
-Top=0
+Left=-2703
+Top=456
 Width=273
 Height=359
 MaxLeft=-1
@@ -300,8 +311,8 @@ TBDockHeight=359
 LRDockWidth=273
 Dockable=1
 StayOnTop=0
-Name=15
-Description=42
+Name=6
+Description=6
 filter=1
 
 [DebugLogView]
@@ -412,11 +423,11 @@ State=0
 Left=0
 Top=0
 Width=2337
-Height=1204
+Height=969
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2337
-ClientHeight=1204
+ClientHeight=969
 TBDockHeight=2318
 LRDockWidth=2826
 Dockable=1
@@ -477,11 +488,11 @@ State=0
 Left=0
 Top=0
 Width=1156
-Height=8539
+Height=6488
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1156
-ClientHeight=8539
+ClientHeight=6488
 TBDockHeight=4882
 LRDockWidth=7148
 Dockable=1
@@ -493,8 +504,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=0
-Top=0
+Left=610
+Top=1471
 Width=2855
 Height=3212
 MaxLeft=-1
@@ -560,11 +571,11 @@ State=0
 Left=0
 Top=0
 Width=1156
-Height=8539
+Height=6488
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1156
-ClientHeight=8539
+ClientHeight=6488
 TBDockHeight=4882
 LRDockWidth=5309
 Dockable=1
@@ -624,8 +635,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=8
-Top=8
+Left=1522
+Top=40
 Width=3822
 Height=1424
 MaxLeft=-1

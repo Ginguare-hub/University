@@ -234,7 +234,7 @@ End;
 // Принимает "начальную" клетку с определённым направлением, возвращает следующую клетку X Y
 // а также Boolean как признак конца
 // Переходит на след. клетку
-Function SetDirection(Var Map: TMatrixOfMap; Var X, Y: Integer): Boolean;
+Function SetDirection(Map: TMatrixOfMap; Var X, Y: Integer): Boolean;
 Var
     IsEnd: Boolean;
     CheckX, CheckY: Integer;
@@ -288,14 +288,13 @@ Begin
             If ( Not((CheckX = X) And (CheckY = Y)) And (Map[CheckX, CheckY].TypeOfGround = GtRoad) ) Then
             Begin
                 IsEnd := False;
+            End
+            Else
+            Begin
+                Map[X, Y].EnemyDirection := DirNone;
             End;
         End;
 
-    End;
-
-    If (IsEnd) Then
-    Begin
-        Map[X, Y].EnemyDirection := DirNone;
     End;
 
     SetDirection := IsEnd;

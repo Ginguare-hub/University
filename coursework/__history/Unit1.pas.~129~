@@ -214,17 +214,17 @@ Begin
             Inc(X);
         End
         Else
-            If ( (Map[X, Y].EnemyDirection = TDirection.DirUp) And (Y < High(Map)) ) Then
+            If ( (Map[X, Y].EnemyDirection = TDirection.DirUp) And (Y > Low(Map[X])) ) Then
             Begin
                 Inc(Y);
             End
             Else
-                If ( (Map[X, Y].EnemyDirection = TDirection.DirLeft) And (X > Low(Map)) ) Then
+                If ( (Map[X, Y].EnemyDirection = TDirection.DirLeft) And (X > Low(Map)) )  Then
                 Begin
                     Dec(X);
                 End
                 Else
-                    If ( (Map[X, Y].EnemyDirection = TDirection.DirDown) And (Y > Low(Map)) ) Then
+                    If ( (Map[X, Y].EnemyDirection = TDirection.DirDown) And (Y < High(Map[X])) )  Then
                     Begin
                         Dec(Y);
                     End;
@@ -234,71 +234,156 @@ End;
 // Принимает "начальную" клетку с определённым направлением, возвращает следующую клетку X Y
 // а также Boolean как признак конца
 // Переходит на след. клетку
-Function SetDirection(Var Map: TMatrixOfMap; Var X, Y: Integer): Boolean;
+//Function SetDirection(Map: TMatrixOfMap; Var X, Y: Integer): Boolean;
+//Var
+//    IsEnd, IsRoad: Boolean;
+//    CheckX, CheckY: Integer;
+//    PrevDir: TDirection;
+//Begin
+//    IsEnd := True;
+//    PrevDir := Map[X, Y].EnemyDirection;
+//
+//    JumpToNextCell(Map, X, Y);
+//    CheckX := X;
+//    CheckY := Y;
+//
+//    If (Map[X, Y].EnemyDirection = TDirection.DirRight) Then
+//    Begin
+//        Map[X, Y].EnemyDirection := TDirection.DirDown;
+//    End
+//    Else
+//    Begin
+//        Map[X, Y].EnemyDirection := Pred(PrevDir);
+//    End;
+//
+//    JumpToNextCell(Map, CheckX, CheckY);
+//    If ( Not((CheckX = X) And (CheckY = Y)) And (Map[CheckX, CheckY].TypeOfGround = GtRoad) ) Then
+//    Begin
+//        IsEnd := False;
+//    End
+//    Else
+//    Begin
+//        CheckX := X;
+//        CheckY := Y;
+//        Map[X, Y].EnemyDirection := PrevDir;
+//        JumpToNextCell(Map, CheckX, CheckY);
+//        If ( Not((CheckX = X) And (CheckY = Y)) And (Map[CheckX, CheckY].TypeOfGround = GtRoad) ) Then
+//        Begin
+//            IsEnd := False;
+//        End
+//        Else
+//        Begin
+//            CheckX := X;
+//            CheckY := Y;
+//            If (Map[X, Y].EnemyDirection = TDirection.DirDown) Then
+//            Begin
+//                Map[X, Y].EnemyDirection := TDirection.DirRight;
+//            End
+//            Else
+//            Begin
+//                Map[X, Y].EnemyDirection := Succ(PrevDir);
+//            End;
+//
+//            JumpToNextCell(Map, CheckX, CheckY);
+//            If ( Not((CheckX = X) And (CheckY = Y)) And (Map[CheckX, CheckY].TypeOfGround = GtRoad) ) Then
+//            Begin
+//                IsEnd := False;
+//            End
+//            Else
+//            Begin
+//                Map[X, Y].EnemyDirection := DirNone;
+//            End;
+//        End;
+//
+//    End;
+//
+//    SetDirection := IsEnd;
+//End;
+
+Function SetDirection(Map: TMatrixOfMap; Var X, Y: Integer): Boolean;
 Var
-    IsEnd: Boolean;
-    CheckX, CheckY: Integer;
-    PrevDir: TDirection;
+    NextX, NextY: Integer;
+    CurrentDir: TDirection;
 Begin
-    IsEnd := True;
-    PrevDir := Map[X, Y].EnemyDirection;
+    Result := False;
+    CurrentDir := Map[X, Y].EnemyDirection;
 
-    JumpToNextCell(Map, X, Y);
-    CheckX := X;
-    CheckY := Y;
+    // Пытаемся идти прямо
+    NextX := X;
+    NextY := Y;
 
-    If (PrevDir = TDirection.DirRight) Then
-    Begin
-        Map[X, Y].EnemyDirection := TDirection.DirDown;
-    End
-    Else
-    Begin
-        Map[X, Y].EnemyDirection := Pred(PrevDir);
+    Case CurrentDir Of
+        DirRight: Inc(NextX);
+        DirLeft:  Dec(NextX);
+        DirUp:    Inc(NextY);
+        DirDown:  Dec(NextY);
     End;
 
-    JumpToNextCell(Map, CheckX, CheckY);
-    If ( Not((CheckX = X) And (CheckY = Y)) And (Map[CheckX, CheckY].TypeOfGround = GtRoad) ) Then
+    // Если прямо дорога - продолжаем
+    If (NextX >= 0) And (NextX < MAP_WIDTH) And (NextY >= 0) And (NextY < MAP_HEIGHT) Then
     Begin
-        IsEnd := False;
-    End
-    Else
-    Begin
-        CheckX := X;
-        CheckY := Y;
-        Map[X, Y].EnemyDirection := PrevDir;
-        JumpToNextCell(Map, CheckX, CheckY);
-        If ( Not((CheckX = X) And (CheckY = Y)) And (Map[CheckX, CheckY].TypeOfGround = GtRoad) ) Then
+        If Map[NextX, NextY].TypeOfGround = GtRoad Then
         Begin
-            IsEnd := False;
-        End
-        Else
+            X := NextX;
+            Y := NextY;
+            Map[X, Y].EnemyDirection := CurrentDir;
+            Exit;
+        End;
+    End;
+
+    // Если прямо не дорога, ищем поворот
+    Case CurrentDir Of
+        DirRight, DirLeft:
         Begin
-            CheckX := X;
-            CheckY := Y;
-            If (PrevDir = TDirection.DirDown) Then
+            // Пробуем вверх
+            NextX := X;
+            NextY := Y + 1;
+            If (NextY < MAP_HEIGHT) And (Map[NextX, NextY].TypeOfGround = GtRoad) Then
             Begin
-                Map[X, Y].EnemyDirection := TDirection.DirRight;
-            End
-            Else
-            Begin
-                Map[X, Y].EnemyDirection := Succ(PrevDir);
+                X := NextX;
+                Y := NextY;
+                Map[X, Y].EnemyDirection := DirUp;
+                Exit;
             End;
 
-            JumpToNextCell(Map, CheckX, CheckY);
-            If ( Not((CheckX = X) And (CheckY = Y)) And (Map[CheckX, CheckY].TypeOfGround = GtRoad) ) Then
+            // Пробуем вниз
+            NextY := Y - 1;
+            If (NextY >= 0) And (Map[NextX, NextY].TypeOfGround = GtRoad) Then
             Begin
-                IsEnd := False;
+                X := NextX;
+                Y := NextY;
+                Map[X, Y].EnemyDirection := DirDown;
+                Exit;
             End;
         End;
 
+        DirUp, DirDown:
+        Begin
+            // Пробуем вправо
+            NextX := X + 1;
+            NextY := Y;
+            If (NextX < MAP_WIDTH) And (Map[NextX, NextY].TypeOfGround = GtRoad) Then
+            Begin
+                X := NextX;
+                Y := NextY;
+                Map[X, Y].EnemyDirection := DirRight;
+                Exit;
+            End;
+
+            // Пробуем влево
+            NextX := X - 1;
+            If (NextX >= 0) And (Map[NextX, NextY].TypeOfGround = GtRoad) Then
+            Begin
+                X := NextX;
+                Y := NextY;
+                Map[X, Y].EnemyDirection := DirLeft;
+                Exit;
+            End;
+        End;
     End;
 
-    If (IsEnd) Then
-    Begin
-        Map[X, Y].EnemyDirection := DirNone;
-    End;
-
-    SetDirection := IsEnd;
+    // Если никуда не можем пойти - конец пути
+    Result := True;
 End;
 
 Procedure CalculateEnemyDirections(Var Map: TMatrixOfMap);

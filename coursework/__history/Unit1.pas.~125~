@@ -42,9 +42,9 @@ Type
         Health: Integer;
         MaxHealth: Integer;
         Speed: Double; //клеток в секунду
-        CellX, CellY: Integer; //текуща€ клетка (X - горизонталь, Y - вертикаль)
+        CellX, CellY: Integer; //текуща€ клетка
         OffsetX, OffsetY: Double; //смещение внутри клетки (0..1)
-        Direction: TDirection; //текущее направление
+        Direction: TDirection; //текущее направление (1-4)
         Reward: Integer;
     End;
 
@@ -91,7 +91,7 @@ Var
 Begin
     For I := Low(Map) To High(Map) Do
     Begin
-        For J := Low(Map[I]) To High(Map[I]) Do
+        For J := Low(Map) To High(Map) Do
         Begin
             Map[I, J].TypeOfGround := TGroundType.GtGrass;
             Map[I, J].TypeOfTurret := TTurretType.TurrNone;
@@ -157,7 +157,7 @@ Begin
     Begin
         For J := 0 To High(MapData[I]) Do
         Begin
-            If ((I = Low(MapData)) Or (I = High(MapData)) Or (J = Low(MapData[I])) Or (J = High(MapData[I]))) Then
+            If ((I = Low(MapData)) Or (I = High(MapData)) Or (J = Low(MapData)) Or (J = High(MapData))) Then
             Begin
                 If (MapData[I, J].TypeOfGround = TGroundType.GtRoad) Then
                 Begin
@@ -186,22 +186,22 @@ begin
 
     If (X = Low(Map)) Then
     Begin
-        FindFirstDirection := DirRight;
+        FindFirstDirection := DirUp;
     End
     Else
         If (X = High(Map)) Then
         Begin
-            FindFirstDirection := DirLeft;
+            FindFirstDirection := DirDown;
         End
         Else
-            If (Y = Low(Map[X])) Then
+            If (Y = Low(Map)) Then
             Begin
-            	FindFirstDirection := DirUp;
+            	FindFirstDirection := DirRight;
             End
             Else
-                If (Y = High(Map[X])) Then
+                If (Y = High(Map)) Then
                 Begin
-                    FindFirstDirection := DirDown;
+                    FindFirstDirection := DirLeft;
                 End;
 end;
 
@@ -209,22 +209,22 @@ Procedure JumpToNextCell(Map: TMatrixOfMap; Var X, Y: Integer);
 Begin
     If Not(Map[X, Y].EnemyDirection = DirNone) Then
     Begin
-        If ( (Map[X, Y].EnemyDirection = DirRight) And (X < High(Map)) ) Then
+        If ( (Map[X, Y].EnemyDirection = DirRight) And (X < High(Map)) ) Then //вниз
         Begin
             Inc(X);
         End
         Else
-            If ( (Map[X, Y].EnemyDirection = TDirection.DirUp) And (Y < High(Map)) ) Then
+            If ( (Map[X, Y].EnemyDirection = TDirection.DirUp) And (Y < High(Map)) ) Then //вверх
             Begin
                 Inc(Y);
             End
             Else
-                If ( (Map[X, Y].EnemyDirection = TDirection.DirLeft) And (X > Low(Map)) ) Then
+                If ( (Map[X, Y].EnemyDirection = TDirection.DirLeft) And (X > Low(Map)) )  Then //вправо
                 Begin
                     Dec(X);
                 End
                 Else
-                    If ( (Map[X, Y].EnemyDirection = TDirection.DirDown) And (Y > Low(Map)) ) Then
+                    If ( (Map[X, Y].EnemyDirection = TDirection.DirDown) And (Y > Low(Map)) )  Then //влево
                     Begin
                         Dec(Y);
                     End;
@@ -234,9 +234,9 @@ End;
 // ѕринимает "начальную" клетку с определЄнным направлением, возвращает следующую клетку X Y
 // а также Boolean как признак конца
 // ѕереходит на след. клетку
-Function SetDirection(Var Map: TMatrixOfMap; Var X, Y: Integer): Boolean;
+Function SetDirection(Map: TMatrixOfMap; Var X, Y: Integer): Boolean;
 Var
-    IsEnd: Boolean;
+    IsEnd, IsRoad: Boolean;
     CheckX, CheckY: Integer;
     PrevDir: TDirection;
 Begin
@@ -247,7 +247,7 @@ Begin
     CheckX := X;
     CheckY := Y;
 
-    If (PrevDir = TDirection.DirRight) Then
+    If (Map[X, Y].EnemyDirection = TDirection.DirRight) Then
     Begin
         Map[X, Y].EnemyDirection := TDirection.DirDown;
     End
@@ -275,7 +275,7 @@ Begin
         Begin
             CheckX := X;
             CheckY := Y;
-            If (PrevDir = TDirection.DirDown) Then
+            If (Map[X, Y].EnemyDirection = TDirection.DirDown) Then
             Begin
                 Map[X, Y].EnemyDirection := TDirection.DirRight;
             End
@@ -288,14 +288,13 @@ Begin
             If ( Not((CheckX = X) And (CheckY = Y)) And (Map[CheckX, CheckY].TypeOfGround = GtRoad) ) Then
             Begin
                 IsEnd := False;
+            End
+            Else
+            Begin
+                Map[X, Y].EnemyDirection := DirNone;
             End;
         End;
 
-    End;
-
-    If (IsEnd) Then
-    Begin
-        Map[X, Y].EnemyDirection := DirNone;
     End;
 
     SetDirection := IsEnd;
@@ -397,17 +396,17 @@ Begin
 
         While FullCells > 0 Do
         Begin
-            If Enemies[I].Direction = TDirection.DirRight Then
+            If Enemies[I].Direction = TDirection.DirRight Then //вниз
                 Enemies[I].CellX := Enemies[I].CellX + 1
             Else
-                If Enemies[I].Direction = TDirection.DirLeft Then
+                If Enemies[I].Direction = TDirection.DirUp Then //вверх
                     Enemies[I].CellX := Enemies[I].CellX - 1
                 Else
-                    If Enemies[I].Direction = TDirection.DirUp Then
-                        Enemies[I].CellY := Enemies[I].CellY - 1
+                    If Enemies[I].Direction = TDirection.DirLeft Then //вправо
+                        Enemies[I].CellY := Enemies[I].CellY + 1
                     Else
-                        If Enemies[I].Direction = TDirection.DirDown Then
-                            Enemies[I].CellY := Enemies[I].CellY + 1;
+                        If Enemies[I].Direction = TDirection.DirDown Then //влево
+                            Enemies[I].CellY := Enemies[I].CellY - 1;
 
             //ќбновл€ем направление на новой клетке
             If (Enemies[I].CellX >= 0) And (Enemies[I].CellX < MAP_WIDTH) And (Enemies[I].CellY >= 0) And
@@ -423,7 +422,7 @@ Begin
         //ѕроверка достижени€ базы
         If (Enemies[I].CellX >= 0) And (Enemies[I].CellX < MAP_WIDTH) And (Enemies[I].CellY >= 0) And (Enemies[I].CellY < MAP_HEIGHT) Then
         Begin
-            If MapData[Enemies[I].CellX, Enemies[I].CellY].TypeOfGround = TGroundType.GtBase Then
+            If MapData[Enemies[I].CellX, Enemies[I].CellY].TypeOfGround = TGroundType.GtRoad Then
             Begin
                 //¬раг достиг базы - удал€ем
                 Enemies[I] := Enemies[Length(Enemies) - 1];
@@ -452,7 +451,7 @@ Begin
     For I := 0 To Length(Enemies) - 1 Do
     Begin
         ScreenX := Enemies[I].CellX * CELL_SIZE;
-        ScreenY := (MAP_HEIGHT - 1 - Enemies[I].CellY) * CELL_SIZE;
+        ScreenY := Enemies[I].CellY * CELL_SIZE;
 
         If Enemies[I].EnemyType = EnCommon Then
             Canvas.Brush.Color := ClBlue
@@ -516,7 +515,7 @@ Begin
         Begin
             For J := 0 To MAP_HEIGHT - 1 Do
             Begin
-                CellRect := Rect(I * CELL_SIZE, (MAP_HEIGHT - 1 - J) * CELL_SIZE, (I + 1) * CELL_SIZE, (MAP_HEIGHT - J) * CELL_SIZE);
+                CellRect := Rect(I * CELL_SIZE, J * CELL_SIZE, (I + 1) * CELL_SIZE, (J + 1) * CELL_SIZE);
 
                 If MapData[I, J].TypeOfGround = TGroundType.GtGrass Then
                 Begin
@@ -526,9 +525,8 @@ Begin
                     If MapData[I, J].TypeOfGround = TGroundType.GtRoad Then
                     Begin
                         case MapData[I, J].EnemyDirection Of
-                            DirRight: StretchDraw(CellRect, RoadRightTex);
-                            DirLeft:  StretchDraw(CellRect, RoadLeftTex);
                             DirDown:  StretchDraw(CellRect, RoadDownTex);
+                            DirLeft:  StretchDraw(CellRect, RoadLeftTex);
                             DirUp:    StretchDraw(CellRect, RoadUpTex);
                         else
                             StretchDraw(CellRect, RoadRightTex);
