@@ -136,9 +136,6 @@ object Form1: TForm1
         Caption = #1042#1099#1093#1086#1076
       end
     end
-    object N4: TMenuItem
-      Caption = #1056#1077#1082#1086#1088#1076#1099
-    end
     object N3: TMenuItem
       Caption = #1056#1072#1079#1088#1072#1073#1086#1090#1095#1080#1082
     end

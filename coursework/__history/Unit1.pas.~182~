@@ -18,9 +18,9 @@ Uses
     Vcl.Menus;
 
 Const
-    MAP_WIDTH = 16;  //клеток по горизонтали (X)
-    MAP_HEIGHT = 16; //клеток по вертикали (Y)
-    CELL_SIZE = 64;  //пикселей
+    MAP_WIDTH  = 16;  //клеток по горизонтали (X) слева направо
+    MAP_HEIGHT = 16;  //клеток по вертикали (Y)   снизу вверх
+    CELL_SIZE  = 64;  //пикселей
 
 Type
     TTurretType = (TurrNone, TurrCommon, TurrSlowing, TurrAreaDamaging);
@@ -41,12 +41,34 @@ Type
         EnemyType: TEnemyType;
         Health: Integer;
         MaxHealth: Integer;
-        Speed: Double;          //клеток в секунду
+        Speed: Double;               //клеток в секунду
         CellX: Integer;
-        CellY: Integer;         //текущая клетка (X - горизонталь, Y - вертикаль)
+        CellY: Integer;              //текущая клетка (X - горизонталь, Y - вертикаль)
         DistanceProgress: Double;
         Reward: Integer;
     End;
+
+    TLineNode = ^TEnemyLine;
+
+    TEnemyLine = Record
+        Enemy: TEnemy;
+        Next: TLineNode;
+    End;
+
+    TEnemySpawns = Record
+        EnemyID: Integer;
+        StartTime: Double;
+        EndTime: Double;
+        EnemyCount: Integer;
+        EnemyCountCurrent: Integer;
+    End;
+
+    TEnemySpawnsArray = Array of TEnemySpawns;
+
+
+
+
+
 
     TForm1 = Class(TForm)
         PaintBox1: TPaintBox;
@@ -57,7 +79,6 @@ Type
         N1: TMenuItem;
         N2: TMenuItem;
         N3: TMenuItem;
-        N4: TMenuItem;
         ScrollBox1: TScrollBox;
         Panel1: TPanel;
         Panel2: TPanel;
@@ -65,6 +86,9 @@ Type
         Procedure Timer1Timer(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
         Procedure FormDestroy(Sender: TObject);
+
+
+
     Private
     Public
     End;
@@ -72,11 +96,16 @@ Type
 Var
     Form1: TForm1;
 
-    GrassTex, RoadRightTex, RoadUpTex, RoadLeftTex, RoadDownTex, BaseTex: TBitmap;
     MapData: TMatrixOfMap;
+
+    GrassTex, RoadRightTex, RoadUpTex, RoadLeftTex, RoadDownTex, BaseTex: TBitmap;
     GameTime: Double = 0.0;
     Enemies: Array Of TEnemy;
     EnemyTemplates: Array Of TEnemy;
+
+    LineHead1: TLineNode;
+
+    EnemySpawnsArray: TEnemySpawnsArray;
 
 Implementation
 
@@ -355,8 +384,7 @@ End;
 Procedure SpawnEnemy(TemplateIndex: Integer);
 Var
     NewEnemy: TEnemy;
-    StartX, StartY: Integer;
-    EnemyCount: Integer;
+    StartX, StartY, EnemyCount: Integer;
 Begin
     If FindStartCell(StartX, StartY) Then
     Begin
@@ -432,12 +460,27 @@ End;
 Procedure DrawEnemies(Canvas: TCanvas);
 Var
     I: Integer;
-    ScreenX, ScreenY: Integer;
+    ScreenX, ScreenY, DeltaX, DeltaY: Integer;
 Begin
     For I := 0 To Length(Enemies) - 1 Do
     Begin
-        ScreenX := (Enemies[I].CellX + Enemies[I].DistanceProgress) * CELL_SIZE;
-        ScreenY := (MAP_HEIGHT - 1 - Enemies[I].CellY) * CELL_SIZE;
+        DeltaX := 0;
+        DeltaY := 0;
+
+        case MapData[Enemies[I].CellX, Enemies[I].CellY].EnemyDirection of
+            DirUp:
+                DeltaY := 1;
+            DirDown:
+                DeltaY := -1;
+            DirRight:
+                DeltaX := 1;
+            DirLeft:
+                DeltaX := -1;
+        end;
+
+        // Враги перемещаются красиво, но становяться на вокую клетку ТОЛЬКО окогда наступают на её середину
+        ScreenX := Trunc((Enemies[I].CellX + (Enemies[I].DistanceProgress { - 0.5}) * DeltaX) * CELL_SIZE);
+        ScreenY := Trunc((MAP_HEIGHT - 1 - Enemies[I].CellY - (Enemies[I].DistanceProgress {- 0.5}) * DeltaY) * CELL_SIZE);
 
         If Enemies[I].EnemyType = EnCommon Then
             Canvas.Brush.Color := ClBlue
@@ -449,6 +492,150 @@ Begin
 
         Canvas.Ellipse(ScreenX + 5, ScreenY + 5, ScreenX + CELL_SIZE - 5, ScreenY + CELL_SIZE - 5);
     End;
+End;
+
+{
+TEnemy = Record
+        EnemyType: TEnemyType;
+        Health: Integer;
+        MaxHealth: Integer;
+        Speed: Double;               //клеток в секунду
+        CellX: Integer;
+        CellY: Integer;              //текущая клетка (X - горизонталь, Y - вертикаль)
+        DistanceProgress: Double;
+        Reward: Integer;
+    End;
+}
+Procedure SetEnemyLineCharacteristics(Var LineHead: TLineNode);
+Const
+    STD_CELLS_POS: Integer = -1;
+    STD_DISTANCE_PROGRESS: Integer = 0;
+
+    COMMON_MAX_HEALTH: Integer = 100;
+    COMMON_SPEED: Double = 1;
+    COMMON_REWARD: Integer = 50;
+
+    HEAVY_MAX_HEALTH: Integer = 200;
+    HEAVY_SPEED: Double = 0.5;
+    HEAVY_REWARD: Integer = 125;
+
+    FAST_MAX_HEALTH: Integer = 50;
+    FAST_SPEED: Double = 1.5;
+    FAST_REWARD: Integer = 75;
+Var
+    Curr: TLineNode;
+Begin
+    Curr := LineHead^.Next;
+
+    While Curr <> Nil Do
+    Begin
+
+        Curr^.Enemy.CellX := STD_CELLS_POS;
+        Curr^.Enemy.CellY := STD_CELLS_POS;
+        Curr^.Enemy.DistanceProgress := STD_DISTANCE_PROGRESS;
+
+        Case Curr^.Enemy.EnemyType Of
+            EnCommon:
+            Begin
+                Curr^.Enemy.Health := COMMON_MAX_HEALTH;
+                Curr^.Enemy.MaxHealth := COMMON_MAX_HEALTH;
+                Curr^.Enemy.Speed := COMMON_SPEED;
+                Curr^.Enemy.Reward := COMMON_REWARD;
+            End;
+
+            EnHeavy:
+            Begin
+                Curr^.Enemy.Health := HEAVY_MAX_HEALTH;
+                Curr^.Enemy.MaxHealth := HEAVY_MAX_HEALTH;
+                Curr^.Enemy.Speed := HEAVY_SPEED;
+                Curr^.Enemy.Reward := HEAVY_REWARD;
+            End;
+
+            EnFast:
+            Begin
+                Curr^.Enemy.Health := FAST_MAX_HEALTH;
+                Curr^.Enemy.MaxHealth := FAST_MAX_HEALTH;
+                Curr^.Enemy.Speed := FAST_SPEED;
+                Curr^.Enemy.Reward := FAST_REWARD;
+            End;
+        End;
+
+        Curr := Curr^.Next;
+    End;
+
+End;
+
+Procedure CreateEnemyLine1(Var LineHead1: TLineNode);
+Var
+    LineEnemyCurr, NewEnemy: TLineNode;
+Begin
+    LineHead1 := Nil;
+    New(LineHead1);
+    LineHead1^.Enemy.EnemyType := TEnemyType.EnNone; // Инициализация первого "пустого" элемента списка
+
+    LineEnemyCurr := LineHead1;
+
+    New(NewEnemy);
+    NewEnemy^.Enemy.EnemyType := EnCommon;
+    LineEnemyCurr^.Next := NewEnemy;
+    LineEnemyCurr := LineEnemyCurr^.Next;
+
+    New(NewEnemy);
+    NewEnemy^.Enemy.EnemyType := EnHeavy;
+    LineEnemyCurr^.Next := NewEnemy;
+    LineEnemyCurr := LineEnemyCurr^.Next;
+
+    New(NewEnemy);
+    NewEnemy^.Enemy.EnemyType := EnCommon;
+    LineEnemyCurr^.Next := NewEnemy;
+    LineEnemyCurr := LineEnemyCurr^.Next;
+
+    New(NewEnemy);
+    NewEnemy^.Enemy.EnemyType := EnFast;
+    LineEnemyCurr^.Next := NewEnemy;
+    LineEnemyCurr := LineEnemyCurr^.Next;
+
+    New(NewEnemy);
+    NewEnemy^.Enemy.EnemyType := EnCommon;
+    LineEnemyCurr^.Next := NewEnemy;
+    LineEnemyCurr := LineEnemyCurr^.Next;
+
+    New(NewEnemy);
+    NewEnemy^.Enemy.EnemyType := EnHeavy;
+    LineEnemyCurr^.Next := NewEnemy;
+    LineEnemyCurr := LineEnemyCurr^.Next;
+
+    LineEnemyCurr^.Next := Nil;
+End;
+
+Procedure ReadEnemySpawns();
+Var
+    ReadedFile: TextFile;
+    Len: Integer;
+    Element: TEnemySpawns;
+Begin
+    Len := 0;
+    //AssignFile(ReadedFile, '.\..\..\EnemySpawnsData.txt');
+    AssignFile(ReadedFile, 'C:\Users\Vlad\Desktop\MyFile1.txt');
+
+    Reset(ReadedFile);
+
+    While (Not EOF(ReadedFile)) Do
+    Begin
+        Inc(Len);
+        SetLength(EnemySpawnsArray, Len);
+
+        Read(ReadedFile, Element.EnemyID);
+        Read(ReadedFile, Element.StartTime);
+        Read(ReadedFile, Element.EndTime);
+        Read(ReadedFile, Element.EnemyCount);
+
+        Element.EnemyCountCurrent := 0;
+
+        EnemySpawnsArray[Len-1] := Element;
+    End;
+
+    CloseFile(ReadedFile);
 End;
 
 //-------------------------------------------------------------------
@@ -474,6 +661,12 @@ Begin
 
     MapData := SetMap1();
     CalculateEnemyDirections(MapData);
+
+    ReadEnemySpawns();
+
+
+    CreateEnemyLine1(LineHead1);
+    SetEnemyLineCharacteristics(LineHead1);
 
     Randomize;
     InitEnemyTemplates();
@@ -535,26 +728,34 @@ End;
 Procedure TForm1.Timer1Timer(Sender: TObject);
 Const
     SEC_IN_MIN = 60;
-    SPAWN_INTERVAL = 2; //появление врага каждые 2 секунды (GameTime увеличивается на 1 в секунду)
+    SPAWN_INTERVAL = 5000; //появление врага каждые X секунд (GameTime увеличивается на 1 в секунду)
     MILISECONDS_IN_SECOND: Integer = 1000;
 Var
     Hours, Minutes, Seconds: Integer;
     DeltaTime: Double;
+    CountToSpawn, I: Integer;
+    Element: TEnemySpawns;
 Begin
     DeltaTime := Timer1.Interval / MILISECONDS_IN_SECOND;
     GameTime := GameTime + DeltaTime;
-
-    If (Trunc(GameTime) Mod SPAWN_INTERVAL = 0) And (Length(Enemies) < 20) Then
-        SpawnEnemy(Random(3));
-
-    UpdateEnemies(DeltaTime);
-
-    PaintBox1.Invalidate;
-
     Hours := Trunc(GameTime) Div (SEC_IN_MIN * SEC_IN_MIN);
     Minutes := (Trunc(GameTime) Div SEC_IN_MIN) Mod SEC_IN_MIN;
     Seconds := Trunc(GameTime) Mod SEC_IN_MIN;
     TimeLabel.Caption := Format('Время: %.2d:%.2d:%.2d', [Hours, Minutes, Seconds]);
+
+    For I := 0 To High(EnemySpawnsArray) Do
+    Begin
+        Element := EnemySpawnsArray[I];
+
+        If(Element.EndTime - Element.StartTime < 0.01) Then
+            CountToSpawn := Element.EnemyCount
+        Else
+            CountToSpawn := Trunc(Element.EnemyCount*(GameTime-Element.StartTime)/(Element.EndTime-Element.StartTime));
+    End;
+
+    UpdateEnemies(DeltaTime);
+
+    PaintBox1.Invalidate;
 End;
 
 End.

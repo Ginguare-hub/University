@@ -63,9 +63,9 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 [View0]
 CustomEditViewType=TEditView
 Module=C:\GitHub\University\AaDS\Lab1.3\Lab1_3.dpr
-CursorX=30
-CursorY=10
-TopLine=1
+CursorX=26
+CursorY=17
+TopLine=4
 LeftCol=1
 Elisions=
 Bookmarks=
