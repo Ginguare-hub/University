@@ -1,0 +1,4 @@
+  ADDR B1 B2 B3 B4 thrass11.tmp                                     PAGE       1
+
+                   ORG 8000
+E                      ^ Unexpected character in instruction or directive.

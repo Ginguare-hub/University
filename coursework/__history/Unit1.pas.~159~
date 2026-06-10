@@ -18,9 +18,9 @@ Uses
     Vcl.Menus;
 
 Const
-    MAP_WIDTH  = 16;  //клеток по горизонтали (X) слева направо
-    MAP_HEIGHT = 16;  //клеток по вертикали (Y)   снизу вверх
-    CELL_SIZE  = 64;  //пикселей
+    MAP_WIDTH = 16;  //клеток по горизонтали (X)
+    MAP_HEIGHT = 16; //клеток по вертикали (Y)
+    CELL_SIZE = 64;  //пикселей
 
 Type
     TTurretType = (TurrNone, TurrCommon, TurrSlowing, TurrAreaDamaging);
@@ -41,21 +41,12 @@ Type
         EnemyType: TEnemyType;
         Health: Integer;
         MaxHealth: Integer;
-        Speed: Double;               //клеток в секунду
+        Speed: Double;          //клеток в секунду
         CellX: Integer;
-        CellY: Integer;              //текущая клетка (X - горизонталь, Y - вертикаль)
+        CellY: Integer;         //текущая клетка (X - горизонталь, Y - вертикаль)
         DistanceProgress: Double;
         Reward: Integer;
     End;
-
-    TLineNode = ^TEnemyLine;
-
-    TEnemyLine = Record
-        Enemy: TEnemy;
-        Next: TLineNode;
-    End;
-
-
 
     TForm1 = Class(TForm)
         PaintBox1: TPaintBox;
@@ -74,9 +65,6 @@ Type
         Procedure Timer1Timer(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
         Procedure FormDestroy(Sender: TObject);
-
-
-
     Private
     Public
     End;
@@ -87,10 +75,8 @@ Var
     GrassTex, RoadRightTex, RoadUpTex, RoadLeftTex, RoadDownTex, BaseTex: TBitmap;
     MapData: TMatrixOfMap;
     GameTime: Double = 0.0;
-    //Enemies: Array Of TEnemy;
-    //EnemyTemplates: Array Of TEnemy;
-
-    LineHead1: TLineNode;
+    Enemies: Array Of TEnemy;
+    EnemyTemplates: Array Of TEnemy;
 
 Implementation
 
@@ -340,28 +326,28 @@ End;
 //-------------------------------------------------------------------
 //Шаблоны врагов
 //-------------------------------------------------------------------
-//Procedure InitEnemyTemplates();
-//Begin
-//    SetLength(EnemyTemplates, 3);
-//
-//    EnemyTemplates[0].EnemyType := EnCommon;
-//    EnemyTemplates[0].Health := 100;
-//    EnemyTemplates[0].MaxHealth := 100;
-//    EnemyTemplates[0].Speed := 2.0;
-//    EnemyTemplates[0].Reward := 50;
-//
-//    EnemyTemplates[1].EnemyType := EnHeavy;
-//    EnemyTemplates[1].Health := 250;
-//    EnemyTemplates[1].MaxHealth := 250;
-//    EnemyTemplates[1].Speed := 1.0;
-//    EnemyTemplates[1].Reward := 100;
-//
-//    EnemyTemplates[2].EnemyType := EnFast;
-//    EnemyTemplates[2].Health := 50;
-//    EnemyTemplates[2].MaxHealth := 50;
-//    EnemyTemplates[2].Speed := 4.0;
-//    EnemyTemplates[2].Reward := 75;
-//End;
+Procedure InitEnemyTemplates();
+Begin
+    SetLength(EnemyTemplates, 3);
+
+    EnemyTemplates[0].EnemyType := EnCommon;
+    EnemyTemplates[0].Health := 100;
+    EnemyTemplates[0].MaxHealth := 100;
+    EnemyTemplates[0].Speed := 2.0;
+    EnemyTemplates[0].Reward := 50;
+
+    EnemyTemplates[1].EnemyType := EnHeavy;
+    EnemyTemplates[1].Health := 250;
+    EnemyTemplates[1].MaxHealth := 250;
+    EnemyTemplates[1].Speed := 1.0;
+    EnemyTemplates[1].Reward := 100;
+
+    EnemyTemplates[2].EnemyType := EnFast;
+    EnemyTemplates[2].Health := 50;
+    EnemyTemplates[2].MaxHealth := 50;
+    EnemyTemplates[2].Speed := 4.0;
+    EnemyTemplates[2].Reward := 75;
+End;
 
 //-------------------------------------------------------------------
 //Создание врага
@@ -370,9 +356,8 @@ Procedure SpawnEnemy(TemplateIndex: Integer);
 Var
     NewEnemy: TEnemy;
     StartX, StartY: Integer;
+    EnemyCount: Integer;
 Begin
-
-
     If FindStartCell(StartX, StartY) Then
     Begin
         NewEnemy := EnemyTemplates[TemplateIndex];
@@ -481,120 +466,6 @@ Begin
     End;
 End;
 
-{
-TEnemy = Record
-        EnemyType: TEnemyType;
-        Health: Integer;
-        MaxHealth: Integer;
-        Speed: Double;               //клеток в секунду
-        CellX: Integer;
-        CellY: Integer;              //текущая клетка (X - горизонталь, Y - вертикаль)
-        DistanceProgress: Double;
-        Reward: Integer;
-    End;
-}
-Procedure SetEnemyLineCharacteristics(Var LineHead: TLineNode);
-Const
-    STD_CELLS_POS: Integer = -1;
-    STD_DISTANCE_PROGRESS: Integer = 0;
-
-    COMMON_MAX_HEALTH: Integer = 100;
-    COMMON_SPEED: Double = 1;
-    COMMON_REWARD: Integer = 50;
-
-    HEAVY_MAX_HEALTH: Integer = 200;
-    HEAVY_SPEED: Double = 0.5;
-    HEAVY_REWARD: Integer = 125;
-
-    FAST_MAX_HEALTH: Integer = 50;
-    FAST_SPEED: Double = 1.5;
-    FAST_REWARD: Integer = 75;
-Var
-    Curr: TLineNode;
-Begin
-    Curr := LineHead^.Next;
-
-    While Curr <> Nil Do
-    Begin
-
-        Curr^.Enemy.CellX := STD_CELLS_POS;
-        Curr^.Enemy.CellY := STD_CELLS_POS;
-        Curr^.Enemy.DistanceProgress := STD_DISTANCE_PROGRESS;
-
-        Case Curr^.Enemy.EnemyType Of
-            EnCommon:
-            Begin
-                Curr^.Enemy.Health := COMMON_MAX_HEALTH;
-                Curr^.Enemy.MaxHealth := COMMON_MAX_HEALTH;
-                Curr^.Enemy.Speed := COMMON_SPEED;
-                Curr^.Enemy.Reward := COMMON_REWARD;
-            End;
-
-            EnHeavy:
-            Begin
-                Curr^.Enemy.Health := HEAVY_MAX_HEALTH;
-                Curr^.Enemy.MaxHealth := HEAVY_MAX_HEALTH;
-                Curr^.Enemy.Speed := HEAVY_SPEED;
-                Curr^.Enemy.Reward := HEAVY_REWARD;
-            End;
-
-            EnFast:
-            Begin
-                Curr^.Enemy.Health := FAST_MAX_HEALTH;
-                Curr^.Enemy.MaxHealth := FAST_MAX_HEALTH;
-                Curr^.Enemy.Speed := FAST_SPEED;
-                Curr^.Enemy.Reward := FAST_REWARD;
-            End;
-        End;
-
-        Curr := Curr^.Next;
-    End;
-
-End;
-
-Procedure CreateEnemyLine1(Var LineHead1: TLineNode);
-Var
-    LineEnemyCurr, NewEnemy: TLineNode;
-Begin
-    LineHead1 := Nil;
-    New(LineHead1);
-    LineHead1^.Enemy.EnemyType := TEnemyType.EnNone; // Инициализация первого "пустого" элемента списка
-
-    LineEnemyCurr := LineHead1;
-
-    New(NewEnemy);
-    NewEnemy^.Enemy.EnemyType := EnCommon;
-    LineEnemyCurr^.Next := NewEnemy;
-    LineEnemyCurr := LineEnemyCurr^.Next;
-
-    New(NewEnemy);
-    NewEnemy^.Enemy.EnemyType := EnHeavy;
-    LineEnemyCurr^.Next := NewEnemy;
-    LineEnemyCurr := LineEnemyCurr^.Next;
-
-    New(NewEnemy);
-    NewEnemy^.Enemy.EnemyType := EnCommon;
-    LineEnemyCurr^.Next := NewEnemy;
-    LineEnemyCurr := LineEnemyCurr^.Next;
-
-    New(NewEnemy);
-    NewEnemy^.Enemy.EnemyType := EnFast;
-    LineEnemyCurr^.Next := NewEnemy;
-    LineEnemyCurr := LineEnemyCurr^.Next;
-
-    New(NewEnemy);
-    NewEnemy^.Enemy.EnemyType := EnCommon;
-    LineEnemyCurr^.Next := NewEnemy;
-    LineEnemyCurr := LineEnemyCurr^.Next;
-
-    New(NewEnemy);
-    NewEnemy^.Enemy.EnemyType := EnHeavy;
-    LineEnemyCurr^.Next := NewEnemy;
-    LineEnemyCurr := LineEnemyCurr^.Next;
-
-    LineEnemyCurr^.Next := Nil;
-End;
-
 //-------------------------------------------------------------------
 //Form события
 //-------------------------------------------------------------------
@@ -618,9 +489,6 @@ Begin
 
     MapData := SetMap1();
     CalculateEnemyDirections(MapData);
-
-    CreateEnemyLine1(LineHead1);
-    SetEnemyLineCharacteristics(LineHead1);
 
     Randomize;
     InitEnemyTemplates();
@@ -690,10 +558,6 @@ Var
 Begin
     DeltaTime := Timer1.Interval / MILISECONDS_IN_SECOND;
     GameTime := GameTime + DeltaTime;
-    Hours := Trunc(GameTime) Div (SEC_IN_MIN * SEC_IN_MIN);
-    Minutes := (Trunc(GameTime) Div SEC_IN_MIN) Mod SEC_IN_MIN;
-    Seconds := Trunc(GameTime) Mod SEC_IN_MIN;
-    TimeLabel.Caption := Format('Время: %.2d:%.2d:%.2d', [Hours, Minutes, Seconds]);
 
     If (Trunc(GameTime) Mod SPAWN_INTERVAL = 0) And (Length(Enemies) < 20) Then
         SpawnEnemy(Random(3));
@@ -701,6 +565,11 @@ Begin
     UpdateEnemies(DeltaTime);
 
     PaintBox1.Invalidate;
+
+    Hours := Trunc(GameTime) Div (SEC_IN_MIN * SEC_IN_MIN);
+    Minutes := (Trunc(GameTime) Div SEC_IN_MIN) Mod SEC_IN_MIN;
+    Seconds := Trunc(GameTime) Mod SEC_IN_MIN;
+    TimeLabel.Caption := Format('Время: %.2d:%.2d:%.2d', [Hours, Minutes, Seconds]);
 End;
 
 End.

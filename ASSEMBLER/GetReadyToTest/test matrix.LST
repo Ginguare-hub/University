@@ -1,0 +1,81 @@
+  ADDR B1 B2 B3 B4 C:\GitHub\University\ASSEMBLER\GetReadyToTest\   PAGE       1
+
+                    ORG   $8000
+
+                           ;   ,
+                                           ;    X
+                                           ;    Y
+                                           ;  A,   B
+
+  8000 86 01               LDAA #1
+  8002 B7 81 00            STAA $8100
+  8005 86 02               LDAA #2
+  8007 B7 81 01            STAA $8101
+  800A 86 03               LDAA #3
+  800C B7 81 02            STAA $8102
+  800F 86 04               LDAA #4
+  8011 B7 81 03            STAA $8103
+  8014 86 05               LDAA #5
+  8016 B7 81 04            STAA $8104
+  8019 86 06               LDAA #6
+  801B B7 81 05            STAA $8105
+  801E 86 07               LDAA #7
+  8020 B7 81 06            STAA $8106
+  8023 86 08               LDAA #8
+  8025 B7 81 07            STAA $8107
+  8028 86 09               LDAA #9
+  802A B7 81 08            STAA $8108
+
+  802D CE 81 00            LDX #$8100
+  8030 18 CE 81 00         LDY #$8100
+  8034 86 00               LDAA #$00
+  8036 C6 00               LDAB #$00
+
+                   find_greatest:
+  8038 3C                  PSHX
+  8039 CE 81 00            LDX #$8100
+  803C 37                  PSHB
+  803D 16                  TAB
+  803E 3A                  ABX
+  803F 33                  PULB
+  8040 E6 00               LDAB  0,X
+  8042 38                  PULX
+
+  8043 36                  PSHA
+  8044 A6 00               LDAA 0,X        ;A
+  8046 11                  CBA
+  8047 2E 09               BGT new_greatest_to_X
+  8049 32                  PULA
+
+  804A 4C                  INCA
+  804B 81 0A               CMPA #$0A
+  804D 26 E9               BNE find_greatest
+  804F 7E 80 64            JMP exit
+
+                   new_greatest_to_X:
+  8052 37                  PSHB
+  8053 36                  PSHA
+  8054 36                  PSHA
+
+  8055 CC 00 00            LDD #$0000
+  8058 C6 00               LDAB #$00
+  805A 32                  PULA
+  805B 16                  TAB
+  805C 86 81               LDAA #$81
+  805E 8F                  XGDX
+
+  805F 32                  PULA
+  ADDR B1 B2 B3 B4 C:\GitHub\University\ASSEMBLER\GetReadyToTest\   PAGE       2
+
+  8060 33                  PULB
+  8061 7E 80 38            JMP find_greatest
+
+                   exit:
+
+
+
+  Symbol Table 
+
+  EXIT               8064
+  FIND_GREATEST      8038
+  NEW_GREATEST_TO_X  8052

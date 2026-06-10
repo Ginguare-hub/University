@@ -1,0 +1,61 @@
+ ORG $8200
+ 
+array FCB 1,2,3,4,5,6,7,8,9
+
+ ORG $8211
+
+	LDX #array
+
+cycle1:
+
+	LDAA 9,X
+	LDAB 8,X
+	MUL
+	STD $8214
+	LDD #0
+	LDAA 5,X
+	LDAB 7,X
+	MUL
+	STD $8215
+
+cycle2:
+	LDAA 3,X
+	LDAB 8,X
+	MUL
+	STD $8216
+	LDAA 5,X
+	LDAB 6,X
+	MUL
+	STD $8217
+
+cycle3: 
+	LDAA 3,X
+	LDAB 7,X
+	MUL
+	STD $8218
+	LDAA 4,X
+	LDAB 6,X
+	MUL
+	STD $8219
+
+sum1:
+	LDAA $8214
+	SUBA $8215
+	STAA $8220
+	LDAA $8216
+	SUBA $8217
+	STAA $8221
+	LDAA $8218
+	SUBA $8219
+	STAA $8222
+
+sum2:
+	LDAA $8220
+	SUBA $8221
+	STAA $8223
+	LDAA $8223
+	ADDA $8222
+	STAA $8223
+	
+
+ 

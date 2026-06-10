@@ -87,8 +87,8 @@ Var
     GrassTex, RoadRightTex, RoadUpTex, RoadLeftTex, RoadDownTex, BaseTex: TBitmap;
     MapData: TMatrixOfMap;
     GameTime: Double = 0.0;
-    //Enemies: Array Of TEnemy;
-    //EnemyTemplates: Array Of TEnemy;
+    Enemies: Array Of TEnemy;
+    EnemyTemplates: Array Of TEnemy;
 
     LineHead1: TLineNode;
 
@@ -340,28 +340,28 @@ End;
 //-------------------------------------------------------------------
 //Шаблоны врагов
 //-------------------------------------------------------------------
-//Procedure InitEnemyTemplates();
-//Begin
-//    SetLength(EnemyTemplates, 3);
-//
-//    EnemyTemplates[0].EnemyType := EnCommon;
-//    EnemyTemplates[0].Health := 100;
-//    EnemyTemplates[0].MaxHealth := 100;
-//    EnemyTemplates[0].Speed := 2.0;
-//    EnemyTemplates[0].Reward := 50;
-//
-//    EnemyTemplates[1].EnemyType := EnHeavy;
-//    EnemyTemplates[1].Health := 250;
-//    EnemyTemplates[1].MaxHealth := 250;
-//    EnemyTemplates[1].Speed := 1.0;
-//    EnemyTemplates[1].Reward := 100;
-//
-//    EnemyTemplates[2].EnemyType := EnFast;
-//    EnemyTemplates[2].Health := 50;
-//    EnemyTemplates[2].MaxHealth := 50;
-//    EnemyTemplates[2].Speed := 4.0;
-//    EnemyTemplates[2].Reward := 75;
-//End;
+Procedure InitEnemyTemplates();
+Begin
+    SetLength(EnemyTemplates, 3);
+
+    EnemyTemplates[0].EnemyType := EnCommon;
+    EnemyTemplates[0].Health := 100;
+    EnemyTemplates[0].MaxHealth := 100;
+    EnemyTemplates[0].Speed := 2.0;
+    EnemyTemplates[0].Reward := 50;
+
+    EnemyTemplates[1].EnemyType := EnHeavy;
+    EnemyTemplates[1].Health := 250;
+    EnemyTemplates[1].MaxHealth := 250;
+    EnemyTemplates[1].Speed := 1.0;
+    EnemyTemplates[1].Reward := 100;
+
+    EnemyTemplates[2].EnemyType := EnFast;
+    EnemyTemplates[2].Health := 50;
+    EnemyTemplates[2].MaxHealth := 50;
+    EnemyTemplates[2].Speed := 4.0;
+    EnemyTemplates[2].Reward := 75;
+End;
 
 //-------------------------------------------------------------------
 //Создание врага
@@ -370,9 +370,8 @@ Procedure SpawnEnemy(TemplateIndex: Integer);
 Var
     NewEnemy: TEnemy;
     StartX, StartY: Integer;
+    EnemyCount: Integer;
 Begin
-
-
     If FindStartCell(StartX, StartY) Then
     Begin
         NewEnemy := EnemyTemplates[TemplateIndex];

@@ -1,0 +1,76 @@
+  ADDR B1 B2 B3 B4 C:\GitHub\University\ASSEMBLER\Lab_2\NEW_TEST.   PAGE       1
+
+                    ORG $8200
+
+  8200 01 02 03 04 array FCB 1,2,3,4,5,6,7,8,9
+. 8204 05 06 07 08
+. 8208 09
+
+                    ORG $8211
+
+  8211 CE 82 00            LDX #array
+
+                   cycle1:
+
+  8214 A6 09               LDAA 9,X
+  8216 E6 08               LDAB 8,X
+  8218 3D                  MUL
+  8219 FD 82 14            STD $8214
+  821C CC 00 00            LDD #0
+  821F A6 05               LDAA 5,X
+  8221 E6 07               LDAB 7,X
+  8223 3D                  MUL
+  8224 FD 82 15            STD $8215
+
+                   cycle2:
+  8227 A6 03               LDAA 3,X
+  8229 E6 08               LDAB 8,X
+  822B 3D                  MUL
+  822C FD 82 16            STD $8216
+  822F A6 05               LDAA 5,X
+  8231 E6 06               LDAB 6,X
+  8233 3D                  MUL
+  8234 FD 82 17            STD $8217
+
+                   cycle3:
+  8237 A6 03               LDAA 3,X
+  8239 E6 07               LDAB 7,X
+  823B 3D                  MUL
+  823C FD 82 18            STD $8218
+  823F A6 04               LDAA 4,X
+  8241 E6 06               LDAB 6,X
+  8243 3D                  MUL
+  8244 FD 82 19            STD $8219
+
+                   sum1:
+  8247 B6 82 14            LDAA $8214
+  824A B0 82 15            SUBA $8215
+  824D B7 82 20            STAA $8220
+  8250 B6 82 16            LDAA $8216
+  8253 B0 82 17            SUBA $8217
+  8256 B7 82 21            STAA $8221
+  8259 B6 82 18            LDAA $8218
+  825C B0 82 19            SUBA $8219
+  825F B7 82 22            STAA $8222
+
+                   sum2:
+  8262 B6 82 20            LDAA $8220
+  8265 B0 82 21            SUBA $8221
+  8268 B7 82 23            STAA $8223
+  826B B6 82 23            LDAA $8223
+  826E BB 82 22            ADDA $8222
+  8271 B7 82 23            STAA $8223
+
+
+
+
+  Symbol Table 
+  Symbol Table     C:\GitHub\University\ASSEMBLER\Lab_2\NEW_TEST.   PAGE       2
+
+
+  SUM1               8247
+  SUM2               8262
+  CYCLE1             8214
+  CYCLE2             8227
+  CYCLE3             8237
+  ARRAY              8200

@@ -1,4 +1,4 @@
-        ORG     $8000
+ORG     $8000
 
         LDY     #0
         CLRA	

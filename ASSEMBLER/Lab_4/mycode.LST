@@ -1,0 +1,255 @@
+  ADDR B1 B2 B3 B4 C:\GitHub\University\ASSEMBLER\Lab_4\mycode.asm  PAGE       1
+
+                   .stack 100h
+E                         ^ Unexpected character in instruction or directive.
+
+                   .data
+                       str     db "hello world programming in assembler is very
+.                  hard", 0Dh, 0Ah, '$'
+E                      ^ Unknown instruction or directive.
+                       ;buffer  db 200 dup(?)
+                       words   dw 50 dup(0)
+E                      ^ Unknown instruction or directive.
+                       lengths dw 50 dup(0)
+E                      ^ Unknown instruction or directive.
+                       count   dw 0
+E                      ^ Unknown instruction or directive.
+                       msg     db 0Dh, 0Ah, "Sorted string:", 0Dh, 0Ah, '$'
+E                      ^ Unknown instruction or directive.
+
+                   .code
+
+                   start:
+                       MOV AX, @data
+E                      ^ Unknown instruction or directive.
+                       MOV DS, AX
+E                      ^ Unknown instruction or directive.
+                       ;MOV ES, AX
+
+                       ;MOV SI, OFFSET str
+                       LEA SI, str
+E                      ^ Unknown instruction or directive.
+                       ;MOV DI, OFFSET words
+                       LEA DI, words
+E                      ^ Unknown instruction or directive.
+                       ;MOV BX OFFSET lengths
+                       LEA BX, lengths
+E                      ^ Unknown instruction or directive.
+                       MOV word ptr count, 0
+E                      ^ Unknown instruction or directive.
+
+                     ;Find first symphol of new word
+                   find_words:
+                       MOV AL, [si]
+E                      ^ Unknown instruction or directive.
+                       CMP AL, '$'
+E                      ^ Unknown instruction or directive.
+                       JE  end_find
+E                      ^ Unknown instruction or directive.
+                       CMP AL, 0Dh
+E                      ^ Unknown instruction or directive.
+                       JE  end_find
+E                      ^ Unknown instruction or directive.
+                       CMP Al, ' '
+E                      ^ Unknown instruction or directive.
+                       JNE is_word_start
+E                      ^ Unknown instruction or directive.
+
+                       INC SI
+E                          ^ Unknown identifier.
+  C000 7E C0 00        JMP find_words
+
+                   is_word_start:
+                       MOV [DI], SI
+E                      ^ Unknown instruction or directive.
+                       ADD DI, 2
+E                      ^ Unknown instruction or directive.
+
+  ADDR B1 B2 B3 B4 C:\GitHub\University\ASSEMBLER\Lab_4\mycode.asm  PAGE       2
+
+                       XOR CX, CX ; Cx now equals 0
+E                      ^ Unknown instruction or directive.
+
+                   count_length:
+                       MOV AL, [SI]
+E                      ^ Unknown instruction or directive.
+                       CMP AL, ' '
+E                      ^ Unknown instruction or directive.
+                       JE  end_of_word
+E                      ^ Unknown instruction or directive.
+                       CMP AL, 0Dh
+E                      ^ Unknown instruction or directive.
+                       JE  end_of_word
+E                      ^ Unknown instruction or directive.
+                       CMP AL, '$'
+E                      ^ Unknown instruction or directive.
+                       JE  end_of_word
+E                      ^ Unknown instruction or directive.
+                       INC CX
+E                          ^ Unknown identifier.
+                       INC SI
+E                          ^ Unknown identifier.
+  C003 7E C0 03        JMP count_length
+
+                   end_of_word:
+                       MOV [BX], CX
+E                      ^ Unknown instruction or directive.
+                       ADD BX, 2
+E                      ^ Unknown instruction or directive.
+                       INC word ptr count
+E                          ^ Unknown identifier.
+  C006 7E C0 00        JMP find_words
+
+                   end_find:
+                       MOV CX, count
+E                      ^ Unknown instruction or directive.
+                       DEC CX
+E                          ^ Unknown identifier.
+
+                   bubble_outer:
+                       PUSH CX
+E                      ^ Unknown instruction or directive.
+                       LEA DI, lengths
+E                      ^ Unknown instruction or directive.
+                       LEA SI, words
+E                      ^ Unknown instruction or directive.
+                       MOV BX, 0
+E                      ^ Unknown instruction or directive.
+
+                   bubble_inner:
+                       MOV AX, [DI]
+E                      ^ Unknown instruction or directive.
+                       MOV DX, [DI+2]
+E                      ^ Unknown instruction or directive.
+
+                       CMP AX, DX
+E                      ^ Unknown instruction or directive.
+                       JBE no_swap
+E                      ^ Unknown instruction or directive.
+
+                       XCHG AX, DX
+E                      ^ Unknown instruction or directive.
+                       MOV [DI], AX
+E                      ^ Unknown instruction or directive.
+                       MOV [DI+2], DX
+  ADDR B1 B2 B3 B4 C:\GitHub\University\ASSEMBLER\Lab_4\mycode.asm  PAGE       3
+
+E                      ^ Unknown instruction or directive.
+
+                       MOV AX, [SI]
+E                      ^ Unknown instruction or directive.
+                       MOV DX, [SI+2]
+E                      ^ Unknown instruction or directive.
+                       XCHG AX, DX
+E                      ^ Unknown instruction or directive.
+                       MOV [SI], AX
+E                      ^ Unknown instruction or directive.
+                       MOV [SI+2], DX
+E                      ^ Unknown instruction or directive.
+
+                   no_swap:
+                       ADD DI, 2
+E                      ^ Unknown instruction or directive.
+                       ADD SI, 2
+E                      ^ Unknown instruction or directive.
+                       INC DX
+E                          ^ Unknown identifier.
+                       LOOP bubble_inner
+E                      ^ Unknown instruction or directive.
+
+                       POP CX
+E                      ^ Unknown instruction or directive.
+                       LOOP bubble_outer
+E                      ^ Unknown instruction or directive.
+
+                       MOV AH, 9
+E                      ^ Unknown instruction or directive.
+                       LEA DX, msg
+E                      ^ Unknown instruction or directive.
+                       INT 21h
+E                      ^ Unknown instruction or directive.
+
+                       LEA SI, words
+E                      ^ Unknown instruction or directive.
+                       MOV CX, count
+E                      ^ Unknown instruction or directive.
+
+                   print_loop:
+                       PUSH CX
+E                      ^ Unknown instruction or directive.
+                       MOV DI, [SI]
+E                      ^ Unknown instruction or directive.
+                       MOV BX, [SI + offset lengths - offset words]
+E                      ^ Unknown instruction or directive.
+
+                   print_word:
+                       MOV AL, [DI]
+E                      ^ Unknown instruction or directive.
+                       CMP AL, ' '
+E                      ^ Unknown instruction or directive.
+                       JE  print_space
+E                      ^ Unknown instruction or directive.
+                       CMP AL, 0Dh
+E                      ^ Unknown instruction or directive.
+                       JE  print_space
+E                      ^ Unknown instruction or directive.
+                       CMP AL, '$'
+E                      ^ Unknown instruction or directive.
+                       JE  print_space
+E                      ^ Unknown instruction or directive.
+
+                       MOV AH, 2
+  ADDR B1 B2 B3 B4 C:\GitHub\University\ASSEMBLER\Lab_4\mycode.asm  PAGE       4
+
+E                      ^ Unknown instruction or directive.
+                       MOV DL, AL
+E                      ^ Unknown instruction or directive.
+                       INT 21h
+E                      ^ Unknown instruction or directive.
+
+                       INC DI
+E                          ^ Unknown identifier.
+                       DEC BX
+E                          ^ Unknown identifier.
+                       JNZ print_word
+E                      ^ Unknown instruction or directive.
+
+                   print_space:
+                       MOV AH, 2
+E                      ^ Unknown instruction or directive.
+                       MOV DL, ' '
+E                      ^ Unknown instruction or directive.
+                       INT 21h
+E                      ^ Unknown instruction or directive.
+
+                       ADD SI, 2
+E                      ^ Unknown instruction or directive.
+                       POP CX
+E                      ^ Unknown instruction or directive.
+                       LOOP print_loop
+E                      ^ Unknown instruction or directive.
+
+                       MOV AH, 4Ch
+E                      ^ Unknown instruction or directive.
+                       INT 21h
+E                      ^ Unknown instruction or directive.
+
+                   end start
+E                      ^ Unknown instruction or directive.
+
+  Symbol Table 
+
+  COUNT_LENGTH       C003
+  IS_WORD_START      C003
+  NO_SWAP            C009
+  END_FIND           C009
+  BUBBLE_INNER       C009
+  FIND_WORDS         C000
+  .DATA              C000
+  PRINT_WORD         C009
+  END_OF_WORD        C006
+  PRINT_LOOP         C009
+  START              C000
+  BUBBLE_OUTER       C009
+  .CODE              C000
+  PRINT_SPACE        C009
