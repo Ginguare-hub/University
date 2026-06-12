@@ -83,6 +83,7 @@ Type
         Panel2: TPanel;
     SelectBox: TShape;
     Panel3: TPanel;
+    Shape1: TShape;
         Procedure MapBoxPaint(Sender: TObject);
         Procedure Timer1Timer(Sender: TObject);
         Procedure FormCreate(Sender: TObject);

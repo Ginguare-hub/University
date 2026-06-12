@@ -83,6 +83,7 @@ Type
         Panel2: TPanel;
     SelectBox: TShape;
     Panel3: TPanel;
+    Shape1: TShape;
         Procedure MapBoxPaint(Sender: TObject);
         Procedure Timer1Timer(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
@@ -727,4 +728,3 @@ End;
 End.
 
 // Добавить состояние игрока "жизни" "деньги" и подумать над снарядами. И систему урона по игроку
-// Сделать отображение меню магазина турелей

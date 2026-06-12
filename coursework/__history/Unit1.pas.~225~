@@ -58,12 +58,6 @@ Type
 
     TEnemySpawnsArray = Array of TEnemySpawns;
 
-    TBullet = Record
-        DistanceProgress: Double;
-        Speed: Double;
-        TargetedEnemy: ^TEnemy;
-    End;
-
 
 
 
@@ -612,9 +606,9 @@ Begin
                     StretchDraw(CellRect, GrassTex);
 
                     case MapData[I, J].TypeOfTurret Of
-                        TurrCommon:  StretchDraw(CellRect, TurretCommonTex);
-                        TurrSlowing:  StretchDraw(CellRect, TurretSlowingTex);
-                        TurrAreaDamaging:    StretchDraw(CellRect, TurretAreaTex);
+                        TurrCommon:  StretchDraw(CellRect, Turret1Tex);
+                        TurrSlowing:  StretchDraw(CellRect, RoadDownTex);
+                        TurrAreaDamaging:    StretchDraw(CellRect, RoadUpTex);
                     end;
 
                 End
@@ -725,6 +719,3 @@ Begin
 End;
 
 End.
-
-// Добавить состояние игрока "жизни" "деньги" и подумать над снарядами. И систему урона по игроку
-// Сделать отображение меню магазина турелей

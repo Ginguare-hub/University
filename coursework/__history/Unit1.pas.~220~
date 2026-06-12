@@ -58,12 +58,6 @@ Type
 
     TEnemySpawnsArray = Array of TEnemySpawns;
 
-    TBullet = Record
-        DistanceProgress: Double;
-        Speed: Double;
-        TargetedEnemy: ^TEnemy;
-    End;
-
 
 
 
@@ -89,8 +83,6 @@ Type
         Procedure FormDestroy(Sender: TObject);
         procedure MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure Panel1Click(Sender: TObject);
-    procedure Panel2Click(Sender: TObject);
-    procedure Panel3Click(Sender: TObject);
 
 
 
@@ -103,7 +95,7 @@ Var
 
     MapData: TMatrixOfMap;
 
-    GrassTex, RoadRightTex, RoadUpTex, RoadLeftTex, RoadDownTex, BaseTex, TurretCommonTex, TurretSlowingTex, TurretAreaTex: TBitmap;
+    GrassTex, RoadRightTex, RoadUpTex, RoadLeftTex, RoadDownTex, BaseTex, Turret1Tex: TBitmap;
     GameTime: Double = 0.0;
 
     // Можно сделать списком
@@ -133,7 +125,7 @@ Begin
             Map[I, J].TypeOfGround := TGroundType.GtGrass;
             Map[I, J].TypeOfTurret := TTurretType.TurrNone;
             Map[I, J].EnemyDirection := TDirection.DirNone;
-            Map[I, J].IsAvailibleForTurret := True;
+            Map[I, J].IsAvailibleForTurret := False;
         End;
     End;
 End;
@@ -545,9 +537,7 @@ Begin
     RoadLeftTex := TBitmap.Create;
     RoadDownTex := TBitmap.Create;
     BaseTex := TBitmap.Create;
-    TurretCommonTex := TBitmap.Create;
-    TurretSlowingTex := TBitmap.Create;
-    TurretAreaTex := TBitmap.Create;
+    Turret1Tex := TBitmap.Create;
 
     GrassTex.LoadFromFile('.\..\..\test_textures\grass_texture.bmp');
     BaseTex.LoadFromFile('.\..\..\test_textures\base_texture.bmp');
@@ -555,9 +545,7 @@ Begin
     RoadUpTex.LoadFromFile('.\..\..\test_textures\road_texture_up.bmp');
     RoadLeftTex.LoadFromFile('.\..\..\test_textures\road_texture_left.bmp');
     RoadDownTex.LoadFromFile('.\..\..\test_textures\road_texture_down.bmp');
-    TurretCommonTex.LoadFromFile('.\..\..\test_textures\grass_and_turret1_texture.bmp');
-    TurretSlowingTex.LoadFromFile('.\..\..\test_textures\turret_slowing_texture.bmp');
-    TurretAreaTex.LoadFromFile('.\..\..\test_textures\turret_area_texture.bmp');
+    Turret1Tex.LoadFromFile('.\..\..\test_textures\turret1_texture.bmp');
 
 
     MapData := SetMap1();
@@ -578,15 +566,15 @@ Begin
     RoadLeftTex.Free;
     RoadDownTex.Free;
     BaseTex.Free;
-    TurretCommonTex.Free;
-    TurretSlowingTex.Free;
-    TurretAreaTex.Free;
+    Turret1Tex.Free;
 End;
 
 procedure TForm1.MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 Begin
     SelectedCellX := X Div CELL_SIZE;
     SelectedCellY := (CELL_SIZE * MAP_HEIGHT - Y) Div CELL_SIZE;
+
+    //ShowMessage(IntToStr(CellX) + ' ' + IntToStr(CellY));
 
     SelectBox.Left := SelectedCellX * CELL_SIZE + MapBox.Left;
     SelectBox.Top := (MAP_HEIGHT - SelectedCellY - 1) * CELL_SIZE + MapBox.Top;
@@ -612,11 +600,10 @@ Begin
                     StretchDraw(CellRect, GrassTex);
 
                     case MapData[I, J].TypeOfTurret Of
-                        TurrCommon:  StretchDraw(CellRect, TurretCommonTex);
-                        TurrSlowing:  StretchDraw(CellRect, TurretSlowingTex);
-                        TurrAreaDamaging:    StretchDraw(CellRect, TurretAreaTex);
+                        TurrCommon:  StretchDraw(CellRect, Turret1Tex);
+                        TurrSlowing:  StretchDraw(CellRect, RoadDownTex);
+                        TurrAreaDamaging:    StretchDraw(CellRect, RoadUpTex);
                     end;
-
                 End
                 Else
                     If MapData[I, J].TypeOfGround = TGroundType.GtRoad Then
@@ -644,30 +631,10 @@ End;
 
 Procedure TForm1.Panel1Click(Sender: TObject);
 Begin
-    If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
-    Begin
-        MapData[SelectedCellX, SelectedCellY].TypeOfTurret := TurrCommon;
-        MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
-    End;
+    MapData[SelectedCellX, SelectedCellY].TypeOfTurret := TurrCommon;
+
+
 End;
-
-procedure TForm1.Panel2Click(Sender: TObject);
-begin
-    If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
-    Begin
-        MapData[SelectedCellX, SelectedCellY].TypeOfTurret := TurrSlowing;
-        MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
-    End;
-end;
-
-procedure TForm1.Panel3Click(Sender: TObject);
-begin
-    If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
-    Begin
-        MapData[SelectedCellX, SelectedCellY].TypeOfTurret := TurrAreaDamaging;
-        MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
-    End;
-end;
 
 Function Clamp(Const MIN, MAX: Double; Value: Double): Double;
 Var
@@ -725,6 +692,3 @@ Begin
 End;
 
 End.
-
-// Добавить состояние игрока "жизни" "деньги" и подумать над снарядами. И систему урона по игроку
-// Сделать отображение меню магазина турелей

@@ -58,12 +58,6 @@ Type
 
     TEnemySpawnsArray = Array of TEnemySpawns;
 
-    TBullet = Record
-        DistanceProgress: Double;
-        Speed: Double;
-        TargetedEnemy: ^TEnemy;
-    End;
-
 
 
 
@@ -725,6 +719,3 @@ Begin
 End;
 
 End.
-
-// Добавить состояние игрока "жизни" "деньги" и подумать над снарядами. И систему урона по игроку
-// Сделать отображение меню магазина турелей
