@@ -1,14 +1,17 @@
-object Form1: TForm1
+object GameForm: TGameForm
   Left = 0
   Top = 0
   Margins.Left = 5
   Margins.Top = 5
   Margins.Right = 5
   Margins.Bottom = 5
-  Caption = 'Form1'
+  BorderStyle = bsDialog
+  Caption = 'GameForm'
   ClientHeight = 1150
   ClientWidth = 1600
   Color = clBtnFace
+  Constraints.MaxHeight = 1248
+  Constraints.MaxWidth = 1624
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,6 +19,8 @@ object Form1: TForm1
   Font.Name = 'Segoe UI'
   Font.Style = []
   Menu = MainMenu1
+  Position = poDesktopCenter
+  RoundedCorners = rcOn
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 168
@@ -84,7 +89,7 @@ object Form1: TForm1
     Layout = tlCenter
   end
   object SelectBox: TShape
-    Left = 466
+    Left = 566
     Top = 1076
     Width = 64
     Height = 64
@@ -95,7 +100,7 @@ object Form1: TForm1
     Brush.Style = bsClear
     Pen.Width = 2
   end
-  object ScrollBox1: TScrollBox
+  object CellOptionScrollBox: TScrollBox
     Left = 10
     Top = 146
     Width = 520
@@ -118,7 +123,7 @@ object Form1: TForm1
       Margins.Right = 5
       Margins.Bottom = 5
       BevelWidth = 2
-      Caption = 'Panel1'
+      Caption = 'Turr COMMON'
       TabOrder = 0
       OnClick = Panel1Click
     end
@@ -132,8 +137,9 @@ object Form1: TForm1
       Margins.Right = 5
       Margins.Bottom = 5
       BevelWidth = 2
-      Caption = 'Panel2'
+      Caption = 'Turr SLOWING'
       TabOrder = 1
+      OnClick = Panel2Click
     end
     object Panel3: TPanel
       Left = 11
@@ -145,8 +151,9 @@ object Form1: TForm1
       Margins.Right = 5
       Margins.Bottom = 5
       BevelWidth = 2
-      Caption = 'Panel3'
+      Caption = 'Turr AREA'
       TabOrder = 2
+      OnClick = Panel3Click
     end
   end
   object Timer1: TTimer

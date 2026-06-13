@@ -15,12 +15,14 @@ Uses
     Vcl.ExtCtrls,
     Vcl.ComCtrls,
     Vcl.StdCtrls,
-    Vcl.Menus;
+    Vcl.Menus,
+    Math;
 
 Const
-    MAP_WIDTH  = 16;  //клеток по горизонтали (X) слева направо
+    MAP_WIDTH = 16;  //клеток по горизонтали (X) слева направо
     MAP_HEIGHT = 16;  //клеток по вертикали (Y)   снизу вверх
-    CELL_SIZE  = 64;  //пикселей
+    CELL_SIZE = 64;  //пикселей
+    MAX_TOWER_HEALTH: Integer = 20;
 
 Type
     TTurretType = (TurrNone, TurrCommon, TurrSlowing, TurrAreaDamaging);
@@ -37,6 +39,13 @@ Type
 
     TMatrixOfMap = Array [0 .. MAP_WIDTH - 1, 0 .. MAP_HEIGHT - 1] Of TMap;
 
+    TTurret = Record        // попробовать переписать всё под
+        TurretType: TTurretType;
+        Radius: Double;
+        FireProgress: Double; // 0 to 1
+        FireRate: Double;
+    End;
+
     TEnemy = Record
         EnemyType: TEnemyType;
         Health: Integer;
@@ -46,6 +55,7 @@ Type
         CellY: Integer;              //текущая клетка (X - горизонталь, Y - вертикаль)
         DistanceProgress: Double;
         Reward: Integer;
+        IsAlive: Bool;
     End;
 
     TEnemySpawns = Record
@@ -58,10 +68,26 @@ Type
 
     TEnemySpawnsArray = Array of TEnemySpawns;
 
+    // Сделать Record Position CellX CellY
     TBullet = Record
         DistanceProgress: Double;
         Speed: Double;
         TargetedEnemy: ^TEnemy;
+        TargetCellX: Integer;
+        TargetCellY: Integer;
+        IsTracking: Bool; // 1 - к врагу, 0 - к клетке
+        TurretCellX: Integer;
+        TurretCellY: Integer;
+    End;
+
+    TBulletNode = Record
+        Bullet: TBullet;
+        Next: ^TBulletNode;
+        Prev: ^TBulletNode;
+    End;
+
+    TBulletList = Record
+        Head: ^TBulletNode;
     End;
 
 
@@ -69,22 +95,24 @@ Type
 
 
 
-    TForm1 = Class(TForm)
+    TGameForm = Class(TForm)
     MapBox: TPaintBox;
-        Timer1: TTimer;
+    GameTimer: TTimer;
         TimeLabel: TLabel;
         Label1: TLabel;
         MainMenu1: TMainMenu;
         N1: TMenuItem;
         N2: TMenuItem;
         N3: TMenuItem;
-        ScrollBox1: TScrollBox;
+    CellOptionScrollBox: TScrollBox;
         Panel1: TPanel;
         Panel2: TPanel;
     SelectBox: TShape;
     Panel3: TPanel;
+    TowerHealthLabel: TLabel;
+    CoinsLabel: TLabel;
         Procedure MapBoxPaint(Sender: TObject);
-        Procedure Timer1Timer(Sender: TObject);
+        Procedure GameTimerTimer(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
         Procedure FormDestroy(Sender: TObject);
         procedure MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -99,7 +127,7 @@ Type
     End;
 
 Var
-    Form1: TForm1;
+    GameForm: TGameForm;
 
     MapData: TMatrixOfMap;
 
@@ -114,14 +142,16 @@ Var
     EnemySpawnsArray: TEnemySpawnsArray;
 
     SelectedCellX, SelectedCellY: Integer;
+    Coins, TowerHealth: Integer;
+    BulletList: ^TBulletList;
 
 Implementation
 
 {$R *.dfm}
+
 //-------------------------------------------------------------------
 //Функции карты
 //-------------------------------------------------------------------
-
 Procedure ClearMap(Var Map: TMatrixOfMap);
 Var
     I, J: Integer;
@@ -332,7 +362,7 @@ Begin
 
     If (IsEnd) Then
     Begin
-        Map[X, Y].EnemyDirection := DirNone;
+        Map[X, Y].EnemyDirection := PrevDir; // проверить удаляются ли элементы или нет
     End;
 
     SetDirection := IsEnd;
@@ -406,6 +436,50 @@ Begin
     End;
 End;
 
+//------------------------------------------------------------------
+// Процедуры списка
+//------------------------------------------------------------------
+Procedure append(Var BulletList: TBulletList; Var Bullet: TBullet); // Добавляем в начало
+Var
+    BulletNode: ^TBulletNode;
+Begin
+    New(BulletNode);
+    BulletNode^.Bullet := Bullet;
+
+    If BulletList.Head <> Nil Then
+    Begin
+        BulletNode^.Next := @BulletList.Head;
+        BulletList.Head.Prev := @BulletNode;
+    End
+    Else
+    Begin
+        BulletNode^.Next := Nil;
+    End;
+
+    BulletNode^.Prev := Nil;
+    BulletList.Head := @BulletNode;
+End;
+
+Procedure delete(Var BulletList: TBulletList; Var BulletNode: TBulletNode); // Добавляем в начало
+Begin
+
+    If (BulletList.Head = @BulletNode) Then
+    Begin
+        BulletList.Head := @BulletNode.Next;
+    End
+    Else
+    Begin
+        BulletNode.Prev.Next := BulletNode.Next;
+    End;
+
+    If (BulletNode.Next <> Nil) Then
+    Begin
+        BulletNode.Next.Prev := BulletNode.Prev;
+    End;
+
+    Dispose(@BulletNode);
+End;
+
 //-------------------------------------------------------------------
 //Обновление позиций врагов
 //-------------------------------------------------------------------
@@ -449,6 +523,7 @@ Begin
                 //Враг достиг базы - удаляем
                 Enemies[I] := Enemies[Length(Enemies) - 1];
                 SetLength(Enemies, Length(Enemies) - 1);
+                Dec(TowerHealth);
             End
             Else
             Begin
@@ -535,9 +610,11 @@ End;
 //-------------------------------------------------------------------
 //Form события
 //-------------------------------------------------------------------
-Procedure TForm1.FormCreate(Sender: TObject);
+Procedure TGameForm.FormCreate(Sender: TObject);
 Begin
     GameTime := 0.0;
+    TowerHealth := MAX_TOWER_HEALTH;
+    Coins := 0;
 
     GrassTex := TBitmap.Create;
     RoadRightTex := TBitmap.Create;
@@ -570,7 +647,7 @@ Begin
     SetLength(Enemies, 0);
 End;
 
-Procedure TForm1.FormDestroy(Sender: TObject);
+Procedure TGameForm.FormDestroy(Sender: TObject);
 Begin
     GrassTex.Free;
     RoadRightTex.Free;
@@ -583,7 +660,7 @@ Begin
     TurretAreaTex.Free;
 End;
 
-procedure TForm1.MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TGameForm.MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 Begin
     SelectedCellX := X Div CELL_SIZE;
     SelectedCellY := (CELL_SIZE * MAP_HEIGHT - Y) Div CELL_SIZE;
@@ -594,7 +671,7 @@ Begin
 
 End;
 
-Procedure TForm1.MapBoxPaint(Sender: TObject);
+Procedure TGameForm.MapBoxPaint(Sender: TObject);
 Var
     I, J: Integer;
     CellRect: TRect;
@@ -642,7 +719,7 @@ Begin
     DrawEnemies(MapBox.Canvas);
 End;
 
-Procedure TForm1.Panel1Click(Sender: TObject);
+Procedure TGameForm.Panel1Click(Sender: TObject);
 Begin
     If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
     Begin
@@ -651,7 +728,7 @@ Begin
     End;
 End;
 
-procedure TForm1.Panel2Click(Sender: TObject);
+procedure TGameForm.Panel2Click(Sender: TObject);
 begin
     If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
     Begin
@@ -660,7 +737,7 @@ begin
     End;
 end;
 
-procedure TForm1.Panel3Click(Sender: TObject);
+procedure TGameForm.Panel3Click(Sender: TObject);
 begin
     If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
     Begin
@@ -685,32 +762,45 @@ Begin
 End;
 
 // TODO: Таймер немного отстаёт от реального времени
-Procedure TForm1.Timer1Timer(Sender: TObject);
+Procedure TGameForm.GameTimerTimer(Sender: TObject);
 Const
     SEC_IN_MIN = 60;
-    SPAWN_INTERVAL = 5000; //появление врага каждые X секунд (GameTime увеличивается на 1 в секунду)
-    MILISECONDS_IN_SECOND: Integer = 1000;
+    //SPAWN_INTERVAL = 5000; //появление врага каждые X секунд (GameTime увеличивается на 1 в секунду)
+    COIN_EARN_INTERVAL = 500;
+    MILISECONDS_IN_SECOND = 1000;
 Var
     Hours, Minutes, Seconds: Integer;
     DeltaTime: Double;
     CountToSpawn, I: Integer;
     Element: TEnemySpawns;
 Begin
-    DeltaTime := Timer1.Interval / MILISECONDS_IN_SECOND;
+    DeltaTime := GameTimer.Interval / MILISECONDS_IN_SECOND;
     GameTime := GameTime + DeltaTime;
     Hours := Trunc(GameTime) Div (SEC_IN_MIN * SEC_IN_MIN);
     Minutes := (Trunc(GameTime) Div SEC_IN_MIN) Mod SEC_IN_MIN;
     Seconds := Trunc(GameTime) Mod SEC_IN_MIN;
     TimeLabel.Caption := Format('Время: %.2d:%.2d:%.2d', [Hours, Minutes, Seconds]);
 
+    If (((Round(GameTime * MILISECONDS_IN_SECOND)) Mod COIN_EARN_INTERVAL) < 10) Then
+    Begin
+        Inc(Coins);
+        CoinsLabel.Caption := Format('Монеты: %4d', [Coins]);
+    End;
+
+    TowerHealthLabel.Caption := Format('Жизни: %d/%d', [TowerHealth, MAX_TOWER_HEALTH]);
+
     For I := 0 To High(EnemySpawnsArray) Do
     Begin
         Element := EnemySpawnsArray[I];
 
         If(Element.EndTime - Element.StartTime < 0.01) Then
-            CountToSpawn := Element.EnemyCount
+        Begin
+            CountToSpawn := Element.EnemyCount;
+        End
         Else
+        Begin
             CountToSpawn := Trunc(Element.EnemyCount*(Clamp(0.0, 1.0, (GameTime-Element.StartTime)/(Element.EndTime-Element.StartTime))));
+        End;
 
         While (CountToSpawn > EnemySpawnsArray[I].EnemyCountCurrent) Do
         Begin

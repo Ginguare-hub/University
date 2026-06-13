@@ -1,14 +1,17 @@
-object Form1: TForm1
+object GameForm: TGameForm
   Left = 0
   Top = 0
   Margins.Left = 5
   Margins.Top = 5
   Margins.Right = 5
   Margins.Bottom = 5
-  Caption = 'Form1'
+  BorderStyle = bsDialog
+  Caption = 'GameForm'
   ClientHeight = 1150
   ClientWidth = 1600
   Color = clBtnFace
+  Constraints.MaxHeight = 1248
+  Constraints.MaxWidth = 1624
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,6 +19,7 @@ object Form1: TForm1
   Font.Name = 'Segoe UI'
   Font.Style = []
   Menu = MainMenu1
+  Position = poDesktopCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 168
@@ -23,7 +27,7 @@ object Form1: TForm1
     1600
     1150)
   TextHeight = 30
-  object PaintBox1: TPaintBox
+  object MapBox: TPaintBox
     Left = 566
     Top = 116
     Width = 1024
@@ -35,8 +39,8 @@ object Form1: TForm1
     Margins.Bottom = 5
     Touch.ParentTabletOptions = False
     Touch.TabletOptions = [toPressAndHold]
-    OnClick = PaintBox1Click
-    OnPaint = PaintBox1Paint
+    OnMouseDown = MapBoxMouseDown
+    OnPaint = MapBoxPaint
   end
   object TimeLabel: TLabel
     Left = 1341
@@ -64,8 +68,8 @@ object Form1: TForm1
   object Label1: TLabel
     Left = 0
     Top = 4
-    Width = 556
-    Height = 132
+    Width = 568
+    Height = 102
     Margins.Left = 5
     Margins.Top = 5
     Margins.Right = 5
@@ -83,9 +87,61 @@ object Form1: TForm1
     ParentFont = False
     Layout = tlCenter
   end
-  object ScrollBox1: TScrollBox
-    Left = 10
-    Top = 146
+  object SelectBox: TShape
+    Left = 566
+    Top = 1076
+    Width = 64
+    Height = 64
+    Margins.Left = 5
+    Margins.Top = 5
+    Margins.Right = 5
+    Margins.Bottom = 5
+    Brush.Style = bsClear
+    Pen.Width = 2
+  end
+  object HPLabel: TLabel
+    Left = 566
+    Top = 51
+    Width = 254
+    Height = 55
+    Margins.Left = 5
+    Margins.Top = 5
+    Margins.Right = 5
+    Margins.Bottom = 5
+    AutoSize = False
+    BiDiMode = bdLeftToRight
+    Caption = #1046#1080#1079#1085#1080': 11/20'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -30
+    Font.Name = 'Segoe UI'
+    Font.Style = [fsBold]
+    ParentBiDiMode = False
+    ParentFont = False
+    Layout = tlCenter
+  end
+  object CoinsLabel: TLabel
+    Left = 342
+    Top = 116
+    Width = 197
+    Height = 65
+    Margins.Left = 5
+    Margins.Top = 5
+    Margins.Right = 5
+    Margins.Bottom = 5
+    AutoSize = False
+    Caption = #1052#1086#1085#1077#1090#1099': 9999'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -30
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+    Layout = tlCenter
+  end
+  object CellOptionScrollBox: TScrollBox
+    Left = 19
+    Top = 191
     Width = 520
     Height = 800
     Margins.Left = 5
@@ -106,8 +162,9 @@ object Form1: TForm1
       Margins.Right = 5
       Margins.Bottom = 5
       BevelWidth = 2
-      Caption = 'Panel1'
+      Caption = 'Turr COMMON'
       TabOrder = 0
+      OnClick = Panel1Click
     end
     object Panel2: TPanel
       Left = 10
@@ -119,15 +176,30 @@ object Form1: TForm1
       Margins.Right = 5
       Margins.Bottom = 5
       BevelWidth = 2
-      Caption = 'Panel2'
+      Caption = 'Turr SLOWING'
       TabOrder = 1
+      OnClick = Panel2Click
+    end
+    object Panel3: TPanel
+      Left = 11
+      Top = 330
+      Width = 499
+      Height = 150
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
+      BevelWidth = 2
+      Caption = 'Turr AREA'
+      TabOrder = 2
+      OnClick = Panel3Click
     end
   end
   object Timer1: TTimer
     Interval = 25
     OnTimer = Timer1Timer
-    Left = 42
-    Top = 962
+    Left = 159
+    Top = 1061
   end
   object MainMenu1: TMainMenu
     Left = 42

@@ -15,12 +15,14 @@ Uses
     Vcl.ExtCtrls,
     Vcl.ComCtrls,
     Vcl.StdCtrls,
-    Vcl.Menus;
+    Vcl.Menus,
+    Math;
 
 Const
-    MAP_WIDTH  = 16;  //клеток по горизонтали (X) слева направо
+    MAP_WIDTH = 16;  //клеток по горизонтали (X) слева направо
     MAP_HEIGHT = 16;  //клеток по вертикали (Y)   снизу вверх
-    CELL_SIZE  = 64;  //пикселей
+    CELL_SIZE = 64;  //пикселей
+    MAX_TOWER_HEALTH: Integer = 20;
 
 Type
     TTurretType = (TurrNone, TurrCommon, TurrSlowing, TurrAreaDamaging);
@@ -46,6 +48,7 @@ Type
         CellY: Integer;              //текуща€ клетка (X - горизонталь, Y - вертикаль)
         DistanceProgress: Double;
         Reward: Integer;
+        IsAlive: Bool;
     End;
 
     TEnemySpawns = Record
@@ -58,31 +61,50 @@ Type
 
     TEnemySpawnsArray = Array of TEnemySpawns;
 
+    // —делать Record Position CellX CellY
+    TBullet = Record
+        DistanceProgress: Double;
+        Speed: Double;
+        TargetedEnemy: ^TEnemy;
+        TargetCellX: Integer;
+        TargetCellY: Integer;
+        IsTracking: Bool; // 1 - к врагу, 0 - к клетке
+    End;
+
+    TBulletNode = Record
+        Bullet: TBullet;
+        Next: ^TBulletNode;
+    End;
 
 
 
 
 
-    TForm1 = Class(TForm)
+
+    TGameForm = Class(TForm)
     MapBox: TPaintBox;
-        Timer1: TTimer;
+    GameTimer: TTimer;
         TimeLabel: TLabel;
         Label1: TLabel;
         MainMenu1: TMainMenu;
         N1: TMenuItem;
         N2: TMenuItem;
         N3: TMenuItem;
-        ScrollBox1: TScrollBox;
+    CellOptionScrollBox: TScrollBox;
         Panel1: TPanel;
         Panel2: TPanel;
     SelectBox: TShape;
     Panel3: TPanel;
+    TowerHealthLabel: TLabel;
+    CoinsLabel: TLabel;
         Procedure MapBoxPaint(Sender: TObject);
-        Procedure Timer1Timer(Sender: TObject);
+        Procedure GameTimerTimer(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
         Procedure FormDestroy(Sender: TObject);
         procedure MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure Panel1Click(Sender: TObject);
+    procedure Panel2Click(Sender: TObject);
+    procedure Panel3Click(Sender: TObject);
 
 
 
@@ -91,11 +113,11 @@ Type
     End;
 
 Var
-    Form1: TForm1;
+    GameForm: TGameForm;
 
     MapData: TMatrixOfMap;
 
-    GrassTex, RoadRightTex, RoadUpTex, RoadLeftTex, RoadDownTex, BaseTex, Turret1Tex: TBitmap;
+    GrassTex, RoadRightTex, RoadUpTex, RoadLeftTex, RoadDownTex, BaseTex, TurretCommonTex, TurretSlowingTex, TurretAreaTex: TBitmap;
     GameTime: Double = 0.0;
 
     // ћожно сделать списком
@@ -106,6 +128,7 @@ Var
     EnemySpawnsArray: TEnemySpawnsArray;
 
     SelectedCellX, SelectedCellY: Integer;
+    Coins, TowerHealth: Integer;
 
 Implementation
 
@@ -324,7 +347,7 @@ Begin
 
     If (IsEnd) Then
     Begin
-        Map[X, Y].EnemyDirection := DirNone;
+        Map[X, Y].EnemyDirection := PrevDir; // проверить удал€ютс€ ли элементы или нет
     End;
 
     SetDirection := IsEnd;
@@ -441,6 +464,7 @@ Begin
                 //¬раг достиг базы - удал€ем
                 Enemies[I] := Enemies[Length(Enemies) - 1];
                 SetLength(Enemies, Length(Enemies) - 1);
+                Dec(TowerHealth);
             End
             Else
             Begin
@@ -527,9 +551,11 @@ End;
 //-------------------------------------------------------------------
 //Form событи€
 //-------------------------------------------------------------------
-Procedure TForm1.FormCreate(Sender: TObject);
+Procedure TGameForm.FormCreate(Sender: TObject);
 Begin
     GameTime := 0.0;
+    TowerHealth := MAX_TOWER_HEALTH;
+    Coins := 0;
 
     GrassTex := TBitmap.Create;
     RoadRightTex := TBitmap.Create;
@@ -537,7 +563,9 @@ Begin
     RoadLeftTex := TBitmap.Create;
     RoadDownTex := TBitmap.Create;
     BaseTex := TBitmap.Create;
-    Turret1Tex := TBitmap.Create;
+    TurretCommonTex := TBitmap.Create;
+    TurretSlowingTex := TBitmap.Create;
+    TurretAreaTex := TBitmap.Create;
 
     GrassTex.LoadFromFile('.\..\..\test_textures\grass_texture.bmp');
     BaseTex.LoadFromFile('.\..\..\test_textures\base_texture.bmp');
@@ -545,7 +573,9 @@ Begin
     RoadUpTex.LoadFromFile('.\..\..\test_textures\road_texture_up.bmp');
     RoadLeftTex.LoadFromFile('.\..\..\test_textures\road_texture_left.bmp');
     RoadDownTex.LoadFromFile('.\..\..\test_textures\road_texture_down.bmp');
-    Turret1Tex.LoadFromFile('.\..\..\test_textures\grass_and_turret1_texture.bmp');
+    TurretCommonTex.LoadFromFile('.\..\..\test_textures\grass_and_turret1_texture.bmp');
+    TurretSlowingTex.LoadFromFile('.\..\..\test_textures\turret_slowing_texture.bmp');
+    TurretAreaTex.LoadFromFile('.\..\..\test_textures\turret_area_texture.bmp');
 
 
     MapData := SetMap1();
@@ -558,7 +588,7 @@ Begin
     SetLength(Enemies, 0);
 End;
 
-Procedure TForm1.FormDestroy(Sender: TObject);
+Procedure TGameForm.FormDestroy(Sender: TObject);
 Begin
     GrassTex.Free;
     RoadRightTex.Free;
@@ -566,10 +596,12 @@ Begin
     RoadLeftTex.Free;
     RoadDownTex.Free;
     BaseTex.Free;
-    Turret1Tex.Free;
+    TurretCommonTex.Free;
+    TurretSlowingTex.Free;
+    TurretAreaTex.Free;
 End;
 
-procedure TForm1.MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TGameForm.MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 Begin
     SelectedCellX := X Div CELL_SIZE;
     SelectedCellY := (CELL_SIZE * MAP_HEIGHT - Y) Div CELL_SIZE;
@@ -580,7 +612,7 @@ Begin
 
 End;
 
-Procedure TForm1.MapBoxPaint(Sender: TObject);
+Procedure TGameForm.MapBoxPaint(Sender: TObject);
 Var
     I, J: Integer;
     CellRect: TRect;
@@ -598,9 +630,9 @@ Begin
                     StretchDraw(CellRect, GrassTex);
 
                     case MapData[I, J].TypeOfTurret Of
-                        TurrCommon:  StretchDraw(CellRect, Turret1Tex);
-                        TurrSlowing:  StretchDraw(CellRect, RoadDownTex);
-                        TurrAreaDamaging:    StretchDraw(CellRect, RoadUpTex);
+                        TurrCommon:  StretchDraw(CellRect, TurretCommonTex);
+                        TurrSlowing:  StretchDraw(CellRect, TurretSlowingTex);
+                        TurrAreaDamaging:    StretchDraw(CellRect, TurretAreaTex);
                     end;
 
                 End
@@ -628,7 +660,7 @@ Begin
     DrawEnemies(MapBox.Canvas);
 End;
 
-Procedure TForm1.Panel1Click(Sender: TObject);
+Procedure TGameForm.Panel1Click(Sender: TObject);
 Begin
     If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
     Begin
@@ -636,6 +668,24 @@ Begin
         MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
     End;
 End;
+
+procedure TGameForm.Panel2Click(Sender: TObject);
+begin
+    If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
+    Begin
+        MapData[SelectedCellX, SelectedCellY].TypeOfTurret := TurrSlowing;
+        MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
+    End;
+end;
+
+procedure TGameForm.Panel3Click(Sender: TObject);
+begin
+    If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
+    Begin
+        MapData[SelectedCellX, SelectedCellY].TypeOfTurret := TurrAreaDamaging;
+        MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
+    End;
+end;
 
 Function Clamp(Const MIN, MAX: Double; Value: Double): Double;
 Var
@@ -653,32 +703,45 @@ Begin
 End;
 
 // TODO: “аймер немного отстаЄт от реального времени
-Procedure TForm1.Timer1Timer(Sender: TObject);
+Procedure TGameForm.GameTimerTimer(Sender: TObject);
 Const
     SEC_IN_MIN = 60;
-    SPAWN_INTERVAL = 5000; //по€вление врага каждые X секунд (GameTime увеличиваетс€ на 1 в секунду)
-    MILISECONDS_IN_SECOND: Integer = 1000;
+    //SPAWN_INTERVAL = 5000; //по€вление врага каждые X секунд (GameTime увеличиваетс€ на 1 в секунду)
+    COIN_EARN_INTERVAL = 500;
+    MILISECONDS_IN_SECOND = 1000;
 Var
     Hours, Minutes, Seconds: Integer;
     DeltaTime: Double;
     CountToSpawn, I: Integer;
     Element: TEnemySpawns;
 Begin
-    DeltaTime := Timer1.Interval / MILISECONDS_IN_SECOND;
+    DeltaTime := GameTimer.Interval / MILISECONDS_IN_SECOND;
     GameTime := GameTime + DeltaTime;
     Hours := Trunc(GameTime) Div (SEC_IN_MIN * SEC_IN_MIN);
     Minutes := (Trunc(GameTime) Div SEC_IN_MIN) Mod SEC_IN_MIN;
     Seconds := Trunc(GameTime) Mod SEC_IN_MIN;
     TimeLabel.Caption := Format('¬рем€: %.2d:%.2d:%.2d', [Hours, Minutes, Seconds]);
 
+    If (((Round(GameTime * MILISECONDS_IN_SECOND)) Mod COIN_EARN_INTERVAL) < 10) Then
+    Begin
+        Inc(Coins);
+        CoinsLabel.Caption := Format('ћонеты: %4d', [Coins]);
+    End;
+
+    TowerHealthLabel.Caption := Format('∆изни: %d/%d', [TowerHealth, MAX_TOWER_HEALTH]);
+
     For I := 0 To High(EnemySpawnsArray) Do
     Begin
         Element := EnemySpawnsArray[I];
 
         If(Element.EndTime - Element.StartTime < 0.01) Then
-            CountToSpawn := Element.EnemyCount
+        Begin
+            CountToSpawn := Element.EnemyCount;
+        End
         Else
+        Begin
             CountToSpawn := Trunc(Element.EnemyCount*(Clamp(0.0, 1.0, (GameTime-Element.StartTime)/(Element.EndTime-Element.StartTime))));
+        End;
 
         While (CountToSpawn > EnemySpawnsArray[I].EnemyCountCurrent) Do
         Begin
@@ -693,3 +756,6 @@ Begin
 End;
 
 End.
+
+// ƒобавить состо€ние игрока "жизни" "деньги" и подумать над снар€дами. » систему урона по игроку
+// —делать отображение меню магазина турелей

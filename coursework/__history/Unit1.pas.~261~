@@ -1,4 +1,4 @@
-п»їUnit Unit1;
+Unit Unit1;
 
 Interface
 
@@ -15,12 +15,14 @@ Uses
     Vcl.ExtCtrls,
     Vcl.ComCtrls,
     Vcl.StdCtrls,
-    Vcl.Menus;
+    Vcl.Menus,
+    Math;
 
 Const
-    MAP_WIDTH  = 16;  //РєР»РµС‚РѕРє РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё (X) СЃР»РµРІР° РЅР°РїСЂР°РІРѕ
-    MAP_HEIGHT = 16;  //РєР»РµС‚РѕРє РїРѕ РІРµСЂС‚РёРєР°Р»Рё (Y)   СЃРЅРёР·Сѓ РІРІРµСЂС…
-    CELL_SIZE  = 64;  //РїРёРєСЃРµР»РµР№
+    MAP_WIDTH = 16;  //клеток по горизонтали (X) слева направо
+    MAP_HEIGHT = 16;  //клеток по вертикали (Y)   снизу вверх
+    CELL_SIZE = 64;  //пикселей
+    MAX_TOWER_HEALTH: Integer = 20;
 
 Type
     TTurretType = (TurrNone, TurrCommon, TurrSlowing, TurrAreaDamaging);
@@ -41,11 +43,12 @@ Type
         EnemyType: TEnemyType;
         Health: Integer;
         MaxHealth: Integer;
-        Speed: Double;               //РєР»РµС‚РѕРє РІ СЃРµРєСѓРЅРґСѓ
+        Speed: Double;               //клеток в секунду
         CellX: Integer;
-        CellY: Integer;              //С‚РµРєСѓС‰Р°СЏ РєР»РµС‚РєР° (X - РіРѕСЂРёР·РѕРЅС‚Р°Р»СЊ, Y - РІРµСЂС‚РёРєР°Р»СЊ)
+        CellY: Integer;              //текущая клетка (X - горизонталь, Y - вертикаль)
         DistanceProgress: Double;
         Reward: Integer;
+        IsAlive: Bool;
     End;
 
     TEnemySpawns = Record
@@ -58,30 +61,45 @@ Type
 
     TEnemySpawnsArray = Array of TEnemySpawns;
 
+    // Сделать Record Position CellX CellY
+    TBullet = Record
+        DistanceProgress: Double;
+        Speed: Double;
+        TargetedEnemy: ^TEnemy;
+        TargetCellX: Integer;
+        TargetCellY: Integer;
+        IsTracking: Bool; // 1 - к врагу, 0 - к клетке
+    End;
 
 
 
 
 
-    TForm1 = Class(TForm)
+
+    TGameForm = Class(TForm)
     MapBox: TPaintBox;
-        Timer1: TTimer;
+    GameTimer: TTimer;
         TimeLabel: TLabel;
         Label1: TLabel;
         MainMenu1: TMainMenu;
         N1: TMenuItem;
         N2: TMenuItem;
         N3: TMenuItem;
-        ScrollBox1: TScrollBox;
+    CellOptionScrollBox: TScrollBox;
         Panel1: TPanel;
         Panel2: TPanel;
     SelectBox: TShape;
+    Panel3: TPanel;
+    TowerHealthLabel: TLabel;
+    CoinsLabel: TLabel;
         Procedure MapBoxPaint(Sender: TObject);
-        Procedure Timer1Timer(Sender: TObject);
+        Procedure GameTimerTimer(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
         Procedure FormDestroy(Sender: TObject);
-    procedure MapBoxMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+        procedure MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure Panel1Click(Sender: TObject);
+    procedure Panel2Click(Sender: TObject);
+    procedure Panel3Click(Sender: TObject);
 
 
 
@@ -90,14 +108,14 @@ Type
     End;
 
 Var
-    Form1: TForm1;
+    GameForm: TGameForm;
 
     MapData: TMatrixOfMap;
 
-    GrassTex, RoadRightTex, RoadUpTex, RoadLeftTex, RoadDownTex, BaseTex: TBitmap;
+    GrassTex, RoadRightTex, RoadUpTex, RoadLeftTex, RoadDownTex, BaseTex, TurretCommonTex, TurretSlowingTex, TurretAreaTex: TBitmap;
     GameTime: Double = 0.0;
 
-    // РњРѕР¶РЅРѕ СЃРґРµР»Р°С‚СЊ СЃРїРёСЃРєРѕРј
+    // Можно сделать списком
     Enemies: Array Of TEnemy;
 
     EnemyTemplates: Array Of TEnemy;
@@ -105,12 +123,13 @@ Var
     EnemySpawnsArray: TEnemySpawnsArray;
 
     SelectedCellX, SelectedCellY: Integer;
+    Coins, TowerHealth: Integer;
 
 Implementation
 
 {$R *.dfm}
 //-------------------------------------------------------------------
-//Р¤СѓРЅРєС†РёРё РєР°СЂС‚С‹
+//Функции карты
 //-------------------------------------------------------------------
 
 Procedure ClearMap(Var Map: TMatrixOfMap);
@@ -124,7 +143,7 @@ Begin
             Map[I, J].TypeOfGround := TGroundType.GtGrass;
             Map[I, J].TypeOfTurret := TTurretType.TurrNone;
             Map[I, J].EnemyDirection := TDirection.DirNone;
-            Map[I, J].IsAvailibleForTurret := False;
+            Map[I, J].IsAvailibleForTurret := True;
         End;
     End;
 End;
@@ -158,7 +177,7 @@ Begin
 
     MapData[5, 11].TypeOfGround := TGroundType.GtRoad;
 
-    //Р‘Р°Р·Р°
+    //База
     For I := 4 To 6 Do
     Begin
         MapData[I, 12].TypeOfGround := TGroundType.GtBase;
@@ -169,7 +188,7 @@ Begin
 End;
 
 //-------------------------------------------------------------------
-//РџРѕРёСЃРє СЃС‚Р°СЂС‚РѕРІРѕР№ РєР»РµС‚РєРё (РєР»РµС‚РєР° Road РЅР° РєСЂР°СЋ РїРѕР»СЏ)
+//Поиск стартовой клетки (клетка Road на краю поля)
 //-------------------------------------------------------------------
 Function FindStartCell(Var StartX, StartY: Integer): Boolean;
 Var
@@ -204,7 +223,7 @@ Begin
 End;
 
 //-------------------------------------------------------------------
-//Р Р°СЃС‡С‘С‚ РЅР°РїСЂР°РІР»РµРЅРёР№ РґР»СЏ РґРѕСЂРѕРі
+//Расчёт направлений для дорог
 //-------------------------------------------------------------------
 Function FindFirstDirection(Map: TMatrixOfMap): TDirection;
 var
@@ -259,9 +278,9 @@ Begin
     End;
 End;
 
-// РџСЂРёРЅРёРјР°РµС‚ "РЅР°С‡Р°Р»СЊРЅСѓСЋ" РєР»РµС‚РєСѓ СЃ РѕРїСЂРµРґРµР»С‘РЅРЅС‹Рј РЅР°РїСЂР°РІР»РµРЅРёРµРј, РІРѕР·РІСЂР°С‰Р°РµС‚ СЃР»РµРґСѓСЋС‰СѓСЋ РєР»РµС‚РєСѓ X Y
-// Р° С‚Р°РєР¶Рµ Boolean РєР°Рє РїСЂРёР·РЅР°Рє РєРѕРЅС†Р°
-// РџРµСЂРµС…РѕРґРёС‚ РЅР° СЃР»РµРґ. РєР»РµС‚РєСѓ
+// Принимает "начальную" клетку с определённым направлением, возвращает следующую клетку X Y
+// а также Boolean как признак конца
+// Переходит на след. клетку
 Function SetDirection(Var Map: TMatrixOfMap; Var X, Y: Integer): Boolean;
 Var
     IsEnd: Boolean;
@@ -323,7 +342,7 @@ Begin
 
     If (IsEnd) Then
     Begin
-        Map[X, Y].EnemyDirection := DirNone;
+        Map[X, Y].EnemyDirection := PrevDir; // проверить удаляются ли элементы или нет
     End;
 
     SetDirection := IsEnd;
@@ -352,7 +371,7 @@ Begin
 End;
 
 //-------------------------------------------------------------------
-//РЁР°Р±Р»РѕРЅС‹ РІСЂР°РіРѕРІ
+//Шаблоны врагов
 //-------------------------------------------------------------------
 Procedure InitEnemyTemplates();
 Begin
@@ -378,7 +397,7 @@ Begin
 End;
 
 //-------------------------------------------------------------------
-//РЎРѕР·РґР°РЅРёРµ РІСЂР°РіР°
+//Создание врага
 //-------------------------------------------------------------------
 Procedure SpawnEnemy(TemplateIndex: Integer);
 Var
@@ -398,7 +417,7 @@ Begin
 End;
 
 //-------------------------------------------------------------------
-//РћР±РЅРѕРІР»РµРЅРёРµ РїРѕР·РёС†РёР№ РІСЂР°РіРѕРІ
+//Обновление позиций врагов
 //-------------------------------------------------------------------
 Procedure UpdateEnemies(DeltaTime: Double);
 Var
@@ -411,7 +430,7 @@ Begin
     Begin
         Enemies[I].DistanceProgress := Enemies[I].DistanceProgress + Enemies[I].Speed * DeltaTime;
 
-        //РЎРєРѕР»СЊРєРѕ С†РµР»С‹С… РєР»РµС‚РѕРє РЅСѓР¶РЅРѕ РїСЂРѕР№С‚Рё
+        //Сколько целых клеток нужно пройти
         FullCells := Round(MoveDistance);
         If FullCells < 1 Then
             FullCells := 1;
@@ -419,7 +438,7 @@ Begin
         While Enemies[I].DistanceProgress > 1 Do
         Begin
 
-            //РћР±РЅРѕРІР»СЏРµРј РЅР°РїСЂР°РІР»РµРЅРёРµ РЅР° РЅРѕРІРѕР№ РєР»РµС‚РєРµ
+            //Обновляем направление на новой клетке
 //            If (Enemies[I].CellX >= 0) And (Enemies[I].CellX < MAP_WIDTH) And (Enemies[I].CellY >= 0) And
 //                (Enemies[I].CellY < MAP_HEIGHT) Then
 //            Begin
@@ -432,14 +451,15 @@ Begin
             Enemies[I].DistanceProgress := Enemies[I].DistanceProgress - 1;
         End;
 
-        //РџСЂРѕРІРµСЂРєР° РґРѕСЃС‚РёР¶РµРЅРёСЏ Р±Р°Р·С‹
+        //Проверка достижения базы
         If (Enemies[I].CellX >= 0) And (Enemies[I].CellX < MAP_WIDTH) And (Enemies[I].CellY >= 0) And (Enemies[I].CellY < MAP_HEIGHT) Then
         Begin
             If MapData[Enemies[I].CellX, Enemies[I].CellY].TypeOfGround = TGroundType.GtBase Then
             Begin
-                //Р’СЂР°Рі РґРѕСЃС‚РёРі Р±Р°Р·С‹ - СѓРґР°Р»СЏРµРј
+                //Враг достиг базы - удаляем
                 Enemies[I] := Enemies[Length(Enemies) - 1];
                 SetLength(Enemies, Length(Enemies) - 1);
+                Dec(TowerHealth);
             End
             Else
             Begin
@@ -454,7 +474,7 @@ Begin
 End;
 
 //-------------------------------------------------------------------
-//РћС‚СЂРёСЃРѕРІРєР° РІСЂР°РіРѕРІ
+//Отрисовка врагов
 //-------------------------------------------------------------------
 Procedure DrawEnemies(Canvas: TCanvas);
 Var
@@ -477,7 +497,7 @@ Begin
                 DeltaX := -1;
         end;
 
-        // Р’СЂР°РіРё РїРµСЂРµРјРµС‰Р°СЋС‚СЃСЏ РєСЂР°СЃРёРІРѕ, РЅРѕ СЃС‚Р°РЅРѕРІСЏС‚СЊСЃСЏ РЅР° РІРѕРєСѓСЋ РєР»РµС‚РєСѓ РўРћР›Р¬РљРћ РѕРєРѕРіРґР° РЅР°СЃС‚СѓРїР°СЋС‚ РЅР° РµС‘ СЃРµСЂРµРґРёРЅСѓ
+        // Враги перемещаются красиво, но становяться на вокую клетку ТОЛЬКО окогда наступают на её середину
         ScreenX := Trunc((Enemies[I].CellX + (Enemies[I].DistanceProgress { - 0.5}) * DeltaX) * CELL_SIZE);
         ScreenY := Trunc((MAP_HEIGHT - 1 - Enemies[I].CellY - (Enemies[I].DistanceProgress {- 0.5}) * DeltaY) * CELL_SIZE);
 
@@ -524,11 +544,13 @@ Begin
 End;
 
 //-------------------------------------------------------------------
-//Form СЃРѕР±С‹С‚РёСЏ
+//Form события
 //-------------------------------------------------------------------
-Procedure TForm1.FormCreate(Sender: TObject);
+Procedure TGameForm.FormCreate(Sender: TObject);
 Begin
     GameTime := 0.0;
+    TowerHealth := MAX_TOWER_HEALTH;
+    Coins := 0;
 
     GrassTex := TBitmap.Create;
     RoadRightTex := TBitmap.Create;
@@ -536,6 +558,9 @@ Begin
     RoadLeftTex := TBitmap.Create;
     RoadDownTex := TBitmap.Create;
     BaseTex := TBitmap.Create;
+    TurretCommonTex := TBitmap.Create;
+    TurretSlowingTex := TBitmap.Create;
+    TurretAreaTex := TBitmap.Create;
 
     GrassTex.LoadFromFile('.\..\..\test_textures\grass_texture.bmp');
     BaseTex.LoadFromFile('.\..\..\test_textures\base_texture.bmp');
@@ -543,6 +568,10 @@ Begin
     RoadUpTex.LoadFromFile('.\..\..\test_textures\road_texture_up.bmp');
     RoadLeftTex.LoadFromFile('.\..\..\test_textures\road_texture_left.bmp');
     RoadDownTex.LoadFromFile('.\..\..\test_textures\road_texture_down.bmp');
+    TurretCommonTex.LoadFromFile('.\..\..\test_textures\grass_and_turret1_texture.bmp');
+    TurretSlowingTex.LoadFromFile('.\..\..\test_textures\turret_slowing_texture.bmp');
+    TurretAreaTex.LoadFromFile('.\..\..\test_textures\turret_area_texture.bmp');
+
 
     MapData := SetMap1();
     CalculateEnemyDirections(MapData);
@@ -554,7 +583,7 @@ Begin
     SetLength(Enemies, 0);
 End;
 
-Procedure TForm1.FormDestroy(Sender: TObject);
+Procedure TGameForm.FormDestroy(Sender: TObject);
 Begin
     GrassTex.Free;
     RoadRightTex.Free;
@@ -562,27 +591,28 @@ Begin
     RoadLeftTex.Free;
     RoadDownTex.Free;
     BaseTex.Free;
+    TurretCommonTex.Free;
+    TurretSlowingTex.Free;
+    TurretAreaTex.Free;
 End;
 
-procedure TForm1.MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TGameForm.MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 Begin
     SelectedCellX := X Div CELL_SIZE;
-    SelectedCellY := (CELL_SIZE * MAP_WIDTH - Y) Div CELL_SIZE;
-
-    //ShowMessage(IntToStr(CellX) + ' ' + IntToStr(CellY));
+    SelectedCellY := (CELL_SIZE * MAP_HEIGHT - Y) Div CELL_SIZE;
 
     SelectBox.Left := SelectedCellX * CELL_SIZE + MapBox.Left;
-    SelectBox.Top := SelectedCellY * CELL_SIZE;
+    SelectBox.Top := (MAP_HEIGHT - SelectedCellY - 1) * CELL_SIZE + MapBox.Top;
 
 
 End;
 
-Procedure TForm1.MapBoxPaint(Sender: TObject);
+Procedure TGameForm.MapBoxPaint(Sender: TObject);
 Var
     I, J: Integer;
     CellRect: TRect;
 Begin
-    With PaintBox1.Canvas Do
+    With MapBox.Canvas Do
     Begin
         For I := 0 To MAP_WIDTH - 1 Do
         Begin
@@ -593,6 +623,13 @@ Begin
                 If MapData[I, J].TypeOfGround = TGroundType.GtGrass Then
                 Begin
                     StretchDraw(CellRect, GrassTex);
+
+                    case MapData[I, J].TypeOfTurret Of
+                        TurrCommon:  StretchDraw(CellRect, TurretCommonTex);
+                        TurrSlowing:  StretchDraw(CellRect, TurretSlowingTex);
+                        TurrAreaDamaging:    StretchDraw(CellRect, TurretAreaTex);
+                    end;
+
                 End
                 Else
                     If MapData[I, J].TypeOfGround = TGroundType.GtRoad Then
@@ -615,8 +652,35 @@ Begin
         End;
     End;
 
-    DrawEnemies(PaintBox1.Canvas);
+    DrawEnemies(MapBox.Canvas);
 End;
+
+Procedure TGameForm.Panel1Click(Sender: TObject);
+Begin
+    If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
+    Begin
+        MapData[SelectedCellX, SelectedCellY].TypeOfTurret := TurrCommon;
+        MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
+    End;
+End;
+
+procedure TGameForm.Panel2Click(Sender: TObject);
+begin
+    If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
+    Begin
+        MapData[SelectedCellX, SelectedCellY].TypeOfTurret := TurrSlowing;
+        MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
+    End;
+end;
+
+procedure TGameForm.Panel3Click(Sender: TObject);
+begin
+    If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
+    Begin
+        MapData[SelectedCellX, SelectedCellY].TypeOfTurret := TurrAreaDamaging;
+        MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
+    End;
+end;
 
 Function Clamp(Const MIN, MAX: Double; Value: Double): Double;
 Var
@@ -633,33 +697,46 @@ Begin
     Clamp := Answer;
 End;
 
-// TODO: РўР°Р№РјРµСЂ РЅРµРјРЅРѕРіРѕ РѕС‚СЃС‚Р°С‘С‚ РѕС‚ СЂРµР°Р»СЊРЅРѕРіРѕ РІСЂРµРјРµРЅРё
-Procedure TForm1.Timer1Timer(Sender: TObject);
+// TODO: Таймер немного отстаёт от реального времени
+Procedure TGameForm.GameTimerTimer(Sender: TObject);
 Const
     SEC_IN_MIN = 60;
-    SPAWN_INTERVAL = 5000; //РїРѕСЏРІР»РµРЅРёРµ РІСЂР°РіР° РєР°Р¶РґС‹Рµ X СЃРµРєСѓРЅРґ (GameTime СѓРІРµР»РёС‡РёРІР°РµС‚СЃСЏ РЅР° 1 РІ СЃРµРєСѓРЅРґСѓ)
-    MILISECONDS_IN_SECOND: Integer = 1000;
+    //SPAWN_INTERVAL = 5000; //появление врага каждые X секунд (GameTime увеличивается на 1 в секунду)
+    COIN_EARN_INTERVAL = 500;
+    MILISECONDS_IN_SECOND = 1000;
 Var
     Hours, Minutes, Seconds: Integer;
     DeltaTime: Double;
     CountToSpawn, I: Integer;
     Element: TEnemySpawns;
 Begin
-    DeltaTime := Timer1.Interval / MILISECONDS_IN_SECOND;
+    DeltaTime := GameTimer.Interval / MILISECONDS_IN_SECOND;
     GameTime := GameTime + DeltaTime;
     Hours := Trunc(GameTime) Div (SEC_IN_MIN * SEC_IN_MIN);
     Minutes := (Trunc(GameTime) Div SEC_IN_MIN) Mod SEC_IN_MIN;
     Seconds := Trunc(GameTime) Mod SEC_IN_MIN;
-    TimeLabel.Caption := Format('Р’СЂРµРјСЏ: %.2d:%.2d:%.2d', [Hours, Minutes, Seconds]);
+    TimeLabel.Caption := Format('Время: %.2d:%.2d:%.2d', [Hours, Minutes, Seconds]);
+
+    If (((Round(GameTime * MILISECONDS_IN_SECOND)) Mod COIN_EARN_INTERVAL) < 10) Then
+    Begin
+        Inc(Coins);
+        CoinsLabel.Caption := Format('Монеты: %4d', [Coins]);
+    End;
+
+    TowerHealthLabel.Caption := Format('Жизни: %d/%d', [TowerHealth, MAX_TOWER_HEALTH]);
 
     For I := 0 To High(EnemySpawnsArray) Do
     Begin
         Element := EnemySpawnsArray[I];
 
         If(Element.EndTime - Element.StartTime < 0.01) Then
-            CountToSpawn := Element.EnemyCount
+        Begin
+            CountToSpawn := Element.EnemyCount;
+        End
         Else
+        Begin
             CountToSpawn := Trunc(Element.EnemyCount*(Clamp(0.0, 1.0, (GameTime-Element.StartTime)/(Element.EndTime-Element.StartTime))));
+        End;
 
         While (CountToSpawn > EnemySpawnsArray[I].EnemyCountCurrent) Do
         Begin
@@ -670,7 +747,10 @@ Begin
 
     UpdateEnemies(DeltaTime);
 
-    PaintBox1.Invalidate;
+    MapBox.Invalidate;
 End;
 
 End.
+
+// Добавить состояние игрока "жизни" "деньги" и подумать над снарядами. И систему урона по игроку
+// Сделать отображение меню магазина турелей

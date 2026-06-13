@@ -5,10 +5,13 @@ object Form1: TForm1
   Margins.Top = 5
   Margins.Right = 5
   Margins.Bottom = 5
+  BorderStyle = bsDialog
   Caption = 'Form1'
   ClientHeight = 1150
   ClientWidth = 1600
   Color = clBtnFace
+  Constraints.MaxHeight = 10000
+  Constraints.MaxWidth = 1624
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -84,7 +87,7 @@ object Form1: TForm1
     Layout = tlCenter
   end
   object SelectBox: TShape
-    Left = 466
+    Left = 566
     Top = 1076
     Width = 64
     Height = 64
@@ -95,19 +98,7 @@ object Form1: TForm1
     Brush.Style = bsClear
     Pen.Width = 2
   end
-  object Shape1: TShape
-    Left = 243
-    Top = 956
-    Width = 163
-    Height = 161
-    Margins.Left = 5
-    Margins.Top = 5
-    Margins.Right = 5
-    Margins.Bottom = 5
-    Pen.Width = 2
-    Shape = stEllipse
-  end
-  object ScrollBox1: TScrollBox
+  object CellOptionScrollBox: TScrollBox
     Left = 10
     Top = 146
     Width = 520
