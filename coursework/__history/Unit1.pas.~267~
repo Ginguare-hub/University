@@ -39,6 +39,13 @@ Type
 
     TMatrixOfMap = Array [0 .. MAP_WIDTH - 1, 0 .. MAP_HEIGHT - 1] Of TMap;
 
+    TTurret = Record        // попробовать переписать всё под
+        TurretType: TTurretType;
+        Radius: Double;
+        FireProgress: Double; // 0 to 1
+        FireRate: Double;
+    End;
+
     TEnemy = Record
         EnemyType: TEnemyType;
         Health: Integer;
@@ -48,6 +55,7 @@ Type
         CellY: Integer;              //текущая клетка (X - горизонталь, Y - вертикаль)
         DistanceProgress: Double;
         Reward: Integer;
+        IsAlive: Bool;
     End;
 
     TEnemySpawns = Record
@@ -60,10 +68,26 @@ Type
 
     TEnemySpawnsArray = Array of TEnemySpawns;
 
+    // Сделать Record Position CellX CellY
     TBullet = Record
         DistanceProgress: Double;
         Speed: Double;
         TargetedEnemy: ^TEnemy;
+        TargetCellX: Integer;
+        TargetCellY: Integer;
+        IsTracking: Bool; // 1 - к врагу, 0 - к клетке
+        TurretCellX: Integer;
+        TurretCellY: Integer;
+    End;
+
+    TBulletNode = Record
+        Bullet: TBullet;
+        Next: ^TBulletNode;
+        Prev: ^TBulletNode;
+    End;
+
+    TBulletList = Record
+        Head: ^TBulletNode;
     End;
 
 
@@ -85,7 +109,7 @@ Type
         Panel2: TPanel;
     SelectBox: TShape;
     Panel3: TPanel;
-    HPLabel: TLabel;
+    TowerHealthLabel: TLabel;
     CoinsLabel: TLabel;
         Procedure MapBoxPaint(Sender: TObject);
         Procedure GameTimerTimer(Sender: TObject);
@@ -119,14 +143,15 @@ Var
 
     SelectedCellX, SelectedCellY: Integer;
     Coins, TowerHealth: Integer;
+    BulletList: ^TBulletList;
 
 Implementation
 
 {$R *.dfm}
+
 //-------------------------------------------------------------------
 //Функции карты
 //-------------------------------------------------------------------
-
 Procedure ClearMap(Var Map: TMatrixOfMap);
 Var
     I, J: Integer;
@@ -337,7 +362,7 @@ Begin
 
     If (IsEnd) Then
     Begin
-        Map[X, Y].EnemyDirection := DirNone;
+        Map[X, Y].EnemyDirection := PrevDir; // проверить удаляются ли элементы или нет
     End;
 
     SetDirection := IsEnd;
@@ -411,6 +436,50 @@ Begin
     End;
 End;
 
+//------------------------------------------------------------------
+// Процедуры списка
+//------------------------------------------------------------------
+Procedure append(Var BulletList: TBulletList; Var Bullet: TBullet); // Добавляем в начало
+Var
+    BulletNode: ^TBulletNode;
+Begin
+    New(BulletNode);
+    BulletNode^.Bullet := Bullet;
+
+    If BulletList.Head <> Nil Then
+    Begin
+        BulletNode^.Next := @BulletList.Head;
+        BulletList.Head.Prev := @BulletNode;
+    End
+    Else
+    Begin
+        BulletNode^.Next := Nil;
+    End;
+
+    BulletNode^.Prev := Nil;
+    BulletList.Head := @BulletNode;
+End;
+
+Procedure delete(Var BulletList: TBulletList; Var BulletNode: TBulletNode); // Добавляем в начало
+Begin
+
+    If (BulletList.Head = @BulletNode) Then
+    Begin
+        BulletList.Head := @BulletNode.Next;
+    End
+    Else
+    Begin
+        BulletNode.Prev.Next := BulletNode.Next;
+    End;
+
+    If (BulletNode.Next <> Nil) Then
+    Begin
+        BulletNode.Next.Prev := BulletNode.Prev;
+    End;
+
+    Dispose(@BulletNode);
+End;
+
 //-------------------------------------------------------------------
 //Обновление позиций врагов
 //-------------------------------------------------------------------
@@ -454,6 +523,7 @@ Begin
                 //Враг достиг базы - удаляем
                 Enemies[I] := Enemies[Length(Enemies) - 1];
                 SetLength(Enemies, Length(Enemies) - 1);
+                Dec(TowerHealth);
             End
             Else
             Begin
@@ -704,7 +774,7 @@ Var
     CountToSpawn, I: Integer;
     Element: TEnemySpawns;
 Begin
-    DeltaTime := Timer1.Interval / MILISECONDS_IN_SECOND;
+    DeltaTime := GameTimer.Interval / MILISECONDS_IN_SECOND;
     GameTime := GameTime + DeltaTime;
     Hours := Trunc(GameTime) Div (SEC_IN_MIN * SEC_IN_MIN);
     Minutes := (Trunc(GameTime) Div SEC_IN_MIN) Mod SEC_IN_MIN;
@@ -717,14 +787,20 @@ Begin
         CoinsLabel.Caption := Format('Монеты: %4d', [Coins]);
     End;
 
+    TowerHealthLabel.Caption := Format('Жизни: %d/%d', [TowerHealth, MAX_TOWER_HEALTH]);
+
     For I := 0 To High(EnemySpawnsArray) Do
     Begin
         Element := EnemySpawnsArray[I];
 
         If(Element.EndTime - Element.StartTime < 0.01) Then
-            CountToSpawn := Element.EnemyCount
+        Begin
+            CountToSpawn := Element.EnemyCount;
+        End
         Else
+        Begin
             CountToSpawn := Trunc(Element.EnemyCount*(Clamp(0.0, 1.0, (GameTime-Element.StartTime)/(Element.EndTime-Element.StartTime))));
+        End;
 
         While (CountToSpawn > EnemySpawnsArray[I].EnemyCountCurrent) Do
         Begin

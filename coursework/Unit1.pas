@@ -19,8 +19,8 @@ Uses
     Math;
 
 Const
-    MAP_WIDTH = 16;  //клеток по горизонтали (X) слева направо
-    MAP_HEIGHT = 16;  //клеток по вертикали (Y)   снизу вверх
+    MAP_WIDTH = 16;  //клеток по горизонтали (X) слева - направо
+    MAP_HEIGHT = 16;  //клеток по вертикали  (Y) снизу - вверх
     CELL_SIZE = 64;  //пикселей
     MAX_TOWER_HEALTH: Integer = 20;
 
@@ -237,7 +237,9 @@ Begin
     End;
 
     If (StartX = -1) Then
+    Begin
         ShowMessage('Error: First Cell Not Found');
+    End;
 
     FindStartCell := Found;
 End;
@@ -497,18 +499,12 @@ Begin
         //Сколько целых клеток нужно пройти
         FullCells := Round(MoveDistance);
         If FullCells < 1 Then
+        Begin
             FullCells := 1;
+        End;
 
         While Enemies[I].DistanceProgress > 1 Do
         Begin
-
-            //Обновляем направление на новой клетке
-//            If (Enemies[I].CellX >= 0) And (Enemies[I].CellX < MAP_WIDTH) And (Enemies[I].CellY >= 0) And
-//                (Enemies[I].CellY < MAP_HEIGHT) Then
-//            Begin
-//                If MapData[Enemies[I].CellX, Enemies[I].CellY].EnemyDirection <> TDirection.DirNone Then
-//                    Enemies[I].Direction := MapData[Enemies[I].CellX, Enemies[I].CellY].EnemyDirection;
-//            End;
 
             JumpToNextCell(MapData, Enemies[I].CellX, Enemies[I].CellY);
 
@@ -566,12 +562,20 @@ Begin
         ScreenY := Trunc((MAP_HEIGHT - 1 - Enemies[I].CellY - (Enemies[I].DistanceProgress {- 0.5}) * DeltaY) * CELL_SIZE);
 
         If Enemies[I].EnemyType = EnCommon Then
+        Begin
             Canvas.Brush.Color := ClBlue
+
+        End
         Else
             If Enemies[I].EnemyType = EnHeavy Then
-                Canvas.Brush.Color := ClRed
+            Begin
+                Canvas.Brush.Color := ClRed;
+            End
             Else
+            Begin
                 Canvas.Brush.Color := ClGreen;
+
+            End;
 
         Canvas.Ellipse(ScreenX + 5, ScreenY + 5, ScreenX + CELL_SIZE - 5, ScreenY + CELL_SIZE - 5);
     End;
@@ -636,7 +640,6 @@ Begin
     TurretSlowingTex.LoadFromFile('.\..\..\test_textures\turret_slowing_texture.bmp');
     TurretAreaTex.LoadFromFile('.\..\..\test_textures\turret_area_texture.bmp');
 
-
     MapData := SetMap1();
     CalculateEnemyDirections(MapData);
 
@@ -667,8 +670,6 @@ Begin
 
     SelectBox.Left := SelectedCellX * CELL_SIZE + MapBox.Left;
     SelectBox.Top := (MAP_HEIGHT - SelectedCellY - 1) * CELL_SIZE + MapBox.Top;
-
-
 End;
 
 Procedure TGameForm.MapBoxPaint(Sender: TObject);
@@ -696,6 +697,7 @@ Begin
 
                 End
                 Else
+                Begin
                     If MapData[I, J].TypeOfGround = TGroundType.GtRoad Then
                     Begin
                         case MapData[I, J].EnemyDirection Of
@@ -708,10 +710,14 @@ Begin
                         end;
                     End
                     Else
+                    Begin
                         If MapData[I, J].TypeOfGround = TGroundType.GtBase Then
                         Begin
                             StretchDraw(CellRect, BaseTex);
                         End;
+
+                    End;
+                End;
             End;
         End;
     End;
@@ -753,10 +759,17 @@ Begin
     Answer := Value;
 
     If (Value < MIN) Then
-        Answer := MIN
+    Begin
+        Answer := MIN;
+    End
     Else
+    Begin
         If (Value > MAX) Then
+        Begin
             Answer := MAX;
+
+        End;
+    End;
 
     Clamp := Answer;
 End;
