@@ -40,8 +40,6 @@ begin
 //  Ptr2 := @Ptr^;
 //  Ptr2^ := 10;
 //  Writeln(IntToStr(Value));
-    SetLength(arr, 1);
-    SetLength(arr, 0);
     WriteLn(High(Arr));
 
     readln;

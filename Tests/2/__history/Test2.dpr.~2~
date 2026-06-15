@@ -1,0 +1,13 @@
+Program Test2;
+
+Uses
+  SysUtils;
+
+//Var
+
+
+Begin
+
+
+    Writeln;
+End.
