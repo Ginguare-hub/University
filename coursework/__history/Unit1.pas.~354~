@@ -31,7 +31,7 @@ Const
     BULLET_SLOW: Array [0..3] Of Double = (1.0, 1.0, 0.9, 1.0);
     IS_BULLET_AOE: Array [0..3] Of Boolean = (False, False, False, True);       // AOE - Area Of Effect     Урон/ЭФфект по области
     IS_BULLET_TRACKING: Array  [0..3] Of Boolean = (False, True, True, False);
-    BULLET_SPEED: Array [0..3] Of Double = (4.0, 4.0, 4.0, 4.0);
+    BULLET_SPEED: Array [0..3] Of Double = (1.0, 1.0, 1.0, 1.0);
 
 Type
     TTurretType = (TurrNone, TurrCommon, TurrSlowing, TurrAreaDamaging);
@@ -120,6 +120,12 @@ Type
     Panel3: TPanel;
     TowerHealthLabel: TLabel;
     CoinsLabel: TLabel;
+    CommonTurretImage: TImage;
+    SlowingTurretImage: TImage;
+    AreaTurretImage: TImage;
+    CommonTurretPriceLabel: TLabel;
+    SlowingTurretPriceLabel: TLabel;
+    AreaTurretPriceLabel: TLabel;
         Procedure MapBoxPaint(Sender: TObject);
         Procedure GameTimerTimer(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
@@ -517,8 +523,10 @@ Begin
         If (Enemies[I].Health <= 0.0) Then
         Begin
             Enemies[I].IsAlive := False;
-        End
-        Else
+            //Inc(I);
+        End;
+
+        If (Enemies[I].IsAlive) Then
         Begin
             Enemies[I].DistanceProgress := Enemies[I].DistanceProgress + Enemies[I].Speed * DeltaTime;
 
@@ -538,22 +546,28 @@ Begin
             //Проверка достижения базы
             If (Enemies[I].CellX >= 0) And (Enemies[I].CellX < MAP_WIDTH) And (Enemies[I].CellY >= 0) And (Enemies[I].CellY < MAP_HEIGHT) Then
             Begin
-                If MapData[Enemies[I].CellX, Enemies[I].CellY].TypeOfGround = TGroundType.GtBase Then
+                If ((MapData[Enemies[I].CellX, Enemies[I].CellY].TypeOfGround = TGroundType.GtBase) And Enemies[I].IsAlive) Then
                 Begin
                     //Враг достиг базы - удаляем
-                    Enemies[I] := Enemies[Length(Enemies) - 1];
-                    SetLength(Enemies, Length(Enemies) - 1);
+                    //Enemies[I] := Enemies[Length(Enemies) - 1];
+                    //SetLength(Enemies, Length(Enemies) - 1);
+                    Enemies[I].IsAlive := False;
                     Dec(TowerHealth);
+                    Inc(I);
                 End
                 Else
                 Begin
-                    I := I + 1;
+                    Inc(I);
                 End;
             End
             Else
             Begin
-                I := I + 1;
+                Inc(I);
             End;
+        End
+        Else
+        Begin
+            Inc(I);
         End;
     End;
 End;
@@ -666,8 +680,10 @@ Begin
                 Begin
                     // Поиск врага
                     K := 0;
+                    IsToStop := False;
                     While ((K < High(Enemies)) And Not IsToStop) Do
                     Begin
+
                         If (Enemies[K].IsAlive) Then
                         Begin
                             DistanceSquared := CalculateDistanceSquared(I, J, Enemies[K].CellX, Enemies[K].CellY);
@@ -680,6 +696,10 @@ Begin
                             Begin
                                 Inc(K);
                             End;
+                        End
+                        Else
+                        Begin
+                            Inc(K);
                         End;
                     End;
 
@@ -1069,7 +1089,6 @@ End;
 // TODO: Таймер немного отстаёт от реального времени
 Procedure TGameForm.GameTimerTimer(Sender: TObject);
 Const
-    //SPAWN_INTERVAL = 5000; //появление врага каждые X секунд (GameTime увеличивается на 1 в секунду)
     COIN_EARN_INTERVAL = 500;
     MILISECONDS_IN_SECOND = 1000;
 Var
@@ -1089,6 +1108,13 @@ Begin
     End;
 
     TowerHealthLabel.Caption := Format('Жизни: %d/%d', [TowerHealth, MAX_TOWER_HEALTH]);
+
+    If (TowerHealth <= 0) Then
+    Begin
+        GameTimer.Enabled := False;
+        Application.MessageBox(PChar('Ваша база потерпела поражение!'), PChar('Поражение'), MB_OK + MB_ICONEXCLAMATION);
+        Close;
+    End;
 
     For I := 0 To High(EnemySpawnsArray) Do
     Begin

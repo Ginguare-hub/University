@@ -130,7 +130,7 @@ object GameForm: TGameForm
     Margins.Right = 5
     Margins.Bottom = 5
     AutoSize = False
-    Caption = #1052#1086#1085#1077#1090#1099':   0'
+    Caption = #1052#1086#1085#1077#1090#1099': 9999'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -30
@@ -150,11 +150,9 @@ object GameForm: TGameForm
     Margins.Bottom = 5
     VertScrollBar.Smooth = True
     BevelWidth = 2
-    DoubleBuffered = True
-    ParentDoubleBuffered = False
     TabOrder = 0
     UseWheelForScrolling = True
-    object CommonTurretPanel: TPanel
+    object Panel1: TPanel
       Left = 10
       Top = 10
       Width = 500
@@ -168,7 +166,7 @@ object GameForm: TGameForm
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
-      OnClick = CommonTurretPanelClick
+      OnClick = Panel1Click
       object CommonTurretImage: TImage
         Left = 9
         Top = 9
@@ -280,7 +278,7 @@ object GameForm: TGameForm
           FFCF}
         Stretch = True
       end
-      object CommonTurretPriceLabel: TLabel
+      object CommonTurretPriceLable: TLabel
         Left = 330
         Top = 9
         Width = 150
@@ -291,14 +289,14 @@ object GameForm: TGameForm
         Margins.Bottom = 5
         AutoSize = False
         BiDiMode = bdRightToLeft
-        Caption = #1062#1077#1085#1072': '
+        Caption = #1062#1077#1085#1072': 25'
         ParentBiDiMode = False
         ParentShowHint = False
         ShowHint = False
         Layout = tlCenter
       end
     end
-    object SlowingTurretPanel: TPanel
+    object Panel2: TPanel
       Left = 10
       Top = 170
       Width = 500
@@ -310,9 +308,10 @@ object GameForm: TGameForm
       BevelInner = bvSpace
       BevelWidth = 2
       BiDiMode = bdLeftToRight
+      Caption = #1060#1060#1060#1060#1060#1060#1060#1060#1060
       ParentBiDiMode = False
       TabOrder = 1
-      OnClick = SlowingTurretPanelClick
+      OnClick = Panel2Click
       object SlowingTurretImage: TImage
         Left = 9
         Top = 9
@@ -424,7 +423,7 @@ object GameForm: TGameForm
           FFCF}
         Stretch = True
       end
-      object SlowingTurretPriceLabel: TLabel
+      object SlowingTurretPriceLable: TLabel
         Left = 330
         Top = 9
         Width = 150
@@ -435,11 +434,11 @@ object GameForm: TGameForm
         Margins.Bottom = 5
         AutoSize = False
         BiDiMode = bdRightToLeft
-        Caption = #1062#1077#1085#1072': '
+        Caption = #1062#1077#1085#1072': 30'
         ParentBiDiMode = False
       end
     end
-    object AreaTurretPanel: TPanel
+    object Panel3: TPanel
       Left = 11
       Top = 330
       Width = 499
@@ -451,7 +450,7 @@ object GameForm: TGameForm
       BevelInner = bvSpace
       BevelWidth = 2
       TabOrder = 2
-      OnClick = AreaTurretPanelClick
+      OnClick = Panel3Click
       object AreaTurretImage: TImage
         Left = 9
         Top = 9
@@ -563,7 +562,7 @@ object GameForm: TGameForm
           FFCF}
         Stretch = True
       end
-      object AreaTurretPriceLabel: TLabel
+      object Label2: TLabel
         Left = 330
         Top = 9
         Width = 150
@@ -574,7 +573,7 @@ object GameForm: TGameForm
         Margins.Bottom = 5
         AutoSize = False
         BiDiMode = bdRightToLeft
-        Caption = #1062#1077#1085#1072': '
+        Caption = #1062#1077#1085#1072': 55'
         ParentBiDiMode = False
       end
     end

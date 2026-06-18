@@ -150,11 +150,9 @@ object GameForm: TGameForm
     Margins.Bottom = 5
     VertScrollBar.Smooth = True
     BevelWidth = 2
-    DoubleBuffered = True
-    ParentDoubleBuffered = False
     TabOrder = 0
     UseWheelForScrolling = True
-    object CommonTurretPanel: TPanel
+    object Panel1: TPanel
       Left = 10
       Top = 10
       Width = 500
@@ -168,7 +166,7 @@ object GameForm: TGameForm
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
-      OnClick = CommonTurretPanelClick
+      OnClick = Panel1Click
       object CommonTurretImage: TImage
         Left = 9
         Top = 9
@@ -291,14 +289,14 @@ object GameForm: TGameForm
         Margins.Bottom = 5
         AutoSize = False
         BiDiMode = bdRightToLeft
-        Caption = #1062#1077#1085#1072': '
+        Caption = #1062#1077#1085#1072': 25'
         ParentBiDiMode = False
         ParentShowHint = False
         ShowHint = False
         Layout = tlCenter
       end
     end
-    object SlowingTurretPanel: TPanel
+    object Panel2: TPanel
       Left = 10
       Top = 170
       Width = 500
@@ -312,7 +310,7 @@ object GameForm: TGameForm
       BiDiMode = bdLeftToRight
       ParentBiDiMode = False
       TabOrder = 1
-      OnClick = SlowingTurretPanelClick
+      OnClick = Panel2Click
       object SlowingTurretImage: TImage
         Left = 9
         Top = 9
@@ -435,11 +433,11 @@ object GameForm: TGameForm
         Margins.Bottom = 5
         AutoSize = False
         BiDiMode = bdRightToLeft
-        Caption = #1062#1077#1085#1072': '
+        Caption = #1062#1077#1085#1072': 30'
         ParentBiDiMode = False
       end
     end
-    object AreaTurretPanel: TPanel
+    object Panel3: TPanel
       Left = 11
       Top = 330
       Width = 499
@@ -451,7 +449,7 @@ object GameForm: TGameForm
       BevelInner = bvSpace
       BevelWidth = 2
       TabOrder = 2
-      OnClick = AreaTurretPanelClick
+      OnClick = Panel3Click
       object AreaTurretImage: TImage
         Left = 9
         Top = 9
@@ -574,7 +572,7 @@ object GameForm: TGameForm
         Margins.Bottom = 5
         AutoSize = False
         BiDiMode = bdRightToLeft
-        Caption = #1062#1077#1085#1072': '
+        Caption = #1062#1077#1085#1072': 55'
         ParentBiDiMode = False
       end
     end

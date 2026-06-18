@@ -99,7 +99,7 @@ object GameForm: TGameForm
     Brush.Style = bsClear
     Pen.Width = 2
   end
-  object HPLabel: TLabel
+  object TowerHealthLabel: TLabel
     Left = 566
     Top = 51
     Width = 254
@@ -157,6 +157,7 @@ object GameForm: TGameForm
       Top = 10
       Width = 500
       Height = 150
+      Hint = 'AAAAAAAAAAA'
       Margins.Left = 5
       Margins.Top = 5
       Margins.Right = 5
@@ -195,9 +196,9 @@ object GameForm: TGameForm
       OnClick = Panel3Click
     end
   end
-  object Timer1: TTimer
+  object GameTimer: TTimer
     Interval = 25
-    OnTimer = Timer1Timer
+    OnTimer = GameTimerTimer
     Left = 159
     Top = 1061
   end

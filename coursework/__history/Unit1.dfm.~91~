@@ -99,7 +99,7 @@ object GameForm: TGameForm
     Brush.Style = bsClear
     Pen.Width = 2
   end
-  object HPLabel: TLabel
+  object TowerHealthLabel: TLabel
     Left = 566
     Top = 51
     Width = 254

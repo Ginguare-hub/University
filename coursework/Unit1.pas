@@ -24,14 +24,18 @@ Const
     CELL_SIZE = 64;  //пикселей
     MAX_TOWER_HEALTH: Integer = 20;
 
-    TURRET_RADII: Array [0..3] Of Double = (4.0, 4.0, 4.0, 4.0);
-    TURRET_FIRE_RATE: Array [0..3] Of Double = (4.0, 4.0, 4.0, 4.0);
+    TURRET_PRICES: Array [0..3] Of Integer = (0, 25, 30, 55);
 
-    BULLET_DAMAGE: Array [0..3] Of Double = (0.0, 34.0, 10.0, 20.0);
-    BULLET_SLOW: Array [0..3] Of Double = (1.0, 1.0, 0.9, 1.0);
+    TURRET_RADII: Array [0..3] Of Double = (0.0, 4.0, 4.0, 4.0);
+    TURRET_FIRE_RATE: Array [0..3] Of Double = (0.0, 4.0, 4.0, 4.0);
+
+    BULLET_DAMAGE: Array [0..3] Of Double = (0.0, 34.0, 10.0, 15.0);
+    BULLET_SLOW: Array [0..3] Of Double = (0.0, 1.0, 0.9, 1.0);
     IS_BULLET_AOE: Array [0..3] Of Boolean = (False, False, False, True);       // AOE - Area Of Effect     Урон/ЭФфект по области
     IS_BULLET_TRACKING: Array  [0..3] Of Boolean = (False, True, True, False);
-    BULLET_SPEED: Array [0..3] Of Double = (1.0, 1.0, 1.0, 1.0);
+    BULLET_SPEED: Array [0..3] Of Double = (0.0, 3.0, 2.5, 4.0);
+
+    ENEMY_REWARD: Array [0..3] Of Integer = (0, 2, 10, 6);
 
 Type
     TTurretType = (TurrNone, TurrCommon, TurrSlowing, TurrAreaDamaging);
@@ -68,7 +72,6 @@ Type
     End;
 
     PTEnemy = ^TEnemy;
-
     TEnemySpawns = Record
         EnemyID: Integer;
         StartTime: Double;
@@ -78,7 +81,6 @@ Type
     End;
 
     TEnemySpawnsArray = Array of TEnemySpawns;
-
     // Сделать Record Position CellX CellY
     TBullet = Record
         DistanceProgress: Double;
@@ -93,7 +95,6 @@ Type
 
     PTBulletNode = ^TBulletNode;
     PTBullet = ^TBullet;
-
     TBulletNode = Record
         Bullet: TBullet;
         Next: PTBulletNode;
@@ -102,6 +103,17 @@ Type
 
     TBulletList = Record
         Head: PTBulletNode;
+    End;
+
+    PTIntegerNode = ^TIntegerNode;
+    TIntegerNode = Record
+        Value: Integer;
+        Next: PTIntegerNode;
+        Prev: PTIntegerNode;
+    End;
+
+    TIntegerList = Record
+        Head: PTIntegerNode;
     End;
 
     TGameForm = Class(TForm)
@@ -114,20 +126,26 @@ Type
         N2: TMenuItem;
         N3: TMenuItem;
     CellOptionScrollBox: TScrollBox;
-        Panel1: TPanel;
-        Panel2: TPanel;
+    CommonTurretPanel: TPanel;
+    SlowingTurretPanel: TPanel;
     SelectBox: TShape;
-    Panel3: TPanel;
+    AreaTurretPanel: TPanel;
     TowerHealthLabel: TLabel;
     CoinsLabel: TLabel;
+    CommonTurretImage: TImage;
+    SlowingTurretImage: TImage;
+    AreaTurretImage: TImage;
+    CommonTurretPriceLabel: TLabel;
+    SlowingTurretPriceLabel: TLabel;
+    AreaTurretPriceLabel: TLabel;
         Procedure MapBoxPaint(Sender: TObject);
         Procedure GameTimerTimer(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
         Procedure FormDestroy(Sender: TObject);
         procedure MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-    procedure Panel1Click(Sender: TObject);
-    procedure Panel2Click(Sender: TObject);
-    procedure Panel3Click(Sender: TObject);
+    procedure CommonTurretPanelClick(Sender: TObject);
+    procedure SlowingTurretPanelClick(Sender: TObject);
+    procedure AreaTurretPanelClick(Sender: TObject);
 
     Private
     Public
@@ -516,6 +534,11 @@ Begin
     Begin
         If (Enemies[I].Health <= 0.0) Then
         Begin
+            If (Enemies[I].IsAlive) Then
+            Begin
+                Coins := Coins + ENEMY_REWARD[Ord(Enemies[I].EnemyType)];
+            End;
+
             Enemies[I].IsAlive := False;
             //Inc(I);
         End;
@@ -611,6 +634,16 @@ Begin
                     TargetCellX := CurrBullet^.TargetCellX;
                     TargetCellY := CurrBullet^.TargetCellY;
                 End;
+
+                For I := 0 To High(Enemies) Do
+                Begin
+                    If (Enemies[I].IsAlive And (Enemies[I].CellX = TargetCellX) And (Enemies[I].CellX = TargetCellX)) Then
+                    Begin
+                        Enemies[I].Health := Enemies[I].Health - Damage;
+                        Enemies[I].Speed := Enemies[I].Speed * SpeedMult;
+                    End;
+                End;
+
             End
             Else
             Begin
@@ -902,7 +935,7 @@ Procedure TGameForm.FormCreate(Sender: TObject);
 Begin
     GameTime := 0.0;
     TowerHealth := MAX_TOWER_HEALTH;
-    Coins := 0;
+    Coins := 50;
     BulletList.Head := Nil;
 
     GrassTex := TBitmap.Create;
@@ -1011,10 +1044,12 @@ Begin
     DrawBullets(MapBox.Canvas);
 End;
 
-Procedure TGameForm.Panel1Click(Sender: TObject);
+Procedure TGameForm.CommonTurretPanelClick(Sender: TObject);
 Begin
     If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
     Begin
+        Coins := Coins - TURRET_PRICES[Ord(TTurretType.TurrCommon)];
+
         MapData[SelectedCellX, SelectedCellY].Turret.TurretType := TurrCommon;
         MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
         MapData[SelectedCellX, SelectedCellY].Turret.FireRate := TURRET_FIRE_RATE[1];
@@ -1023,10 +1058,12 @@ Begin
     End;
 End;
 
-procedure TGameForm.Panel2Click(Sender: TObject);
+procedure TGameForm.SlowingTurretPanelClick(Sender: TObject);
 begin
     If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
     Begin
+        Coins := Coins - TURRET_PRICES[Ord(TTurretType.TurrSlowing)];
+
         MapData[SelectedCellX, SelectedCellY].Turret.TurretType := TurrSlowing;
         MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
         MapData[SelectedCellX, SelectedCellY].Turret.FireRate := TURRET_FIRE_RATE[2];
@@ -1035,10 +1072,12 @@ begin
     End;
 end;
 
-procedure TGameForm.Panel3Click(Sender: TObject);
+procedure TGameForm.AreaTurretPanelClick(Sender: TObject);
 begin
     If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
     Begin
+        Coins := Coins - TURRET_PRICES[Ord(TTurretType.TurrAreaDamaging)];
+
         MapData[SelectedCellX, SelectedCellY].Turret.TurretType := TurrAreaDamaging;
         MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
         MapData[SelectedCellX, SelectedCellY].Turret.FireRate := TURRET_FIRE_RATE[3];
@@ -1068,6 +1107,46 @@ Begin
     Clamp := Answer;
 End;
 
+Procedure UpdateButtons();
+Begin
+    GameForm.CommonTurretPriceLabel.Caption := Format('Цена: %d', [TURRET_PRICES[Ord(TTurretType.TurrCommon)]]);
+    GameForm.SlowingTurretPriceLabel.Caption := Format('Цена: %d', [TURRET_PRICES[Ord(TTurretType.TurrSlowing)]]);
+    GameForm.AreaTurretPriceLabel.Caption := Format('Цена: %d', [TURRET_PRICES[Ord(TTurretType.TurrAreaDamaging)]]);
+
+    If (Coins > TURRET_PRICES[Ord(TTurretType.TurrCommon)]) Then
+    Begin
+        GameForm.CommonTurretPriceLabel.Enabled := True;
+        GameForm.CommonTurretPanel.Enabled := True;
+    End
+    Else
+    Begin
+        GameForm.CommonTurretPriceLabel.Enabled := False;
+        GameForm.CommonTurretPanel.Enabled := False;
+    End;
+
+    If (Coins > TURRET_PRICES[Ord(TTurretType.TurrSlowing)]) Then
+    Begin
+        GameForm.SlowingTurretPriceLabel.Enabled := True;
+        GameForm.SlowingTurretPanel.Enabled := True;
+    End
+    Else
+    Begin
+        GameForm.SlowingTurretPriceLabel.Enabled := False;
+        GameForm.SlowingTurretPanel.Enabled := False;
+    End;
+
+    If (Coins > TURRET_PRICES[Ord(TTurretType.TurrAreaDamaging)]) Then
+    Begin
+        GameForm.AreaTurretPriceLabel.Enabled := True;
+        GameForm.AreaTurretPanel.Enabled := True;
+    End
+    Else
+    Begin
+        GameForm.AreaTurretPriceLabel.Enabled := False;
+        GameForm.AreaTurretPanel.Enabled := False;
+    End;
+End;
+
 Procedure SetTimeLabel();
 Const
     SEC_IN_MIN = 60;
@@ -1083,7 +1162,6 @@ End;
 // TODO: Таймер немного отстаёт от реального времени
 Procedure TGameForm.GameTimerTimer(Sender: TObject);
 Const
-    //SPAWN_INTERVAL = 5000; //появление врага каждые X секунд (GameTime увеличивается на 1 в секунду)
     COIN_EARN_INTERVAL = 500;
     MILISECONDS_IN_SECOND = 1000;
 Var
@@ -1131,6 +1209,7 @@ Begin
         End;
     End;
 
+    UpdateButtons();
     UpdateEnemies(DeltaTime);
     UpdateTurrets(DeltaTime);
     UpdateBullets(DeltaTime);

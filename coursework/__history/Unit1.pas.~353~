@@ -120,6 +120,12 @@ Type
     Panel3: TPanel;
     TowerHealthLabel: TLabel;
     CoinsLabel: TLabel;
+    CommonTurretImage: TImage;
+    SlowingTurretImage: TImage;
+    AreaTurretImage: TImage;
+    CommonTurretPriceLable: TLabel;
+    SlowingTurretPriceLable: TLabel;
+    Label2: TLabel;
         Procedure MapBoxPaint(Sender: TObject);
         Procedure GameTimerTimer(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
@@ -1083,7 +1089,6 @@ End;
 // TODO: Таймер немного отстаёт от реального времени
 Procedure TGameForm.GameTimerTimer(Sender: TObject);
 Const
-    //SPAWN_INTERVAL = 5000; //появление врага каждые X секунд (GameTime увеличивается на 1 в секунду)
     COIN_EARN_INTERVAL = 500;
     MILISECONDS_IN_SECOND = 1000;
 Var
@@ -1103,6 +1108,13 @@ Begin
     End;
 
     TowerHealthLabel.Caption := Format('Жизни: %d/%d', [TowerHealth, MAX_TOWER_HEALTH]);
+
+    If (TowerHealth <= 0) Then
+    Begin
+        GameTimer.Enabled := False;
+        Application.MessageBox(PChar('Ваша база потерпела поражение!'), PChar('Поражение'), MB_OK + MB_ICONEXCLAMATION);
+        Close;
+    End;
 
     For I := 0 To High(EnemySpawnsArray) Do
     Begin
