@@ -29,11 +29,13 @@ Const
     TURRET_RADII: Array [0..3] Of Double = (0.0, 4.0, 4.0, 4.0);
     TURRET_FIRE_RATE: Array [0..3] Of Double = (0.0, 4.0, 4.0, 4.0);
 
-    BULLET_DAMAGE: Array [0..3] Of Double = (0.0, 34.0, 10.0, 20.0);
+    BULLET_DAMAGE: Array [0..3] Of Double = (0.0, 34.0, 10.0, 15.0);
     BULLET_SLOW: Array [0..3] Of Double = (0.0, 1.0, 0.9, 1.0);
     IS_BULLET_AOE: Array [0..3] Of Boolean = (False, False, False, True);       // AOE - Area Of Effect     Урон/ЭФфект по области
     IS_BULLET_TRACKING: Array  [0..3] Of Boolean = (False, True, True, False);
-    BULLET_SPEED: Array [0..3] Of Double = (0.0, 1.0, 1.0, 1.0);
+    BULLET_SPEED: Array [0..3] Of Double = (0.0, 3.0, 2.5, 4.0);
+
+    ENEMY_REWARD: Array [0..3] Of Integer = (0, 2, 10, 6);
 
 Type
     TTurretType = (TurrNone, TurrCommon, TurrSlowing, TurrAreaDamaging);
@@ -70,7 +72,6 @@ Type
     End;
 
     PTEnemy = ^TEnemy;
-
     TEnemySpawns = Record
         EnemyID: Integer;
         StartTime: Double;
@@ -80,7 +81,6 @@ Type
     End;
 
     TEnemySpawnsArray = Array of TEnemySpawns;
-
     // Сделать Record Position CellX CellY
     TBullet = Record
         DistanceProgress: Double;
@@ -95,7 +95,6 @@ Type
 
     PTBulletNode = ^TBulletNode;
     PTBullet = ^TBullet;
-
     TBulletNode = Record
         Bullet: TBullet;
         Next: PTBulletNode;
@@ -104,6 +103,17 @@ Type
 
     TBulletList = Record
         Head: PTBulletNode;
+    End;
+
+    PTEnemySpawnsNode = ^TEnemySpawnsNode;
+    TEnemySpawnsNode = Record
+        EnemySpawns: TEnemySpawns;
+        Next: PTEnemySpawnsNode;
+        Prev: PTEnemySpawnsNode;
+    End;
+
+    TEnemySpawnsList = Record
+        Head: PTEnemySpawnsNode;
     End;
 
     TGameForm = Class(TForm)
@@ -159,6 +169,9 @@ Var
     SelectedCellX, SelectedCellY: Integer;
     Coins, TowerHealth: Integer;
     BulletList: TBulletList;
+
+    IntFile: File Of Integer;
+
 
 Implementation
 
@@ -469,7 +482,7 @@ End;
 //------------------------------------------------------------------
 // Процедуры списка
 //------------------------------------------------------------------
-Procedure Append(Var BulletList: TBulletList; Bullet: TBullet); // Добавляем в начало
+Procedure Append(Var BulletList: TBulletList; Bullet: TBullet); Overload // Добавляем в начало
 Var
     BulletNode: PTBulletNode;
 Begin
@@ -490,7 +503,7 @@ Begin
     BulletList.Head := BulletNode;
 End;
 
-Procedure Delete(Var BulletList: TBulletList; BulletNode: PTBulletNode); // Добавляем в начало
+Procedure Delete(Var BulletList: TBulletList; BulletNode: PTBulletNode); Overload // Добавляем в начало
 Begin
 
     If (BulletList.Head = BulletNode) Then
@@ -510,6 +523,47 @@ Begin
     Dispose(BulletNode);
 End;
 
+Procedure Append(Var IntegerList: TEnemySpawnsList; EnemySpawns: TEnemySpawns); Overload // Добавляем в начало
+Var
+    EnemySpawnsNode: PTEnemySpawnsNode;
+Begin
+    New(EnemySpawnsNode);
+    EnemySpawnsNode^.EnemySpawns := EnemySpawns;
+
+    If BulletList.Head <> Nil Then
+    Begin
+        EnemySpawnsNode^.Next := IntegerList.Head;
+        IntegerList.Head^.Prev := EnemySpawnsNode;
+    End
+    Else
+    Begin
+        EnemySpawnsNode^.Next := Nil;
+    End;
+
+    EnemySpawnsNode^.Prev := Nil;
+    IntegerList.Head := EnemySpawnsNode;
+End;
+
+Procedure Delete(Var EnemySpawnsList: TEnemySpawnsList; EnemySpawnsNode: PTEnemySpawnsNode); Overload // Добавляем в начало
+Begin
+
+    If (EnemySpawnsList.Head = EnemySpawnsNode) Then
+    Begin
+        EnemySpawnsList.Head := EnemySpawnsNode.Next;
+    End
+    Else
+    Begin
+        EnemySpawnsNode^.Prev^.Next := EnemySpawnsNode.Next;
+    End;
+
+    If (EnemySpawnsNode^.Next <> Nil) Then
+    Begin
+        EnemySpawnsNode^.Next^.Prev := EnemySpawnsNode^.Prev;
+    End;
+
+    Dispose(EnemySpawnsNode);
+End;
+
 //-------------------------------------------------------------------
 //Обновление позиций врагов
 //-------------------------------------------------------------------
@@ -524,6 +578,11 @@ Begin
     Begin
         If (Enemies[I].Health <= 0.0) Then
         Begin
+            If (Enemies[I].IsAlive) Then
+            Begin
+                Coins := Coins + ENEMY_REWARD[Ord(Enemies[I].EnemyType)];
+            End;
+
             Enemies[I].IsAlive := False;
             //Inc(I);
         End;
@@ -619,6 +678,16 @@ Begin
                     TargetCellX := CurrBullet^.TargetCellX;
                     TargetCellY := CurrBullet^.TargetCellY;
                 End;
+
+                For I := 0 To High(Enemies) Do
+                Begin
+                    If (Enemies[I].IsAlive And (Enemies[I].CellX = TargetCellX) And (Enemies[I].CellX = TargetCellX)) Then
+                    Begin
+                        Enemies[I].Health := Enemies[I].Health - Damage;
+                        Enemies[I].Speed := Enemies[I].Speed * SpeedMult;
+                    End;
+                End;
+
             End
             Else
             Begin
@@ -910,7 +979,7 @@ Procedure TGameForm.FormCreate(Sender: TObject);
 Begin
     GameTime := 0.0;
     TowerHealth := MAX_TOWER_HEALTH;
-    Coins := 0;
+    Coins := 50;
     BulletList.Head := Nil;
 
     GrassTex := TBitmap.Create;
@@ -1023,6 +1092,8 @@ Procedure TGameForm.CommonTurretPanelClick(Sender: TObject);
 Begin
     If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
     Begin
+        Coins := Coins - TURRET_PRICES[Ord(TTurretType.TurrCommon)];
+
         MapData[SelectedCellX, SelectedCellY].Turret.TurretType := TurrCommon;
         MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
         MapData[SelectedCellX, SelectedCellY].Turret.FireRate := TURRET_FIRE_RATE[1];
@@ -1035,6 +1106,8 @@ procedure TGameForm.SlowingTurretPanelClick(Sender: TObject);
 begin
     If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
     Begin
+        Coins := Coins - TURRET_PRICES[Ord(TTurretType.TurrSlowing)];
+
         MapData[SelectedCellX, SelectedCellY].Turret.TurretType := TurrSlowing;
         MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
         MapData[SelectedCellX, SelectedCellY].Turret.FireRate := TURRET_FIRE_RATE[2];
@@ -1047,6 +1120,8 @@ procedure TGameForm.AreaTurretPanelClick(Sender: TObject);
 begin
     If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
     Begin
+        Coins := Coins - TURRET_PRICES[Ord(TTurretType.TurrAreaDamaging)];
+
         MapData[SelectedCellX, SelectedCellY].Turret.TurretType := TurrAreaDamaging;
         MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
         MapData[SelectedCellX, SelectedCellY].Turret.FireRate := TURRET_FIRE_RATE[3];
@@ -1095,19 +1170,23 @@ Begin
 
     If (Coins > TURRET_PRICES[Ord(TTurretType.TurrSlowing)]) Then
     Begin
+        GameForm.SlowingTurretPriceLabel.Enabled := True;
         GameForm.SlowingTurretPanel.Enabled := True;
     End
     Else
     Begin
+        GameForm.SlowingTurretPriceLabel.Enabled := False;
         GameForm.SlowingTurretPanel.Enabled := False;
     End;
 
     If (Coins > TURRET_PRICES[Ord(TTurretType.TurrAreaDamaging)]) Then
     Begin
+        GameForm.AreaTurretPriceLabel.Enabled := True;
         GameForm.AreaTurretPanel.Enabled := True;
     End
     Else
     Begin
+        GameForm.AreaTurretPriceLabel.Enabled := False;
         GameForm.AreaTurretPanel.Enabled := False;
     End;
 End;

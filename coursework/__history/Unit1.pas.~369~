@@ -29,11 +29,13 @@ Const
     TURRET_RADII: Array [0..3] Of Double = (0.0, 4.0, 4.0, 4.0);
     TURRET_FIRE_RATE: Array [0..3] Of Double = (0.0, 4.0, 4.0, 4.0);
 
-    BULLET_DAMAGE: Array [0..3] Of Double = (0.0, 34.0, 10.0, 20.0);
+    BULLET_DAMAGE: Array [0..3] Of Double = (0.0, 34.0, 10.0, 15.0);
     BULLET_SLOW: Array [0..3] Of Double = (0.0, 1.0, 0.9, 1.0);
     IS_BULLET_AOE: Array [0..3] Of Boolean = (False, False, False, True);       // AOE - Area Of Effect     Урон/ЭФфект по области
     IS_BULLET_TRACKING: Array  [0..3] Of Boolean = (False, True, True, False);
-    BULLET_SPEED: Array [0..3] Of Double = (0.0, 1.0, 1.0, 1.0);
+    BULLET_SPEED: Array [0..3] Of Double = (0.0, 3.0, 2.5, 4.0);
+
+    ENEMY_REWARD: Array [0..3] Of Integer = (0, 2, 10, 6);
 
 Type
     TTurretType = (TurrNone, TurrCommon, TurrSlowing, TurrAreaDamaging);
@@ -70,7 +72,6 @@ Type
     End;
 
     PTEnemy = ^TEnemy;
-
     TEnemySpawns = Record
         EnemyID: Integer;
         StartTime: Double;
@@ -80,7 +81,6 @@ Type
     End;
 
     TEnemySpawnsArray = Array of TEnemySpawns;
-
     // Сделать Record Position CellX CellY
     TBullet = Record
         DistanceProgress: Double;
@@ -95,7 +95,6 @@ Type
 
     PTBulletNode = ^TBulletNode;
     PTBullet = ^TBullet;
-
     TBulletNode = Record
         Bullet: TBullet;
         Next: PTBulletNode;
@@ -104,6 +103,17 @@ Type
 
     TBulletList = Record
         Head: PTBulletNode;
+    End;
+
+    PTIntegerNode = ^TIntegerNode;
+    TIntegerNode = Record
+        Value: Integer;
+        Next: PTIntegerNode;
+        Prev: PTIntegerNode;
+    End;
+
+    TIntegerList = Record
+        Head: PTIntegerNode;
     End;
 
     TGameForm = Class(TForm)
@@ -159,6 +169,7 @@ Var
     SelectedCellX, SelectedCellY: Integer;
     Coins, TowerHealth: Integer;
     BulletList: TBulletList;
+
 
 Implementation
 
@@ -469,7 +480,7 @@ End;
 //------------------------------------------------------------------
 // Процедуры списка
 //------------------------------------------------------------------
-Procedure Append(Var BulletList: TBulletList; Bullet: TBullet); // Добавляем в начало
+Procedure Append(Var BulletList: TBulletList; Bullet: TBullet); Overload // Добавляем в начало
 Var
     BulletNode: PTBulletNode;
 Begin
@@ -490,7 +501,7 @@ Begin
     BulletList.Head := BulletNode;
 End;
 
-Procedure Delete(Var BulletList: TBulletList; BulletNode: PTBulletNode); // Добавляем в начало
+Procedure Delete(Var BulletList: TBulletList; BulletNode: PTBulletNode); Overload // Добавляем в начало
 Begin
 
     If (BulletList.Head = BulletNode) Then
@@ -510,6 +521,47 @@ Begin
     Dispose(BulletNode);
 End;
 
+Procedure Append(Var IntegerList: TIntegerList; Value: Integer); Overload // Добавляем в начало
+Var
+    IntegerNode: PTIntegerNode;
+Begin
+    New(IntegerNode);
+    IntegerNode^.Value := Value;
+
+    If BulletList.Head <> Nil Then
+    Begin
+        IntegerNode^.Next := IntegerList.Head;
+        IntegerList.Head^.Prev := IntegerNode;
+    End
+    Else
+    Begin
+        IntegerNode^.Next := Nil;
+    End;
+
+    IntegerNode^.Prev := Nil;
+    IntegerList.Head := IntegerNode;
+End;
+
+Procedure Delete(Var IntegerList: TIntegerList; IntegerNode: PTIntegerNode); Overload // Добавляем в начало
+Begin
+
+    If (IntegerList.Head = IntegerNode) Then
+    Begin
+        IntegerList.Head := IntegerNode.Next;
+    End
+    Else
+    Begin
+        IntegerNode^.Prev^.Next := IntegerNode.Next;
+    End;
+
+    If (IntegerNode^.Next <> Nil) Then
+    Begin
+        IntegerNode^.Next^.Prev := IntegerNode^.Prev;
+    End;
+
+    Dispose(IntegerNode);
+End;
+
 //-------------------------------------------------------------------
 //Обновление позиций врагов
 //-------------------------------------------------------------------
@@ -524,6 +576,11 @@ Begin
     Begin
         If (Enemies[I].Health <= 0.0) Then
         Begin
+            If (Enemies[I].IsAlive) Then
+            Begin
+                Coins := Coins + ENEMY_REWARD[Ord(Enemies[I].EnemyType)];
+            End;
+
             Enemies[I].IsAlive := False;
             //Inc(I);
         End;
@@ -619,6 +676,16 @@ Begin
                     TargetCellX := CurrBullet^.TargetCellX;
                     TargetCellY := CurrBullet^.TargetCellY;
                 End;
+
+                For I := 0 To High(Enemies) Do
+                Begin
+                    If (Enemies[I].IsAlive And (Enemies[I].CellX = TargetCellX) And (Enemies[I].CellX = TargetCellX)) Then
+                    Begin
+                        Enemies[I].Health := Enemies[I].Health - Damage;
+                        Enemies[I].Speed := Enemies[I].Speed * SpeedMult;
+                    End;
+                End;
+
             End
             Else
             Begin
