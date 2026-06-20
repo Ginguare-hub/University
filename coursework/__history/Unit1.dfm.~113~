@@ -150,8 +150,7 @@ object GameForm: TGameForm
     Margins.Bottom = 5
     VertScrollBar.Smooth = True
     BevelInner = bvLowered
-    BevelOuter = bvRaised
-    BevelKind = bkFlat
+    BevelKind = bkSoft
     BevelWidth = 2
     DoubleBuffered = True
     ParentDoubleBuffered = False
