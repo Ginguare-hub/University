@@ -507,28 +507,6 @@ Begin
     MapData[TurretPos.CellX, TurretPos.CellY].Turret.ReloadProgress := 0;
 End;
 
-//------------------------------------------------------------
-//Создание врага
-//-------------------------------------------------------------------
-Procedure SpawnEnemy(TemplateIndex: Integer);
-Var
-    NewEnemy: TEnemy;
-    EnemyCount: Integer;
-    StartPos: TPosition;
-Begin
-    If FindStartCell(StartPos.CellX, StartPos.CellY) Then
-    Begin
-        NewEnemy := EnemyTemplates[TemplateIndex];
-        NewEnemy.Pos.CellX := StartPos.CellX;
-        NewEnemy.Pos.CellY := StartPos.CellY;
-        NewEnemy.IsAlive := True;
-
-        EnemyCount := Length(Enemies);
-        SetLength(Enemies, EnemyCount + 1);
-        Enemies[EnemyCount] := NewEnemy;
-    End;
-End;
-
 //------------------------------------------------------------------
 // Процедуры списка
 //------------------------------------------------------------------
@@ -611,6 +589,28 @@ Begin
     End;
 
     Dispose(EnemySpawnsNode);
+End;
+
+//------------------------------------------------------------
+//Создание врага
+//-------------------------------------------------------------------
+Procedure SpawnEnemy(TemplateIndex: Integer);
+Var
+    NewEnemy: TEnemy;
+    EnemyCount: Integer;
+    StartPos: TPosition;
+Begin
+    If FindStartCell(StartPos.CellX, StartPos.CellY) Then
+    Begin
+        NewEnemy := EnemyTemplates[TemplateIndex];
+        NewEnemy.Pos.CellX := StartPos.CellX;
+        NewEnemy.Pos.CellY := StartPos.CellY;
+        NewEnemy.IsAlive := True;
+
+        EnemyCount := Length(Enemies);
+        SetLength(Enemies, EnemyCount + 1);
+        Enemies[EnemyCount] := NewEnemy;
+    End;
 End;
 
 //-------------------------------------------------------------------
@@ -753,7 +753,6 @@ Begin
                         End;
                     End;
 
-
                 End;
 
                 If (TargetedEnemy <> Nil) Then
@@ -789,7 +788,7 @@ Begin
         I := 0;
         IsToStop := False;
 
-        While ((I < High(Enemies)) And Not IsToStop) Do
+        While ((I < Length(Enemies)) And Not IsToStop) Do
         Begin
 
             If (Enemies[I].IsAlive) Then
@@ -1248,9 +1247,10 @@ Const
     MILISECONDS_IN_SECOND = 1000;
 Var
     DeltaTime: Double;
-    CountToSpawn, I, J: Integer;
+    CountToSpawn, I: Integer;
     Element: TEnemySpawns;
     Iterator: PTEnemySpawnsNode;
+    WillStopSpawnEnemies, HasNoAliveEnemies: Boolean;
 Begin
     DeltaTime := GameTimer.Interval / MILISECONDS_IN_SECOND;
     GameTime := GameTime + DeltaTime;
@@ -1273,9 +1273,15 @@ Begin
     End;
 
     Iterator := EnemySpawnsList.Head;
-    While Iterator <> Nil Do
+    WillStopSpawnEnemies := True;
+    While (Iterator <> Nil) Do
     Begin
         Element := Iterator^.EnemySpawns;
+
+        If (Element.EndTime > GameTime) Then
+        Begin
+            WillStopSpawnEnemies := False;
+        End;
 
         If(Element.EndTime - Element.StartTime < 0.01) Then
         Begin
@@ -1293,6 +1299,25 @@ Begin
         End;
 
         Iterator := Iterator^.Next;
+    End;
+
+    HasNoAliveEnemies := True;
+    If (WillStopSpawnEnemies) Then
+    Begin
+        For I := 0 To High(Enemies) Do
+        Begin
+            If (Enemies[I].IsAlive) Then
+            Begin
+                HasNoAliveEnemies := False;
+            End;
+        End;
+    End;
+
+    If (HasNoAliveEnemies And WillStopSpawnEnemies) Then
+    Begin
+        GameTimer.Enabled := False;
+        Application.MessageBox(PChar('Ваша база успешно выстояла все атаки врага!'), PChar('Победа'), MB_OK + MB_ICONASTERISK);
+        Close;
     End;
 
     UpdateButtons();
