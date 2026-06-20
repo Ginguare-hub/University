@@ -18,7 +18,7 @@ object GameForm: TGameForm
   Font.Height = -21
   Font.Name = 'Segoe UI'
   Font.Style = []
-  Menu = MainMenu
+  Menu = MainMenu1
   Position = poDesktopCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -585,16 +585,16 @@ object GameForm: TGameForm
     Left = 159
     Top = 1061
   end
-  object MainMenu: TMainMenu
+  object MainMenu1: TMainMenu
     Left = 42
     Top = 1058
-    object MenuOptionMenu: TMenuItem
+    object N1: TMenuItem
       Caption = #1052#1077#1085#1102
-      object MenuOptionQuit: TMenuItem
+      object N2: TMenuItem
         Caption = #1042#1099#1093#1086#1076
       end
     end
-    object MenuOptionAutor: TMenuItem
+    object N3: TMenuItem
       Caption = #1056#1072#1079#1088#1072#1073#1086#1090#1095#1080#1082
     end
   end

@@ -27,7 +27,7 @@ Const
     TURRET_PRICES: Array [0..3] Of Integer = (0, 25, 30, 55);
 
     TURRET_RADII: Array [0..3] Of Double = (0.0, 4.0, 4.0, 4.0);
-    TURRET_FIRE_RATE: Array [0..3] Of Double = (0.0, 4.0, 4.0, 4.0);
+    TURRET_FIRE_RATE: Array [0..3] Of Double = (0.0, 1.2, 1.3, 0.7);
 
     BULLET_DAMAGE: Array [0..3] Of Double = (0.0, 34.0, 10.0, 15.0);
     BULLET_SLOW: Array [0..3] Of Double = (0.0, 1.0, 0.9, 1.0);
@@ -35,7 +35,7 @@ Const
     IS_BULLET_TRACKING: Array  [0..3] Of Boolean = (False, True, True, False);
     BULLET_SPEED: Array [0..3] Of Double = (0.0, 3.0, 2.5, 4.0);
 
-    ENEMY_REWARD: Array [0..3] Of Integer = (0, 2, 10, 6);
+    ENEMY_REWARD: Array [0..3] Of Integer = (0, 2, 6, 3);
 
 Type
     TTurretType = (TurrNone, TurrCommon, TurrSlowing, TurrAreaDamaging);
@@ -80,7 +80,6 @@ Type
         EnemyCountCurrent: Integer;
     End;
 
-    TEnemySpawnsArray = Array of TEnemySpawns;
     // Сделать Record Position CellX CellY
     TBullet = Record
         DistanceProgress: Double;
@@ -105,15 +104,15 @@ Type
         Head: PTBulletNode;
     End;
 
-    PTIntegerNode = ^TIntegerNode;
-    TIntegerNode = Record
-        Value: Integer;
-        Next: PTIntegerNode;
-        Prev: PTIntegerNode;
+    PTEnemySpawnsNode = ^TEnemySpawnsNode;
+    TEnemySpawnsNode = Record
+        EnemySpawns: TEnemySpawns;
+        Next: PTEnemySpawnsNode;
+        Prev: PTEnemySpawnsNode;
     End;
 
-    TIntegerList = Record
-        Head: PTIntegerNode;
+    TEnemySpawnsList = Record
+        Head: PTEnemySpawnsNode;
     End;
 
     TGameForm = Class(TForm)
@@ -148,8 +147,11 @@ Type
     procedure AreaTurretPanelClick(Sender: TObject);
 
     Private
+
     Public
     End;
+
+    Function Clamp(Const MIN, MAX: Double; Value: Double): Double;
 
 Var
     GameForm: TGameForm;
@@ -164,7 +166,7 @@ Var
 
     EnemyTemplates: Array Of TEnemy;
 
-    EnemySpawnsArray: TEnemySpawnsArray;
+    EnemySpawnsList: TEnemySpawnsList;
 
     SelectedCellX, SelectedCellY: Integer;
     Coins, TowerHealth: Integer;
@@ -230,6 +232,34 @@ Begin
     End;
 
     SetMap1 := MapData;
+End;
+
+Procedure WriteEnemySpawnsToFile();
+Var
+    Element: TEnemySpawns;
+    SpawnsDataTypedFile: File Of TEnemySpawns;
+    UntypedFile: TextFile;
+Begin
+    AssignFile(UntypedFile, '.\..\..\EnemySpawnsData.txt');
+    AssignFile(SpawnsDataTypedFile, '.\..\..\EnemySpawnsData.dat');
+
+    Reset(UntypedFile);
+    Rewrite(SpawnsDataTypedFile);
+
+    While (Not EOF(UntypedFile)) Do
+    Begin
+        Read(UntypedFile, Element.EnemyID);
+        Read(UntypedFile, Element.StartTime);
+        Read(UntypedFile, Element.EndTime);
+        Read(UntypedFile, Element.EnemyCount);
+        Element.EnemyCountCurrent := 0;
+
+        Write(SpawnsDataTypedFile, Element);
+    End;
+
+    CloseFile(UntypedFile);
+    CloseFile(SpawnsDataTypedFile);
+
 End;
 
 //-------------------------------------------------------------------
@@ -479,7 +509,7 @@ End;
 //------------------------------------------------------------------
 // Процедуры списка
 //------------------------------------------------------------------
-Procedure Append(Var BulletList: TBulletList; Bullet: TBullet); // Добавляем в начало
+Procedure Append(Var BulletList: TBulletList; Bullet: TBullet); Overload // Добавляем в начало
 Var
     BulletNode: PTBulletNode;
 Begin
@@ -500,7 +530,7 @@ Begin
     BulletList.Head := BulletNode;
 End;
 
-Procedure Delete(Var BulletList: TBulletList; BulletNode: PTBulletNode); // Добавляем в начало
+Procedure Delete(Var BulletList: TBulletList; BulletNode: PTBulletNode); Overload // Добавляем в начало
 Begin
 
     If (BulletList.Head = BulletNode) Then
@@ -518,6 +548,47 @@ Begin
     End;
 
     Dispose(BulletNode);
+End;
+
+Procedure Append(Var EnemySpawnsList: TEnemySpawnsList; EnemySpawns: TEnemySpawns); Overload // Добавляем в начало
+Var
+    EnemySpawnsNode: PTEnemySpawnsNode;
+Begin
+    New(EnemySpawnsNode);
+    EnemySpawnsNode^.EnemySpawns := EnemySpawns;
+
+    If EnemySpawnsList.Head <> Nil Then
+    Begin
+        EnemySpawnsNode^.Next := EnemySpawnsList.Head;
+        EnemySpawnsList.Head^.Prev := EnemySpawnsNode;
+    End
+    Else
+    Begin
+        EnemySpawnsNode^.Next := Nil;
+    End;
+
+    EnemySpawnsNode^.Prev := Nil;
+    EnemySpawnsList.Head := EnemySpawnsNode;
+End;
+
+Procedure Delete(Var EnemySpawnsList: TEnemySpawnsList; EnemySpawnsNode: PTEnemySpawnsNode); Overload // Добавляем в начало
+Begin
+
+    If (EnemySpawnsList.Head = EnemySpawnsNode) Then
+    Begin
+        EnemySpawnsList.Head := EnemySpawnsNode.Next;
+    End
+    Else
+    Begin
+        EnemySpawnsNode^.Prev^.Next := EnemySpawnsNode.Next;
+    End;
+
+    If (EnemySpawnsNode^.Next <> Nil) Then
+    Begin
+        EnemySpawnsNode^.Next^.Prev := EnemySpawnsNode^.Prev;
+    End;
+
+    Dispose(EnemySpawnsNode);
 End;
 
 //-------------------------------------------------------------------
@@ -702,6 +773,7 @@ Begin
             Begin
 
                 MapData[I, J].Turret.ReloadProgress := MapData[I, J].Turret.ReloadProgress + (MapData[I, J].Turret.FireRate * DeltaTime);
+                MapData[I, J].Turret.ReloadProgress := Clamp(0, 1.1, MapData[I, J].Turret.ReloadProgress);
 
                 If (MapData[I, J].Turret.ReloadProgress > 1) Then
                 Begin
@@ -900,29 +972,21 @@ End;
 
 Procedure ReadEnemySpawns();
 Var
-    ReadedFile: TextFile;
+    ReadedFile: File Of TEnemySpawns;
     Len: Integer;
     Element: TEnemySpawns;
 Begin
     Len := 0;
 
-    AssignFile(ReadedFile, '.\..\..\EnemySpawnsData.txt');
+    AssignFile(ReadedFile, '.\..\..\EnemySpawnsData.dat');
 
     Reset(ReadedFile);
 
     While (Not EOF(ReadedFile)) Do
     Begin
-        Inc(Len);
-        SetLength(EnemySpawnsArray, Len);
+        Read(ReadedFile, Element);
 
-        Read(ReadedFile, Element.EnemyID);
-        Read(ReadedFile, Element.StartTime);
-        Read(ReadedFile, Element.EndTime);
-        Read(ReadedFile, Element.EnemyCount);
-
-        Element.EnemyCountCurrent := 0;
-
-        EnemySpawnsArray[Len-1] := Element;
+        Append(EnemySpawnsList, Element);
     End;
 
     CloseFile(ReadedFile);
@@ -937,6 +1001,8 @@ Begin
     TowerHealth := MAX_TOWER_HEALTH;
     Coins := 50;
     BulletList.Head := Nil;
+
+    WriteEnemySpawnsToFile();
 
     GrassTex := TBitmap.Create;
     RoadRightTex := TBitmap.Create;
@@ -1162,12 +1228,13 @@ End;
 // TODO: Таймер немного отстаёт от реального времени
 Procedure TGameForm.GameTimerTimer(Sender: TObject);
 Const
-    COIN_EARN_INTERVAL = 500;
+    COIN_EARN_INTERVAL = 1000;
     MILISECONDS_IN_SECOND = 1000;
 Var
     DeltaTime: Double;
     CountToSpawn, I, J: Integer;
     Element: TEnemySpawns;
+    Iterator: PTEnemySpawnsNode;
 Begin
     DeltaTime := GameTimer.Interval / MILISECONDS_IN_SECOND;
     GameTime := GameTime + DeltaTime;
@@ -1189,9 +1256,10 @@ Begin
         Close;
     End;
 
-    For I := 0 To High(EnemySpawnsArray) Do
+    Iterator := EnemySpawnsList.Head;
+    While Iterator <> Nil Do
     Begin
-        Element := EnemySpawnsArray[I];
+        Element := Iterator^.EnemySpawns;
 
         If(Element.EndTime - Element.StartTime < 0.01) Then
         Begin
@@ -1202,11 +1270,13 @@ Begin
             CountToSpawn := Trunc(Element.EnemyCount*(Clamp(0.0, 1.0, (GameTime-Element.StartTime)/(Element.EndTime-Element.StartTime))));
         End;
 
-        While (CountToSpawn > EnemySpawnsArray[I].EnemyCountCurrent) Do
+        While (CountToSpawn > Iterator^.EnemySpawns.EnemyCountCurrent) Do
         Begin
             SpawnEnemy(Element.EnemyID);
-            Inc(EnemySpawnsArray[I].EnemyCountCurrent);
+            Inc(Iterator^.EnemySpawns.EnemyCountCurrent);
         End;
+
+        Iterator := Iterator^.Next;
     End;
 
     UpdateButtons();

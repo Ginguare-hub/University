@@ -1,4 +1,4 @@
-п»їUnit Unit1;
+Unit Unit1;
 
 Interface
 
@@ -19,23 +19,22 @@ Uses
     Math;
 
 Const
-    MAP_WIDTH = 16;  //РєР»РµС‚РѕРє РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё (X) СЃР»РµРІР° - РЅР°РїСЂР°РІРѕ
-    MAP_HEIGHT = 16;  //РєР»РµС‚РѕРє РїРѕ РІРµСЂС‚РёРєР°Р»Рё  (Y) СЃРЅРёР·Сѓ - РІРІРµСЂС…
-    CELL_SIZE = 64;  //РїРёРєСЃРµР»РµР№
+    MAP_WIDTH = 16;  //клеток по горизонтали (X) слева - направо
+    MAP_HEIGHT = 16;  //клеток по вертикали  (Y) снизу - вверх
+    CELL_SIZE = 64;  //пикселей
     MAX_TOWER_HEALTH: Integer = 20;
 
     TURRET_PRICES: Array [0..3] Of Integer = (0, 25, 30, 55);
-
     TURRET_RADII: Array [0..3] Of Double = (0.0, 4.0, 4.0, 4.0);
-    TURRET_FIRE_RATE: Array [0..3] Of Double = (0.0, 4.0, 4.0, 4.0);
+    TURRET_FIRE_RATE: Array [0..3] Of Double = (0.0, 1.2, 1.3, 0.7);
 
     BULLET_DAMAGE: Array [0..3] Of Double = (0.0, 34.0, 10.0, 15.0);
     BULLET_SLOW: Array [0..3] Of Double = (0.0, 1.0, 0.9, 1.0);
-    IS_BULLET_AOE: Array [0..3] Of Boolean = (False, False, False, True);       // AOE - Area Of Effect     РЈСЂРѕРЅ/Р­Р¤С„РµРєС‚ РїРѕ РѕР±Р»Р°СЃС‚Рё
+    IS_BULLET_AOE: Array [0..3] Of Boolean = (False, False, False, True);       // AOE - Area Of Effect     Урон/ЭФфект по области
     IS_BULLET_TRACKING: Array  [0..3] Of Boolean = (False, True, True, False);
     BULLET_SPEED: Array [0..3] Of Double = (0.0, 3.0, 2.5, 4.0);
 
-    ENEMY_REWARD: Array [0..3] Of Integer = (0, 2, 10, 6);
+    ENEMY_REWARD: Array [0..3] Of Integer = (0, 2, 6, 3);
 
 Type
     TTurretType = (TurrNone, TurrCommon, TurrSlowing, TurrAreaDamaging);
@@ -43,7 +42,12 @@ Type
     TGroundType = (GtGrass, GtRoad, GtBase);
     TDirection = (DirNone, DirRight, DirUp, DirLeft, DirDown);
 
-    TTurret = Record        // РїРѕРїСЂРѕР±РѕРІР°С‚СЊ РїРµСЂРµРїРёСЃР°С‚СЊ РІСЃС‘ РїРѕРґ
+    TPosition = Record
+        CellX: Integer;
+        CellY: Integer;
+    End;
+
+    TTurret = Record        // попробовать переписать всё под
         TurretType: TTurretType;
         Radius: Double;
         ReloadProgress: Double; // 0 to 1
@@ -63,9 +67,8 @@ Type
         EnemyType: TEnemyType;
         Health: Double;
         MaxHealth: Double;
-        Speed: Double;               //РєР»РµС‚РѕРє РІ СЃРµРєСѓРЅРґСѓ
-        CellX: Integer;
-        CellY: Integer;              //С‚РµРєСѓС‰Р°СЏ РєР»РµС‚РєР° (X - РіРѕСЂРёР·РѕРЅС‚Р°Р»СЊ, Y - РІРµСЂС‚РёРєР°Р»СЊ)
+        Speed: Double;               //клеток в секунду
+        Pos: TPosition;             //текущая клетка (X - горизонталь, Y - вертикаль)
         DistanceProgress: Double;
         Reward: Integer;
         IsAlive: Bool;
@@ -80,17 +83,14 @@ Type
         EnemyCountCurrent: Integer;
     End;
 
-    TEnemySpawnsArray = Array of TEnemySpawns;
-    // РЎРґРµР»Р°С‚СЊ Record Position CellX CellY
+    // Сделать Record Position CellX CellY
     TBullet = Record
         DistanceProgress: Double;
         Speed: Double;
         TargetedEnemy: PTEnemy;
-        TargetCellX: Integer;                                                   // РћР±СЉРµРґРµРЅРёС‚СЊ !!!!
-        TargetCellY: Integer;
-        IsTracking: Bool;   // 1 - Рє РІСЂР°РіСѓ, 0 - Рє РєР»РµС‚РєРµ
-        TurretCellX: Integer;
-        TurretCellY: Integer;
+        TargetPos: TPosition;
+        TurretPos: TPosition;
+        IsTracking: Bool;   // 1 - к врагу, 0 - к клетке
     End;
 
     PTBulletNode = ^TBulletNode;
@@ -105,26 +105,26 @@ Type
         Head: PTBulletNode;
     End;
 
-    PTIntegerNode = ^TIntegerNode;
-    TIntegerNode = Record
-        Value: Integer;
-        Next: PTIntegerNode;
-        Prev: PTIntegerNode;
+    PTEnemySpawnsNode = ^TEnemySpawnsNode;
+    TEnemySpawnsNode = Record
+        EnemySpawns: TEnemySpawns;
+        Next: PTEnemySpawnsNode;
+        Prev: PTEnemySpawnsNode;
     End;
 
-    TIntegerList = Record
-        Head: PTIntegerNode;
+    TEnemySpawnsList = Record
+        Head: PTEnemySpawnsNode;
     End;
 
     TGameForm = Class(TForm)
     MapBox: TPaintBox;
     GameTimer: TTimer;
-        TimeLabel: TLabel;
-        Label1: TLabel;
-        MainMenu1: TMainMenu;
-        N1: TMenuItem;
-        N2: TMenuItem;
-        N3: TMenuItem;
+    TimeLabel: TLabel;
+    Label1: TLabel;
+    MainMenu: TMainMenu;
+    MenuOptionMenu: TMenuItem;
+    MenuOptionQuit: TMenuItem;
+    MenuOptionAutor: TMenuItem;
     CellOptionScrollBox: TScrollBox;
     CommonTurretPanel: TPanel;
     SlowingTurretPanel: TPanel;
@@ -138,11 +138,11 @@ Type
     CommonTurretPriceLabel: TLabel;
     SlowingTurretPriceLabel: TLabel;
     AreaTurretPriceLabel: TLabel;
-        Procedure MapBoxPaint(Sender: TObject);
-        Procedure GameTimerTimer(Sender: TObject);
-        Procedure FormCreate(Sender: TObject);
-        Procedure FormDestroy(Sender: TObject);
-        procedure MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    Procedure MapBoxPaint(Sender: TObject);
+    Procedure GameTimerTimer(Sender: TObject);
+    Procedure FormCreate(Sender: TObject);
+    Procedure FormDestroy(Sender: TObject);
+    procedure MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure CommonTurretPanelClick(Sender: TObject);
     procedure SlowingTurretPanelClick(Sender: TObject);
     procedure AreaTurretPanelClick(Sender: TObject);
@@ -150,6 +150,8 @@ Type
     Private
     Public
     End;
+
+    Function Clamp(Const MIN, MAX: Double; Value: Double): Double;
 
 Var
     GameForm: TGameForm;
@@ -159,24 +161,23 @@ Var
     GrassTex, RoadRightTex, RoadUpTex, RoadLeftTex, RoadDownTex, BaseTex, TurretCommonTex, TurretSlowingTex, TurretAreaTex: TBitmap;
     GameTime: Double = 0.0;
 
-    // РњРѕР¶РЅРѕ СЃРґРµР»Р°С‚СЊ СЃРїРёСЃРєРѕРј
+    // Можно сделать списком
     Enemies: Array Of TEnemy;
 
     EnemyTemplates: Array Of TEnemy;
 
-    EnemySpawnsArray: TEnemySpawnsArray;
+    EnemySpawnsList: TEnemySpawnsList;
 
     SelectedCellX, SelectedCellY: Integer;
     Coins, TowerHealth: Integer;
     BulletList: TBulletList;
-
 
 Implementation
 
 {$R *.dfm}
 
 //-------------------------------------------------------------------
-//Р¤СѓРЅРєС†РёРё РєР°СЂС‚С‹
+//Функции карты
 //-------------------------------------------------------------------
 Procedure ClearMap(Var Map: TMatrixOfMap);
 Var
@@ -223,7 +224,7 @@ Begin
 
     MapData[5, 11].TypeOfGround := TGroundType.GtRoad;
 
-    //Р‘Р°Р·Р°
+    //База
     For I := 4 To 6 Do
     Begin
         MapData[I, 12].TypeOfGround := TGroundType.GtBase;
@@ -233,8 +234,36 @@ Begin
     SetMap1 := MapData;
 End;
 
+Procedure WriteEnemySpawnsToFile();
+Var
+    Element: TEnemySpawns;
+    SpawnsDataTypedFile: File Of TEnemySpawns;
+    UntypedFile: TextFile;
+Begin
+    AssignFile(UntypedFile, '.\..\..\EnemySpawnsData.txt');
+    AssignFile(SpawnsDataTypedFile, '.\..\..\EnemySpawnsData.dat');
+
+    Reset(UntypedFile);
+    Rewrite(SpawnsDataTypedFile);
+
+    While (Not EOF(UntypedFile)) Do
+    Begin
+        Read(UntypedFile, Element.EnemyID);
+        Read(UntypedFile, Element.StartTime);
+        Read(UntypedFile, Element.EndTime);
+        Read(UntypedFile, Element.EnemyCount);
+        Element.EnemyCountCurrent := 0;
+
+        Write(SpawnsDataTypedFile, Element);
+    End;
+
+    CloseFile(UntypedFile);
+    CloseFile(SpawnsDataTypedFile);
+
+End;
+
 //-------------------------------------------------------------------
-//РџРѕРёСЃРє СЃС‚Р°СЂС‚РѕРІРѕР№ РєР»РµС‚РєРё (РєР»РµС‚РєР° Road РЅР° РєСЂР°СЋ РїРѕР»СЏ)
+//Поиск стартовой клетки (клетка Road на краю поля)
 //-------------------------------------------------------------------
 Function FindStartCell(Var StartX, StartY: Integer): Boolean;
 Var
@@ -271,7 +300,7 @@ Begin
 End;
 
 //-------------------------------------------------------------------
-//Р Р°СЃС‡С‘С‚ РЅР°РїСЂР°РІР»РµРЅРёР№ РґР»СЏ РґРѕСЂРѕРі
+//Расчёт направлений для дорог
 //-------------------------------------------------------------------
 Function FindFirstDirection(Map: TMatrixOfMap): TDirection;
 var
@@ -338,9 +367,9 @@ Begin
     End;
 End;
 
-// РџСЂРёРЅРёРјР°РµС‚ "РЅР°С‡Р°Р»СЊРЅСѓСЋ" РєР»РµС‚РєСѓ СЃ РѕРїСЂРµРґРµР»С‘РЅРЅС‹Рј РЅР°РїСЂР°РІР»РµРЅРёРµРј, РІРѕР·РІСЂР°С‰Р°РµС‚ СЃР»РµРґСѓСЋС‰СѓСЋ РєР»РµС‚РєСѓ X Y
-// Р° С‚Р°РєР¶Рµ Boolean РєР°Рє РїСЂРёР·РЅР°Рє РєРѕРЅС†Р°
-// РџРµСЂРµС…РѕРґРёС‚ РЅР° СЃР»РµРґ. РєР»РµС‚РєСѓ
+// Принимает "начальную" клетку с определённым направлением, возвращает следующую клетку X Y
+// а также Boolean как признак конца
+// Переходит на след. клетку
 Function SetDirection(Var Map: TMatrixOfMap; Var X, Y: Integer): Boolean;
 Var
     IsEnd: Boolean;
@@ -402,7 +431,7 @@ Begin
 
     If (IsEnd) Then
     Begin
-        Map[X, Y].EnemyDirection := PrevDir; // РїСЂРѕРІРµСЂРёС‚СЊ СѓРґР°Р»СЏСЋС‚СЃСЏ Р»Рё СЌР»РµРјРµРЅС‚С‹ РёР»Рё РЅРµС‚
+        Map[X, Y].EnemyDirection := PrevDir; // проверить удаляются ли элементы или нет
     End;
 
     SetDirection := IsEnd;
@@ -431,7 +460,7 @@ Begin
 End;
 
 //-------------------------------------------------------------------
-//РЁР°Р±Р»РѕРЅС‹ РІСЂР°РіРѕРІ
+//Шаблоны врагов
 //-------------------------------------------------------------------
 Procedure InitEnemyTemplates();
 Begin
@@ -457,7 +486,7 @@ Begin
 End;
 
 //------------------------------------------------------------
-//РЎРѕР·РґР°РЅРёРµ РІСЂР°РіР°
+//Создание врага
 //-------------------------------------------------------------------
 Procedure SpawnEnemy(TemplateIndex: Integer);
 Var
@@ -467,8 +496,8 @@ Begin
     If FindStartCell(StartX, StartY) Then
     Begin
         NewEnemy := EnemyTemplates[TemplateIndex];
-        NewEnemy.CellX := StartX;
-        NewEnemy.CellY := StartY;
+        NewEnemy.Pos.CellX := StartX;
+        NewEnemy.Pos.CellY := StartY;
         NewEnemy.IsAlive := True;
 
         EnemyCount := Length(Enemies);
@@ -478,9 +507,9 @@ Begin
 End;
 
 //------------------------------------------------------------------
-// РџСЂРѕС†РµРґСѓСЂС‹ СЃРїРёСЃРєР°
+// Процедуры списка
 //------------------------------------------------------------------
-Procedure Append(Var BulletList: TBulletList; Bullet: TBullet); Overload // Р”РѕР±Р°РІР»СЏРµРј РІ РЅР°С‡Р°Р»Рѕ
+Procedure Append(Var BulletList: TBulletList; Bullet: TBullet); Overload // Добавляем в начало
 Var
     BulletNode: PTBulletNode;
 Begin
@@ -501,7 +530,7 @@ Begin
     BulletList.Head := BulletNode;
 End;
 
-Procedure Delete(Var BulletList: TBulletList; BulletNode: PTBulletNode); Overload // Р”РѕР±Р°РІР»СЏРµРј РІ РЅР°С‡Р°Р»Рѕ
+Procedure Delete(Var BulletList: TBulletList; BulletNode: PTBulletNode); Overload // Добавляем в начало
 Begin
 
     If (BulletList.Head = BulletNode) Then
@@ -521,49 +550,49 @@ Begin
     Dispose(BulletNode);
 End;
 
-Procedure Append(Var IntegerList: TIntegerList; Value: Integer); Overload // Р”РѕР±Р°РІР»СЏРµРј РІ РЅР°С‡Р°Р»Рѕ
+Procedure Append(Var EnemySpawnsList: TEnemySpawnsList; EnemySpawns: TEnemySpawns); Overload // Добавляем в начало
 Var
-    BulletNode: PTBulletNode;
+    EnemySpawnsNode: PTEnemySpawnsNode;
 Begin
-    New(BulletNode);
-    BulletNode^.Bullet := Bullet;
+    New(EnemySpawnsNode);
+    EnemySpawnsNode^.EnemySpawns := EnemySpawns;
 
-    If BulletList.Head <> Nil Then
+    If EnemySpawnsList.Head <> Nil Then
     Begin
-        BulletNode^.Next := BulletList.Head;
-        BulletList.Head^.Prev := BulletNode;
+        EnemySpawnsNode^.Next := EnemySpawnsList.Head;
+        EnemySpawnsList.Head^.Prev := EnemySpawnsNode;
     End
     Else
     Begin
-        BulletNode^.Next := Nil;
+        EnemySpawnsNode^.Next := Nil;
     End;
 
-    BulletNode^.Prev := Nil;
-    BulletList.Head := BulletNode;
+    EnemySpawnsNode^.Prev := Nil;
+    EnemySpawnsList.Head := EnemySpawnsNode;
 End;
 
-Procedure Delete(Var BulletList: TBulletList; BulletNode: PTBulletNode); Overload // Р”РѕР±Р°РІР»СЏРµРј РІ РЅР°С‡Р°Р»Рѕ
+Procedure Delete(Var EnemySpawnsList: TEnemySpawnsList; EnemySpawnsNode: PTEnemySpawnsNode); Overload // Добавляем в начало
 Begin
 
-    If (BulletList.Head = BulletNode) Then
+    If (EnemySpawnsList.Head = EnemySpawnsNode) Then
     Begin
-        BulletList.Head := BulletNode.Next;
+        EnemySpawnsList.Head := EnemySpawnsNode.Next;
     End
     Else
     Begin
-        BulletNode^.Prev^.Next := BulletNode.Next;
+        EnemySpawnsNode^.Prev^.Next := EnemySpawnsNode.Next;
     End;
 
-    If (BulletNode^.Next <> Nil) Then
+    If (EnemySpawnsNode^.Next <> Nil) Then
     Begin
-        BulletNode^.Next^.Prev := BulletNode^.Prev;
+        EnemySpawnsNode^.Next^.Prev := EnemySpawnsNode^.Prev;
     End;
 
-    Dispose(BulletNode);
+    Dispose(EnemySpawnsNode);
 End;
 
 //-------------------------------------------------------------------
-//РћР±РЅРѕРІР»РµРЅРёРµ РїРѕР·РёС†РёР№ РІСЂР°РіРѕРІ
+//Обновление позиций врагов
 //-------------------------------------------------------------------
 Procedure UpdateEnemies(DeltaTime: Double);
 Var
@@ -589,7 +618,7 @@ Begin
         Begin
             Enemies[I].DistanceProgress := Enemies[I].DistanceProgress + Enemies[I].Speed * DeltaTime;
 
-            //РЎРєРѕР»СЊРєРѕ С†РµР»С‹С… РєР»РµС‚РѕРє РЅСѓР¶РЅРѕ РїСЂРѕР№С‚Рё
+            //Сколько целых клеток нужно пройти
             FullCells := Round(MoveDistance);
             If FullCells < 1 Then
             Begin
@@ -598,16 +627,16 @@ Begin
 
             While Enemies[I].DistanceProgress > 1 Do
             Begin
-                JumpToNextCell(MapData, Enemies[I].CellX, Enemies[I].CellY);
+                JumpToNextCell(MapData, Enemies[I].Pos.CellX, Enemies[I].Pos.CellY);
                 Enemies[I].DistanceProgress := Enemies[I].DistanceProgress - 1;
             End;
 
-            //РџСЂРѕРІРµСЂРєР° РґРѕСЃС‚РёР¶РµРЅРёСЏ Р±Р°Р·С‹
-            If (Enemies[I].CellX >= 0) And (Enemies[I].CellX < MAP_WIDTH) And (Enemies[I].CellY >= 0) And (Enemies[I].CellY < MAP_HEIGHT) Then
+            //Проверка достижения базы
+            If (Enemies[I].Pos.CellX >= 0) And (Enemies[I].Pos.CellX < MAP_WIDTH) And (Enemies[I].Pos.CellY >= 0) And (Enemies[I].Pos.CellY < MAP_HEIGHT) Then
             Begin
-                If ((MapData[Enemies[I].CellX, Enemies[I].CellY].TypeOfGround = TGroundType.GtBase) And Enemies[I].IsAlive) Then
+                If ((MapData[Enemies[I].Pos.CellX, Enemies[I].Pos.CellY].TypeOfGround = TGroundType.GtBase) And Enemies[I].IsAlive) Then
                 Begin
-                    //Р’СЂР°Рі РґРѕСЃС‚РёРі Р±Р°Р·С‹ - СѓРґР°Р»СЏРµРј
+                    //Враг достиг базы - удаляем
                     //Enemies[I] := Enemies[Length(Enemies) - 1];
                     //SetLength(Enemies, Length(Enemies) - 1);
                     Enemies[I].IsAlive := False;
@@ -660,7 +689,7 @@ Begin
         Begin
             Temp := Iterator;
             Iterator := Iterator^.Next;
-            TurretTypeID := Ord(MapData[CurrBullet^.TurretCellX, CurrBullet^.TurretCellY].Turret.TurretType);
+            TurretTypeID := Ord(MapData[CurrBullet^.TurretPos.CellX, CurrBullet^.TurretPos.CellY].Turret.TurretType);
             Damage := BULLET_DAMAGE[TurretTypeID];
             SpeedMult := BULLET_SLOW[TurretTypeID];
 
@@ -668,18 +697,18 @@ Begin
             Begin
                 If (CurrBullet^.IsTracking) Then
                 Begin
-                    TargetCellX := CurrBullet^.TargetedEnemy^.CellX;
-                    TargetCellY := CurrBullet^.TargetedEnemy^.CellY;
+                    TargetCellX := CurrBullet^.TargetedEnemy^.Pos.CellX;
+                    TargetCellY := CurrBullet^.TargetedEnemy^.Pos.CellY;
                 End
                 Else
                 Begin
-                    TargetCellX := CurrBullet^.TargetCellX;
-                    TargetCellY := CurrBullet^.TargetCellY;
+                    TargetCellX := CurrBullet^.TargetPos.CellX;
+                    TargetCellY := CurrBullet^.TargetPos.CellY;
                 End;
 
                 For I := 0 To High(Enemies) Do
                 Begin
-                    If (Enemies[I].IsAlive And (Enemies[I].CellX = TargetCellX) And (Enemies[I].CellX = TargetCellX)) Then
+                    If (Enemies[I].IsAlive And (Enemies[I].Pos.CellX = TargetCellX) And (Enemies[I].Pos.CellX = TargetCellX)) Then
                     Begin
                         Enemies[I].Health := Enemies[I].Health - Damage;
                         Enemies[I].Speed := Enemies[I].Speed * SpeedMult;
@@ -695,15 +724,15 @@ Begin
                 End
                 Else
                 Begin
-                    TargetCellX := CurrBullet^.TargetCellX;
-                    TargetCellY := CurrBullet^.TargetCellY;
+                    TargetCellX := CurrBullet^.TargetPos.CellX;
+                    TargetCellY := CurrBullet^.TargetPos.CellY;
 
                     TargetedEnemy := Nil;
 
-                    // РџРѕРёСЃРє РІСЂР°РіР° РІ РєР»РµС‚РєРµ
+                    // Поиск врага в клетке
                     For I := 0 To High(Enemies) Do
                     Begin
-                        If (Enemies[I].IsAlive And (Enemies[I].CellX = TargetCellX) And (Enemies[I].CellX = TargetCellX)) Then
+                        If (Enemies[I].IsAlive And (Enemies[I].Pos.CellX = TargetCellX) And (Enemies[I].Pos.CellX = TargetCellX)) Then
                         Begin
                             TargetedEnemy := @Enemies[I];
                         End;
@@ -744,10 +773,11 @@ Begin
             Begin
 
                 MapData[I, J].Turret.ReloadProgress := MapData[I, J].Turret.ReloadProgress + (MapData[I, J].Turret.FireRate * DeltaTime);
+                MapData[I, J].Turret.ReloadProgress := Clamp(0, 1.1, MapData[I, J].Turret.ReloadProgress);
 
                 If (MapData[I, J].Turret.ReloadProgress > 1) Then
                 Begin
-                    // РџРѕРёСЃРє РІСЂР°РіР°
+                    // Поиск врага
                     K := 0;
                     IsToStop := False;
                     While ((K < High(Enemies)) And Not IsToStop) Do
@@ -755,7 +785,7 @@ Begin
 
                         If (Enemies[K].IsAlive) Then
                         Begin
-                            DistanceSquared := CalculateDistanceSquared(I, J, Enemies[K].CellX, Enemies[K].CellY);
+                            DistanceSquared := CalculateDistanceSquared(I, J, Enemies[K].Pos.CellX, Enemies[K].Pos.CellY);
 
                             If ((DistanceSquared < (MapData[I, J].Turret.Radius * MapData[I, J].Turret.Radius))) Then
                             Begin
@@ -774,7 +804,7 @@ Begin
 
                     If (IsToStop) Then
                     Begin
-                        While (MapData[I, J].Turret.ReloadProgress > 1) Do   // РЎРѕР·РґР°С‘Рј РїСѓР»СЋ
+                        While (MapData[I, J].Turret.ReloadProgress > 1) Do   // Создаём пулю
                         Begin
                             MapData[I, J].Turret.ReloadProgress := MapData[I, J].Turret.ReloadProgress - 1;
                             TurretID := Ord(MapData[I, J].Turret.TurretType);
@@ -790,12 +820,12 @@ Begin
                             End
                             Else
                             Begin
-                                Bullet.TargetCellX := Enemies[K].CellX;
-                                Bullet.TargetCellY := Enemies[K].CellY;
+                                Bullet.TargetPos.CellX := Enemies[K].Pos.CellX;
+                                Bullet.TargetPos.CellY := Enemies[K].Pos.CellY;
                             End;
 
-                            Bullet.TurretCellX := I;
-                            Bullet.TurretCellY := J;
+                            Bullet.TurretPos.CellX := I;
+                            Bullet.TurretPos.CellY := J;
                             //
 
                             //ShowMessage(Format('Error: Funny Error! - I = %d; J = %d, FP = %f', [I, J, MapData[I, J].Turret.FireProgress]));
@@ -814,7 +844,7 @@ Begin
 End;
 
 //-------------------------------------------------------------------
-//РћС‚СЂРёСЃРѕРІРєР° РІСЂР°РіРѕРІ
+//Отрисовка врагов
 //-------------------------------------------------------------------
 Procedure DrawEnemies(Canvas: TCanvas);
 Var
@@ -828,7 +858,7 @@ Begin
             DeltaX := 0;
             DeltaY := 0;
 
-            case MapData[Enemies[I].CellX, Enemies[I].CellY].EnemyDirection of
+            case MapData[Enemies[I].Pos.CellX, Enemies[I].Pos.CellY].EnemyDirection of
                 DirUp:
                     DeltaY := 1;
                 DirDown:
@@ -839,9 +869,9 @@ Begin
                     DeltaX := -1;
             end;
 
-            // Р’СЂР°РіРё РїРµСЂРµРјРµС‰Р°СЋС‚СЃСЏ РєСЂР°СЃРёРІРѕ, РЅРѕ СЃС‚Р°РЅРѕРІСЏС‚СЊСЃСЏ РЅР° РІРѕРєСѓСЋ РєР»РµС‚РєСѓ РўРћР›Р¬РљРћ РѕРєРѕРіРґР° РЅР°СЃС‚СѓРїР°СЋС‚ РЅР° РµС‘ СЃРµСЂРµРґРёРЅСѓ
-            ScreenX := Trunc((Enemies[I].CellX + (Enemies[I].DistanceProgress { - 0.5}) * DeltaX) * CELL_SIZE);
-            ScreenY := Trunc((MAP_HEIGHT - 1 - Enemies[I].CellY - (Enemies[I].DistanceProgress {- 0.5}) * DeltaY) * CELL_SIZE);
+            // Враги перемещаются красиво, но становяться на вокую клетку ТОЛЬКО окогда наступают на её середину
+            ScreenX := Trunc((Enemies[I].Pos.CellX + (Enemies[I].DistanceProgress { - 0.5}) * DeltaX) * CELL_SIZE);
+            ScreenY := Trunc((MAP_HEIGHT - 1 - Enemies[I].Pos.CellY - (Enemies[I].DistanceProgress {- 0.5}) * DeltaY) * CELL_SIZE);
 
             If Enemies[I].EnemyType = EnCommon Then
             Begin
@@ -885,7 +915,7 @@ Begin
 
         If CurrBullet.IsTracking Then
         Begin
-            case MapData[CurrBullet^.TargetedEnemy^.CellX, CurrBullet^.TargetedEnemy^.CellY].EnemyDirection of
+            case MapData[CurrBullet^.TargetedEnemy^.Pos.CellX, CurrBullet^.TargetedEnemy^.Pos.CellY].EnemyDirection of
                 DirUp:
                     DeltaY := 1;
                 DirDown:
@@ -896,26 +926,25 @@ Begin
                     DeltaX := -1;
             end;
 
-            TargetPixelX := (CurrBullet^.TargetedEnemy^.CellX + (CurrBullet^.TargetedEnemy^.DistanceProgress) * DeltaX) * CELL_SIZE;
-            TargetPixelY := (CurrBullet^.TargetedEnemy^.CellY + (CurrBullet^.TargetedEnemy^.DistanceProgress) * DeltaY) * CELL_SIZE;
+            TargetPixelX := (CurrBullet^.TargetedEnemy^.Pos.CellX + (CurrBullet^.TargetedEnemy^.DistanceProgress) * DeltaX) * CELL_SIZE;
+            TargetPixelY := (CurrBullet^.TargetedEnemy^.Pos.CellY + (CurrBullet^.TargetedEnemy^.DistanceProgress) * DeltaY) * CELL_SIZE;
 
         End
         Else
         Begin
-            TargetPixelX := CurrBullet^.TargetCellX * CELL_SIZE;
-            TargetPixelY := CurrBullet^.TargetCellY * CELL_SIZE;
+            TargetPixelX := CurrBullet^.TargetPos.CellX * CELL_SIZE;
+            TargetPixelY := CurrBullet^.TargetPos.CellY * CELL_SIZE;
         End;
 
         // (CurrBullet^.TargetedEnemy^.CellX + (CurrBullet^.TargetedEnemy^.DistanceProgress) * DeltaX) * CELL_SIZE
         // (CurrBullet^.TargetedEnemy^.CellY - (CurrBullet^.TargetedEnemy^.DistanceProgress) * DeltaY) * CELL_SIZE
 
-        ScreenX := Trunc(CELL_SIZE * (CurrBullet^.TurretCellX * (1 - CurrBullet^.DistanceProgress)) + TargetPixelX * (CurrBullet^.DistanceProgress));
-        ScreenY := MAP_HEIGHT * CELL_SIZE - Trunc(CELL_SIZE * (CurrBullet^.TurretCellY * (1 - CurrBullet^.DistanceProgress)) + TargetPixelY * (CurrBullet^.DistanceProgress)) - CELL_SIZE;
+        ScreenX := Trunc(CELL_SIZE * (CurrBullet^.TurretPos.CellX * (1 - CurrBullet^.DistanceProgress)) + TargetPixelX * (CurrBullet^.DistanceProgress));
+        ScreenY := MAP_HEIGHT * CELL_SIZE - Trunc(CELL_SIZE * (CurrBullet^.TurretPos.CellY * (1 - CurrBullet^.DistanceProgress)) + TargetPixelY * (CurrBullet^.DistanceProgress)) - CELL_SIZE;
 
 //        If Enemies[I].EnemyType = EnCommon Then
 //        Begin
-//            Canvas.Brush.Color := ClBlue
-//
+//            Canvas.Brush.Color := ClBlack;
 //        End
 //        Else
 //        Begin
@@ -942,36 +971,28 @@ End;
 
 Procedure ReadEnemySpawns();
 Var
-    ReadedFile: TextFile;
+    ReadedFile: File Of TEnemySpawns;
     Len: Integer;
     Element: TEnemySpawns;
 Begin
     Len := 0;
 
-    AssignFile(ReadedFile, '.\..\..\EnemySpawnsData.txt');
+    AssignFile(ReadedFile, '.\..\..\EnemySpawnsData.dat');
 
     Reset(ReadedFile);
 
     While (Not EOF(ReadedFile)) Do
     Begin
-        Inc(Len);
-        SetLength(EnemySpawnsArray, Len);
+        Read(ReadedFile, Element);
 
-        Read(ReadedFile, Element.EnemyID);
-        Read(ReadedFile, Element.StartTime);
-        Read(ReadedFile, Element.EndTime);
-        Read(ReadedFile, Element.EnemyCount);
-
-        Element.EnemyCountCurrent := 0;
-
-        EnemySpawnsArray[Len-1] := Element;
+        Append(EnemySpawnsList, Element);
     End;
 
     CloseFile(ReadedFile);
 End;
 
 //-------------------------------------------------------------------
-//Form СЃРѕР±С‹С‚РёСЏ
+//Form события
 //-------------------------------------------------------------------
 Procedure TGameForm.FormCreate(Sender: TObject);
 Begin
@@ -979,6 +1000,8 @@ Begin
     TowerHealth := MAX_TOWER_HEALTH;
     Coins := 50;
     BulletList.Head := Nil;
+
+    WriteEnemySpawnsToFile();
 
     GrassTex := TBitmap.Create;
     RoadRightTex := TBitmap.Create;
@@ -1151,9 +1174,9 @@ End;
 
 Procedure UpdateButtons();
 Begin
-    GameForm.CommonTurretPriceLabel.Caption := Format('Р¦РµРЅР°: %d', [TURRET_PRICES[Ord(TTurretType.TurrCommon)]]);
-    GameForm.SlowingTurretPriceLabel.Caption := Format('Р¦РµРЅР°: %d', [TURRET_PRICES[Ord(TTurretType.TurrSlowing)]]);
-    GameForm.AreaTurretPriceLabel.Caption := Format('Р¦РµРЅР°: %d', [TURRET_PRICES[Ord(TTurretType.TurrAreaDamaging)]]);
+    GameForm.CommonTurretPriceLabel.Caption := Format('Цена: %d', [TURRET_PRICES[Ord(TTurretType.TurrCommon)]]);
+    GameForm.SlowingTurretPriceLabel.Caption := Format('Цена: %d', [TURRET_PRICES[Ord(TTurretType.TurrSlowing)]]);
+    GameForm.AreaTurretPriceLabel.Caption := Format('Цена: %d', [TURRET_PRICES[Ord(TTurretType.TurrAreaDamaging)]]);
 
     If (Coins > TURRET_PRICES[Ord(TTurretType.TurrCommon)]) Then
     Begin
@@ -1198,18 +1221,19 @@ Begin
     Hours := Trunc(GameTime) Div (SEC_IN_MIN * SEC_IN_MIN);
     Minutes := (Trunc(GameTime) Div SEC_IN_MIN) Mod SEC_IN_MIN;
     Seconds := Trunc(GameTime) Mod SEC_IN_MIN;
-    GameForm.TimeLabel.Caption := Format('Р’СЂРµРјСЏ: %.2d:%.2d:%.2d', [Hours, Minutes, Seconds]);
+    GameForm.TimeLabel.Caption := Format('Время: %.2d:%.2d:%.2d', [Hours, Minutes, Seconds]);
 End;
 
-// TODO: РўР°Р№РјРµСЂ РЅРµРјРЅРѕРіРѕ РѕС‚СЃС‚Р°С‘С‚ РѕС‚ СЂРµР°Р»СЊРЅРѕРіРѕ РІСЂРµРјРµРЅРё
+// TODO: Таймер немного отстаёт от реального времени
 Procedure TGameForm.GameTimerTimer(Sender: TObject);
 Const
-    COIN_EARN_INTERVAL = 500;
+    COIN_EARN_INTERVAL = 1000;
     MILISECONDS_IN_SECOND = 1000;
 Var
     DeltaTime: Double;
     CountToSpawn, I, J: Integer;
     Element: TEnemySpawns;
+    Iterator: PTEnemySpawnsNode;
 Begin
     DeltaTime := GameTimer.Interval / MILISECONDS_IN_SECOND;
     GameTime := GameTime + DeltaTime;
@@ -1219,21 +1243,22 @@ Begin
     If (((Round(GameTime * MILISECONDS_IN_SECOND)) Mod COIN_EARN_INTERVAL) < 10) Then
     Begin
         Inc(Coins);
-        CoinsLabel.Caption := Format('РњРѕРЅРµС‚С‹: %4d', [Coins]);
+        CoinsLabel.Caption := Format('Монеты: %4d', [Coins]);
     End;
 
-    TowerHealthLabel.Caption := Format('Р–РёР·РЅРё: %d/%d', [TowerHealth, MAX_TOWER_HEALTH]);
+    TowerHealthLabel.Caption := Format('Жизни: %d/%d', [TowerHealth, MAX_TOWER_HEALTH]);
 
     If (TowerHealth <= 0) Then
     Begin
         GameTimer.Enabled := False;
-        Application.MessageBox(PChar('Р’Р°С€Р° Р±Р°Р·Р° РїРѕС‚РµСЂРїРµР»Р° РїРѕСЂР°Р¶РµРЅРёРµ!'), PChar('РџРѕСЂР°Р¶РµРЅРёРµ'), MB_OK + MB_ICONEXCLAMATION);
+        Application.MessageBox(PChar('Ваша база потерпела поражение!'), PChar('Поражение'), MB_OK + MB_ICONEXCLAMATION);
         Close;
     End;
 
-    For I := 0 To High(EnemySpawnsArray) Do
+    Iterator := EnemySpawnsList.Head;
+    While Iterator <> Nil Do
     Begin
-        Element := EnemySpawnsArray[I];
+        Element := Iterator^.EnemySpawns;
 
         If(Element.EndTime - Element.StartTime < 0.01) Then
         Begin
@@ -1244,11 +1269,13 @@ Begin
             CountToSpawn := Trunc(Element.EnemyCount*(Clamp(0.0, 1.0, (GameTime-Element.StartTime)/(Element.EndTime-Element.StartTime))));
         End;
 
-        While (CountToSpawn > EnemySpawnsArray[I].EnemyCountCurrent) Do
+        While (CountToSpawn > Iterator^.EnemySpawns.EnemyCountCurrent) Do
         Begin
             SpawnEnemy(Element.EnemyID);
-            Inc(EnemySpawnsArray[I].EnemyCountCurrent);
+            Inc(Iterator^.EnemySpawns.EnemyCountCurrent);
         End;
+
+        Iterator := Iterator^.Next;
     End;
 
     UpdateButtons();
@@ -1261,5 +1288,5 @@ End;
 
 End.
 
-// Р”РѕР±Р°РІРёС‚СЊ СЃРѕСЃС‚РѕСЏРЅРёРµ РёРіСЂРѕРєР° "Р¶РёР·РЅРё" "РґРµРЅСЊРіРё" Рё РїРѕРґСѓРјР°С‚СЊ РЅР°Рґ СЃРЅР°СЂСЏРґР°РјРё. Р СЃРёСЃС‚РµРјСѓ СѓСЂРѕРЅР° РїРѕ РёРіСЂРѕРєСѓ
-// РЎРґРµР»Р°С‚СЊ РѕС‚РѕР±СЂР°Р¶РµРЅРёРµ РјРµРЅСЋ РјР°РіР°Р·РёРЅР° С‚СѓСЂРµР»РµР№
+// Добавить состояние игрока "жизни" "деньги" и подумать над снарядами. И систему урона по игроку
+// Сделать отображение меню магазина турелей

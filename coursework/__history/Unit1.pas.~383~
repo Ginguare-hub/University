@@ -23,15 +23,19 @@ Const
     MAP_HEIGHT = 16;  //клеток по вертикали  (Y) снизу - вверх
     CELL_SIZE = 64;  //пикселей
     MAX_TOWER_HEALTH: Integer = 20;
+    START_COINS: Integer = 50;
 
-    TURRET_RADII: Array [0..3] Of Double = (4.0, 4.0, 4.0, 4.0);
-    TURRET_FIRE_RATE: Array [0..3] Of Double = (4.0, 4.0, 4.0, 4.0);
+    TURRET_PRICES: Array [0..3] Of Integer = (0, 25, 30, 55);
+    TURRET_RADII: Array [0..3] Of Double = (0.0, 4.0, 4.0, 4.0);
+    TURRET_FIRE_RATE: Array [0..3] Of Double = (0.0, 1.2, 1.3, 0.7);
 
-    BULLET_DAMAGE: Array [0..3] Of Double = (0.0, 34.0, 10.0, 20.0);
-    BULLET_SLOW: Array [0..3] Of Double = (1.0, 1.0, 0.9, 1.0);
+    BULLET_DAMAGE: Array [0..3] Of Double = (0.0, 34.0, 10.0, 15.0);
+    BULLET_SLOW: Array [0..3] Of Double = (0.0, 1.0, 0.9, 1.0);
     IS_BULLET_AOE: Array [0..3] Of Boolean = (False, False, False, True);       // AOE - Area Of Effect     Урон/ЭФфект по области
     IS_BULLET_TRACKING: Array  [0..3] Of Boolean = (False, True, True, False);
-    BULLET_SPEED: Array [0..3] Of Double = (4.0, 4.0, 4.0, 4.0);
+    BULLET_SPEED: Array [0..3] Of Double = (0.0, 3.0, 2.5, 4.0);
+
+    ENEMY_REWARD: Array [0..3] Of Integer = (0, 2, 6, 3);
 
 Type
     TTurretType = (TurrNone, TurrCommon, TurrSlowing, TurrAreaDamaging);
@@ -39,10 +43,15 @@ Type
     TGroundType = (GtGrass, GtRoad, GtBase);
     TDirection = (DirNone, DirRight, DirUp, DirLeft, DirDown);
 
+    TPosition = Record
+        CellX: Integer;
+        CellY: Integer;
+    End;
+
     TTurret = Record        // попробовать переписать всё под
         TurretType: TTurretType;
         Radius: Double;
-        FireProgress: Double; // 0 to 1
+        ReloadProgress: Double; // 0 to 1
         FireRate: Double;
     End;
 
@@ -60,15 +69,13 @@ Type
         Health: Double;
         MaxHealth: Double;
         Speed: Double;               //клеток в секунду
-        CellX: Integer;
-        CellY: Integer;              //текущая клетка (X - горизонталь, Y - вертикаль)
+        Pos: TPosition;             //текущая клетка (X - горизонталь, Y - вертикаль)
         DistanceProgress: Double;
         Reward: Integer;
         IsAlive: Bool;
     End;
 
     PTEnemy = ^TEnemy;
-
     TEnemySpawns = Record
         EnemyID: Integer;
         StartTime: Double;
@@ -77,23 +84,18 @@ Type
         EnemyCountCurrent: Integer;
     End;
 
-    TEnemySpawnsArray = Array of TEnemySpawns;
-
     // Сделать Record Position CellX CellY
     TBullet = Record
         DistanceProgress: Double;
         Speed: Double;
         TargetedEnemy: PTEnemy;
-        TargetCellX: Integer;                                                   // Объеденить !!!!
-        TargetCellY: Integer;
+        TargetPos: TPosition;
+        TurretPos: TPosition;
         IsTracking: Bool;   // 1 - к врагу, 0 - к клетке
-        TurretCellX: Integer;
-        TurretCellY: Integer;
     End;
 
     PTBulletNode = ^TBulletNode;
     PTBullet = ^TBullet;
-
     TBulletNode = Record
         Bullet: TBullet;
         Next: PTBulletNode;
@@ -104,34 +106,53 @@ Type
         Head: PTBulletNode;
     End;
 
+    PTEnemySpawnsNode = ^TEnemySpawnsNode;
+    TEnemySpawnsNode = Record
+        EnemySpawns: TEnemySpawns;
+        Next: PTEnemySpawnsNode;
+        Prev: PTEnemySpawnsNode;
+    End;
+
+    TEnemySpawnsList = Record
+        Head: PTEnemySpawnsNode;
+    End;
+
     TGameForm = Class(TForm)
     MapBox: TPaintBox;
     GameTimer: TTimer;
-        TimeLabel: TLabel;
-        Label1: TLabel;
-        MainMenu1: TMainMenu;
-        N1: TMenuItem;
-        N2: TMenuItem;
-        N3: TMenuItem;
+    TimeLabel: TLabel;
+    Label1: TLabel;
+    MainMenu: TMainMenu;
+    MenuOptionMenu: TMenuItem;
+    MenuOptionQuit: TMenuItem;
+    MenuOptionAutor: TMenuItem;
     CellOptionScrollBox: TScrollBox;
-        Panel1: TPanel;
-        Panel2: TPanel;
+    CommonTurretPanel: TPanel;
+    SlowingTurretPanel: TPanel;
     SelectBox: TShape;
-    Panel3: TPanel;
+    AreaTurretPanel: TPanel;
     TowerHealthLabel: TLabel;
     CoinsLabel: TLabel;
-        Procedure MapBoxPaint(Sender: TObject);
-        Procedure GameTimerTimer(Sender: TObject);
-        Procedure FormCreate(Sender: TObject);
-        Procedure FormDestroy(Sender: TObject);
-        procedure MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-    procedure Panel1Click(Sender: TObject);
-    procedure Panel2Click(Sender: TObject);
-    procedure Panel3Click(Sender: TObject);
+    CommonTurretImage: TImage;
+    SlowingTurretImage: TImage;
+    AreaTurretImage: TImage;
+    CommonTurretPriceLabel: TLabel;
+    SlowingTurretPriceLabel: TLabel;
+    AreaTurretPriceLabel: TLabel;
+    Procedure MapBoxPaint(Sender: TObject);
+    Procedure GameTimerTimer(Sender: TObject);
+    Procedure FormCreate(Sender: TObject);
+    Procedure FormDestroy(Sender: TObject);
+    procedure MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure CommonTurretPanelClick(Sender: TObject);
+    procedure SlowingTurretPanelClick(Sender: TObject);
+    procedure AreaTurretPanelClick(Sender: TObject);
 
     Private
     Public
     End;
+
+    Function Clamp(Const MIN, MAX: Double; Value: Double): Double;
 
 Var
     GameForm: TGameForm;
@@ -146,9 +167,9 @@ Var
 
     EnemyTemplates: Array Of TEnemy;
 
-    EnemySpawnsArray: TEnemySpawnsArray;
+    EnemySpawnsList: TEnemySpawnsList;
 
-    SelectedCellX, SelectedCellY: Integer;
+    SelectedPos: TPosition;
     Coins, TowerHealth: Integer;
     BulletList: TBulletList;
 
@@ -214,16 +235,44 @@ Begin
     SetMap1 := MapData;
 End;
 
+Procedure WriteEnemySpawnsToFile();
+Var
+    Element: TEnemySpawns;
+    SpawnsDataTypedFile: File Of TEnemySpawns;
+    UntypedFile: TextFile;
+Begin
+    AssignFile(UntypedFile, '.\..\..\EnemySpawnsData.txt');
+    AssignFile(SpawnsDataTypedFile, '.\..\..\EnemySpawnsData.dat');
+
+    Reset(UntypedFile);
+    Rewrite(SpawnsDataTypedFile);
+
+    While (Not EOF(UntypedFile)) Do
+    Begin
+        Read(UntypedFile, Element.EnemyID);
+        Read(UntypedFile, Element.StartTime);
+        Read(UntypedFile, Element.EndTime);
+        Read(UntypedFile, Element.EnemyCount);
+        Element.EnemyCountCurrent := 0;
+
+        Write(SpawnsDataTypedFile, Element);
+    End;
+
+    CloseFile(UntypedFile);
+    CloseFile(SpawnsDataTypedFile);
+
+End;
+
 //-------------------------------------------------------------------
 //Поиск стартовой клетки (клетка Road на краю поля)
 //-------------------------------------------------------------------
 Function FindStartCell(Var StartX, StartY: Integer): Boolean;
 Var
     I, J: Integer;
-    Found: Boolean;
-    NeighborCount: Integer;
+    IsFound, IsBorder: Boolean;
 Begin
-    Found := False;
+    IsFound := False;
+    IsBorder := False;
     StartX := -1;
     StartY := -1;
 
@@ -231,24 +280,26 @@ Begin
     Begin
         For J := 0 To High(MapData[I]) Do
         Begin
-            If ((I = Low(MapData)) Or (I = High(MapData)) Or (J = Low(MapData[I])) Or (J = High(MapData[I]))) Then
+            IsBorder := ((I = Low(MapData))
+                         Or (I = High(MapData))
+                         Or (J = Low(MapData[I]))
+                         Or (J = High(MapData[I])));
+
+            If (IsBorder And (MapData[I, J].TypeOfGround = TGroundType.GtRoad)) Then
             Begin
-                If (MapData[I, J].TypeOfGround = TGroundType.GtRoad) Then
-                Begin
-                    Found := True;
-                    StartX := I;
-                    StartY := J;
-                End;
+                IsFound := True;
+                StartX := I;
+                StartY := J;
             End;
         End;
     End;
 
     If (StartX = -1) Then
     Begin
-        ShowMessage('Error: First Cell Not Found');
+        ShowMessage('Ошибка: Начальная клетка появления врагов не найдена');
     End;
 
-    FindStartCell := Found;
+    FindStartCell := IsFound;
 End;
 
 //-------------------------------------------------------------------
@@ -289,27 +340,27 @@ end;
 
 Procedure JumpToNextCell(Map: TMatrixOfMap; Var X, Y: Integer);
 Begin
-    If Not(Map[X, Y].EnemyDirection = DirNone) Then
+    If (Map[X, Y].EnemyDirection <> DirNone) Then
     Begin
-        If ( (Map[X, Y].EnemyDirection = DirRight) And (X < High(Map)) ) Then
+        If ((Map[X, Y].EnemyDirection = DirRight) And (X < High(Map))) Then
         Begin
             Inc(X);
         End
         Else
         Begin
-            If ( (Map[X, Y].EnemyDirection = TDirection.DirUp) And (Y < High(Map)) ) Then
+            If ((Map[X, Y].EnemyDirection = TDirection.DirUp) And (Y < High(Map))) Then
             Begin
                 Inc(Y);
             End
             Else
             Begin
-                If ( (Map[X, Y].EnemyDirection = TDirection.DirLeft) And (X > Low(Map)) ) Then
+                If ((Map[X, Y].EnemyDirection = TDirection.DirLeft) And (X > Low(Map))) Then
                 Begin
                     Dec(X);
                 End
                 Else
                 Begin
-                    If ( (Map[X, Y].EnemyDirection = TDirection.DirDown) And (Y > Low(Map)) ) Then
+                    If ((Map[X, Y].EnemyDirection = TDirection.DirDown) And (Y > Low(Map))) Then
                     Begin
                         Dec(Y);
                     End;
@@ -319,61 +370,66 @@ Begin
     End;
 End;
 
-// Принимает "начальную" клетку с определённым направлением, возвращает следующую клетку X Y
+// Принимает "начальную" клетку с определённым направлением, возвращает следующую клетку X Y, устанавливает направление клетки
 // а также Boolean как признак конца
 // Переходит на след. клетку
-Function SetDirection(Var Map: TMatrixOfMap; Var X, Y: Integer): Boolean;
+Function SetDirection(Var Map: TMatrixOfMap; Var Pos: TPosition): Boolean;
 Var
-    IsEnd: Boolean;
-    CheckX, CheckY: Integer;
+    IsEnd, IsSamePos: Boolean;
+    CheckPos: TPosition;
     PrevDir: TDirection;
 Begin
     IsEnd := True;
-    PrevDir := Map[X, Y].EnemyDirection;
+    PrevDir := Map[Pos.CellX, Pos.CellY].EnemyDirection;
 
-    JumpToNextCell(Map, X, Y);
-    CheckX := X;
-    CheckY := Y;
+    JumpToNextCell(Map, Pos.CellX, Pos.CellY);
+    CheckPos.CellX := Pos.CellX;
+    CheckPos.CellY := Pos.CellY;
 
     If (PrevDir = TDirection.DirRight) Then
     Begin
-        Map[X, Y].EnemyDirection := TDirection.DirDown;
+        Map[Pos.CellX, Pos.CellY].EnemyDirection := TDirection.DirDown;
     End
     Else
     Begin
-        Map[X, Y].EnemyDirection := Pred(PrevDir);
+        Map[Pos.CellX, Pos.CellY].EnemyDirection := Pred(PrevDir);
     End;
 
-    JumpToNextCell(Map, CheckX, CheckY);
-    If ( Not((CheckX = X) And (CheckY = Y)) And (Map[CheckX, CheckY].TypeOfGround = GtRoad) ) Then
+    JumpToNextCell(Map, CheckPos.CellX, CheckPos.CellY);
+
+    If (Not((CheckPos.CellX = Pos.CellX) And (CheckPos.CellY = Pos.CellY)) And (Map[CheckPos.CellX, CheckPos.CellY].TypeOfGround = GtRoad)) Then
     Begin
         IsEnd := False;
     End
     Else
     Begin
-        CheckX := X;
-        CheckY := Y;
-        Map[X, Y].EnemyDirection := PrevDir;
-        JumpToNextCell(Map, CheckX, CheckY);
-        If ( Not((CheckX = X) And (CheckY = Y)) And (Map[CheckX, CheckY].TypeOfGround = GtRoad) ) Then
+        CheckPos.CellX := Pos.CellX;
+        CheckPos.CellY := Pos.CellY;
+        Map[Pos.CellX, Pos.CellY].EnemyDirection := PrevDir;
+
+        JumpToNextCell(Map, CheckPos.CellX, CheckPos.CellY);
+
+        If ( Not((CheckPos.CellX = Pos.CellX) And (CheckPos.CellY = Pos.CellY)) And (Map[CheckPos.CellX, CheckPos.CellY].TypeOfGround = GtRoad) ) Then
         Begin
             IsEnd := False;
         End
         Else
         Begin
-            CheckX := X;
-            CheckY := Y;
+            CheckPos.CellX := Pos.CellX;
+            CheckPos.CellY := Pos.CellY;
+
             If (PrevDir = TDirection.DirDown) Then
             Begin
-                Map[X, Y].EnemyDirection := TDirection.DirRight;
+                Map[Pos.CellX, Pos.CellY].EnemyDirection := TDirection.DirRight;
             End
             Else
             Begin
-                Map[X, Y].EnemyDirection := Succ(PrevDir);
+                Map[Pos.CellX, Pos.CellY].EnemyDirection := Succ(PrevDir);
             End;
 
-            JumpToNextCell(Map, CheckX, CheckY);
-            If ( Not((CheckX = X) And (CheckY = Y)) And (Map[CheckX, CheckY].TypeOfGround = GtRoad) ) Then
+            JumpToNextCell(Map, CheckPos.CellX, CheckPos.CellY);
+
+            If ( Not((CheckPos.CellX = Pos.CellX) And (CheckPos.CellY = Pos.CellY)) And (Map[CheckPos.CellX, CheckPos.CellY].TypeOfGround = GtRoad) ) Then
             Begin
                 IsEnd := False;
             End;
@@ -383,7 +439,7 @@ Begin
 
     If (IsEnd) Then
     Begin
-        Map[X, Y].EnemyDirection := PrevDir; // проверить удаляются ли элементы или нет
+        Map[Pos.CellX, Pos.CellY].EnemyDirection := PrevDir; // проверить удаляются ли элементы или нет
     End;
 
     SetDirection := IsEnd;
@@ -391,23 +447,23 @@ End;
 
 Procedure CalculateEnemyDirections(Var Map: TMatrixOfMap);
 Var
-    X, Y, StartX, StartY: Integer;
+    Pos, StartPos: TPosition;
     HasTop, HasBottom, HasLeft, HasRight: Boolean;
     IsStop: Boolean;
 Begin
     IsStop := False;
-    StartX := 0;
-    StartY := 0;
+    StartPos.CellX := 0;
+    StartPos.CellY := 0;
 
-    FindStartCell(StartX, StartY);
+    FindStartCell(StartPos.CellX, StartPos.CellY);
 
-    X := StartX;
-    Y := StartY;
+    Pos.CellX := StartPos.CellX;
+    Pos.CellY := StartPos.CellY;
 
-    Map[X, Y].EnemyDirection := FindFirstDirection(Map);
+    Map[Pos.CellX, Pos.CellY].EnemyDirection := FindFirstDirection(Map);
 
     Repeat
-        IsStop := SetDirection(Map, X, Y);
+        IsStop := SetDirection(Map, Pos);
     Until IsStop;
 End;
 
@@ -437,19 +493,30 @@ Begin
     EnemyTemplates[2].Reward := 75;
 End;
 
+Procedure InitTurret(TurretPos: TPosition; TurretType: TTurretType);
+Begin
+    MapData[TurretPos.CellX, TurretPos.CellY].Turret.TurretType := TurretType;
+    MapData[TurretPos.CellX, TurretPos.CellY].Turret.FireRate := TURRET_FIRE_RATE[Ord(TurretType)];
+    MapData[TurretPos.CellX, TurretPos.CellY].Turret.Radius := TURRET_RADII[Ord(TurretType)];
+
+    MapData[TurretPos.CellX, TurretPos.CellY].IsAvailibleForTurret := False;
+    MapData[TurretPos.CellX, TurretPos.CellY].Turret.ReloadProgress := 0;
+End;
+
 //------------------------------------------------------------
 //Создание врага
 //-------------------------------------------------------------------
 Procedure SpawnEnemy(TemplateIndex: Integer);
 Var
     NewEnemy: TEnemy;
-    StartX, StartY, EnemyCount: Integer;
+    EnemyCount: Integer;
+    StartPos: TPosition;
 Begin
-    If FindStartCell(StartX, StartY) Then
+    If FindStartCell(StartPos.CellX, StartPos.CellY) Then
     Begin
         NewEnemy := EnemyTemplates[TemplateIndex];
-        NewEnemy.CellX := StartX;
-        NewEnemy.CellY := StartY;
+        NewEnemy.Pos.CellX := StartPos.CellX;
+        NewEnemy.Pos.CellY := StartPos.CellY;
         NewEnemy.IsAlive := True;
 
         EnemyCount := Length(Enemies);
@@ -461,7 +528,7 @@ End;
 //------------------------------------------------------------------
 // Процедуры списка
 //------------------------------------------------------------------
-Procedure Append(Var BulletList: TBulletList; Bullet: TBullet); // Добавляем в начало
+Procedure Append(Var BulletList: TBulletList; Bullet: TBullet); Overload // Добавляем в начало
 Var
     BulletNode: PTBulletNode;
 Begin
@@ -482,7 +549,7 @@ Begin
     BulletList.Head := BulletNode;
 End;
 
-Procedure Delete(Var BulletList: TBulletList; BulletNode: PTBulletNode); // Добавляем в начало
+Procedure Delete(Var BulletList: TBulletList; BulletNode: PTBulletNode); Overload // Добавляем в начало
 Begin
 
     If (BulletList.Head = BulletNode) Then
@@ -502,6 +569,47 @@ Begin
     Dispose(BulletNode);
 End;
 
+Procedure Append(Var EnemySpawnsList: TEnemySpawnsList; EnemySpawns: TEnemySpawns); Overload // Добавляем в начало
+Var
+    EnemySpawnsNode: PTEnemySpawnsNode;
+Begin
+    New(EnemySpawnsNode);
+    EnemySpawnsNode^.EnemySpawns := EnemySpawns;
+
+    If EnemySpawnsList.Head <> Nil Then
+    Begin
+        EnemySpawnsNode^.Next := EnemySpawnsList.Head;
+        EnemySpawnsList.Head^.Prev := EnemySpawnsNode;
+    End
+    Else
+    Begin
+        EnemySpawnsNode^.Next := Nil;
+    End;
+
+    EnemySpawnsNode^.Prev := Nil;
+    EnemySpawnsList.Head := EnemySpawnsNode;
+End;
+
+Procedure Delete(Var EnemySpawnsList: TEnemySpawnsList; EnemySpawnsNode: PTEnemySpawnsNode); Overload // Добавляем в начало
+Begin
+
+    If (EnemySpawnsList.Head = EnemySpawnsNode) Then
+    Begin
+        EnemySpawnsList.Head := EnemySpawnsNode.Next;
+    End
+    Else
+    Begin
+        EnemySpawnsNode^.Prev^.Next := EnemySpawnsNode.Next;
+    End;
+
+    If (EnemySpawnsNode^.Next <> Nil) Then
+    Begin
+        EnemySpawnsNode^.Next^.Prev := EnemySpawnsNode^.Prev;
+    End;
+
+    Dispose(EnemySpawnsNode);
+End;
+
 //-------------------------------------------------------------------
 //Обновление позиций врагов
 //-------------------------------------------------------------------
@@ -516,9 +624,16 @@ Begin
     Begin
         If (Enemies[I].Health <= 0.0) Then
         Begin
+            If (Enemies[I].IsAlive) Then
+            Begin
+                Coins := Coins + ENEMY_REWARD[Ord(Enemies[I].EnemyType)];
+            End;
+
             Enemies[I].IsAlive := False;
-        End
-        Else
+            //Inc(I);
+        End;
+
+        If (Enemies[I].IsAlive) Then
         Begin
             Enemies[I].DistanceProgress := Enemies[I].DistanceProgress + Enemies[I].Speed * DeltaTime;
 
@@ -531,29 +646,35 @@ Begin
 
             While Enemies[I].DistanceProgress > 1 Do
             Begin
-                JumpToNextCell(MapData, Enemies[I].CellX, Enemies[I].CellY);
+                JumpToNextCell(MapData, Enemies[I].Pos.CellX, Enemies[I].Pos.CellY);
                 Enemies[I].DistanceProgress := Enemies[I].DistanceProgress - 1;
             End;
 
             //Проверка достижения базы
-            If (Enemies[I].CellX >= 0) And (Enemies[I].CellX < MAP_WIDTH) And (Enemies[I].CellY >= 0) And (Enemies[I].CellY < MAP_HEIGHT) Then
+            If (Enemies[I].Pos.CellX >= 0) And (Enemies[I].Pos.CellX < MAP_WIDTH) And (Enemies[I].Pos.CellY >= 0) And (Enemies[I].Pos.CellY < MAP_HEIGHT) Then
             Begin
-                If MapData[Enemies[I].CellX, Enemies[I].CellY].TypeOfGround = TGroundType.GtBase Then
+                If ((MapData[Enemies[I].Pos.CellX, Enemies[I].Pos.CellY].TypeOfGround = TGroundType.GtBase) And Enemies[I].IsAlive) Then
                 Begin
                     //Враг достиг базы - удаляем
-                    Enemies[I] := Enemies[Length(Enemies) - 1];
-                    SetLength(Enemies, Length(Enemies) - 1);
+                    //Enemies[I] := Enemies[Length(Enemies) - 1];
+                    //SetLength(Enemies, Length(Enemies) - 1);
+                    Enemies[I].IsAlive := False;
                     Dec(TowerHealth);
+                    Inc(I);
                 End
                 Else
                 Begin
-                    I := I + 1;
+                    Inc(I);
                 End;
             End
             Else
             Begin
-                I := I + 1;
+                Inc(I);
             End;
+        End
+        Else
+        Begin
+            Inc(I);
         End;
     End;
 End;
@@ -587,7 +708,7 @@ Begin
         Begin
             Temp := Iterator;
             Iterator := Iterator^.Next;
-            TurretTypeID := Ord(MapData[CurrBullet^.TurretCellX, CurrBullet^.TurretCellY].Turret.TurretType);
+            TurretTypeID := Ord(MapData[CurrBullet^.TurretPos.CellX, CurrBullet^.TurretPos.CellY].Turret.TurretType);
             Damage := BULLET_DAMAGE[TurretTypeID];
             SpeedMult := BULLET_SLOW[TurretTypeID];
 
@@ -595,14 +716,24 @@ Begin
             Begin
                 If (CurrBullet^.IsTracking) Then
                 Begin
-                    TargetCellX := CurrBullet^.TargetedEnemy^.CellX;
-                    TargetCellY := CurrBullet^.TargetedEnemy^.CellY;
+                    TargetCellX := CurrBullet^.TargetedEnemy^.Pos.CellX;
+                    TargetCellY := CurrBullet^.TargetedEnemy^.Pos.CellY;
                 End
                 Else
                 Begin
-                    TargetCellX := CurrBullet^.TargetCellX;
-                    TargetCellY := CurrBullet^.TargetCellY;
+                    TargetCellX := CurrBullet^.TargetPos.CellX;
+                    TargetCellY := CurrBullet^.TargetPos.CellY;
                 End;
+
+                For I := 0 To High(Enemies) Do
+                Begin
+                    If (Enemies[I].IsAlive And (Enemies[I].Pos.CellX = TargetCellX) And (Enemies[I].Pos.CellX = TargetCellX)) Then
+                    Begin
+                        Enemies[I].Health := Enemies[I].Health - Damage;
+                        Enemies[I].Speed := Enemies[I].Speed * SpeedMult;
+                    End;
+                End;
+
             End
             Else
             Begin
@@ -612,15 +743,15 @@ Begin
                 End
                 Else
                 Begin
-                    TargetCellX := CurrBullet^.TargetCellX;
-                    TargetCellY := CurrBullet^.TargetCellY;
+                    TargetCellX := CurrBullet^.TargetPos.CellX;
+                    TargetCellY := CurrBullet^.TargetPos.CellY;
 
                     TargetedEnemy := Nil;
 
                     // Поиск врага в клетке
                     For I := 0 To High(Enemies) Do
                     Begin
-                        If (Enemies[I].IsAlive And (Enemies[I].CellX = TargetCellX) And (Enemies[I].CellX = TargetCellX)) Then
+                        If (Enemies[I].IsAlive And (Enemies[I].Pos.CellX = TargetCellX) And (Enemies[I].Pos.CellX = TargetCellX)) Then
                         Begin
                             TargetedEnemy := @Enemies[I];
                         End;
@@ -660,19 +791,29 @@ Begin
             If (MapData[I, J].Turret.TurretType <> TurrNone) Then
             Begin
 
-                MapData[I, J].Turret.FireProgress := MapData[I, J].Turret.FireProgress + (MapData[I, J].Turret.FireRate * DeltaTime);
+                MapData[I, J].Turret.ReloadProgress := MapData[I, J].Turret.ReloadProgress + (MapData[I, J].Turret.FireRate * DeltaTime);
+                MapData[I, J].Turret.ReloadProgress := Clamp(0, 1.1, MapData[I, J].Turret.ReloadProgress);
 
-                If (MapData[I, J].Turret.FireProgress > 1) Then
+                If (MapData[I, J].Turret.ReloadProgress > 1) Then
                 Begin
                     // Поиск врага
                     K := 0;
+                    IsToStop := False;
                     While ((K < High(Enemies)) And Not IsToStop) Do
                     Begin
-                        DistanceSquared := CalculateDistanceSquared(I, J, Enemies[K].CellX, Enemies[K].CellY);
 
-                        If (DistanceSquared < (MapData[I, J].Turret.Radius * MapData[I, J].Turret.Radius)) Then
+                        If (Enemies[K].IsAlive) Then
                         Begin
-                            IsToStop := True;
+                            DistanceSquared := CalculateDistanceSquared(I, J, Enemies[K].Pos.CellX, Enemies[K].Pos.CellY);
+
+                            If ((DistanceSquared < (MapData[I, J].Turret.Radius * MapData[I, J].Turret.Radius))) Then
+                            Begin
+                                IsToStop := True;
+                            End
+                            Else
+                            Begin
+                                Inc(K);
+                            End;
                         End
                         Else
                         Begin
@@ -682,9 +823,9 @@ Begin
 
                     If (IsToStop) Then
                     Begin
-                        While (MapData[I, J].Turret.FireProgress > 1) Do   // Создаём пулю
+                        While (MapData[I, J].Turret.ReloadProgress > 1) Do   // Создаём пулю
                         Begin
-                            MapData[I, J].Turret.FireProgress := MapData[I, J].Turret.FireProgress - 1;
+                            MapData[I, J].Turret.ReloadProgress := MapData[I, J].Turret.ReloadProgress - 1;
                             TurretID := Ord(MapData[I, J].Turret.TurretType);
 
                             // BulletInit
@@ -698,12 +839,12 @@ Begin
                             End
                             Else
                             Begin
-                                Bullet.TargetCellX := Enemies[K].CellX;
-                                Bullet.TargetCellY := Enemies[K].CellY;
+                                Bullet.TargetPos.CellX := Enemies[K].Pos.CellX;
+                                Bullet.TargetPos.CellY := Enemies[K].Pos.CellY;
                             End;
 
-                            Bullet.TurretCellX := I;
-                            Bullet.TurretCellY := J;
+                            Bullet.TurretPos.CellX := I;
+                            Bullet.TurretPos.CellY := J;
                             //
 
                             //ShowMessage(Format('Error: Funny Error! - I = %d; J = %d, FP = %f', [I, J, MapData[I, J].Turret.FireProgress]));
@@ -727,29 +868,29 @@ End;
 Procedure DrawEnemies(Canvas: TCanvas);
 Var
     I: Integer;
-    ScreenX, ScreenY, DeltaX, DeltaY: Integer;
+    ScreenPos, DeltaPos: TPosition;
 Begin
     For I := 0 To Length(Enemies) - 1 Do
     Begin
         If (Enemies[I].IsAlive) Then
         Begin
-            DeltaX := 0;
-            DeltaY := 0;
+            DeltaPos.CellX := 0;
+            DeltaPos.CellY := 0;
 
-            case MapData[Enemies[I].CellX, Enemies[I].CellY].EnemyDirection of
+            case MapData[Enemies[I].Pos.CellX, Enemies[I].Pos.CellY].EnemyDirection of
                 DirUp:
-                    DeltaY := 1;
+                    DeltaPos.CellY := 1;
                 DirDown:
-                    DeltaY := -1;
+                    DeltaPos.CellY := -1;
                 DirRight:
-                    DeltaX := 1;
+                    DeltaPos.CellX := 1;
                 DirLeft:
-                    DeltaX := -1;
+                    DeltaPos.CellX := -1;
             end;
 
             // Враги перемещаются красиво, но становяться на вокую клетку ТОЛЬКО окогда наступают на её середину
-            ScreenX := Trunc((Enemies[I].CellX + (Enemies[I].DistanceProgress { - 0.5}) * DeltaX) * CELL_SIZE);
-            ScreenY := Trunc((MAP_HEIGHT - 1 - Enemies[I].CellY - (Enemies[I].DistanceProgress {- 0.5}) * DeltaY) * CELL_SIZE);
+            ScreenPos.CellX := Trunc((Enemies[I].Pos.CellX + (Enemies[I].DistanceProgress { - 0.5}) * DeltaPos.CellX) * CELL_SIZE);
+            ScreenPos.CellY := Trunc((MAP_HEIGHT - 1 - Enemies[I].Pos.CellY - (Enemies[I].DistanceProgress {- 0.5}) * DeltaPos.CellY) * CELL_SIZE);
 
             If Enemies[I].EnemyType = EnCommon Then
             Begin
@@ -769,16 +910,16 @@ Begin
                 End;
             End;
 
-            Canvas.Ellipse(ScreenX + 5, ScreenY + 5, ScreenX + CELL_SIZE - 5, ScreenY + CELL_SIZE - 5);
-
+            Canvas.Ellipse(ScreenPos.CellX + 5, ScreenPos.CellY + 5, ScreenPos.CellX + CELL_SIZE - 5, ScreenPos.CellY + CELL_SIZE - 5);
         End;
     End;
 End;
 
 Procedure DrawBullets(Canvas: TCanvas);
 Var
-    ScreenX, ScreenY, I, DeltaX, DeltaY: Integer;
+    ScreenPos, DeltaPos: TPosition;
     TargetPixelX, TargetPixelY: Double;
+    I: Integer;
     Iterator: PTBulletNode;
     CurrBullet: PTBullet;
 Begin
@@ -788,42 +929,41 @@ Begin
     Begin
         CurrBullet := @Iterator^.Bullet;
 
-        DeltaX := 0;
-        DeltaY := 0;
+        DeltaPos.CellX := 0;
+        DeltaPos.CellY := 0;
 
         If CurrBullet.IsTracking Then
         Begin
-            case MapData[CurrBullet^.TargetedEnemy^.CellX, CurrBullet^.TargetedEnemy^.CellY].EnemyDirection of
+            case MapData[CurrBullet^.TargetedEnemy^.Pos.CellX, CurrBullet^.TargetedEnemy^.Pos.CellY].EnemyDirection of
                 DirUp:
-                    DeltaY := 1;
+                    DeltaPos.CellY := 1;
                 DirDown:
-                    DeltaY := -1;
+                    DeltaPos.CellY := -1;
                 DirRight:
-                    DeltaX := 1;
+                    DeltaPos.CellX := 1;
                 DirLeft:
-                    DeltaX := -1;
+                    DeltaPos.CellX := -1;
             end;
 
-            TargetPixelX := (CurrBullet^.TargetedEnemy^.CellX + (CurrBullet^.TargetedEnemy^.DistanceProgress) * DeltaX) * CELL_SIZE;
-            TargetPixelY := (CurrBullet^.TargetedEnemy^.CellY + (CurrBullet^.TargetedEnemy^.DistanceProgress) * DeltaY) * CELL_SIZE;
+            TargetPixelX := (CurrBullet^.TargetedEnemy^.Pos.CellX + (CurrBullet^.TargetedEnemy^.DistanceProgress) * DeltaPos.CellX) * CELL_SIZE;
+            TargetPixelY := (CurrBullet^.TargetedEnemy^.Pos.CellY + (CurrBullet^.TargetedEnemy^.DistanceProgress) * DeltaPos.CellY) * CELL_SIZE;
 
         End
         Else
         Begin
-            TargetPixelX := CurrBullet^.TargetCellX * CELL_SIZE;
-            TargetPixelY := CurrBullet^.TargetCellY * CELL_SIZE;
+            TargetPixelX := CurrBullet^.TargetPos.CellX * CELL_SIZE;
+            TargetPixelY := CurrBullet^.TargetPos.CellY * CELL_SIZE;
         End;
 
         // (CurrBullet^.TargetedEnemy^.CellX + (CurrBullet^.TargetedEnemy^.DistanceProgress) * DeltaX) * CELL_SIZE
         // (CurrBullet^.TargetedEnemy^.CellY - (CurrBullet^.TargetedEnemy^.DistanceProgress) * DeltaY) * CELL_SIZE
 
-        ScreenX := Trunc(CELL_SIZE * (CurrBullet^.TurretCellX * (1 - CurrBullet^.DistanceProgress)) + TargetPixelX * (CurrBullet^.DistanceProgress));
-        ScreenY := MAP_HEIGHT * CELL_SIZE - Trunc(CELL_SIZE * (CurrBullet^.TurretCellY * (1 - CurrBullet^.DistanceProgress)) + TargetPixelY * (CurrBullet^.DistanceProgress)) - CELL_SIZE;
+        ScreenPos.CellX := Trunc(CELL_SIZE * (CurrBullet^.TurretPos.CellX * (1 - CurrBullet^.DistanceProgress)) + TargetPixelX * (CurrBullet^.DistanceProgress));
+        ScreenPos.CellY := MAP_HEIGHT * CELL_SIZE - Trunc(CELL_SIZE * (CurrBullet^.TurretPos.CellY * (1 - CurrBullet^.DistanceProgress)) + TargetPixelY * (CurrBullet^.DistanceProgress)) - CELL_SIZE;
 
 //        If Enemies[I].EnemyType = EnCommon Then
 //        Begin
-//            Canvas.Brush.Color := ClBlue
-//
+//            Canvas.Brush.Color := ClBlack;
 //        End
 //        Else
 //        Begin
@@ -840,7 +980,7 @@ Begin
 
         Canvas.Brush.Color := ClMenuText;
 
-        Canvas.Ellipse(ScreenX + 20, ScreenY + 20, ScreenX + CELL_SIZE - 20, ScreenY + CELL_SIZE - 20);
+        Canvas.Ellipse(ScreenPos.CellX + 20, ScreenPos.CellY + 20, ScreenPos.CellX + CELL_SIZE - 20, ScreenPos.CellY + CELL_SIZE - 20);
 
 
         Iterator := Iterator^.Next;
@@ -850,29 +990,21 @@ End;
 
 Procedure ReadEnemySpawns();
 Var
-    ReadedFile: TextFile;
+    ReadedFile: File Of TEnemySpawns;
     Len: Integer;
     Element: TEnemySpawns;
 Begin
     Len := 0;
 
-    AssignFile(ReadedFile, '.\..\..\EnemySpawnsData.txt');
+    AssignFile(ReadedFile, '.\..\..\EnemySpawnsData.dat');
 
     Reset(ReadedFile);
 
     While (Not EOF(ReadedFile)) Do
     Begin
-        Inc(Len);
-        SetLength(EnemySpawnsArray, Len);
+        Read(ReadedFile, Element);
 
-        Read(ReadedFile, Element.EnemyID);
-        Read(ReadedFile, Element.StartTime);
-        Read(ReadedFile, Element.EndTime);
-        Read(ReadedFile, Element.EnemyCount);
-
-        Element.EnemyCountCurrent := 0;
-
-        EnemySpawnsArray[Len-1] := Element;
+        Append(EnemySpawnsList, Element);
     End;
 
     CloseFile(ReadedFile);
@@ -885,8 +1017,10 @@ Procedure TGameForm.FormCreate(Sender: TObject);
 Begin
     GameTime := 0.0;
     TowerHealth := MAX_TOWER_HEALTH;
-    Coins := 0;
+    Coins := START_COINS;
     BulletList.Head := Nil;
+
+    WriteEnemySpawnsToFile();
 
     GrassTex := TBitmap.Create;
     RoadRightTex := TBitmap.Create;
@@ -933,11 +1067,11 @@ End;
 
 procedure TGameForm.MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 Begin
-    SelectedCellX := X Div CELL_SIZE;
-    SelectedCellY := (CELL_SIZE * MAP_HEIGHT - Y) Div CELL_SIZE;
+    SelectedPos.CellX := X Div CELL_SIZE;
+    SelectedPos.CellY := (CELL_SIZE * MAP_HEIGHT - Y) Div CELL_SIZE;
 
-    SelectBox.Left := SelectedCellX * CELL_SIZE + MapBox.Left;
-    SelectBox.Top := (MAP_HEIGHT - SelectedCellY - 1) * CELL_SIZE + MapBox.Top;
+    SelectBox.Left := SelectedPos.CellX * CELL_SIZE + MapBox.Left;
+    SelectBox.Top := (MAP_HEIGHT - SelectedPos.CellY - 1) * CELL_SIZE + MapBox.Top;
 End;
 
 Procedure TGameForm.MapBoxPaint(Sender: TObject);
@@ -994,39 +1128,30 @@ Begin
     DrawBullets(MapBox.Canvas);
 End;
 
-Procedure TGameForm.Panel1Click(Sender: TObject);
+Procedure TGameForm.CommonTurretPanelClick(Sender: TObject);
 Begin
-    If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
+    If ((MapData[SelectedPos.CellX, SelectedPos.CellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedPos.CellX, SelectedPos.CellY].IsAvailibleForTurret) Then
     Begin
-        MapData[SelectedCellX, SelectedCellY].Turret.TurretType := TurrCommon;
-        MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
-        MapData[SelectedCellX, SelectedCellY].Turret.FireRate := TURRET_FIRE_RATE[1];
-        MapData[SelectedCellX, SelectedCellY].Turret.Radius := TURRET_RADII[1];
-        MapData[SelectedCellX, SelectedCellY].Turret.FireProgress := 0;
+        Coins := Coins - TURRET_PRICES[Ord(TTurretType.TurrCommon)];
+        InitTurret(SelectedPos, TurrCommon);
     End;
 End;
 
-procedure TGameForm.Panel2Click(Sender: TObject);
+procedure TGameForm.SlowingTurretPanelClick(Sender: TObject);
 begin
-    If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
+    If ((MapData[SelectedPos.CellX, SelectedPos.CellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedPos.CellX, SelectedPos.CellY].IsAvailibleForTurret) Then
     Begin
-        MapData[SelectedCellX, SelectedCellY].Turret.TurretType := TurrSlowing;
-        MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
-        MapData[SelectedCellX, SelectedCellY].Turret.FireRate := TURRET_FIRE_RATE[2];
-        MapData[SelectedCellX, SelectedCellY].Turret.Radius := TURRET_RADII[2];
-        MapData[SelectedCellX, SelectedCellY].Turret.FireProgress := 0;
+        Coins := Coins - TURRET_PRICES[Ord(TTurretType.TurrSlowing)];
+        InitTurret(SelectedPos, TurrCommon);
     End;
 end;
 
-procedure TGameForm.Panel3Click(Sender: TObject);
+procedure TGameForm.AreaTurretPanelClick(Sender: TObject);
 begin
-    If ((MapData[SelectedCellX, SelectedCellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret) Then
+    If ((MapData[SelectedPos.CellX, SelectedPos.CellY].TypeOfGround = TGroundType.GtGrass) And MapData[SelectedPos.CellX, SelectedPos.CellY].IsAvailibleForTurret) Then
     Begin
-        MapData[SelectedCellX, SelectedCellY].Turret.TurretType := TurrAreaDamaging;
-        MapData[SelectedCellX, SelectedCellY].IsAvailibleForTurret := False;
-        MapData[SelectedCellX, SelectedCellY].Turret.FireRate := TURRET_FIRE_RATE[3];
-        MapData[SelectedCellX, SelectedCellY].Turret.Radius := TURRET_RADII[3];
-        MapData[SelectedCellX, SelectedCellY].Turret.FireProgress := 0;
+        Coins := Coins - TURRET_PRICES[Ord(TTurretType.TurrAreaDamaging)];
+        InitTurret(SelectedPos, TurrCommon);
     End;
 end;
 
@@ -1051,6 +1176,46 @@ Begin
     Clamp := Answer;
 End;
 
+Procedure UpdateButtons();
+Begin
+    GameForm.CommonTurretPriceLabel.Caption := Format('Цена: %d', [TURRET_PRICES[Ord(TTurretType.TurrCommon)]]);
+    GameForm.SlowingTurretPriceLabel.Caption := Format('Цена: %d', [TURRET_PRICES[Ord(TTurretType.TurrSlowing)]]);
+    GameForm.AreaTurretPriceLabel.Caption := Format('Цена: %d', [TURRET_PRICES[Ord(TTurretType.TurrAreaDamaging)]]);
+
+    If (Coins >= TURRET_PRICES[Ord(TTurretType.TurrCommon)]) Then
+    Begin
+        GameForm.CommonTurretPriceLabel.Enabled := True;
+        GameForm.CommonTurretPanel.Enabled := True;
+    End
+    Else
+    Begin
+        GameForm.CommonTurretPriceLabel.Enabled := False;
+        GameForm.CommonTurretPanel.Enabled := False;
+    End;
+
+    If (Coins >= TURRET_PRICES[Ord(TTurretType.TurrSlowing)]) Then
+    Begin
+        GameForm.SlowingTurretPriceLabel.Enabled := True;
+        GameForm.SlowingTurretPanel.Enabled := True;
+    End
+    Else
+    Begin
+        GameForm.SlowingTurretPriceLabel.Enabled := False;
+        GameForm.SlowingTurretPanel.Enabled := False;
+    End;
+
+    If (Coins >= TURRET_PRICES[Ord(TTurretType.TurrAreaDamaging)]) Then
+    Begin
+        GameForm.AreaTurretPriceLabel.Enabled := True;
+        GameForm.AreaTurretPanel.Enabled := True;
+    End
+    Else
+    Begin
+        GameForm.AreaTurretPriceLabel.Enabled := False;
+        GameForm.AreaTurretPanel.Enabled := False;
+    End;
+End;
+
 Procedure SetTimeLabel();
 Const
     SEC_IN_MIN = 60;
@@ -1066,13 +1231,13 @@ End;
 // TODO: Таймер немного отстаёт от реального времени
 Procedure TGameForm.GameTimerTimer(Sender: TObject);
 Const
-    //SPAWN_INTERVAL = 5000; //появление врага каждые X секунд (GameTime увеличивается на 1 в секунду)
-    COIN_EARN_INTERVAL = 500;
+    COIN_EARN_INTERVAL = 1000;
     MILISECONDS_IN_SECOND = 1000;
 Var
     DeltaTime: Double;
     CountToSpawn, I, J: Integer;
     Element: TEnemySpawns;
+    Iterator: PTEnemySpawnsNode;
 Begin
     DeltaTime := GameTimer.Interval / MILISECONDS_IN_SECOND;
     GameTime := GameTime + DeltaTime;
@@ -1087,9 +1252,17 @@ Begin
 
     TowerHealthLabel.Caption := Format('Жизни: %d/%d', [TowerHealth, MAX_TOWER_HEALTH]);
 
-    For I := 0 To High(EnemySpawnsArray) Do
+    If (TowerHealth <= 0) Then
     Begin
-        Element := EnemySpawnsArray[I];
+        GameTimer.Enabled := False;
+        Application.MessageBox(PChar('Ваша база потерпела поражение!'), PChar('Поражение'), MB_OK + MB_ICONEXCLAMATION);
+        Close;
+    End;
+
+    Iterator := EnemySpawnsList.Head;
+    While Iterator <> Nil Do
+    Begin
+        Element := Iterator^.EnemySpawns;
 
         If(Element.EndTime - Element.StartTime < 0.01) Then
         Begin
@@ -1100,13 +1273,16 @@ Begin
             CountToSpawn := Trunc(Element.EnemyCount*(Clamp(0.0, 1.0, (GameTime-Element.StartTime)/(Element.EndTime-Element.StartTime))));
         End;
 
-        While (CountToSpawn > EnemySpawnsArray[I].EnemyCountCurrent) Do
+        While (CountToSpawn > Iterator^.EnemySpawns.EnemyCountCurrent) Do
         Begin
             SpawnEnemy(Element.EnemyID);
-            Inc(EnemySpawnsArray[I].EnemyCountCurrent);
+            Inc(Iterator^.EnemySpawns.EnemyCountCurrent);
         End;
+
+        Iterator := Iterator^.Next;
     End;
 
+    UpdateButtons();
     UpdateEnemies(DeltaTime);
     UpdateTurrets(DeltaTime);
     UpdateBullets(DeltaTime);
