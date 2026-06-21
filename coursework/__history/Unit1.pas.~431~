@@ -17,7 +17,7 @@ Uses
     Vcl.StdCtrls,
     Vcl.Menus,
     Math,
-    Unit2, Vcl.Imaging.pngimage;
+    Unit2;
 
 Const
     MAP_WIDTH = 16;   //клеток по горизонтали (X) слева - направо
@@ -185,11 +185,6 @@ Var
 Implementation
 
 {$R *.dfm}
-
-//function GetDPIScale: Double;
-//begin
-//  Result := Screen.PixelsPerInch / 96; // 96 - стандартный DPI
-//end;
 
 //-------------------------------------------------------------------
 //Функции карты
@@ -1150,14 +1145,6 @@ Begin
     SetTurretMenuHint(AreaTurretPanel, TTurretType.TurrAreaDamaging);
 
     Application.HintHidePause := -1;
-
-    ClientWidth  := MapBox.Left + MAP_WIDTH * CELL_SIZE + 10;
-    ClientHeight := MapBox.Top  + MAP_HEIGHT * CELL_SIZE + 10;
-
-    Constraints.MinWidth  := Width;
-    Constraints.MaxWidth  := Width;
-    Constraints.MinHeight := Height;
-    Constraints.MaxHeight := Height;
 End;
 
 Procedure TGameForm.FormDestroy(Sender: TObject);

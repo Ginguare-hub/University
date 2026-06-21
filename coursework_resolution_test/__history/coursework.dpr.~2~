@@ -1,0 +1,14 @@
+program coursework;
+
+uses
+  Vcl.Forms,
+  Unit1 in 'Unit1.pas' {GameForm};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TGameForm, GameForm);
+  Application.Run;
+end.

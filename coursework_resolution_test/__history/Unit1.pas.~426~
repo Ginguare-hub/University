@@ -17,7 +17,7 @@ Uses
     Vcl.StdCtrls,
     Vcl.Menus,
     Math,
-    Unit2, Vcl.Imaging.pngimage;
+    Unit2;
 
 Const
     MAP_WIDTH = 16;   //клеток по горизонтали (X) слева - направо
@@ -143,7 +143,6 @@ Type
     SlowingTurretPriceLabel: TLabel;
     AreaTurretPriceLabel: TLabel;
     MenuOptionInstruction: TMenuItem;
-    Image1: TImage;
     Procedure MapBoxPaint(Sender: TObject);
     Procedure GameTimerTimer(Sender: TObject);
     Procedure FormCreate(Sender: TObject);
@@ -185,11 +184,6 @@ Var
 Implementation
 
 {$R *.dfm}
-
-//function GetDPIScale: Double;
-//begin
-//  Result := Screen.PixelsPerInch / 96; // 96 - стандартный DPI
-//end;
 
 //-------------------------------------------------------------------
 //Функции карты
@@ -255,8 +249,8 @@ Var
     SpawnsDataTypedFile: File Of TEnemySpawns;
     UntypedFile: TextFile;
 Begin
-    AssignFile(UntypedFile, '.\EnemySpawnsData.txt');
-    AssignFile(SpawnsDataTypedFile, '.\EnemySpawnsData.dat');
+    AssignFile(UntypedFile, '.\..\..\EnemySpawnsData.txt');
+    AssignFile(SpawnsDataTypedFile, '.\..\..\EnemySpawnsData.dat');
 
     Reset(UntypedFile);
     Rewrite(SpawnsDataTypedFile);
@@ -1005,7 +999,7 @@ Var
 Begin
     Len := 0;
 
-    AssignFile(ReadedFile, '.\EnemySpawnsData.dat');
+    AssignFile(ReadedFile, '.\..\..\EnemySpawnsData.dat');
 
     Reset(ReadedFile);
 
@@ -1036,17 +1030,17 @@ End;
 
 Procedure LoadTextures();
 Begin
-    GrassTex.LoadFromFile('.\textures\grass_texture.bmp');
-    BaseTex.LoadFromFile('.\textures\base_texture.bmp');
+    GrassTex.LoadFromFile('.\..\..\textures\grass_texture.bmp');
+    BaseTex.LoadFromFile('.\..\..\textures\base_texture.bmp');
 
-    RoadRightTex.LoadFromFile('.\textures\road_rigth_texture.bmp');
-    RoadUpTex.LoadFromFile('.\textures\road_up_texture.bmp');
-    RoadLeftTex.LoadFromFile('.\textures\road_left_texture.bmp');
-    RoadDownTex.LoadFromFile('.\textures\road_down_texture.bmp');
+    RoadRightTex.LoadFromFile('.\..\..\textures\road_rigth_texture.bmp');
+    RoadUpTex.LoadFromFile('.\..\..\textures\road_up_texture.bmp');
+    RoadLeftTex.LoadFromFile('.\..\..\textures\road_left_texture.bmp');
+    RoadDownTex.LoadFromFile('.\..\..\textures\road_down_texture.bmp');
 
-    TurretCommonTex.LoadFromFile('.\textures\common_turret_texture.bmp');
-    TurretSlowingTex.LoadFromFile('.\textures\slowing_turret_texture.bmp');
-    TurretAreaTex.LoadFromFile('.\textures\area_turret_texture.bmp');
+    TurretCommonTex.LoadFromFile('.\..\..\textures\common_turret_texture.bmp');
+    TurretSlowingTex.LoadFromFile('.\..\..\textures\slowing_turret_texture.bmp');
+    TurretAreaTex.LoadFromFile('.\..\..\textures\area_turret_texture.bmp');
 End;
 
 Procedure FreeTextures();
@@ -1089,8 +1083,6 @@ Begin
     BulletSpeed := BULLET_SPEED[TurrIndex];
     IsTracking := IS_BULLET_TRACKING[TurrIndex];
     IsAOE := IS_BULLET_AOE[TurrIndex];
-
-    Panel.ShowHint := True;
 
     Panel.Hint := Format('Урон за снаряд: %f' + #13#10
                          + 'Радиус: %f' + #13#10
@@ -1150,14 +1142,6 @@ Begin
     SetTurretMenuHint(AreaTurretPanel, TTurretType.TurrAreaDamaging);
 
     Application.HintHidePause := -1;
-
-    ClientWidth  := MapBox.Left + MAP_WIDTH * CELL_SIZE + 10;
-    ClientHeight := MapBox.Top  + MAP_HEIGHT * CELL_SIZE + 10;
-
-    Constraints.MinWidth  := Width;
-    Constraints.MaxWidth  := Width;
-    Constraints.MinHeight := Height;
-    Constraints.MaxHeight := Height;
 End;
 
 Procedure TGameForm.FormDestroy(Sender: TObject);

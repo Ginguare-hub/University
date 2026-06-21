@@ -5,13 +5,16 @@ object GameForm: TGameForm
   Margins.Top = 5
   Margins.Right = 5
   Margins.Bottom = 5
-  BorderStyle = bsDialog
-  Caption = 'GameForm'
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = #1047#1072#1097#1080#1090#1072' '#1041#1072#1096#1085#1080
   ClientHeight = 1150
   ClientWidth = 1600
   Color = clBtnFace
   Constraints.MaxHeight = 1248
   Constraints.MaxWidth = 1624
+  Constraints.MinHeight = 1248
+  Constraints.MinWidth = 1624
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,8 +23,10 @@ object GameForm: TGameForm
   Font.Style = []
   Menu = MainMenu
   Position = poDesktopCenter
+  OnCanResize = FormCanResize
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnHelp = FormHelp
   PixelsPerInch = 168
   DesignSize = (
     1600
@@ -92,6 +97,7 @@ object GameForm: TGameForm
     Top = 1076
     Width = 64
     Height = 64
+    Cursor = crCross
     Margins.Left = 5
     Margins.Top = 5
     Margins.Right = 5
@@ -586,7 +592,6 @@ object GameForm: TGameForm
     Top = 1061
   end
   object MainMenu: TMainMenu
-    OwnerDraw = True
     Left = 42
     Top = 1058
     object MenuOptionMenu: TMenuItem
@@ -597,11 +602,13 @@ object GameForm: TGameForm
         OnClick = MenuOptionMenuClick
       end
     end
-    object N1: TMenuItem
+    object MenuOptionInstruction: TMenuItem
       Caption = #1048#1085#1089#1090#1088#1091#1082#1094#1080#1103
+      OnClick = MenuOptionInstructionClick
     end
     object MenuOptionAutor: TMenuItem
       Caption = #1056#1072#1079#1088#1072#1073#1086#1090#1095#1080#1082
+      OnClick = MenuOptionAutorClick
     end
   end
 end
