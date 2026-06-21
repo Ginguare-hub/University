@@ -96,7 +96,6 @@ object GameForm: TGameForm
     Top = 1076
     Width = 64
     Height = 64
-    Cursor = crCross
     Margins.Left = 5
     Margins.Top = 5
     Margins.Right = 5

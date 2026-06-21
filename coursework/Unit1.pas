@@ -141,6 +141,7 @@ Type
     CommonTurretPriceLabel: TLabel;
     SlowingTurretPriceLabel: TLabel;
     AreaTurretPriceLabel: TLabel;
+    MenuOptionInstruction: TMenuItem;
     Procedure MapBoxPaint(Sender: TObject);
     Procedure GameTimerTimer(Sender: TObject);
     Procedure FormCreate(Sender: TObject);
@@ -149,6 +150,11 @@ Type
     procedure CommonTurretPanelClick(Sender: TObject);
     procedure SlowingTurretPanelClick(Sender: TObject);
     procedure AreaTurretPanelClick(Sender: TObject);
+    procedure MenuOptionMenuClick(Sender: TObject);
+    procedure FormCanResize(Sender: TObject; var NewWidth, NewHeight: Integer;
+      var Resize: Boolean);
+    function FormHelp(Command: Word; Data: THelpEventData;
+      var CallHelp: Boolean): Boolean;
 
     Private
     Public
@@ -1024,15 +1030,17 @@ End;
 
 Procedure LoadTextures();
 Begin
-    GrassTex.LoadFromFile('.\..\..\test_textures\grass_texture.bmp');
-    BaseTex.LoadFromFile('.\..\..\test_textures\base_texture.bmp');
-    RoadRightTex.LoadFromFile('.\..\..\test_textures\road_texture_right.bmp');
-    RoadUpTex.LoadFromFile('.\..\..\test_textures\road_texture_up.bmp');
-    RoadLeftTex.LoadFromFile('.\..\..\test_textures\road_texture_left.bmp');
-    RoadDownTex.LoadFromFile('.\..\..\test_textures\road_texture_down.bmp');
-    TurretCommonTex.LoadFromFile('.\..\..\test_textures\grass_and_turret1_texture.bmp');
-    TurretSlowingTex.LoadFromFile('.\..\..\test_textures\turret_slowing_texture.bmp');
-    TurretAreaTex.LoadFromFile('.\..\..\test_textures\turret_area_texture.bmp');
+    GrassTex.LoadFromFile('.\..\..\textures\grass_texture.bmp');
+    BaseTex.LoadFromFile('.\..\..\textures\base_texture.bmp');
+    RoadRightTex.LoadFromFile('.\..\..\textures\road_texture_right.bmp');
+
+    RoadUpTex.LoadFromFile('.\..\..\textures\road_texture_up.bmp');
+    RoadLeftTex.LoadFromFile('.\..\..\textures\road_texture_left.bmp');
+    RoadDownTex.LoadFromFile('.\..\..\textures\road_texture_down.bmp');
+
+    TurretCommonTex.LoadFromFile('.\..\..\textures\common_turret_texture.bmp');
+    TurretSlowingTex.LoadFromFile('.\..\..\textures\slowing_turret_texture.bmp');
+    TurretAreaTex.LoadFromFile('.\..\..\textures\area_turret_texture.bmp');
 End;
 
 Procedure FreeTextures();
@@ -1051,6 +1059,11 @@ End;
 //-------------------------------------------------------------------
 //Form события
 //-------------------------------------------------------------------
+Procedure TGameForm.FormCanResize(Sender: TObject; var NewWidth, NewHeight: Integer; var Resize: Boolean);
+Begin
+    Resize := False;
+End;
+
 Procedure TGameForm.FormCreate(Sender: TObject);
 Begin
     GameTime := 0.0;
@@ -1077,7 +1090,12 @@ Begin
     FreeTextures();
 End;
 
-procedure TGameForm.MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+Function TGameForm.FormHelp(Command: Word; Data: THelpEventData; Var CallHelp: Boolean): Boolean;
+Begin
+    CallHelp := False;
+End;
+
+Procedure TGameForm.MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 Begin
     SelectedPos.CellX := X Div CELL_SIZE;
     SelectedPos.CellY := (CELL_SIZE * MAP_HEIGHT - Y) Div CELL_SIZE;
@@ -1139,6 +1157,11 @@ Begin
     DrawEnemies(MapBox.Canvas);
     DrawBullets(MapBox.Canvas);
 End;
+
+procedure TGameForm.MenuOptionMenuClick(Sender: TObject);
+begin
+    Close;
+end;
 
 Procedure TGameForm.CommonTurretPanelClick(Sender: TObject);
 Begin
