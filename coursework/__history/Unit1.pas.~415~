@@ -16,7 +16,8 @@ Uses
     Vcl.ComCtrls,
     Vcl.StdCtrls,
     Vcl.Menus,
-    Math;
+    Math,
+    Unit2;
 
 Const
     MAP_WIDTH = 16;   //клеток по горизонтали (X) слева - направо
@@ -36,8 +37,8 @@ Const
     BULLET_SPEED: Array [0..3] Of Double = (0.0, 4.0, 3.0, 2.0);
 
     ENEMY_MAX_HEALTH: Array [0..3] Of Double = (0, 100.0, 250.0, 50.0);
-    ENEMY_SPEED: Array [0..3] Of Double = (0, 2.0, 1.0, 3.0);
-    ENEMY_REWARD: Array [0..3] Of Integer = (0, 2, 6, 3);
+    ENEMY_SPEED: Array [0..3] Of Double = (0, 2.0, 1.0, 2.5);
+    ENEMY_REWARD: Array [0..3] Of Integer = (0, 2, 3, 2);
 
 Type
     TTurretType = (TurrNone, TurrCommon, TurrSlowing, TurrAreaDamaging);
@@ -141,6 +142,7 @@ Type
     CommonTurretPriceLabel: TLabel;
     SlowingTurretPriceLabel: TLabel;
     AreaTurretPriceLabel: TLabel;
+    MenuOptionInstruction: TMenuItem;
     Procedure MapBoxPaint(Sender: TObject);
     Procedure GameTimerTimer(Sender: TObject);
     Procedure FormCreate(Sender: TObject);
@@ -149,6 +151,13 @@ Type
     procedure CommonTurretPanelClick(Sender: TObject);
     procedure SlowingTurretPanelClick(Sender: TObject);
     procedure AreaTurretPanelClick(Sender: TObject);
+    procedure MenuOptionMenuClick(Sender: TObject);
+    procedure FormCanResize(Sender: TObject; var NewWidth, NewHeight: Integer;
+      var Resize: Boolean);
+    function FormHelp(Command: Word; Data: THelpEventData;
+      var CallHelp: Boolean): Boolean;
+    procedure MenuOptionInstructionClick(Sender: TObject);
+    procedure MenuOptionAutorClick(Sender: TObject);
 
     Private
     Public
@@ -378,8 +387,9 @@ Var
     PrevDir: TDirection;
 Begin
     IsEnd := True;
-    PrevDir := Map[Pos.CellX, Pos.CellY].EnemyDirection;
     IsNotSamePos := False;
+
+    PrevDir := Map[Pos.CellX, Pos.CellY].EnemyDirection;
 
     JumpToNextCell(Map, Pos.CellX, Pos.CellY);
     CheckPos.CellX := Pos.CellX;
@@ -450,7 +460,6 @@ End;
 Procedure CalculateEnemyDirections(Var Map: TMatrixOfMap);
 Var
     Pos, StartPos: TPosition;
-    HasTop, HasBottom, HasLeft, HasRight: Boolean;
     IsStop: Boolean;
 Begin
     IsStop := False;
@@ -573,7 +582,6 @@ End;
 
 Procedure Delete(Var EnemySpawnsList: TEnemySpawnsList; EnemySpawnsNode: PTEnemySpawnsNode); Overload // Добавляем в начало
 Begin
-
     If (EnemySpawnsList.Head = EnemySpawnsNode) Then
     Begin
         EnemySpawnsList.Head := EnemySpawnsNode.Next;
@@ -600,6 +608,8 @@ Var
     EnemyCount: Integer;
     StartPos: TPosition;
 Begin
+    EnemyCount := 0;
+
     If FindStartCell(StartPos.CellX, StartPos.CellY) Then
     Begin
         NewEnemy := EnemyTemplates[TemplateIndex];
@@ -619,10 +629,9 @@ End;
 Procedure UpdateEnemies(DeltaTime: Double);
 Var
     I: Integer;
-    MoveDistance: Double;
-    FullCells: Integer;
 Begin
     I := 0;
+
     While I < Length(Enemies) Do
     Begin
         If (Enemies[I].Health <= 0.0) Then
@@ -638,13 +647,6 @@ Begin
         If (Enemies[I].IsAlive) Then
         Begin
             Enemies[I].DistanceProgress := Enemies[I].DistanceProgress + Enemies[I].Speed * DeltaTime;
-
-            //Сколько целых клеток нужно пройти
-            FullCells := Round(MoveDistance);
-            If FullCells < 1 Then
-            Begin
-                FullCells := 1;
-            End;
 
             While Enemies[I].DistanceProgress > 1 Do
             Begin
@@ -683,17 +685,23 @@ Begin
     CalculateDistanceSquared := DistanceSquared;
 End;
 
-//Function FindEnemyInCell(Enemy: PTEnemy):
-
 Procedure UpdateBullets(DeltaTime: Double);
 Var
     Iterator, Temp: PTBulletNode;
     CurrBullet: PTBullet;
     TargetedEnemy: PTEnemy;
     Damage, SpeedMult: Double;
-    TurretTypeID, TargetCellX, TargetCellY, I: Integer;
+    TurretTypeID, I: Integer;
+    TargetPos: TPosition;
 Begin
+    CurrBullet := Nil;
+    Temp := Nil;
     Iterator := BulletList.Head;
+    Damage := 0;
+    SpeedMult := 0;
+    TurretTypeID := 0;
+    TargetPos.CellX := 0;
+    TargetPos.CellY := 0;
 
     While Iterator <> Nil Do
     Begin
@@ -712,18 +720,18 @@ Begin
             Begin
                 If (CurrBullet^.IsTracking) Then
                 Begin
-                    TargetCellX := CurrBullet^.TargetedEnemy^.Pos.CellX;
-                    TargetCellY := CurrBullet^.TargetedEnemy^.Pos.CellY;
+                    TargetPos.CellX := CurrBullet^.TargetedEnemy^.Pos.CellX;
+                    TargetPos.CellY := CurrBullet^.TargetedEnemy^.Pos.CellY;
                 End
                 Else
                 Begin
-                    TargetCellX := CurrBullet^.TargetPos.CellX;
-                    TargetCellY := CurrBullet^.TargetPos.CellY;
+                    TargetPos.CellX := CurrBullet^.TargetPos.CellX;
+                    TargetPos.CellY := CurrBullet^.TargetPos.CellY;
                 End;
 
                 For I := 0 To High(Enemies) Do
                 Begin
-                    If (Enemies[I].IsAlive And (Enemies[I].Pos.CellX = TargetCellX) And (Enemies[I].Pos.CellX = TargetCellX)) Then
+                    If (Enemies[I].IsAlive And (Enemies[I].Pos.CellX = TargetPos.CellX) And (Enemies[I].Pos.CellY = TargetPos.CellY)) Then
                     Begin
                         Enemies[I].Health := Enemies[I].Health - Damage;
                         Enemies[I].Speed := Enemies[I].Speed * SpeedMult;
@@ -739,15 +747,15 @@ Begin
                 End
                 Else
                 Begin
-                    TargetCellX := CurrBullet^.TargetPos.CellX;
-                    TargetCellY := CurrBullet^.TargetPos.CellY;
+                    TargetPos.CellX := CurrBullet^.TargetPos.CellX;
+                    TargetPos.CellY := CurrBullet^.TargetPos.CellY;
 
                     TargetedEnemy := Nil;
 
                     // Поиск врага в клетке
                     For I := 0 To High(Enemies) Do
                     Begin
-                        If (Enemies[I].IsAlive And (Enemies[I].Pos.CellX = TargetCellX) And (Enemies[I].Pos.CellX = TargetCellX)) Then
+                        If (Enemies[I].IsAlive And (Enemies[I].Pos.CellX = TargetPos.CellX) And (Enemies[I].Pos.CellX = TargetPos.CellX)) Then
                         Begin
                             TargetedEnemy := @Enemies[I];
                         End;
@@ -778,6 +786,9 @@ Var
     Bullet: TBullet;
     CurrCell: ^TMap;
 Begin
+    DistanceSquared := 0;
+    TurretID := 0;
+    IsToStop := False;
     CurrCell := @MapData[Pos.CellX, Pos.CellY];
 
     CurrCell^.Turret.ReloadProgress := CurrCell^.Turret.ReloadProgress + (CurrCell^.Turret.FireRate * DeltaTime);
@@ -817,7 +828,6 @@ Begin
                 CurrCell^.Turret.ReloadProgress := CurrCell^.Turret.ReloadProgress - 1;
                 TurretID := Ord(CurrCell^.Turret.TurretType);
 
-                // BulletInit
                 Bullet.DistanceProgress := 0;
                 Bullet.Speed := BULLET_SPEED[TurretID];
                 Bullet.IsTracking := IS_BULLET_TRACKING[TurretID];
@@ -846,6 +856,9 @@ Var
     I, J: Integer;
     CurrPos: TPosition;
 Begin
+    CurrPos.CellX := 0;
+    CurrPos.CellY := 0;
+
     For I := 0 To MAP_WIDTH - 1 Do
     Begin
         For J := 0 To MAP_HEIGHT - 1 Do
@@ -869,6 +882,11 @@ Var
     I: Integer;
     ScreenPos, DeltaPos: TPosition;
 Begin
+    ScreenPos.CellX := 0;
+    ScreenPos.CellY := 0;
+    DeltaPos.CellX := 0;
+    DeltaPos.CellY := 0;
+
     For I := 0 To Length(Enemies) - 1 Do
     Begin
         If (Enemies[I].IsAlive) Then
@@ -922,7 +940,14 @@ Var
     Iterator: PTBulletNode;
     CurrBullet: PTBullet;
 Begin
+    ScreenPos.CellX := 0;
+    ScreenPos.CellY := 0;
+    DeltaPos.CellX := 0;
+    DeltaPos.CellY := 0;
+    TargetPixelX := 0.0;
+    TargetPixelY := 0.0;
     Iterator := BulletList.Head;
+    CurrBullet := Nil;
 
     While (Iterator <> Nil) Do
     Begin
@@ -954,33 +979,12 @@ Begin
             TargetPixelY := CurrBullet^.TargetPos.CellY * CELL_SIZE;
         End;
 
-        // (CurrBullet^.TargetedEnemy^.CellX + (CurrBullet^.TargetedEnemy^.DistanceProgress) * DeltaX) * CELL_SIZE
-        // (CurrBullet^.TargetedEnemy^.CellY - (CurrBullet^.TargetedEnemy^.DistanceProgress) * DeltaY) * CELL_SIZE
-
         ScreenPos.CellX := Trunc(CELL_SIZE * (CurrBullet^.TurretPos.CellX * (1 - CurrBullet^.DistanceProgress)) + TargetPixelX * (CurrBullet^.DistanceProgress));
         ScreenPos.CellY := MAP_HEIGHT * CELL_SIZE - Trunc(CELL_SIZE * (CurrBullet^.TurretPos.CellY * (1 - CurrBullet^.DistanceProgress)) + TargetPixelY * (CurrBullet^.DistanceProgress)) - CELL_SIZE;
-
-//        If Enemies[I].EnemyType = EnCommon Then
-//        Begin
-//            Canvas.Brush.Color := ClBlack;
-//        End
-//        Else
-//        Begin
-//            If Enemies[I].EnemyType = EnHeavy Then
-//            Begin
-//                Canvas.Brush.Color := ClRed;
-//            End
-//            Else
-//            Begin
-//                Canvas.Brush.Color := ClGreen;
-//
-//            End;
-//        End;
 
         Canvas.Brush.Color := ClMenuText;
 
         Canvas.Ellipse(ScreenPos.CellX + 20, ScreenPos.CellY + 20, ScreenPos.CellX + CELL_SIZE - 20, ScreenPos.CellY + CELL_SIZE - 20);
-
 
         Iterator := Iterator^.Next;
     End;
@@ -1026,11 +1030,11 @@ Procedure LoadTextures();
 Begin
     GrassTex.LoadFromFile('.\..\..\textures\grass_texture.bmp');
     BaseTex.LoadFromFile('.\..\..\textures\base_texture.bmp');
-    RoadRightTex.LoadFromFile('.\..\..\textures\road_texture_right.bmp');
 
-    RoadUpTex.LoadFromFile('.\..\..\textures\road_texture_up.bmp');
-    RoadLeftTex.LoadFromFile('.\..\..\textures\road_texture_left.bmp');
-    RoadDownTex.LoadFromFile('.\..\..\textures\road_texture_down.bmp');
+    RoadRightTex.LoadFromFile('.\..\..\textures\road_rigth_texture.bmp');
+    RoadUpTex.LoadFromFile('.\..\..\textures\road_up_texture.bmp');
+    RoadLeftTex.LoadFromFile('.\..\..\textures\road_left_texture.bmp');
+    RoadDownTex.LoadFromFile('.\..\..\textures\road_down_texture.bmp');
 
     TurretCommonTex.LoadFromFile('.\..\..\textures\common_turret_texture.bmp');
     TurretSlowingTex.LoadFromFile('.\..\..\textures\slowing_turret_texture.bmp');
@@ -1053,6 +1057,11 @@ End;
 //-------------------------------------------------------------------
 //Form события
 //-------------------------------------------------------------------
+Procedure TGameForm.FormCanResize(Sender: TObject; var NewWidth, NewHeight: Integer; var Resize: Boolean);
+Begin
+    Resize := False;
+End;
+
 Procedure TGameForm.FormCreate(Sender: TObject);
 Begin
     GameTime := 0.0;
@@ -1079,7 +1088,12 @@ Begin
     FreeTextures();
 End;
 
-procedure TGameForm.MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+Function TGameForm.FormHelp(Command: Word; Data: THelpEventData; Var CallHelp: Boolean): Boolean;
+Begin
+    CallHelp := False;
+End;
+
+Procedure TGameForm.MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 Begin
     SelectedPos.CellX := X Div CELL_SIZE;
     SelectedPos.CellY := (CELL_SIZE * MAP_HEIGHT - Y) Div CELL_SIZE;
@@ -1141,6 +1155,29 @@ Begin
     DrawEnemies(MapBox.Canvas);
     DrawBullets(MapBox.Canvas);
 End;
+
+procedure TGameForm.MenuOptionAutorClick(Sender: TObject);
+begin
+    GameTimer.Enabled := False;
+    Application.MessageBox(PChar('Автор: Педько Владислав, гр. 551004'), PChar('Автор'), MB_OK);
+    GameTimer.Enabled := True;
+end;
+
+procedure TGameForm.MenuOptionInstructionClick(Sender: TObject);
+Var
+    InstructionForm: TInstructionForm;
+Begin
+    GameTimer.Enabled := False;
+    InstructionForm := TInstructionForm.Create(Self);
+    InstructionForm.ShowModal;
+    InstructionForm.Free;
+    GameTimer.Enabled := True;
+End;
+
+procedure TGameForm.MenuOptionMenuClick(Sender: TObject);
+begin
+    Close;
+end;
 
 Procedure TGameForm.CommonTurretPanelClick(Sender: TObject);
 Begin

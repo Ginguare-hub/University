@@ -27,18 +27,18 @@ Const
     START_COINS: Integer = 50;
 
     TURRET_PRICES: Array [0..3] Of Integer = (0, 25, 30, 55);
-    TURRET_RADII: Array [0..3] Of Double = (0.0, 4.0, 4.0, 4.0);
+    TURRET_RADII: Array [0..3] Of Double = (0.0, 3.0, 4.0, 2.0);
     TURRET_FIRE_RATE: Array [0..3] Of Double = (0.0, 1.2, 1.5, 0.7);
 
     BULLET_DAMAGE: Array [0..3] Of Double = (0.0, 34.0, 10.0, 20.0);
     BULLET_SLOW: Array [0..3] Of Double = (0.0, 1.0, 0.9, 1.0);
     IS_BULLET_AOE: Array [0..3] Of Boolean = (False, False, False, True);       // AOE - Area Of Effect     Урон/ЭФфект по области
     IS_BULLET_TRACKING: Array  [0..3] Of Boolean = (False, True, True, False);
-    BULLET_SPEED: Array [0..3] Of Double = (0.0, 4.0, 3.0, 2.0);
+    BULLET_SPEED: Array [0..3] Of Double = (0.0, 3.0, 5.0, 2.0);
 
     ENEMY_MAX_HEALTH: Array [0..3] Of Double = (0, 100.0, 250.0, 50.0);
-    ENEMY_SPEED: Array [0..3] Of Double = (0, 2.0, 1.0, 3.0);
-    ENEMY_REWARD: Array [0..3] Of Integer = (0, 2, 6, 3);
+    ENEMY_SPEED: Array [0..3] Of Double = (0, 2.0, 1.0, 2.5);
+    ENEMY_REWARD: Array [0..3] Of Integer = (0, 2, 3, 2);
 
 Type
     TTurretType = (TurrNone, TurrCommon, TurrSlowing, TurrAreaDamaging);
@@ -249,8 +249,8 @@ Var
     SpawnsDataTypedFile: File Of TEnemySpawns;
     UntypedFile: TextFile;
 Begin
-    AssignFile(UntypedFile, '.\..\..\EnemySpawnsData.txt');
-    AssignFile(SpawnsDataTypedFile, '.\..\..\EnemySpawnsData.dat');
+    AssignFile(UntypedFile, '.\EnemySpawnsData.txt');
+    AssignFile(SpawnsDataTypedFile, '.\EnemySpawnsData.dat');
 
     Reset(UntypedFile);
     Rewrite(SpawnsDataTypedFile);
@@ -387,8 +387,9 @@ Var
     PrevDir: TDirection;
 Begin
     IsEnd := True;
-    PrevDir := Map[Pos.CellX, Pos.CellY].EnemyDirection;
     IsNotSamePos := False;
+
+    PrevDir := Map[Pos.CellX, Pos.CellY].EnemyDirection;
 
     JumpToNextCell(Map, Pos.CellX, Pos.CellY);
     CheckPos.CellX := Pos.CellX;
@@ -459,7 +460,6 @@ End;
 Procedure CalculateEnemyDirections(Var Map: TMatrixOfMap);
 Var
     Pos, StartPos: TPosition;
-    HasTop, HasBottom, HasLeft, HasRight: Boolean;
     IsStop: Boolean;
 Begin
     IsStop := False;
@@ -582,7 +582,6 @@ End;
 
 Procedure Delete(Var EnemySpawnsList: TEnemySpawnsList; EnemySpawnsNode: PTEnemySpawnsNode); Overload // Добавляем в начало
 Begin
-
     If (EnemySpawnsList.Head = EnemySpawnsNode) Then
     Begin
         EnemySpawnsList.Head := EnemySpawnsNode.Next;
@@ -609,6 +608,8 @@ Var
     EnemyCount: Integer;
     StartPos: TPosition;
 Begin
+    EnemyCount := 0;
+
     If FindStartCell(StartPos.CellX, StartPos.CellY) Then
     Begin
         NewEnemy := EnemyTemplates[TemplateIndex];
@@ -628,10 +629,9 @@ End;
 Procedure UpdateEnemies(DeltaTime: Double);
 Var
     I: Integer;
-    MoveDistance: Double;
-    FullCells: Integer;
 Begin
     I := 0;
+
     While I < Length(Enemies) Do
     Begin
         If (Enemies[I].Health <= 0.0) Then
@@ -647,13 +647,6 @@ Begin
         If (Enemies[I].IsAlive) Then
         Begin
             Enemies[I].DistanceProgress := Enemies[I].DistanceProgress + Enemies[I].Speed * DeltaTime;
-
-            //Сколько целых клеток нужно пройти
-            FullCells := Round(MoveDistance);
-            If FullCells < 1 Then
-            Begin
-                FullCells := 1;
-            End;
 
             While Enemies[I].DistanceProgress > 1 Do
             Begin
@@ -692,17 +685,23 @@ Begin
     CalculateDistanceSquared := DistanceSquared;
 End;
 
-//Function FindEnemyInCell(Enemy: PTEnemy):
-
 Procedure UpdateBullets(DeltaTime: Double);
 Var
     Iterator, Temp: PTBulletNode;
     CurrBullet: PTBullet;
     TargetedEnemy: PTEnemy;
     Damage, SpeedMult: Double;
-    TurretTypeID, TargetCellX, TargetCellY, I: Integer;
+    TurretTypeID, I: Integer;
+    TargetPos: TPosition;
 Begin
+    CurrBullet := Nil;
+    Temp := Nil;
     Iterator := BulletList.Head;
+    Damage := 0;
+    SpeedMult := 0;
+    TurretTypeID := 0;
+    TargetPos.CellX := 0;
+    TargetPos.CellY := 0;
 
     While Iterator <> Nil Do
     Begin
@@ -721,18 +720,18 @@ Begin
             Begin
                 If (CurrBullet^.IsTracking) Then
                 Begin
-                    TargetCellX := CurrBullet^.TargetedEnemy^.Pos.CellX;
-                    TargetCellY := CurrBullet^.TargetedEnemy^.Pos.CellY;
+                    TargetPos.CellX := CurrBullet^.TargetedEnemy^.Pos.CellX;
+                    TargetPos.CellY := CurrBullet^.TargetedEnemy^.Pos.CellY;
                 End
                 Else
                 Begin
-                    TargetCellX := CurrBullet^.TargetPos.CellX;
-                    TargetCellY := CurrBullet^.TargetPos.CellY;
+                    TargetPos.CellX := CurrBullet^.TargetPos.CellX;
+                    TargetPos.CellY := CurrBullet^.TargetPos.CellY;
                 End;
 
                 For I := 0 To High(Enemies) Do
                 Begin
-                    If (Enemies[I].IsAlive And (Enemies[I].Pos.CellX = TargetCellX) And (Enemies[I].Pos.CellX = TargetCellX)) Then
+                    If (Enemies[I].IsAlive And (Enemies[I].Pos.CellX = TargetPos.CellX) And (Enemies[I].Pos.CellY = TargetPos.CellY)) Then
                     Begin
                         Enemies[I].Health := Enemies[I].Health - Damage;
                         Enemies[I].Speed := Enemies[I].Speed * SpeedMult;
@@ -748,15 +747,15 @@ Begin
                 End
                 Else
                 Begin
-                    TargetCellX := CurrBullet^.TargetPos.CellX;
-                    TargetCellY := CurrBullet^.TargetPos.CellY;
+                    TargetPos.CellX := CurrBullet^.TargetPos.CellX;
+                    TargetPos.CellY := CurrBullet^.TargetPos.CellY;
 
                     TargetedEnemy := Nil;
 
                     // Поиск врага в клетке
                     For I := 0 To High(Enemies) Do
                     Begin
-                        If (Enemies[I].IsAlive And (Enemies[I].Pos.CellX = TargetCellX) And (Enemies[I].Pos.CellX = TargetCellX)) Then
+                        If (Enemies[I].IsAlive And (Enemies[I].Pos.CellX = TargetPos.CellX) And (Enemies[I].Pos.CellX = TargetPos.CellX)) Then
                         Begin
                             TargetedEnemy := @Enemies[I];
                         End;
@@ -787,6 +786,9 @@ Var
     Bullet: TBullet;
     CurrCell: ^TMap;
 Begin
+    DistanceSquared := 0;
+    TurretID := 0;
+    IsToStop := False;
     CurrCell := @MapData[Pos.CellX, Pos.CellY];
 
     CurrCell^.Turret.ReloadProgress := CurrCell^.Turret.ReloadProgress + (CurrCell^.Turret.FireRate * DeltaTime);
@@ -826,7 +828,6 @@ Begin
                 CurrCell^.Turret.ReloadProgress := CurrCell^.Turret.ReloadProgress - 1;
                 TurretID := Ord(CurrCell^.Turret.TurretType);
 
-                // BulletInit
                 Bullet.DistanceProgress := 0;
                 Bullet.Speed := BULLET_SPEED[TurretID];
                 Bullet.IsTracking := IS_BULLET_TRACKING[TurretID];
@@ -855,6 +856,9 @@ Var
     I, J: Integer;
     CurrPos: TPosition;
 Begin
+    CurrPos.CellX := 0;
+    CurrPos.CellY := 0;
+
     For I := 0 To MAP_WIDTH - 1 Do
     Begin
         For J := 0 To MAP_HEIGHT - 1 Do
@@ -878,6 +882,11 @@ Var
     I: Integer;
     ScreenPos, DeltaPos: TPosition;
 Begin
+    ScreenPos.CellX := 0;
+    ScreenPos.CellY := 0;
+    DeltaPos.CellX := 0;
+    DeltaPos.CellY := 0;
+
     For I := 0 To Length(Enemies) - 1 Do
     Begin
         If (Enemies[I].IsAlive) Then
@@ -931,7 +940,14 @@ Var
     Iterator: PTBulletNode;
     CurrBullet: PTBullet;
 Begin
+    ScreenPos.CellX := 0;
+    ScreenPos.CellY := 0;
+    DeltaPos.CellX := 0;
+    DeltaPos.CellY := 0;
+    TargetPixelX := 0.0;
+    TargetPixelY := 0.0;
     Iterator := BulletList.Head;
+    CurrBullet := Nil;
 
     While (Iterator <> Nil) Do
     Begin
@@ -983,7 +999,7 @@ Var
 Begin
     Len := 0;
 
-    AssignFile(ReadedFile, '.\..\..\EnemySpawnsData.dat');
+    AssignFile(ReadedFile, '.\EnemySpawnsData.dat');
 
     Reset(ReadedFile);
 
@@ -1000,11 +1016,13 @@ End;
 Procedure CreateTextures();
 Begin
     GrassTex := TBitmap.Create;
+    BaseTex := TBitmap.Create;
+
     RoadRightTex := TBitmap.Create;
     RoadUpTex := TBitmap.Create;
     RoadLeftTex := TBitmap.Create;
     RoadDownTex := TBitmap.Create;
-    BaseTex := TBitmap.Create;
+
     TurretCommonTex := TBitmap.Create;
     TurretSlowingTex := TBitmap.Create;
     TurretAreaTex := TBitmap.Create;
@@ -1012,30 +1030,85 @@ End;
 
 Procedure LoadTextures();
 Begin
-    GrassTex.LoadFromFile('.\..\..\textures\grass_texture.bmp');
-    BaseTex.LoadFromFile('.\..\..\textures\base_texture.bmp');
-    RoadRightTex.LoadFromFile('.\..\..\textures\road_texture_right.bmp');
+    GrassTex.LoadFromFile('.\textures\grass_texture.bmp');
+    BaseTex.LoadFromFile('.\textures\base_texture.bmp');
 
-    RoadUpTex.LoadFromFile('.\..\..\textures\road_texture_up.bmp');
-    RoadLeftTex.LoadFromFile('.\..\..\textures\road_texture_left.bmp');
-    RoadDownTex.LoadFromFile('.\..\..\textures\road_texture_down.bmp');
+    RoadRightTex.LoadFromFile('.\textures\road_rigth_texture.bmp');
+    RoadUpTex.LoadFromFile('.\textures\road_up_texture.bmp');
+    RoadLeftTex.LoadFromFile('.\textures\road_left_texture.bmp');
+    RoadDownTex.LoadFromFile('.\textures\road_down_texture.bmp');
 
-    TurretCommonTex.LoadFromFile('.\..\..\textures\common_turret_texture.bmp');
-    TurretSlowingTex.LoadFromFile('.\..\..\textures\slowing_turret_texture.bmp');
-    TurretAreaTex.LoadFromFile('.\..\..\textures\area_turret_texture.bmp');
+    TurretCommonTex.LoadFromFile('.\textures\common_turret_texture.bmp');
+    TurretSlowingTex.LoadFromFile('.\textures\slowing_turret_texture.bmp');
+    TurretAreaTex.LoadFromFile('.\textures\area_turret_texture.bmp');
 End;
 
 Procedure FreeTextures();
 Begin
     GrassTex.Free;
+    BaseTex.Free;
+
     RoadRightTex.Free;
     RoadUpTex.Free;
     RoadLeftTex.Free;
     RoadDownTex.Free;
-    BaseTex.Free;
+
     TurretCommonTex.Free;
     TurretSlowingTex.Free;
     TurretAreaTex.Free;
+End;
+
+//    TURRET_PRICES: Array [0..3] Of Integer = (0, 25, 30, 55);
+//    TURRET_RADII: Array [0..3] Of Double = (0.0, 3.0, 4.0, 2.0);
+//    TURRET_FIRE_RATE: Array [0..3] Of Double = (0.0, 1.2, 1.5, 0.7);
+//
+//    BULLET_DAMAGE: Array [0..3] Of Double = (0.0, 34.0, 10.0, 20.0);
+//    BULLET_SLOW: Array [0..3] Of Double = (0.0, 1.0, 0.9, 1.0);
+//    IS_BULLET_AOE: Array [0..3] Of Boolean = (False, False, False, True);       // AOE - Area Of Effect     Урон/ЭФфект по области
+//    IS_BULLET_TRACKING: Array  [0..3] Of Boolean = (False, True, True, False);
+//    BULLET_SPEED: Array [0..3] Of Double = (0.0, 3.0, 5.0, 2.0);
+
+Procedure SetTurretMenuHint(Panel: TPanel; TurrType: TTurretType);
+Var
+    TurrIndex: Integer;
+    Radius, FireRate, DamagePerBullet, SlowingMult, BulletSpeed: Double;
+    IsAOE, IsTracking: Bool;
+Begin
+    TurrIndex := Ord(TurrType);
+
+    Radius := TURRET_RADII[TurrIndex];
+    FireRate := TURRET_FIRE_RATE[TurrIndex];
+    DamagePerBullet := BULLET_DAMAGE[TurrIndex];
+    SlowingMult := BULLET_SLOW[TurrIndex];
+    BulletSpeed := BULLET_SPEED[TurrIndex];
+    IsTracking := IS_BULLET_TRACKING[TurrIndex];
+    IsAOE := IS_BULLET_AOE[TurrIndex];
+
+    Panel.ShowHint := True;
+
+    Panel.Hint := Format('Урон за снаряд: %f' + #13#10
+                         + 'Радиус: %f' + #13#10
+                         + 'Скорострельность: %f' + #13#10
+                         + 'Скорость снаряда: %f' + #13#10
+                         + 'Множитель замедления: %f' + #13#10, [DamagePerBullet, Radius, FireRate, BulletSpeed, SlowingMult]);
+
+    If (IsAOE) Then
+    Begin
+        Panel.Hint := Panel.Hint + 'Урон по области: Да' + #13#10;
+    End
+    Else
+    Begin
+        Panel.Hint := Panel.Hint + 'Урон по области: Нет' + #13#10;
+    End;
+
+    If (IsTracking) Then
+    Begin
+        Panel.Hint := Panel.Hint + 'Метод атаки: По противнику';
+    End
+    Else
+    Begin
+        Panel.Hint := Panel.Hint + 'Метод атаки: По клетке';
+    End;
 End;
 
 //-------------------------------------------------------------------
@@ -1065,6 +1138,12 @@ Begin
 
     InitEnemyTemplates();
     SetLength(Enemies, 0);
+
+    SetTurretMenuHint(SlowingTurretPanel, TTurretType.TurrSlowing);
+    SetTurretMenuHint(CommonTurretPanel, TTurretType.TurrCommon);
+    SetTurretMenuHint(AreaTurretPanel, TTurretType.TurrAreaDamaging);
+
+    Application.HintHidePause := -1;
 End;
 
 Procedure TGameForm.FormDestroy(Sender: TObject);

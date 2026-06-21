@@ -17,19 +17,19 @@ File_14=TSourceModule,'C:\GitHub\University\Forms\Test\Unit2.pas',0,1,16,44,43,0
 
 [Modules]
 Module0=C:\GitHub\University\coursework\Unit1.pas
-Module1=C:\GitHub\University\coursework\Unit2.pas
-Module2=C:\GitHub\University\coursework\coursework.dproj
+Module1=C:\GitHub\University\coursework\coursework.dproj
+Module2=C:\GitHub\University\coursework\Unit2.pas
 Count=3
 EditWindowCount=1
 
 [C:\GitHub\University\coursework\Unit1.pas]
 ModuleType=TSourceModule
 
-[C:\GitHub\University\coursework\Unit2.pas]
-ModuleType=TSourceModule
-
 [C:\GitHub\University\coursework\coursework.dproj]
 ModuleType=TBaseProject
+
+[C:\GitHub\University\coursework\Unit2.pas]
+ModuleType=TSourceModule
 
 [EditWindow0]
 ViewCount=3
@@ -59,7 +59,7 @@ BorlandEditorCodeExplorer=BorlandEditorCodeExplorer@EditWindow0
 TopPanelSize=0
 LeftPanelSize=1895
 LeftPanelClients=PropertyInspector,DockSite3
-LeftPanelData=00000800010100000000FF120000000000000167070000000000000100000000960E000009000000446F636B53697465330100000000651E00001100000050726F7065727479496E73706563746F72FFFFFFFF
+LeftPanelData=00000800010100000000FF1200000000000001670700000000000001000000008B02000009000000446F636B53697465330100000000651E00001100000050726F7065727479496E73706563746F72FFFFFFFF
 RightPanelSize=1156
 RightPanelClients=DockSite2,DockSite4
 RightPanelData=00000800010100000000FF1200000000000001840400000000000001000000004A12000009000000446F636B53697465320100000000651E000009000000446F636B5369746534FFFFFFFF
@@ -73,13 +73,13 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 [View0]
 CustomEditViewType=TEditView
 Module=C:\GitHub\University\coursework\Unit1.pas
-CursorX=30
-CursorY=1147
-TopLine=1128
+CursorX=1
+CursorY=1435
+TopLine=1396
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=Borland.FormDesignerView
+EditViewName=C:\GitHub\University\coursework\Unit1.pas
 
 [View1]
 CustomEditViewType=TEditView
@@ -129,7 +129,7 @@ StayOnTop=0
 
 [Breakpoints]
 Count=1
-Breakpoint0='C:\GitHub\University\coursework\Unit1.pas',1341,'',0,1,'',1,0,0,'',1,'','','',0,''
+Breakpoint0='C:\GitHub\University\coursework\Unit1.pas',1420,'',0,1,'',1,0,0,'',1,'','','',0,''
 
 [EmbarcaderoWin32Debugger_AddressBreakpoints]
 Count=0
@@ -221,23 +221,23 @@ Visible=1
 Docked=1
 State=0
 Left=0
-Top=757
+Top=165
 Width=1895
-Height=3945
+Height=7115
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1895
-ClientHeight=3945
+ClientHeight=7115
 TBDockHeight=9010
 LRDockWidth=1895
 Dockable=1
 StayOnTop=0
-SplitPos=146
+SplitPos=111
 
 [PropInspDesignerSelection]
 ArrangeBy=Name
-SelectedItem=Caption,Images
-ExpandedItems=Anchors=0,Constraints=1,Font=1,BorderIcons=1,CustomTitleBar=0,GlassFrame=0,HorzScrollBar=0,LiveBindings=0,"LiveBindings Designer=0",Margins=0,Menu=0,Padding=0,StyleElements=0,Touch=0,VertScrollBar=0,Touch.InteractiveGestureOptions=0,Touch.InteractiveGestures=0,Touch.TabletOptions=0,ImageMargins=0,Font.Style=0
+SelectedItem=Caption,CustomHint
+ExpandedItems=Anchors=0,Constraints=1,Font=0,BorderIcons=0,CustomTitleBar=0,GlassFrame=0,HorzScrollBar=0,LiveBindings=0,"LiveBindings Designer=0",Margins=0,Menu=0,Padding=0,StyleElements=0,Touch=0,VertScrollBar=0,Touch.InteractiveGestureOptions=0,Touch.InteractiveGestures=0,Touch.TabletOptions=0,BevelEdges=0
 
 [frmDesignPreview]
 PercentageSizes=1
@@ -574,11 +574,11 @@ State=0
 Left=0
 Top=0
 Width=1895
-Height=3549
+Height=380
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1895
-ClientHeight=3549
+ClientHeight=380
 TBDockHeight=3672
 LRDockWidth=1895
 Dockable=1
@@ -708,11 +708,11 @@ State=0
 Left=0
 Top=40
 Width=1895
-Height=3549
+Height=380
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1895
-ClientHeight=3549
+ClientHeight=380
 TBDockHeight=9010
 LRDockWidth=1895
 Dockable=1
