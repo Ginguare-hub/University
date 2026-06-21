@@ -16,7 +16,8 @@ Uses
     Vcl.ComCtrls,
     Vcl.StdCtrls,
     Vcl.Menus,
-    Math;
+    Math,
+    Unit2;
 
 Const
     MAP_WIDTH = 16;   //клеток по горизонтали (X) слева - направо
@@ -155,6 +156,8 @@ Type
       var Resize: Boolean);
     function FormHelp(Command: Word; Data: THelpEventData;
       var CallHelp: Boolean): Boolean;
+    procedure MenuOptionInstructionClick(Sender: TObject);
+    procedure MenuOptionAutorClick(Sender: TObject);
 
     Private
     Public
@@ -960,33 +963,12 @@ Begin
             TargetPixelY := CurrBullet^.TargetPos.CellY * CELL_SIZE;
         End;
 
-        // (CurrBullet^.TargetedEnemy^.CellX + (CurrBullet^.TargetedEnemy^.DistanceProgress) * DeltaX) * CELL_SIZE
-        // (CurrBullet^.TargetedEnemy^.CellY - (CurrBullet^.TargetedEnemy^.DistanceProgress) * DeltaY) * CELL_SIZE
-
         ScreenPos.CellX := Trunc(CELL_SIZE * (CurrBullet^.TurretPos.CellX * (1 - CurrBullet^.DistanceProgress)) + TargetPixelX * (CurrBullet^.DistanceProgress));
         ScreenPos.CellY := MAP_HEIGHT * CELL_SIZE - Trunc(CELL_SIZE * (CurrBullet^.TurretPos.CellY * (1 - CurrBullet^.DistanceProgress)) + TargetPixelY * (CurrBullet^.DistanceProgress)) - CELL_SIZE;
-
-//        If Enemies[I].EnemyType = EnCommon Then
-//        Begin
-//            Canvas.Brush.Color := ClBlack;
-//        End
-//        Else
-//        Begin
-//            If Enemies[I].EnemyType = EnHeavy Then
-//            Begin
-//                Canvas.Brush.Color := ClRed;
-//            End
-//            Else
-//            Begin
-//                Canvas.Brush.Color := ClGreen;
-//
-//            End;
-//        End;
 
         Canvas.Brush.Color := ClMenuText;
 
         Canvas.Ellipse(ScreenPos.CellX + 20, ScreenPos.CellY + 20, ScreenPos.CellX + CELL_SIZE - 20, ScreenPos.CellY + CELL_SIZE - 20);
-
 
         Iterator := Iterator^.Next;
     End;
@@ -1156,6 +1138,24 @@ Begin
 
     DrawEnemies(MapBox.Canvas);
     DrawBullets(MapBox.Canvas);
+End;
+
+procedure TGameForm.MenuOptionAutorClick(Sender: TObject);
+begin
+    GameTimer.Enabled := False;
+    Application.MessageBox(PChar('Автор: Педько Владислав, гр. 551004'), PChar('Автор'), MB_OK);
+    GameTimer.Enabled := True;
+end;
+
+procedure TGameForm.MenuOptionInstructionClick(Sender: TObject);
+Var
+    InstructionForm: TInstructionForm;
+Begin
+    GameTimer.Enabled := False;
+    InstructionForm := TInstructionForm.Create(Self);
+    InstructionForm.ShowModal;
+    InstructionForm.Free;
+    GameTimer.Enabled := True;
 End;
 
 procedure TGameForm.MenuOptionMenuClick(Sender: TObject);

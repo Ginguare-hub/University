@@ -68,8 +68,8 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 [View0]
 CustomEditViewType=TEditView
 Module=C:\GitHub\University\Lab4\Lab4_4\Delphi\Unit1.pas
-CursorX=60
-CursorY=731
+CursorX=133
+CursorY=719
 TopLine=702
 LeftCol=1
 Elisions=
@@ -79,8 +79,8 @@ EditViewName=C:\GitHub\University\Lab4\Lab4_4\Delphi\Unit1.pas
 [View1]
 CustomEditViewType=TEditView
 Module=C:\GitHub\University\Lab4\Lab4_4\Delphi\Unit2.pas
-CursorX=74
-CursorY=30
+CursorX=1
+CursorY=36
 TopLine=1
 LeftCol=1
 Elisions=
@@ -220,6 +220,11 @@ LRDockWidth=1895
 Dockable=1
 StayOnTop=0
 SplitPos=111
+
+[PropInspDesignerSelection]
+ArrangeBy=Name
+SelectedItem=Caption,
+ExpandedItems=Anchors=0,BorderIcons=0,Constraints=0,CustomTitleBar=0,Font=0,GlassFrame=0
 
 [frmDesignPreview]
 PercentageSizes=1

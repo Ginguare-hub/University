@@ -17,21 +17,26 @@ File_14=TSourceModule,'C:\GitHub\University\Forms\Test\Unit2.pas',0,1,16,44,43,0
 
 [Modules]
 Module0=C:\GitHub\University\coursework\Unit1.pas
-Module1=C:\GitHub\University\coursework\coursework.dproj
-Count=2
+Module1=C:\GitHub\University\coursework\Unit2.pas
+Module2=C:\GitHub\University\coursework\coursework.dproj
+Count=3
 EditWindowCount=1
 
 [C:\GitHub\University\coursework\Unit1.pas]
+ModuleType=TSourceModule
+
+[C:\GitHub\University\coursework\Unit2.pas]
 ModuleType=TSourceModule
 
 [C:\GitHub\University\coursework\coursework.dproj]
 ModuleType=TBaseProject
 
 [EditWindow0]
-ViewCount=2
+ViewCount=3
 CurrentEditView=C:\GitHub\University\coursework\Unit1.pas
 View0=0
 View1=1
+View2=2
 PercentageSizes=1
 Create=1
 Visible=1
@@ -54,7 +59,7 @@ BorlandEditorCodeExplorer=BorlandEditorCodeExplorer@EditWindow0
 TopPanelSize=0
 LeftPanelSize=1895
 LeftPanelClients=PropertyInspector,DockSite3
-LeftPanelData=00000800010100000000FF120000000000000167070000000000000100000000F20A000009000000446F636B53697465330100000000651E00001100000050726F7065727479496E73706563746F72FFFFFFFF
+LeftPanelData=00000800010100000000FF120000000000000167070000000000000100000000960E000009000000446F636B53697465330100000000651E00001100000050726F7065727479496E73706563746F72FFFFFFFF
 RightPanelSize=1156
 RightPanelClients=DockSite2,DockSite4
 RightPanelData=00000800010100000000FF1200000000000001840400000000000001000000004A12000009000000446F636B53697465320100000000651E000009000000446F636B5369746534FFFFFFFF
@@ -68,9 +73,9 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 [View0]
 CustomEditViewType=TEditView
 Module=C:\GitHub\University\coursework\Unit1.pas
-CursorX=6
-CursorY=1097
-TopLine=1078
+CursorX=30
+CursorY=1147
+TopLine=1128
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -78,9 +83,20 @@ EditViewName=Borland.FormDesignerView
 
 [View1]
 CustomEditViewType=TEditView
+Module=C:\GitHub\University\coursework\Unit2.pas
+CursorX=21
+CursorY=48
+TopLine=45
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=C:\GitHub\University\coursework\Unit2.pas
+
+[View2]
+CustomEditViewType=TEditView
 Module=C:\GitHub\University\coursework\coursework.dpr
 CursorX=1
-CursorY=9
+CursorY=10
 TopLine=1
 LeftCol=1
 Elisions=
@@ -205,23 +221,23 @@ Visible=1
 Docked=1
 State=0
 Left=0
-Top=578
+Top=757
 Width=1895
-Height=4904
+Height=3945
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1895
-ClientHeight=4904
+ClientHeight=3945
 TBDockHeight=9010
 LRDockWidth=1895
 Dockable=1
 StayOnTop=0
-SplitPos=111
+SplitPos=146
 
 [PropInspDesignerSelection]
 ArrangeBy=Name
-SelectedItem=Cursor,CustomHint
-ExpandedItems=Anchors=0,Constraints=1,LiveBindings=0,"LiveBindings Designer=0",Margins=0,Touch=0,BorderIcons=0,CustomTitleBar=0,Menu=0,Font=0,GlassFrame=0,HorzScrollBar=0,Padding=0,StyleElements=0,VertScrollBar=0,Brush=0
+SelectedItem=Caption,Images
+ExpandedItems=Anchors=0,Constraints=1,Font=1,BorderIcons=1,CustomTitleBar=0,GlassFrame=0,HorzScrollBar=0,LiveBindings=0,"LiveBindings Designer=0",Margins=0,Menu=0,Padding=0,StyleElements=0,Touch=0,VertScrollBar=0,Touch.InteractiveGestureOptions=0,Touch.InteractiveGestures=0,Touch.TabletOptions=0,ImageMargins=0,Font.Style=0
 
 [frmDesignPreview]
 PercentageSizes=1
@@ -558,11 +574,11 @@ State=0
 Left=0
 Top=0
 Width=1895
-Height=2591
+Height=3549
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1895
-ClientHeight=2591
+ClientHeight=3549
 TBDockHeight=3672
 LRDockWidth=1895
 Dockable=1
@@ -692,11 +708,11 @@ State=0
 Left=0
 Top=40
 Width=1895
-Height=2591
+Height=3549
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1895
-ClientHeight=2591
+ClientHeight=3549
 TBDockHeight=9010
 LRDockWidth=1895
 Dockable=1

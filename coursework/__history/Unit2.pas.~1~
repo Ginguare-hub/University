@@ -1,0 +1,41 @@
+Unit Unit2;
+
+Interface
+
+Uses
+    Winapi.Windows,
+    Winapi.Messages,
+    System.SysUtils,
+    System.Variants,
+    System.Classes,
+    Vcl.Graphics,
+    Vcl.Controls,
+    Vcl.Forms,
+    Vcl.Dialogs, Vcl.StdCtrls;
+
+Type
+    TForm2 = Class(TForm)
+    Button1: TButton;
+    InstructionLabel: TLabel;
+    InstructionHeaderLabel: TLabel;
+    procedure Button1Click(Sender: TObject);
+
+    Private
+        { Private declarations }
+    Public
+        { Public declarations }
+    End;
+
+Var
+    Form2: TForm2;
+
+Implementation
+
+{$R *.dfm}
+
+procedure TForm2.Button1Click(Sender: TObject);
+begin
+    Close;
+end;
+
+End.

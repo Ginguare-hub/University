@@ -141,6 +141,7 @@ Type
     CommonTurretPriceLabel: TLabel;
     SlowingTurretPriceLabel: TLabel;
     AreaTurretPriceLabel: TLabel;
+    MenuOptionInstruction: TMenuItem;
     Procedure MapBoxPaint(Sender: TObject);
     Procedure GameTimerTimer(Sender: TObject);
     Procedure FormCreate(Sender: TObject);
@@ -149,6 +150,11 @@ Type
     procedure CommonTurretPanelClick(Sender: TObject);
     procedure SlowingTurretPanelClick(Sender: TObject);
     procedure AreaTurretPanelClick(Sender: TObject);
+    procedure MenuOptionMenuClick(Sender: TObject);
+    procedure FormCanResize(Sender: TObject; var NewWidth, NewHeight: Integer;
+      var Resize: Boolean);
+    function FormHelp(Command: Word; Data: THelpEventData;
+      var CallHelp: Boolean): Boolean;
 
     Private
     Public
@@ -507,28 +513,6 @@ Begin
     MapData[TurretPos.CellX, TurretPos.CellY].Turret.ReloadProgress := 0;
 End;
 
-//------------------------------------------------------------
-//Создание врага
-//-------------------------------------------------------------------
-Procedure SpawnEnemy(TemplateIndex: Integer);
-Var
-    NewEnemy: TEnemy;
-    EnemyCount: Integer;
-    StartPos: TPosition;
-Begin
-    If FindStartCell(StartPos.CellX, StartPos.CellY) Then
-    Begin
-        NewEnemy := EnemyTemplates[TemplateIndex];
-        NewEnemy.Pos.CellX := StartPos.CellX;
-        NewEnemy.Pos.CellY := StartPos.CellY;
-        NewEnemy.IsAlive := True;
-
-        EnemyCount := Length(Enemies);
-        SetLength(Enemies, EnemyCount + 1);
-        Enemies[EnemyCount] := NewEnemy;
-    End;
-End;
-
 //------------------------------------------------------------------
 // Процедуры списка
 //------------------------------------------------------------------
@@ -611,6 +595,28 @@ Begin
     End;
 
     Dispose(EnemySpawnsNode);
+End;
+
+//------------------------------------------------------------
+//Создание врага
+//-------------------------------------------------------------------
+Procedure SpawnEnemy(TemplateIndex: Integer);
+Var
+    NewEnemy: TEnemy;
+    EnemyCount: Integer;
+    StartPos: TPosition;
+Begin
+    If FindStartCell(StartPos.CellX, StartPos.CellY) Then
+    Begin
+        NewEnemy := EnemyTemplates[TemplateIndex];
+        NewEnemy.Pos.CellX := StartPos.CellX;
+        NewEnemy.Pos.CellY := StartPos.CellY;
+        NewEnemy.IsAlive := True;
+
+        EnemyCount := Length(Enemies);
+        SetLength(Enemies, EnemyCount + 1);
+        Enemies[EnemyCount] := NewEnemy;
+    End;
 End;
 
 //-------------------------------------------------------------------
@@ -753,7 +759,6 @@ Begin
                         End;
                     End;
 
-
                 End;
 
                 If (TargetedEnemy <> Nil) Then
@@ -789,7 +794,7 @@ Begin
         I := 0;
         IsToStop := False;
 
-        While ((I < High(Enemies)) And Not IsToStop) Do
+        While ((I < Length(Enemies)) And Not IsToStop) Do
         Begin
 
             If (Enemies[I].IsAlive) Then
@@ -1010,18 +1015,8 @@ Begin
     CloseFile(ReadedFile);
 End;
 
-//-------------------------------------------------------------------
-//Form события
-//-------------------------------------------------------------------
-Procedure TGameForm.FormCreate(Sender: TObject);
+Procedure CreateTextures();
 Begin
-    GameTime := 0.0;
-    TowerHealth := MAX_TOWER_HEALTH;
-    Coins := START_COINS;
-    BulletList.Head := Nil;
-
-    WriteEnemySpawnsToFile();
-
     GrassTex := TBitmap.Create;
     RoadRightTex := TBitmap.Create;
     RoadUpTex := TBitmap.Create;
@@ -1031,27 +1026,24 @@ Begin
     TurretCommonTex := TBitmap.Create;
     TurretSlowingTex := TBitmap.Create;
     TurretAreaTex := TBitmap.Create;
-
-    GrassTex.LoadFromFile('.\..\..\test_textures\grass_texture.bmp');
-    BaseTex.LoadFromFile('.\..\..\test_textures\base_texture.bmp');
-    RoadRightTex.LoadFromFile('.\..\..\test_textures\road_texture_right.bmp');
-    RoadUpTex.LoadFromFile('.\..\..\test_textures\road_texture_up.bmp');
-    RoadLeftTex.LoadFromFile('.\..\..\test_textures\road_texture_left.bmp');
-    RoadDownTex.LoadFromFile('.\..\..\test_textures\road_texture_down.bmp');
-    TurretCommonTex.LoadFromFile('.\..\..\test_textures\grass_and_turret1_texture.bmp');
-    TurretSlowingTex.LoadFromFile('.\..\..\test_textures\turret_slowing_texture.bmp');
-    TurretAreaTex.LoadFromFile('.\..\..\test_textures\turret_area_texture.bmp');
-
-    MapData := SetMap1();
-    CalculateEnemyDirections(MapData);
-
-    ReadEnemySpawns();
-
-    InitEnemyTemplates();
-    SetLength(Enemies, 0);
 End;
 
-Procedure TGameForm.FormDestroy(Sender: TObject);
+Procedure LoadTextures();
+Begin
+    GrassTex.LoadFromFile('.\..\..\textures\grass_texture.bmp');
+    BaseTex.LoadFromFile('.\..\..\textures\base_texture.bmp');
+    RoadRightTex.LoadFromFile('.\..\..\textures\road_texture_right.bmp');
+
+    RoadUpTex.LoadFromFile('.\..\..\textures\road_texture_up.bmp');
+    RoadLeftTex.LoadFromFile('.\..\..\textures\road_texture_left.bmp');
+    RoadDownTex.LoadFromFile('.\..\..\textures\road_texture_down.bmp');
+
+    TurretCommonTex.LoadFromFile('.\..\..\textures\common_turret_texture.bmp');
+    TurretSlowingTex.LoadFromFile('.\..\..\textures\slowing_turret_texture.bmp');
+    TurretAreaTex.LoadFromFile('.\..\..\textures\area_turret_texture.bmp');
+End;
+
+Procedure FreeTextures();
 Begin
     GrassTex.Free;
     RoadRightTex.Free;
@@ -1064,7 +1056,46 @@ Begin
     TurretAreaTex.Free;
 End;
 
-procedure TGameForm.MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+//-------------------------------------------------------------------
+//Form события
+//-------------------------------------------------------------------
+Procedure TGameForm.FormCanResize(Sender: TObject; var NewWidth, NewHeight: Integer; var Resize: Boolean);
+Begin
+    Resize := False;
+End;
+
+Procedure TGameForm.FormCreate(Sender: TObject);
+Begin
+    GameTime := 0.0;
+    TowerHealth := MAX_TOWER_HEALTH;
+    Coins := START_COINS;
+    BulletList.Head := Nil;
+
+    WriteEnemySpawnsToFile();
+
+    CreateTextures();
+    LoadTextures();
+
+    MapData := SetMap1();
+    CalculateEnemyDirections(MapData);
+
+    ReadEnemySpawns();
+
+    InitEnemyTemplates();
+    SetLength(Enemies, 0);
+End;
+
+Procedure TGameForm.FormDestroy(Sender: TObject);
+Begin
+    FreeTextures();
+End;
+
+Function TGameForm.FormHelp(Command: Word; Data: THelpEventData; Var CallHelp: Boolean): Boolean;
+Begin
+    CallHelp := False;
+End;
+
+Procedure TGameForm.MapBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 Begin
     SelectedPos.CellX := X Div CELL_SIZE;
     SelectedPos.CellY := (CELL_SIZE * MAP_HEIGHT - Y) Div CELL_SIZE;
@@ -1126,6 +1157,11 @@ Begin
     DrawEnemies(MapBox.Canvas);
     DrawBullets(MapBox.Canvas);
 End;
+
+procedure TGameForm.MenuOptionMenuClick(Sender: TObject);
+begin
+    Close;
+end;
 
 Procedure TGameForm.CommonTurretPanelClick(Sender: TObject);
 Begin
@@ -1234,9 +1270,10 @@ Const
     MILISECONDS_IN_SECOND = 1000;
 Var
     DeltaTime: Double;
-    CountToSpawn, I, J: Integer;
+    CountToSpawn, I: Integer;
     Element: TEnemySpawns;
     Iterator: PTEnemySpawnsNode;
+    WillStopSpawnEnemies, HasNoAliveEnemies: Boolean;
 Begin
     DeltaTime := GameTimer.Interval / MILISECONDS_IN_SECOND;
     GameTime := GameTime + DeltaTime;
@@ -1259,9 +1296,15 @@ Begin
     End;
 
     Iterator := EnemySpawnsList.Head;
-    While Iterator <> Nil Do
+    WillStopSpawnEnemies := True;
+    While (Iterator <> Nil) Do
     Begin
         Element := Iterator^.EnemySpawns;
+
+        If (Element.EndTime > GameTime) Then
+        Begin
+            WillStopSpawnEnemies := False;
+        End;
 
         If(Element.EndTime - Element.StartTime < 0.01) Then
         Begin
@@ -1279,6 +1322,25 @@ Begin
         End;
 
         Iterator := Iterator^.Next;
+    End;
+
+    HasNoAliveEnemies := True;
+    If (WillStopSpawnEnemies) Then
+    Begin
+        For I := 0 To High(Enemies) Do
+        Begin
+            If (Enemies[I].IsAlive) Then
+            Begin
+                HasNoAliveEnemies := False;
+            End;
+        End;
+    End;
+
+    If (HasNoAliveEnemies And WillStopSpawnEnemies) Then
+    Begin
+        GameTimer.Enabled := False;
+        Application.MessageBox(PChar('Ваша база успешно выстояла все атаки врага!'), PChar('Победа'), MB_OK + MB_ICONASTERISK);
+        Close;
     End;
 
     UpdateButtons();

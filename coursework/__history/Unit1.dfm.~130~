@@ -608,7 +608,6 @@ object GameForm: TGameForm
     end
     object MenuOptionAutor: TMenuItem
       Caption = #1056#1072#1079#1088#1072#1073#1086#1090#1095#1080#1082
-      OnClick = MenuOptionAutorClick
     end
   end
 end

@@ -5,7 +5,6 @@ object GameForm: TGameForm
   Margins.Top = 5
   Margins.Right = 5
   Margins.Bottom = 5
-  BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = #1047#1072#1097#1080#1090#1072' '#1041#1072#1096#1085#1080
   ClientHeight = 1150
@@ -608,7 +607,6 @@ object GameForm: TGameForm
     end
     object MenuOptionAutor: TMenuItem
       Caption = #1056#1072#1079#1088#1072#1073#1086#1090#1095#1080#1082
-      OnClick = MenuOptionAutorClick
     end
   end
 end
