@@ -11,6 +11,10 @@ object GameForm: TGameForm
   ClientHeight = 1150
   ClientWidth = 1600
   Color = clBtnFace
+  Constraints.MaxHeight = 1248
+  Constraints.MaxWidth = 1624
+  Constraints.MinHeight = 1248
+  Constraints.MinWidth = 1624
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

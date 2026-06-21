@@ -73,13 +73,13 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 [View0]
 CustomEditViewType=TEditView
 Module=C:\GitHub\University\coursework\Unit1.pas
-CursorX=104
-CursorY=1431
-TopLine=1396
+CursorX=92
+CursorY=1158
+TopLine=1153
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=Borland.FormDesignerView
+EditViewName=C:\GitHub\University\coursework\Unit1.pas
 
 [View1]
 CustomEditViewType=TEditView
@@ -129,7 +129,7 @@ StayOnTop=0
 
 [Breakpoints]
 Count=1
-Breakpoint0='C:\GitHub\University\coursework\Unit1.pas',1420,'',0,1,'',1,0,0,'',1,'','','',0,''
+Breakpoint0='C:\GitHub\University\coursework\Unit1.pas',1417,'',0,1,'',1,0,0,'',1,'','','',0,''
 
 [EmbarcaderoWin32Debugger_AddressBreakpoints]
 Count=0
@@ -234,11 +234,6 @@ Dockable=1
 StayOnTop=0
 SplitPos=111
 
-[PropInspDesignerSelection]
-ArrangeBy=Name
-SelectedItem=Brush,
-ExpandedItems=Anchors=0,BorderIcons=0,Constraints=1,CustomTitleBar=0,Font=0,GlassFrame=0,HorzScrollBar=0,LiveBindings=0,"LiveBindings Designer=0",Margins=0,Menu=0,Padding=0,StyleElements=0,Menu.LiveBindings=0,"Menu.LiveBindings Designer=0",Font.Style=0,Brush=0,Pen=0,Touch=0
-
 [frmDesignPreview]
 PercentageSizes=1
 Create=1
@@ -248,11 +243,11 @@ State=0
 Left=0
 Top=0
 Width=1156
-Height=8539
+Height=9727
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1156
-ClientHeight=8539
+ClientHeight=9727
 TBDockHeight=5958
 LRDockWidth=2513
 Dockable=1
@@ -264,8 +259,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-8
-Top=-8
+Left=-466
+Top=-713
 Width=1849
 Height=3142
 MaxLeft=-1
@@ -510,11 +505,11 @@ State=0
 Left=0
 Top=0
 Width=1156
-Height=8539
+Height=9727
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1156
-ClientHeight=8539
+ClientHeight=9727
 TBDockHeight=4882
 LRDockWidth=7148
 Dockable=1
@@ -593,11 +588,11 @@ State=0
 Left=0
 Top=0
 Width=1156
-Height=8539
+Height=9727
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1156
-ClientHeight=8539
+ClientHeight=9727
 TBDockHeight=4882
 LRDockWidth=5309
 Dockable=1

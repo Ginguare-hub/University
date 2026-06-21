@@ -73,9 +73,9 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 [View0]
 CustomEditViewType=TEditView
 Module=C:\GitHub\University\coursework\Unit1.pas
-CursorX=1
-CursorY=1435
-TopLine=1396
+CursorX=21
+CursorY=1177
+TopLine=1153
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -129,7 +129,7 @@ StayOnTop=0
 
 [Breakpoints]
 Count=1
-Breakpoint0='C:\GitHub\University\coursework\Unit1.pas',1420,'',0,1,'',1,0,0,'',1,'','','',0,''
+Breakpoint0='C:\GitHub\University\coursework\Unit1.pas',1417,'',0,1,'',1,0,0,'',1,'','','',0,''
 
 [EmbarcaderoWin32Debugger_AddressBreakpoints]
 Count=0
@@ -233,11 +233,6 @@ LRDockWidth=1895
 Dockable=1
 StayOnTop=0
 SplitPos=111
-
-[PropInspDesignerSelection]
-ArrangeBy=Name
-SelectedItem=Caption,CustomHint
-ExpandedItems=Anchors=0,Constraints=1,Font=0,BorderIcons=0,CustomTitleBar=0,GlassFrame=0,HorzScrollBar=0,LiveBindings=0,"LiveBindings Designer=0",Margins=0,Menu=0,Padding=0,StyleElements=0,Touch=0,VertScrollBar=0,Touch.InteractiveGestureOptions=0,Touch.InteractiveGestures=0,Touch.TabletOptions=0,BevelEdges=0
 
 [frmDesignPreview]
 PercentageSizes=1

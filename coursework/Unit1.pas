@@ -186,10 +186,10 @@ Implementation
 
 {$R *.dfm}
 
-//function GetDPIScale: Double;
-//begin
-//  Result := Screen.PixelsPerInch / 96; // 96 - стандартный DPI
-//end;
+function GetDPIScale: Double;
+begin
+  Result := Screen.PixelsPerInch / 96; // 96 - стандартный DPI
+end;
 
 //-------------------------------------------------------------------
 //Функции карты
@@ -1149,15 +1149,7 @@ Begin
     SetTurretMenuHint(CommonTurretPanel, TTurretType.TurrCommon);
     SetTurretMenuHint(AreaTurretPanel, TTurretType.TurrAreaDamaging);
 
-    Application.HintHidePause := -1;
-
-    ClientWidth  := MapBox.Left + MAP_WIDTH * CELL_SIZE + 10;
-    ClientHeight := MapBox.Top  + MAP_HEIGHT * CELL_SIZE + 10;
-
-    Constraints.MinWidth  := Width;
-    Constraints.MaxWidth  := Width;
-    Constraints.MinHeight := Height;
-    Constraints.MaxHeight := Height;
+    Application.HintHidePause := -1
 End;
 
 Procedure TGameForm.FormDestroy(Sender: TObject);
