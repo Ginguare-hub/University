@@ -236,33 +236,6 @@ Begin
     SetMap1 := MapData;
 End;
 
-Procedure WriteEnemySpawnsToFile();
-Var
-    Element: TEnemySpawns;
-    SpawnsDataTypedFile: File Of TEnemySpawns;
-    UntypedFile: TextFile;
-Begin
-    AssignFile(UntypedFile, '.\EnemySpawnsData.txt');
-    AssignFile(SpawnsDataTypedFile, '.\EnemySpawnsData.dat');
-
-    Reset(UntypedFile);
-    Rewrite(SpawnsDataTypedFile);
-
-    While (Not EOF(UntypedFile)) Do
-    Begin
-        Read(UntypedFile, Element.EnemyID);
-        Read(UntypedFile, Element.StartTime);
-        Read(UntypedFile, Element.EndTime);
-        Read(UntypedFile, Element.EnemyCount);
-        Element.EnemyCountCurrent := 0;
-
-        Write(SpawnsDataTypedFile, Element);
-    End;
-
-    CloseFile(UntypedFile);
-    CloseFile(SpawnsDataTypedFile);
-End;
-
 Function FindStartCell(Var StartX, StartY: Integer): Boolean;
 Var
     I, J: Integer;
@@ -391,11 +364,7 @@ Begin
     JumpToNextCell(Map, CheckPos.CellX, CheckPos.CellY);
     IsNotSamePos := Not((CheckPos.CellX = Pos.CellX) And (CheckPos.CellY = Pos.CellY));
 
-    If (IsNotSamePos And (Map[CheckPos.CellX, CheckPos.CellY].TypeOfGround = GtRoad)) Then
-    Begin
-        IsEnd := False;
-    End
-    Else
+    If Not (IsNotSamePos And (Map[CheckPos.CellX, CheckPos.CellY].TypeOfGround = GtRoad)) Then
     Begin
         CheckPos.CellX := Pos.CellX;
         CheckPos.CellY := Pos.CellY;
@@ -404,11 +373,7 @@ Begin
         JumpToNextCell(Map, CheckPos.CellX, CheckPos.CellY);
         IsNotSamePos := Not((CheckPos.CellX = Pos.CellX) And (CheckPos.CellY = Pos.CellY));
 
-        If (IsNotSamePos And (Map[CheckPos.CellX, CheckPos.CellY].TypeOfGround = GtRoad) ) Then
-        Begin
-            IsEnd := False;
-        End
-        Else
+        If Not(IsNotSamePos And (Map[CheckPos.CellX, CheckPos.CellY].TypeOfGround = GtRoad) ) Then
         Begin
             CheckPos.CellX := Pos.CellX;
             CheckPos.CellY := Pos.CellY;
@@ -429,8 +394,16 @@ Begin
             Begin
                 IsEnd := False;
             End;
-        End;
+        End
+        Else
+        Begin
+            IsEnd := False;
+        End
 
+    End
+    Else
+    Begin
+        IsEnd := False;
     End;
 
     If (IsEnd) Then
@@ -544,7 +517,7 @@ Begin
     New(EnemySpawnsNode);
     EnemySpawnsNode^.EnemySpawns := EnemySpawns;
 
-    If EnemySpawnsList.Head <> Nil Then
+    If (EnemySpawnsList.Head <> Nil) Then
     Begin
         EnemySpawnsNode^.Next := EnemySpawnsList.Head;
         EnemySpawnsList.Head^.Prev := EnemySpawnsNode;
@@ -802,7 +775,7 @@ Begin
                 Bullet.Speed := BULLET_SPEED[TurretID];
                 Bullet.IsTracking := IS_BULLET_TRACKING[TurretID];
 
-                If Bullet.IsTracking Then
+                If (Bullet.IsTracking) Then
                 Begin
                     Bullet.TargetedEnemy := @Enemies[I];
                 End
@@ -1072,8 +1045,6 @@ Begin
     TowerHealth := MAX_TOWER_HEALTH;
     Coins := START_COINS;
     BulletList.Head := Nil;
-
-    WriteEnemySpawnsToFile();
 
     CreateTextures();
     LoadTextures();
