@@ -17,7 +17,7 @@ Uses
     Vcl.StdCtrls,
     Vcl.Menus,
     Math,
-    Unit2;
+    Unit2, Vcl.Imaging.pngimage;
 
 Const
     MAP_WIDTH = 16;   //клеток по горизонтали (X) слева - направо
@@ -185,6 +185,11 @@ Implementation
 
 {$R *.dfm}
 
+function GetDPIScale: Double;
+begin
+  Result := Screen.PixelsPerInch / 96; // 96 - стандартный DPI
+end;
+
 //-------------------------------------------------------------------
 //Функции карты
 //-------------------------------------------------------------------
@@ -249,8 +254,8 @@ Var
     SpawnsDataTypedFile: File Of TEnemySpawns;
     UntypedFile: TextFile;
 Begin
-    AssignFile(UntypedFile, '.\..\..\EnemySpawnsData.txt');
-    AssignFile(SpawnsDataTypedFile, '.\..\..\EnemySpawnsData.dat');
+    AssignFile(UntypedFile, '.\EnemySpawnsData.txt');
+    AssignFile(SpawnsDataTypedFile, '.\EnemySpawnsData.dat');
 
     Reset(UntypedFile);
     Rewrite(SpawnsDataTypedFile);
@@ -999,7 +1004,7 @@ Var
 Begin
     Len := 0;
 
-    AssignFile(ReadedFile, '.\..\..\EnemySpawnsData.dat');
+    AssignFile(ReadedFile, '.\EnemySpawnsData.dat');
 
     Reset(ReadedFile);
 
@@ -1143,7 +1148,7 @@ Begin
     SetTurretMenuHint(CommonTurretPanel, TTurretType.TurrCommon);
     SetTurretMenuHint(AreaTurretPanel, TTurretType.TurrAreaDamaging);
 
-    Application.HintHidePause := -1;
+    Application.HintHidePause := -1
 End;
 
 Procedure TGameForm.FormDestroy(Sender: TObject);

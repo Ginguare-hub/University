@@ -143,7 +143,6 @@ Type
     SlowingTurretPriceLabel: TLabel;
     AreaTurretPriceLabel: TLabel;
     MenuOptionInstruction: TMenuItem;
-    Image1: TImage;
     Procedure MapBoxPaint(Sender: TObject);
     Procedure GameTimerTimer(Sender: TObject);
     Procedure FormCreate(Sender: TObject);
@@ -185,6 +184,11 @@ Var
 Implementation
 
 {$R *.dfm}
+
+function GetDPIScale: Double;
+begin
+  Result := Screen.PixelsPerInch / 96; // 96 - стандартный DPI
+end;
 
 //-------------------------------------------------------------------
 //Функции карты
@@ -995,11 +999,8 @@ End;
 Procedure ReadEnemySpawns();
 Var
     ReadedFile: File Of TEnemySpawns;
-    Len: Integer;
     Element: TEnemySpawns;
 Begin
-    Len := 0;
-
     AssignFile(ReadedFile, '.\EnemySpawnsData.dat');
 
     Reset(ReadedFile);
@@ -1127,8 +1128,6 @@ Begin
     Coins := START_COINS;
     BulletList.Head := Nil;
 
-    MapBox.Width := 16 * CELL_SIZE;
-
     WriteEnemySpawnsToFile();
 
     CreateTextures();
@@ -1146,7 +1145,7 @@ Begin
     SetTurretMenuHint(CommonTurretPanel, TTurretType.TurrCommon);
     SetTurretMenuHint(AreaTurretPanel, TTurretType.TurrAreaDamaging);
 
-    Application.HintHidePause := -1;
+    Application.HintHidePause := -1
 End;
 
 Procedure TGameForm.FormDestroy(Sender: TObject);
@@ -1229,7 +1228,7 @@ begin
     GameTimer.Enabled := True;
 end;
 
-procedure TGameForm.MenuOptionInstructionClick(Sender: TObject);
+Procedure TGameForm.MenuOptionInstructionClick(Sender: TObject);
 Var
     InstructionForm: TInstructionForm;
 Begin

@@ -42,6 +42,10 @@ object GameForm: TGameForm
     Margins.Top = 5
     Margins.Right = 5
     Margins.Bottom = 5
+    Constraints.MaxHeight = 1024
+    Constraints.MaxWidth = 1024
+    Constraints.MinHeight = 1024
+    Constraints.MinWidth = 1024
     Touch.ParentTabletOptions = False
     Touch.TabletOptions = [toPressAndHold]
     OnMouseDown = MapBoxMouseDown

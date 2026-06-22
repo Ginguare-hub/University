@@ -143,7 +143,6 @@ Type
     SlowingTurretPriceLabel: TLabel;
     AreaTurretPriceLabel: TLabel;
     MenuOptionInstruction: TMenuItem;
-    Image1: TImage;
     Procedure MapBoxPaint(Sender: TObject);
     Procedure GameTimerTimer(Sender: TObject);
     Procedure FormCreate(Sender: TObject);
@@ -185,6 +184,11 @@ Var
 Implementation
 
 {$R *.dfm}
+
+function GetDPIScale: Double;
+begin
+  Result := Screen.PixelsPerInch / 96; // 96 - стандартный DPI
+end;
 
 //-------------------------------------------------------------------
 //‘ункции карты
@@ -995,11 +999,8 @@ End;
 Procedure ReadEnemySpawns();
 Var
     ReadedFile: File Of TEnemySpawns;
-    Len: Integer;
     Element: TEnemySpawns;
 Begin
-    Len := 0;
-
     AssignFile(ReadedFile, '.\EnemySpawnsData.dat');
 
     Reset(ReadedFile);
@@ -1059,16 +1060,6 @@ Begin
     TurretAreaTex.Free;
 End;
 
-//    TURRET_PRICES: Array [0..3] Of Integer = (0, 25, 30, 55);
-//    TURRET_RADII: Array [0..3] Of Double = (0.0, 3.0, 4.0, 2.0);
-//    TURRET_FIRE_RATE: Array [0..3] Of Double = (0.0, 1.2, 1.5, 0.7);
-//
-//    BULLET_DAMAGE: Array [0..3] Of Double = (0.0, 34.0, 10.0, 20.0);
-//    BULLET_SLOW: Array [0..3] Of Double = (0.0, 1.0, 0.9, 1.0);
-//    IS_BULLET_AOE: Array [0..3] Of Boolean = (False, False, False, True);       // AOE - Area Of Effect     ”рон/Ё‘фект по области
-//    IS_BULLET_TRACKING: Array  [0..3] Of Boolean = (False, True, True, False);
-//    BULLET_SPEED: Array [0..3] Of Double = (0.0, 3.0, 5.0, 2.0);
-
 Procedure SetTurretMenuHint(Panel: TPanel; TurrType: TTurretType);
 Var
     TurrIndex: Integer;
@@ -1126,9 +1117,6 @@ Begin
     TowerHealth := MAX_TOWER_HEALTH;
     Coins := START_COINS;
     BulletList.Head := Nil;
-
-    MapBox.Width := 16 * CELL_SIZE;
-    MapBox.Height := 16 * CELL_SIZE;
 
     WriteEnemySpawnsToFile();
 
@@ -1230,7 +1218,7 @@ begin
     GameTimer.Enabled := True;
 end;
 
-procedure TGameForm.MenuOptionInstructionClick(Sender: TObject);
+Procedure TGameForm.MenuOptionInstructionClick(Sender: TObject);
 Var
     InstructionForm: TInstructionForm;
 Begin
