@@ -1,4 +1,4 @@
-Program TextFilesDelphiTest;
+﻿Program TextFilesDelphiTest;
 
 Uses
     System.SysUtils;

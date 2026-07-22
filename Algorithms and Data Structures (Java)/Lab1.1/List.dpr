@@ -1,4 +1,4 @@
-Program List;
+п»їProgram List;
 
 {$APPTYPE CONSOLE}
 {$R *.res}
@@ -35,7 +35,7 @@ Begin
         Begin
             Try
                 ReadLn(NumberStr);
-                If (UpperCase(NumberStr) = UpperCase('стоп')) Or (UpperCase(NumberStr) = UpperCase('stop')) Then
+                If (UpperCase(NumberStr) = UpperCase('СЃС‚РѕРї')) Or (UpperCase(NumberStr) = UpperCase('stop')) Then
                 Begin
                     IsStop := True;
                     IsCorrect := False;
@@ -43,13 +43,13 @@ Begin
                 Else
                     Number := StrToInt(NumberStr);
             Except
-                WriteLn('Некорректный ввод, повторите снова.');
+                WriteLn('РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ, РїРѕРІС‚РѕСЂРёС‚Рµ СЃРЅРѕРІР°.');
                 IsCorrect := False;
             End;
 
             If IsCorrect And (Not((Number >= MIN_NUMBER) And (Number <= MAX_NUMBER)) And Not(Number = 0)) Then
             Begin
-                WriteLn('Число должно входить в диапазон [', MIN_NUMBER, ',', MAX_NUMBER, '] или равняться 0.');
+                WriteLn('Р§РёСЃР»Рѕ РґРѕР»Р¶РЅРѕ РІС…РѕРґРёС‚СЊ РІ РґРёР°РїР°Р·РѕРЅ [', MIN_NUMBER, ',', MAX_NUMBER, '] РёР»Рё СЂР°РІРЅСЏС‚СЊСЃСЏ 0.');
                 IsCorrect := False;
             End;
         End;
@@ -119,9 +119,9 @@ Begin
     End;
 
     If IsEqual Then
-        WriteLn('Многочлены равны.')
+        WriteLn('РњРЅРѕРіРѕС‡Р»РµРЅС‹ СЂР°РІРЅС‹.')
     Else
-        WriteLn('Многочлены НЕ равны.');
+        WriteLn('РњРЅРѕРіРѕС‡Р»РµРЅС‹ РќР• СЂР°РІРЅС‹.');
 
     Equality := IsEqual;
 End;
@@ -160,7 +160,7 @@ Begin
         Answer := Answer + Temp^.Data * Power(Number, Temp^.Power);
     End;
 
-    WriteLn('Значение в точке ' + IntToStr(Number) + ' равно ' + IntToStr(Answer));
+    WriteLn('Р—РЅР°С‡РµРЅРёРµ РІ С‚РѕС‡РєРµ ' + IntToStr(Number) + ' СЂР°РІРЅРѕ ' + IntToStr(Answer));
     Meaning := Answer;
 End;
 
@@ -203,7 +203,7 @@ Begin
 
     End;
 
-    Print(HeadAnswer, 'Результат суммирования: ');
+    Print(HeadAnswer, 'Р РµР·СѓР»СЊС‚Р°С‚ СЃСѓРјРјРёСЂРѕРІР°РЅРёСЏ: ');
 End;
 
 Var
@@ -230,11 +230,11 @@ Begin
     Pow := 0;
     IsStop := False;
 
-    Writeln('Введите ''Стоп'' если закончили вводить номера телефонов.'#13#10);
+    Writeln('Р’РІРµРґРёС‚Рµ ''РЎС‚РѕРї'' РµСЃР»Рё Р·Р°РєРѕРЅС‡РёР»Рё РІРІРѕРґРёС‚СЊ РЅРѕРјРµСЂР° С‚РµР»РµС„РѕРЅРѕРІ.'#13#10);
 
-    WriteLn('Введите многочлен P: ');
+    WriteLn('Р’РІРµРґРёС‚Рµ РјРЅРѕРіРѕС‡Р»РµРЅ P: ');
     Repeat
-        Number := ReadAndVerify(-999, 999, ('Коэффициент при x^' + IntToStr(Pow) + ': '), IsStop);
+        Number := ReadAndVerify(-999, 999, ('РљРѕСЌС„С„РёС†РёРµРЅС‚ РїСЂРё x^' + IntToStr(Pow) + ': '), IsStop);
         If (Not IsStop) And (Number <> 0) Then
             Append(Number, Pow, UniHeadP);
         Pow := Pow + 1;
@@ -243,9 +243,9 @@ Begin
     Pow := 0;
     IsStop := False;
 
-    Writeln('Введите многочлен S: ');
+    Writeln('Р’РІРµРґРёС‚Рµ РјРЅРѕРіРѕС‡Р»РµРЅ S: ');
     Repeat
-        Number := ReadAndVerify(-999, 999, ('Коэффициент при x^' + IntToStr(Pow) + ': '), IsStop);
+        Number := ReadAndVerify(-999, 999, ('РљРѕСЌС„С„РёС†РёРµРЅС‚ РїСЂРё x^' + IntToStr(Pow) + ': '), IsStop);
         If (Not IsStop) And (Number <> 0) Then
             Append(Number, Pow, UniHeadS);
         Pow := Pow + 1;
@@ -255,21 +255,21 @@ Begin
 
     Writeln(power(5, 5));
 
-    WriteLn(#13#10'Воспроизведение многочлена P: '#13#10);
+    WriteLn(#13#10'Р’РѕСЃРїСЂРѕРёР·РІРµРґРµРЅРёРµ РјРЅРѕРіРѕС‡Р»РµРЅР° P: '#13#10);
     Print(UniHeadP, 'P(x) = ');
 
-    WriteLn(#13#10'Воспроизведение многочлена S: ');
+    WriteLn(#13#10'Р’РѕСЃРїСЂРѕРёР·РІРµРґРµРЅРёРµ РјРЅРѕРіРѕС‡Р»РµРЅР° S: ');
     Print(UniHeadS, 'S(x) = ');
 
-    WriteLn(#13#10#13#10'Реализация функции сравнения многочленов: ');
+    WriteLn(#13#10#13#10'Р РµР°Р»РёР·Р°С†РёСЏ С„СѓРЅРєС†РёРё СЃСЂР°РІРЅРµРЅРёСЏ РјРЅРѕРіРѕС‡Р»РµРЅРѕРІ: ');
     Equality(UniHeadP, UniHeadS);
 
-    WriteLn(#13#10'Реализация функции вычисления значения многочлена в точке: ');
-    X := ReadAndVerify(-100, 100, 'Введите число x: ', IsStop);
+    WriteLn(#13#10'Р РµР°Р»РёР·Р°С†РёСЏ С„СѓРЅРєС†РёРё РІС‹С‡РёСЃР»РµРЅРёСЏ Р·РЅР°С‡РµРЅРёСЏ РјРЅРѕРіРѕС‡Р»РµРЅР° РІ С‚РѕС‡РєРµ: ');
+    X := ReadAndVerify(-100, 100, 'Р’РІРµРґРёС‚Рµ С‡РёСЃР»Рѕ x: ', IsStop);
     Meaning(UniHeadP, X);
     Meaning(UniHeadS, X);
 
-    WriteLn(#13#10'Воспроизведение функции суммирования многочленов: ');
+    WriteLn(#13#10'Р’РѕСЃРїСЂРѕРёР·РІРµРґРµРЅРёРµ С„СѓРЅРєС†РёРё СЃСѓРјРјРёСЂРѕРІР°РЅРёСЏ РјРЅРѕРіРѕС‡Р»РµРЅРѕРІ: ');
     Add(UniHeadAnswer, UniHeadP, UniHeadS);
     WriteLn;
 

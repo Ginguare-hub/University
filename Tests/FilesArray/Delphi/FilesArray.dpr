@@ -1,4 +1,4 @@
-Program FilesArray;
+﻿Program FilesArray;
 
 Uses
     System.SysUtils;

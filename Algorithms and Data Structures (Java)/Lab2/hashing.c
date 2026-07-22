@@ -1,4 +1,4 @@
-#include <stdio.h>
+п»ї#include <stdio.h>
 #include <locale.h>
 #include <stdlib.h>
 #include <string.h>
@@ -136,7 +136,7 @@ void deleteItemRecursive(struct library** termList, struct library* item)
     // If item has a parent
     if (item->parent) {
         //// Remove item from parent's children list
-        // Удаляем элемент item из родителей
+        // РЈРґР°Р»СЏРµРј СЌР»РµРјРµРЅС‚ item РёР· СЂРѕРґРёС‚РµР»РµР№
         struct library* current = item->parent->firstChild;
         
         // If deleting first child
@@ -177,7 +177,7 @@ void deleteItemRecursive(struct library** termList, struct library* item)
     free(item);
 }
 
-// поисковые функции
+// РїРѕРёСЃРєРѕРІС‹Рµ С„СѓРЅРєС†РёРё
 
 // Find term by name
 struct library* findTermByName(struct library* termList, const char* name) 
@@ -192,7 +192,7 @@ struct library* findTermByName(struct library* termList, const char* name)
     return NULL;
 }
 
-// вывод всей библиотеки
+// РІС‹РІРѕРґ РІСЃРµР№ Р±РёР±Р»РёРѕС‚РµРєРё
 
 // Recursive tree printing
 void printTree(struct library* item, int indent) 
@@ -646,7 +646,7 @@ int main(void)
     
     printf("\nBase library:\n");
     
-    // Добавление
+    // Р”РѕР±Р°РІР»РµРЅРёРµ
     struct library* t1 = createItem(lvlTerm, 10, "Programming");
     struct library* t2 = createItem(lvlTerm, 25, "Databases");
     struct library* t3 = createItem(lvlTerm, 5, "Algorithms");

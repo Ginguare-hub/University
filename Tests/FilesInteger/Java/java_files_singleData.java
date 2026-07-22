@@ -1,4 +1,4 @@
-import java.util.Scanner;
+﻿import java.util.Scanner;
 import java.io.*;
 
 public class java_files_singleData {

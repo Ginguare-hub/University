@@ -1,4 +1,4 @@
-Program Lab1_3;
+п»їProgram Lab1_3;
 
 {$APPTYPE CONSOLE}
 {$R *.res}
@@ -35,13 +35,13 @@ Begin
         Try
             ReadLn(Number);
         Except
-            WriteLn('Некорректный ввод, повторите снова.');
+            WriteLn('РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ, РїРѕРІС‚РѕСЂРёС‚Рµ СЃРЅРѕРІР°.');
             IsCorrect := False;
         End;
 
         If IsCorrect And (Not((Number >= MIN_NUMBER) And (Number <= MAX_NUMBER))) Then
         Begin
-            WriteLn('Число должно входить в диапазон [', MIN_NUMBER, ',', MAX_NUMBER, '] либо равняться 0.');
+            WriteLn('Р§РёСЃР»Рѕ РґРѕР»Р¶РЅРѕ РІС…РѕРґРёС‚СЊ РІ РґРёР°РїР°Р·РѕРЅ [', MIN_NUMBER, ',', MAX_NUMBER, '] Р»РёР±Рѕ СЂР°РІРЅСЏС‚СЊСЃСЏ 0.');
             IsCorrect := False;
         End;
 
@@ -76,13 +76,13 @@ Begin
     While X <> Nil Do
     Begin
         WriteLn;
-        WriteLn('ФИО: ', X^.LastName, ' ', X^.FirstName, ' ', X^.Surname);
-        WriteLn('Номер телефона: ', X^.PhoneNumber);
+        WriteLn('Р¤РРћ: ', X^.LastName, ' ', X^.FirstName, ' ', X^.Surname);
+        WriteLn('РќРѕРјРµСЂ С‚РµР»РµС„РѕРЅР°: ', X^.PhoneNumber);
         X := X^.Next;
     End;
 End;
 
-//Функция сравнения двух ФИО
+//Р¤СѓРЅРєС†РёСЏ СЃСЂР°РІРЅРµРЅРёСЏ РґРІСѓС… Р¤РРћ
 Function CompareFIO(Const FirstName1, LastName1, Surname1: String; Const FirstName2, LastName2, Surname2: String): Integer;
 Var
     FIO1, FIO2: String;
@@ -141,20 +141,20 @@ Begin
     PhoneNumber := 0;
     IsAnyone := False;
 
-    PhoneNumber := ReadAndVerify(1_000_000, 9_999_999, 'Введите номер телефона абонента, фамилию которого хотите найти: '#13#10'> ');
+    PhoneNumber := ReadAndVerify(1_000_000, 9_999_999, 'Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ С‚РµР»РµС„РѕРЅР° Р°Р±РѕРЅРµРЅС‚Р°, С„Р°РјРёР»РёСЋ РєРѕС‚РѕСЂРѕРіРѕ С…РѕС‚РёС‚Рµ РЅР°Р№С‚Рё: '#13#10'> ');
 
     While Temp <> Nil Do
     Begin
         If PhoneNumber = Temp^.PhoneNumber Then
         Begin
-            WriteLn('Фамилия владельца номера телефона: ', Temp^.LastName);
+            WriteLn('Р¤Р°РјРёР»РёСЏ РІР»Р°РґРµР»СЊС†Р° РЅРѕРјРµСЂР° С‚РµР»РµС„РѕРЅР°: ', Temp^.LastName);
             IsAnyOne := True;
         End;
         Temp := Temp^.Next;
     End;
 
     If Not(IsAnyone) Then
-        WriteLn('Нет абонента с таким номером --- ', PhoneNumber);
+        WriteLn('РќРµС‚ Р°Р±РѕРЅРµРЅС‚Р° СЃ С‚Р°РєРёРј РЅРѕРјРµСЂРѕРј --- ', PhoneNumber);
 End;
 
 Procedure FindPhoneNumberByLastName(Head: UnidirNode);
@@ -167,21 +167,21 @@ Begin
     LastName := '';
     IsAnyone := False;
 
-    Write('Введите фамилию абонента, номер телефона котрого хотите найти: '#13#10'> ');
+    Write('Р’РІРµРґРёС‚Рµ С„Р°РјРёР»РёСЋ Р°Р±РѕРЅРµРЅС‚Р°, РЅРѕРјРµСЂ С‚РµР»РµС„РѕРЅР° РєРѕС‚СЂРѕРіРѕ С…РѕС‚РёС‚Рµ РЅР°Р№С‚Рё: '#13#10'> ');
     ReadLn(LastName);
 
     While Temp <> Nil Do
     Begin
         If LastName = Temp^.LastName Then
         Begin
-            WriteLn('Номер телефона абонента: ', Temp^.PhoneNumber, '  ---  ', Temp^.LastName, ' ', Temp^.FirstName, ' ', Temp^.Surname);
+            WriteLn('РќРѕРјРµСЂ С‚РµР»РµС„РѕРЅР° Р°Р±РѕРЅРµРЅС‚Р°: ', Temp^.PhoneNumber, '  ---  ', Temp^.LastName, ' ', Temp^.FirstName, ' ', Temp^.Surname);
             IsAnyone := True;
         End;
         Temp := Temp^.Next;
     End;
 
     If Not(IsAnyone) Then
-        WriteLn('Нет абонента с такой фамилией --- ', LastName);
+        WriteLn('РќРµС‚ Р°Р±РѕРЅРµРЅС‚Р° СЃ С‚Р°РєРѕР№ С„Р°РјРёР»РёРµР№ --- ', LastName);
 End;
 
 Procedure Append(Const FirstName, LastName, Surname: String; PhoneNumber: Integer; Var Head: UnidirNode);
@@ -240,26 +240,26 @@ Begin
 
     LastName := '0';
 
-    Writeln('Введите число 0 вместо фамилии если закончили ввод абонентов.');
+    Writeln('Р’РІРµРґРёС‚Рµ С‡РёСЃР»Рѕ 0 РІРјРµСЃС‚Рѕ С„Р°РјРёР»РёРё РµСЃР»Рё Р·Р°РєРѕРЅС‡РёР»Рё РІРІРѕРґ Р°Р±РѕРЅРµРЅС‚РѕРІ.');
 
     WriteLn;
-    Write('Введите фамилию: '#13#10'> ');
+    Write('Р’РІРµРґРёС‚Рµ С„Р°РјРёР»РёСЋ: '#13#10'> ');
     ReadLn(LastName);
 
     While LastName <> '0' Do
     Begin
-        Write('Введите имя: '#13#10'> ');
+        Write('Р’РІРµРґРёС‚Рµ РёРјСЏ: '#13#10'> ');
         ReadLn(FirstName);
-        Write('Введите отчество: '#13#10'> ');
+        Write('Р’РІРµРґРёС‚Рµ РѕС‚С‡РµСЃС‚РІРѕ: '#13#10'> ');
         ReadLn(Surname);
-        Number := ReadAndVerify(1_000_000, 9_999_999, 'Введите номер телефона: '#13#10'> ');
+        Number := ReadAndVerify(1_000_000, 9_999_999, 'Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ С‚РµР»РµС„РѕРЅР°: '#13#10'> ');
         Insert(FirstName, LastName, Surname, Number, UniHead);
         WriteLn;
-        Write('Введите фамилию: '#13#10'> ');
+        Write('Р’РІРµРґРёС‚Рµ С„Р°РјРёР»РёСЋ: '#13#10'> ');
         ReadLn(LastName);
     End;
 
-    WriteLn(#13#10'Воспроизведение упорядоченного однонаправленного списка абонентов: ');
+    WriteLn(#13#10'Р’РѕСЃРїСЂРѕРёР·РІРµРґРµРЅРёРµ СѓРїРѕСЂСЏРґРѕС‡РµРЅРЅРѕРіРѕ РѕРґРЅРѕРЅР°РїСЂР°РІР»РµРЅРЅРѕРіРѕ СЃРїРёСЃРєР° Р°Р±РѕРЅРµРЅС‚РѕРІ: ');
     Print(UniHead);
 
     WriteLn;

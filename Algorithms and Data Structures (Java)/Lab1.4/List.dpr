@@ -1,4 +1,4 @@
-Program List;
+п»їProgram List;
 
 {$APPTYPE CONSOLE}
 {$R *.res}
@@ -39,13 +39,13 @@ Begin
         Try
             ReadLn(Number);
         Except
-            WriteLn('Некорректный ввод, повторите снова.');
+            WriteLn('РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ, РїРѕРІС‚РѕСЂРёС‚Рµ СЃРЅРѕРІР°.');
             IsCorrect := False;
         End;
 
         If IsCorrect And ( Not((Number >= MIN_NUMBER1) And (Number <= MAX_NUMBER1)) And Not((Number >= MIN_NUMBER2) And (Number <= MAX_NUMBER2)) And Not(Number = 0)) Then
         Begin
-            WriteLn('Число должно входить в диапазон [', MIN_NUMBER1, ',', MAX_NUMBER1, '] либо [', MIN_NUMBER2, ',', MAX_NUMBER2, '] или равняться 0.');
+            WriteLn('Р§РёСЃР»Рѕ РґРѕР»Р¶РЅРѕ РІС…РѕРґРёС‚СЊ РІ РґРёР°РїР°Р·РѕРЅ [', MIN_NUMBER1, ',', MAX_NUMBER1, '] Р»РёР±Рѕ [', MIN_NUMBER2, ',', MAX_NUMBER2, '] РёР»Рё СЂР°РІРЅСЏС‚СЊСЃСЏ 0.');
             IsCorrect := False;
         End;
 
@@ -368,15 +368,15 @@ Begin
 
     Number := 0;
 
-    Writeln('Введите число 0 если закончили вводить номера телефонов.');
+    Writeln('Р’РІРµРґРёС‚Рµ С‡РёСЃР»Рѕ 0 РµСЃР»Рё Р·Р°РєРѕРЅС‡РёР»Рё РІРІРѕРґРёС‚СЊ РЅРѕРјРµСЂР° С‚РµР»РµС„РѕРЅРѕРІ.');
 
     Repeat
-        Number := ReadAndVerify(100, 999, 1_000_000, 9_999_999, 'Введите номер телефона: ');
+        Number := ReadAndVerify(100, 999, 1_000_000, 9_999_999, 'Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ С‚РµР»РµС„РѕРЅР°: ');
         If Number <> 0 Then
             Append(Number, BiHead);
     Until Number = 0;
 
-    WriteLn(#13#10'Воспроизведение неупорядоченного списка с конца: ');
+    WriteLn(#13#10'Р’РѕСЃРїСЂРѕРёР·РІРµРґРµРЅРёРµ РЅРµСѓРїРѕСЂСЏРґРѕС‡РµРЅРЅРѕРіРѕ СЃРїРёСЃРєР° СЃ РєРѕРЅС†Р°: ');
     PrintReverse(BiHead);
 
     Arr := FillArrayByRule(BiHead);
@@ -384,7 +384,7 @@ Begin
     DeleteEmergencyNumbers(Arr);
     UniHead := FillUnidirNode(Arr);
 
-    WriteLn(#13#10'Воспроизведение упорядоченного однонаправленного списка: ');
+    WriteLn(#13#10'Р’РѕСЃРїСЂРѕРёР·РІРµРґРµРЅРёРµ СѓРїРѕСЂСЏРґРѕС‡РµРЅРЅРѕРіРѕ РѕРґРЅРѕРЅР°РїСЂР°РІР»РµРЅРЅРѕРіРѕ СЃРїРёСЃРєР°: ');
     Print(UniHead);
 
     ReadLn;

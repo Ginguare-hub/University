@@ -1,9 +1,9 @@
-Program TextFilesDelphiTest;
+п»їProgram TextFilesDelphiTest;
 
 Uses
     System.SysUtils;
 
-//Проверки----------------------------------------------------------------------
+//РџСЂРѕРІРµСЂРєРё----------------------------------------------------------------------
 
 Function ReadAndVerify(Const MIN_NUMBER, MAX_NUMBER: Integer; MyString: String): Integer;
 
@@ -93,7 +93,7 @@ Begin
     CanRead := IsReady;
 End;
 
-Function CanWrite(Var FileVar: TextFile): Boolean; //проверить работоспособность
+Function CanWrite(Var FileVar: TextFile): Boolean; //РїСЂРѕРІРµСЂРёС‚СЊ СЂР°Р±РѕС‚РѕСЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ
 
 Var
     IsReady: Boolean;
@@ -142,7 +142,7 @@ Begin
     CheckMyFile := CheckInput;
 End;
 
-//Проверки----------------------------------------------------------------------
+//РџСЂРѕРІРµСЂРєРё----------------------------------------------------------------------
 
 Function WorkWithConsoleOrFile(IsOutput: Boolean): Boolean;
 

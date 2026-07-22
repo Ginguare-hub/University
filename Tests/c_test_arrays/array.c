@@ -1,4 +1,4 @@
-#include "stdio.h"
+п»ї#include "stdio.h"
 #include "locale.h"
 #include "malloc.h"
 
@@ -18,7 +18,7 @@ int findDayOfWeek(int day, int month, int year);
 
 int findMaxDay(int month, int year)
 {
-    int maxDayInEachMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; // Индекс = месяц - 1; значение = max количество дней
+    int maxDayInEachMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; // РРЅРґРµРєСЃ = РјРµСЃСЏС† - 1; Р·РЅР°С‡РµРЅРёРµ = max РєРѕР»РёС‡РµСЃС‚РІРѕ РґРЅРµР№
     int maxDay;
 
     maxDay = maxDayInEachMonth[month - 1];

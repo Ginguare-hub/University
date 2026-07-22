@@ -1,4 +1,4 @@
-Unit Unit1;
+п»їUnit Unit1;
 
 Interface
 
@@ -186,7 +186,7 @@ Begin
     For I := 1 To Length(S) Do
     Begin
         Ch := S[I];
-        //Unicode-safe: русские/английские/Ё/и т.д.
+        //Unicode-safe: СЂСѓСЃСЃРєРёРµ/Р°РЅРіР»РёР№СЃРєРёРµ/РЃ/Рё С‚.Рґ.
         If Not TCharacter.IsLetter(Ch) Then
             Exit(False);
     End;

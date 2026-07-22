@@ -1,4 +1,4 @@
-#include <stdio.h>
+п»ї#include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
 
@@ -62,19 +62,19 @@ int main(void)
 
     setlocale(LC_ALL, "Russian");
 
-    printf("Введите количество ребят N: ");
+    printf("Р’РІРµРґРёС‚Рµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЂРµР±СЏС‚ N: ");
     scanf("%d", &n);
     if (n < 1)
     {
-        printf("N должно быть >= 1\n");
+        printf("N РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ >= 1\n");
         return 1;
     }
 
-    printf("Введите шаг k: ");
+    printf("Р’РІРµРґРёС‚Рµ С€Р°Рі k: ");
     scanf("%d", &k);
     if (k < 1)
     {
-        printf("k должно быть >= 1\n");
+        printf("k РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ >= 1\n");
         return 1;
     }
 
@@ -82,18 +82,18 @@ int main(void)
     int last = countingRhyme(n, k, order);
 
     printf("\nN = %d, k = %d\n", n, k);
-    printf("Порядок выбывания: ");
+    printf("РџРѕСЂСЏРґРѕРє РІС‹Р±С‹РІР°РЅРёСЏ: ");
     for (int i = 0; i < n - 1; i++)
     {
         printf("%d", order[i]);
         if (i < n - 2)
             printf(", ");
     }
-    printf("\nОстаётся: %d\n", last);
+    printf("\nРћСЃС‚Р°С‘С‚СЃСЏ: %d\n", last);
     free(order);
 
-    printf("\n=== Таблица для N = 1..64, k = %d ===\n\n", k);
-    printf(" N  | Порядок выбывания\n");
+    printf("\n=== РўР°Р±Р»РёС†Р° РґР»СЏ N = 1..64, k = %d ===\n\n", k);
+    printf(" N  | РџРѕСЂСЏРґРѕРє РІС‹Р±С‹РІР°РЅРёСЏ\n");
     printf("----|-------------------\n");
 
     int *buf = (int *)malloc(65 * sizeof(int));

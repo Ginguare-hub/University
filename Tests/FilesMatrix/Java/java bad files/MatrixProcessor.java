@@ -1,4 +1,4 @@
-import java.util.Scanner;
+п»їimport java.util.Scanner;
 import java.io.*;
 
 public class MatrixProcessor {
@@ -257,7 +257,7 @@ public class MatrixProcessor {
         boolean isToFile = false;
         int[][] matrix = null;
         
-        // Ввод данных
+        // Р’РІРѕРґ РґР°РЅРЅС‹С…
         isFromFile = workWithConsoleOrFile(scanner, false);
         
         if (isFromFile) {
@@ -278,7 +278,7 @@ public class MatrixProcessor {
             matrix = readMatrixFromConsole(scanner);
         }
         
-        // Вывод данных
+        // Р’С‹РІРѕРґ РґР°РЅРЅС‹С…
         isToFile = workWithConsoleOrFile(scanner, true);
         
         if (isToFile) {

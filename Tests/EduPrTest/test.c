@@ -1,10 +1,10 @@
-#include <stdio.h>
+п»ї#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <locale.h>
 
-// ===================== СТРУКТУРЫ =====================
+// ===================== РЎРўР РЈРљРўРЈР Р« =====================
 
 typedef struct date
 {
@@ -39,7 +39,7 @@ typedef struct doctorSchedule
     char name[30];
     char surname[30];
     char patronymic[30];
-    int schedule[6][2];        // [день недели 0-5][0=начало, 1=конец] в минутах
+    int schedule[6][2];        // [РґРµРЅСЊ РЅРµРґРµР»Рё 0-5][0=РЅР°С‡Р°Р»Рѕ, 1=РєРѕРЅРµС†] РІ РјРёРЅСѓС‚Р°С…
 } doctorSchedule;
 
 typedef struct NodeDoctor
@@ -48,17 +48,17 @@ typedef struct NodeDoctor
     struct NodeDoctor* next;
 } NodeDoctor;
 
-// ===================== ГЛОБАЛЬНЫЕ СПИСКИ =====================
+// ===================== Р“Р›РћР‘РђР›Р¬РќР«Р• РЎРџРРЎРљР =====================
 appointment* list_appointments = NULL;
 NodeDoctor* list_doctors = NULL;
 
-// ===================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====================
+// ===================== Р’РЎРџРћРњРћР“РђРўР•Р›Р¬РќР«Р• Р¤РЈРќРљР¦РР =====================
 
 void clear_input() {
     while (getchar() != '\n');
 }
 
-// Добавление врача
+// Р”РѕР±Р°РІР»РµРЅРёРµ РІСЂР°С‡Р°
 void add_doctor(NodeDoctor** head, doctorSchedule d) {
     NodeDoctor* new_node = (NodeDoctor*)malloc(sizeof(NodeDoctor));
     if (new_node == NULL) return;
@@ -67,7 +67,7 @@ void add_doctor(NodeDoctor** head, doctorSchedule d) {
     *head = new_node;
 }
 
-// Добавление талона
+// Р”РѕР±Р°РІР»РµРЅРёРµ С‚Р°Р»РѕРЅР°
 void add_appointment(appointment** head, appointment app) {
     appointment* new_node = (appointment*)malloc(sizeof(appointment));
     if (new_node == NULL) return;
@@ -76,14 +76,14 @@ void add_appointment(appointment** head, appointment app) {
     *head = new_node;
 }
 
-// ===================== РАБОТА С ФАЙЛАМИ =====================
+// ===================== Р РђР‘РћРўРђ РЎ Р¤РђР™Р›РђРњР =====================
 
 void save_appointments() {
     FILE* f = fopen("appointments.dat", "wb");
     if (!f) return;
     appointment* cur = list_appointments;
     while (cur) {
-        fwrite(cur, sizeof(appointment), 1, f);   // Записываем без указателя next
+        fwrite(cur, sizeof(appointment), 1, f);   // Р—Р°РїРёСЃС‹РІР°РµРј Р±РµР· СѓРєР°Р·Р°С‚РµР»СЏ next
         cur = cur->next;
     }
     fclose(f);
@@ -121,10 +121,10 @@ void load_doctors() {
     fclose(f);
 }
 
-// ===================== СОРТИРОВКА =====================
+// ===================== РЎРћР РўРР РћР’РљРђ =====================
 void sort_appointments_by_date() {
     if (list_appointments == NULL) {
-        printf("Список талонов пуст!\n");
+        printf("РЎРїРёСЃРѕРє С‚Р°Р»РѕРЅРѕРІ РїСѓСЃС‚!\n");
         return;
     }
 
@@ -163,24 +163,24 @@ void sort_appointments_by_date() {
         lptr = ptr1;
     } while (swapped);
 
-    printf("Талоны успешно отсортированы по дате и времени!\n");
+    printf("РўР°Р»РѕРЅС‹ СѓСЃРїРµС€РЅРѕ РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅС‹ РїРѕ РґР°С‚Рµ Рё РІСЂРµРјРµРЅРё!\n");
 }
 
-// ===================== СПЕЦИАЛЬНАЯ ФУНКЦИЯ - ВЫДАЧА ТАЛОНОВ =====================
+// ===================== РЎРџР•Р¦РРђР›Р¬РќРђРЇ Р¤РЈРќРљР¦РРЇ - Р’Р«Р”РђР§Рђ РўРђР›РћРќРћР’ =====================
 void issue_tickets() {
     char doc_surname[30];
     date search_date;
 
-    printf("Введите фамилию врача: ");
+    printf("Р’РІРµРґРёС‚Рµ С„Р°РјРёР»РёСЋ РІСЂР°С‡Р°: ");
     fgets(doc_surname, 30, stdin);
     doc_surname[strcspn(doc_surname, "\n")] = 0;
 
-    printf("Введите дату (день месяц год): ");
+    printf("Р’РІРµРґРёС‚Рµ РґР°С‚Сѓ (РґРµРЅСЊ РјРµСЃСЏС† РіРѕРґ): ");
     scanf("%d %d %d", &search_date.day, &search_date.month, &search_date.year);
     clear_input();
 
     FILE* f = fopen("issued_tickets.txt", "w");
-    if (f) fprintf(f, "=== ВЫДАЧА ТАЛОНОВ ===\nДата: %02d.%02d.%d\nВрач: %s\n\n", 
+    if (f) fprintf(f, "=== Р’Р«Р”РђР§Рђ РўРђР›РћРќРћР’ ===\nР”Р°С‚Р°: %02d.%02d.%d\nР’СЂР°С‡: %s\n\n", 
                   search_date.day, search_date.month, search_date.year, doc_surname);
 
     appointment* cur = list_appointments;
@@ -196,11 +196,11 @@ void issue_tickets() {
                 if (doc->data.doctorID == cur->doctorID && 
                     strstr(doc->data.surname, doc_surname) != NULL) {
                     
-                    if (strlen(cur->surname) == 0) {  // Талон свободен
-                        printf("%02d:%02d  Каб:%d  Очередь:%d\n", 
+                    if (strlen(cur->surname) == 0) {  // РўР°Р»РѕРЅ СЃРІРѕР±РѕРґРµРЅ
+                        printf("%02d:%02d  РљР°Р±:%d  РћС‡РµСЂРµРґСЊ:%d\n", 
                                cur->appointmentTime.hour, cur->appointmentTime.minute,
                                cur->cabinet, cur->queuePlace);
-                        if (f) fprintf(f, "%02d:%02d  Каб:%d  №%d\n", 
+                        if (f) fprintf(f, "%02d:%02d  РљР°Р±:%d  в„–%d\n", 
                                      cur->appointmentTime.hour, cur->appointmentTime.minute,
                                      cur->cabinet, cur->queuePlace);
                         count++;
@@ -214,25 +214,25 @@ void issue_tickets() {
     }
 
     if (count == 0) {
-        printf("Свободных талонов не найдено.\n");
-        if (f) fprintf(f, "Свободных талонов не найдено.\n");
+        printf("РЎРІРѕР±РѕРґРЅС‹С… С‚Р°Р»РѕРЅРѕРІ РЅРµ РЅР°Р№РґРµРЅРѕ.\n");
+        if (f) fprintf(f, "РЎРІРѕР±РѕРґРЅС‹С… С‚Р°Р»РѕРЅРѕРІ РЅРµ РЅР°Р№РґРµРЅРѕ.\n");
     }
     if (f) fclose(f);
-    printf("Результат сохранён в issued_tickets.txt\n");
+    printf("Р РµР·СѓР»СЊС‚Р°С‚ СЃРѕС…СЂР°РЅС‘РЅ РІ issued_tickets.txt\n");
 }
 
-// ===================== ПОИСК =====================
+// ===================== РџРћРРЎРљ =====================
 void search_by_doctor() {
     char doc_surname[30];
     date search_date;
-    printf("Фамилия врача: ");
+    printf("Р¤Р°РјРёР»РёСЏ РІСЂР°С‡Р°: ");
     fgets(doc_surname, 30, stdin);
     doc_surname[strcspn(doc_surname, "\n")] = 0;
-    printf("Дата (день месяц год): ");
+    printf("Р”Р°С‚Р° (РґРµРЅСЊ РјРµСЃСЏС† РіРѕРґ): ");
     scanf("%d %d %d", &search_date.day, &search_date.month, &search_date.year);
     clear_input();
 
-    printf("\nТалоны к врачу %s на %02d.%02d.%d:\n", doc_surname, search_date.day, search_date.month, search_date.year);
+    printf("\nРўР°Р»РѕРЅС‹ Рє РІСЂР°С‡Сѓ %s РЅР° %02d.%02d.%d:\n", doc_surname, search_date.day, search_date.month, search_date.year);
     
     appointment* cur = list_appointments;
     while (cur) {
@@ -243,7 +243,7 @@ void search_by_doctor() {
             NodeDoctor* d = list_doctors;
             while (d) {
                 if (d->data.doctorID == cur->doctorID && strstr(d->data.surname, doc_surname)) {
-                    printf("%02d:%02d | Каб:%d | Оч:%d | %s %s %s\n",
+                    printf("%02d:%02d | РљР°Р±:%d | РћС‡:%d | %s %s %s\n",
                            cur->appointmentTime.hour, cur->appointmentTime.minute,
                            cur->cabinet, cur->queuePlace,
                            cur->surname, cur->name, cur->patronymic);
@@ -258,15 +258,15 @@ void search_by_doctor() {
 
 void search_by_patient() {
     char patient_surname[30];
-    printf("Фамилия пациента: ");
+    printf("Р¤Р°РјРёР»РёСЏ РїР°С†РёРµРЅС‚Р°: ");
     fgets(patient_surname, 30, stdin);
     patient_surname[strcspn(patient_surname, "\n")] = 0;
 
-    printf("\nЗаписи пациента %s:\n", patient_surname);
+    printf("\nР—Р°РїРёСЃРё РїР°С†РёРµРЅС‚Р° %s:\n", patient_surname);
     appointment* cur = list_appointments;
     while (cur) {
         if (strstr(cur->surname, patient_surname) != NULL) {
-            printf("%02d.%02d.%d %02d:%02d | Каб:%d | Врач ID:%d\n",
+            printf("%02d.%02d.%d %02d:%02d | РљР°Р±:%d | Р’СЂР°С‡ ID:%d\n",
                    cur->appointmentDate.day, cur->appointmentDate.month, cur->appointmentDate.year,
                    cur->appointmentTime.hour, cur->appointmentTime.minute,
                    cur->cabinet, cur->doctorID);
@@ -275,7 +275,7 @@ void search_by_patient() {
     }
 }
 
-// ===================== ГЛАВНОЕ МЕНЮ =====================
+// ===================== Р“Р›РђР’РќРћР• РњР•РќР® =====================
 int main() {
     int choice, sub;
 
@@ -283,21 +283,21 @@ int main() {
     
     load_doctors();
     load_appointments();
-    printf("Данные загружены из файлов.\n");
+    printf("Р”Р°РЅРЅС‹Рµ Р·Р°РіСЂСѓР¶РµРЅС‹ РёР· С„Р°Р№Р»РѕРІ.\n");
 
     while (1) {
-        printf("\n=== ПОЛИКЛИНИКА - МЕНЮ ===\n");
-        printf("1. Чтение данных из файлов\n");
-        printf("2. Просмотр списков\n");
-        printf("3. Сортировка талонов по дате и времени\n");
-        printf("4. Поиск данных\n");
-        printf("5. Добавление данных\n");
-        printf("6. Удаление данных\n");
-        printf("7. Редактирование данных\n");
-        printf("8. Выдача талонов к врачу\n");
-        printf("9. Выход без сохранения\n");
-        printf("10. Выход с сохранением\n");
-        printf("Выберите пункт: ");
+        printf("\n=== РџРћР›РРљР›РРќРРљРђ - РњР•РќР® ===\n");
+        printf("1. Р§С‚РµРЅРёРµ РґР°РЅРЅС‹С… РёР· С„Р°Р№Р»РѕРІ\n");
+        printf("2. РџСЂРѕСЃРјРѕС‚СЂ СЃРїРёСЃРєРѕРІ\n");
+        printf("3. РЎРѕСЂС‚РёСЂРѕРІРєР° С‚Р°Р»РѕРЅРѕРІ РїРѕ РґР°С‚Рµ Рё РІСЂРµРјРµРЅРё\n");
+        printf("4. РџРѕРёСЃРє РґР°РЅРЅС‹С…\n");
+        printf("5. Р”РѕР±Р°РІР»РµРЅРёРµ РґР°РЅРЅС‹С…\n");
+        printf("6. РЈРґР°Р»РµРЅРёРµ РґР°РЅРЅС‹С…\n");
+        printf("7. Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РґР°РЅРЅС‹С…\n");
+        printf("8. Р’С‹РґР°С‡Р° С‚Р°Р»РѕРЅРѕРІ Рє РІСЂР°С‡Сѓ\n");
+        printf("9. Р’С‹С…РѕРґ Р±РµР· СЃРѕС…СЂР°РЅРµРЅРёСЏ\n");
+        printf("10. Р’С‹С…РѕРґ СЃ СЃРѕС…СЂР°РЅРµРЅРёРµРј\n");
+        printf("Р’С‹Р±РµСЂРёС‚Рµ РїСѓРЅРєС‚: ");
 
         if (scanf("%d", &choice) != 1) { clear_input(); continue; }
         clear_input();
@@ -305,10 +305,10 @@ int main() {
         if (choice == 1) {
             load_doctors();
             load_appointments();
-            printf("Данные успешно перезагружены.\n");
+            printf("Р”Р°РЅРЅС‹Рµ СѓСЃРїРµС€РЅРѕ РїРµСЂРµР·Р°РіСЂСѓР¶РµРЅС‹.\n");
         }
         else if (choice == 2) {
-            printf("1 - Врачи\n2 - Талоны\nВыбор: ");
+            printf("1 - Р’СЂР°С‡Рё\n2 - РўР°Р»РѕРЅС‹\nР’С‹Р±РѕСЂ: ");
             scanf("%d", &sub); clear_input();
             if (sub == 1) {
                 NodeDoctor* cur = list_doctors;
@@ -321,7 +321,7 @@ int main() {
             } else if (sub == 2) {
                 appointment* cur = list_appointments;
                 while (cur) {
-                    printf("%02d.%02d.%d %02d:%02d | Каб:%d | Оч:%d | %s %s %s | Врач:%d\n",
+                    printf("%02d.%02d.%d %02d:%02d | РљР°Р±:%d | РћС‡:%d | %s %s %s | Р’СЂР°С‡:%d\n",
                            cur->appointmentDate.day, cur->appointmentDate.month, cur->appointmentDate.year,
                            cur->appointmentTime.hour, cur->appointmentTime.minute,
                            cur->cabinet, cur->queuePlace, cur->surname, cur->name, cur->patronymic, cur->doctorID);
@@ -333,50 +333,50 @@ int main() {
             sort_appointments_by_date();
         }
         else if (choice == 4) {
-            printf("1 - Поиск по врачу и дате\n2 - Поиск по пациенту\nВыбор: ");
+            printf("1 - РџРѕРёСЃРє РїРѕ РІСЂР°С‡Сѓ Рё РґР°С‚Рµ\n2 - РџРѕРёСЃРє РїРѕ РїР°С†РёРµРЅС‚Сѓ\nР’С‹Р±РѕСЂ: ");
             scanf("%d", &sub); clear_input();
             if (sub == 1) search_by_doctor();
             else if (sub == 2) search_by_patient();
         }
         else if (choice == 5) {
-            printf("1 - Добавить врача\n2 - Добавить талон\nВыбор: ");
+            printf("1 - Р”РѕР±Р°РІРёС‚СЊ РІСЂР°С‡Р°\n2 - Р”РѕР±Р°РІРёС‚СЊ С‚Р°Р»РѕРЅ\nР’С‹Р±РѕСЂ: ");
             scanf("%d", &sub); clear_input();
             if (sub == 2) {
                 appointment app = {0};
-                printf("Дата (день месяц год): "); scanf("%d %d %d", &app.appointmentDate.day, &app.appointmentDate.month, &app.appointmentDate.year);
-                printf("Время (час минуты): "); scanf("%d %d", &app.appointmentTime.hour, &app.appointmentTime.minute);
-                printf("Номер очереди: "); scanf("%d", &app.queuePlace);
+                printf("Р”Р°С‚Р° (РґРµРЅСЊ РјРµСЃСЏС† РіРѕРґ): "); scanf("%d %d %d", &app.appointmentDate.day, &app.appointmentDate.month, &app.appointmentDate.year);
+                printf("Р’СЂРµРјСЏ (С‡Р°СЃ РјРёРЅСѓС‚С‹): "); scanf("%d %d", &app.appointmentTime.hour, &app.appointmentTime.minute);
+                printf("РќРѕРјРµСЂ РѕС‡РµСЂРµРґРё: "); scanf("%d", &app.queuePlace);
                 clear_input();
-                printf("Имя: "); fgets(app.name, 30, stdin); app.name[strcspn(app.name,"\n")]=0;
-                printf("Фамилия: "); fgets(app.surname, 30, stdin); app.surname[strcspn(app.surname,"\n")]=0;
-                printf("Отчество: "); fgets(app.patronymic, 30, stdin); app.patronymic[strcspn(app.patronymic,"\n")]=0;
-                printf("Кабинет: "); scanf("%d", &app.cabinet);
-                printf("ID врача: "); scanf("%d", &app.doctorID);
+                printf("РРјСЏ: "); fgets(app.name, 30, stdin); app.name[strcspn(app.name,"\n")]=0;
+                printf("Р¤Р°РјРёР»РёСЏ: "); fgets(app.surname, 30, stdin); app.surname[strcspn(app.surname,"\n")]=0;
+                printf("РћС‚С‡РµСЃС‚РІРѕ: "); fgets(app.patronymic, 30, stdin); app.patronymic[strcspn(app.patronymic,"\n")]=0;
+                printf("РљР°Р±РёРЅРµС‚: "); scanf("%d", &app.cabinet);
+                printf("ID РІСЂР°С‡Р°: "); scanf("%d", &app.doctorID);
                 add_appointment(&list_appointments, app);
-                printf("Талон добавлен!\n");
+                printf("РўР°Р»РѕРЅ РґРѕР±Р°РІР»РµРЅ!\n");
             }
         }
         else if (choice == 6) {
-            printf("Удаление не реализовано в этой версии.\n");
+            printf("РЈРґР°Р»РµРЅРёРµ РЅРµ СЂРµР°Р»РёР·РѕРІР°РЅРѕ РІ СЌС‚РѕР№ РІРµСЂСЃРёРё.\n");
         }
         else if (choice == 7) {
-            printf("Редактирование не реализовано в этой версии.\n");
+            printf("Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РЅРµ СЂРµР°Р»РёР·РѕРІР°РЅРѕ РІ СЌС‚РѕР№ РІРµСЂСЃРёРё.\n");
         }
         else if (choice == 8) {
             issue_tickets();
         }
         else if (choice == 9) {
-            printf("Выход без сохранения.\n");
+            printf("Р’С‹С…РѕРґ Р±РµР· СЃРѕС…СЂР°РЅРµРЅРёСЏ.\n");
             return 0;
         }
         else if (choice == 10) {
             save_doctors();
             save_appointments();
-            printf("Данные сохранены. Выход.\n");
+            printf("Р”Р°РЅРЅС‹Рµ СЃРѕС…СЂР°РЅРµРЅС‹. Р’С‹С…РѕРґ.\n");
             return 0;
         }
         else {
-            printf("Неверный пункт!\n");
+            printf("РќРµРІРµСЂРЅС‹Р№ РїСѓРЅРєС‚!\n");
         }
     }
     return 0;

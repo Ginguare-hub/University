@@ -1,4 +1,4 @@
-//Program Test2;
+﻿//Program Test2;
 //
 //Uses
 //  SysUtils;
